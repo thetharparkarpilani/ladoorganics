@@ -1,278 +1,322 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lado Organics | Premium Tharparkar Tradition</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="./css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lado Organics | Pure Tharparkar A2 Tradition from Pilani</title>
+  <meta name="description" content="Direct from Pilani, Rajasthan. 100% pure Tharparkar A2 Bilona Ghee, Cow Dung Dhoop, Biogas Vermicompost, and Deep Work Bhunga Farm Stays.">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="./css/style.css">
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        serif: ['Playfair Display', 'serif']
-                    }
-                }
-            }
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            serif: ['Playfair Display', 'serif']
+          }
         }
-    </script>
-    <script src="./js/app.js" defer></script>
+      }
+    }
+  </script>
+  <script src="./js/app.js" defer></script>
 </head>
 <body class="antialiased selection:bg-[#c2410c] selection:text-white">
 
-    <header>
-        <nav class="glass-nav fixed w-full top-0 z-50 border-b border-[var(--border)] transition-all duration-300">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-                <a href="#" class="text-2xl md:text-3xl font-serif font-bold tracking-widest text-[var(--mud)] flex items-center gap-2">
-                    <i class="fa-solid fa-leaf text-[var(--terracotta)] text-xl"></i>
-                    LADO <span class="text-[var(--terracotta)] font-light">ORGANICS</span>
-                </a>
-                
-                <div class="flex items-center gap-4 sm:gap-8">
-                    <div class="hidden lg:flex space-x-8 text-sm font-medium tracking-widest text-[var(--mud)]/80">
-                        <a href="#store" class="hover:text-[var(--terracotta)] transition-colors">THE STORE</a>
-                        <a href="#adopt" class="hover:text-[var(--terracotta)] transition-colors">ADOPT-A-COW</a>
-                        <a href="#blueprint" class="hover:text-[var(--terracotta)] transition-colors">OUR BLUEPRINT</a>
-                    </div>
-                    
-                    <div class="relative group">
-                        <i class="fas fa-globe absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--mud)]/50 text-xs"></i>
-                        <select id="lang-toggle" class="appearance-none bg-white/50 backdrop-blur-sm border border-[var(--border)] text-[var(--mud)] text-xs font-bold py-2 pl-8 pr-6 rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--terracotta)] transition-all">
-                            <option value="en">EN</option>
-                            <option value="hi">हिंदी</option>
-                            <option value="ma">मारवाड़ी</option>
-                        </select>
-                        <i class="fas fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-[var(--mud)]/50 text-[10px] pointer-events-none"></i>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    </header>
+  <!-- Sticky Navigation with Working 3-Language Toggle -->
+  <header>
+    <nav class="glass-nav fixed w-full top-0 z-40 border-b border-[var(--border)] transition-all duration-300">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex justify-between items-center">
+        <a href="#" class="text-xl sm:text-2xl md:text-3xl font-serif font-bold tracking-widest text-[var(--mud)] flex items-center gap-2">
+          <i class="fa-solid fa-leaf text-[var(--terracotta)] text-lg sm:text-xl"></i>
+          <span>LADO <span class="text-[var(--terracotta)] font-normal">ORGANICS</span></span>
+        </a>
+        
+        <div class="flex items-center gap-4 sm:gap-7">
+          <div class="hidden lg:flex space-x-7 text-xs font-bold tracking-widest text-[var(--mud)]/80">
+            <a href="#store" data-i18n="nav_store" class="hover:text-[var(--terracotta)] transition-colors">THE STORE</a>
+            <a href="#adopt" data-i18n="nav_adopt" class="hover:text-[var(--terracotta)] transition-colors">ADOPT-A-COW</a>
+            <a href="#blueprint" data-i18n="nav_blueprint" class="hover:text-[var(--terracotta)] transition-colors">BLUEPRINT</a>
+            <a href="#journal" data-i18n="nav_journal" class="hover:text-[var(--terracotta)] transition-colors">JOURNAL</a>
+          </div>
+          
+          <div class="relative">
+            <i class="fas fa-globe absolute left-3 top-1/2 -translate-y-1/2 text-[var(--mud)]/60 text-xs pointer-events-none"></i>
+            <select id="lang-toggle" aria-label="Select Language" class="appearance-none bg-white/80 border border-[var(--border)] text-[var(--mud)] text-xs font-bold py-2 pl-8 pr-7 rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--terracotta)]">
+              <option value="en">EN</option>
+              <option value="hi">हिंदी</option>
+              <option value="ma">मारवाड़ी</option>
+            </select>
+            <i class="fas fa-chevron-down absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--mud)]/60 text-[10px] pointer-events-none"></i>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
 
-    <main>
-        <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 px-4 sm:px-6 lg:px-8 overflow-hidden">
-            <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-[#f59e0b] rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
-            <div class="absolute top-[20%] right-[-10%] w-96 h-96 bg-[#c2410c] rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
-            
-            <div class="max-w-6xl mx-auto text-center relative z-10">
-                <div class="status-pill inline-flex items-center gap-2 px-5 py-2 rounded-full mb-8 text-xs font-bold tracking-widest reveal">
-                    <span class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]"></span>
-                    DIRECT FROM PILANI • 100% PURE THARPARKAR TRADITION
-                </div>
-                
-                <h1 class="text-5xl md:text-7xl lg:text-8xl font-serif font-bold leading-[1.05] mb-8 text-[var(--mud)] reveal" style="transition-delay: 100ms;">
-                    Spiritual Heritage, <br><span class="text-[var(--terracotta)] italic font-normal">Consciously Crafted.</span>
-                </h1>
-                
-                <p class="text-lg md:text-xl text-[var(--mud)]/70 mb-12 leading-relaxed font-light max-w-2xl mx-auto reveal" style="transition-delay: 200ms;">
-                    Based on the "cow as a coconut" zero-waste Hindu philosophy. We empower over 100 local farming families while delivering unadulterated wellness directly to you.
-                </p>
-                
-                <div class="flex flex-col sm:flex-row justify-center gap-4 mb-20 reveal" style="transition-delay: 300ms;">
-                    <a href="#store" class="primary-btn px-8 py-4 rounded-full font-bold shadow-xl flex items-center justify-center gap-3">
-                        <i class="fas fa-shopping-cart"></i> Shop The Collection
-                    </a>
-                    <a href="#blueprint" class="bg-white/80 backdrop-blur text-[var(--mud)] border border-[var(--border)] px-8 py-4 rounded-full font-bold hover:bg-white hover:shadow-lg transition-all flex items-center justify-center gap-3">
-                        <i class="fas fa-play-circle"></i> Watch Our Story
-                    </a>
-                </div>
-                
-                <div class="max-w-4xl mx-auto relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white/50 glass-card reveal" style="transition-delay: 400ms;">
-                    <div class="absolute inset-0 bg-gradient-to-t from-[var(--mud)]/80 to-transparent z-10 flex items-center justify-center group cursor-pointer">
-                        <div class="w-20 h-20 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center group-hover:scale-110 group-hover:bg-white/30 transition-all duration-300">
-                            <i class="fas fa-play text-3xl text-white ml-2"></i>
-                        </div>
-                    </div>
-                    <img src="https://images.unsplash.com/photo-1545657802-95f00e572af4?auto=format&fit=crop&q=80&w=1200" alt="Farm Documentation" class="w-full aspect-video object-cover" />
-                    <div class="absolute bottom-6 left-6 z-20 text-left">
-                        <span class="bg-[var(--terracotta)] text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-2 inline-block">Build in Public</span>
-                        <h3 class="text-white font-serif text-2xl">The Zero-Waste Ecosystem</h3>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="store" class="py-24 bg-white px-4 sm:px-6 lg:px-8">
-            <div class="max-w-7xl mx-auto">
-                <header class="text-center mb-20 reveal">
-                    <span class="text-sm font-sans tracking-widest text-[var(--earth)] mb-3 uppercase block font-bold">The Circular Store</span>
-                    <h2 class="text-4xl md:text-5xl font-serif font-bold text-[var(--mud)]">Ethical & Unadulterated</h2>
-                </header>
-                <div id="product-catalog-grid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8"></div>
-            </div>
-        </section>
-
-        <section id="adopt" class="py-24 bg-[var(--bg)] px-4 sm:px-6 lg:px-8 border-y border-[var(--border)] relative overflow-hidden">
-            <div class="max-w-7xl mx-auto relative z-10">
-                <div class="grid lg:grid-cols-2 gap-16 items-center">
-                    <div class="reveal">
-                        <img src="https://images.unsplash.com/photo-1596733430284-f74370603094?auto=format&fit=crop&q=80&w=800" alt="Tharparkar Calf" class="rounded-3xl shadow-2xl border-8 border-white transform -rotate-2 hover:rotate-0 transition duration-500">
-                    </div>
-                    <div class="reveal" style="transition-delay: 200ms;">
-                        <span class="text-sm font-sans tracking-widest text-[var(--earth)] mb-3 uppercase block font-bold">Community Initiative</span>
-                        <h2 class="text-4xl md:text-5xl font-serif font-bold mb-6 text-[var(--mud)]">Adopt a Tharparkar</h2>
-                        <p class="text-[var(--mud)]/80 font-light mb-8 text-lg leading-relaxed">
-                            Join our inner circle. Digitally sponsor our indigenous calves—<span class="font-medium">Dholi Sheri, Tara, and Roshni</span>—to directly fund the Gaushala. In exchange, receive exclusive monthly updates, priority access to fresh batches, and free stays at our Bhunga Farm.
-                        </p>
-                        <div class="space-y-4 mb-10">
-                            <div class="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-[var(--border)]">
-                                <div class="w-12 h-12 rounded-full bg-[var(--earth)]/20 flex items-center justify-center text-[var(--terracotta)] text-xl">
-                                    <i class="fas fa-heart"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-[var(--mud)]">Direct Impact</h4>
-                                    <p class="text-sm text-[var(--mud)]/70">100% of proceeds go to veterinary care and organic fodder.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <a href="#webhook-section" class="primary-btn px-8 py-4 rounded-full font-bold shadow-xl inline-flex items-center gap-3">
-                            Sponsor a Calf Today <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="blueprint" class="py-24 bg-[var(--mud)] text-[var(--bg)] px-4 sm:px-6 lg:px-8">
-            <div class="max-w-7xl mx-auto">
-                <div class="text-center mb-20 reveal">
-                    <span class="text-sm font-sans tracking-widest text-[var(--earth)] mb-3 uppercase block font-bold">Zero-Waste Philosophy</span>
-                    <h2 class="text-4xl md:text-5xl font-serif font-bold">The Cow as a Coconut</h2>
-                    <p class="mt-6 text-[var(--bg)]/70 max-w-2xl mx-auto font-light leading-relaxed">Like the coconut tree where every part is utilized, our farm operates on an ancient circular model. Absolutely nothing goes to waste.</p>
-                </div>
-                
-                <div class="grid md:grid-cols-3 gap-8 relative z-10">
-                    <div class="bg-[var(--bg)]/10 backdrop-blur-md p-8 rounded-3xl border border-[var(--bg)]/20 reveal" style="transition-delay: 100ms;">
-                        <div class="w-14 h-14 bg-[var(--terracotta)] rounded-full flex items-center justify-center text-2xl mb-6 shadow-lg text-white">1</div>
-                        <h3 class="text-2xl font-serif font-bold mb-3">Nourishment</h3>
-                        <p class="text-[var(--bg)]/70 font-light text-sm">Our Tharparkar cows produce ethical A2 milk, hand-churned into premium Bilona Ghee for your family's health.</p>
-                    </div>
-                    
-                    <div class="bg-[var(--bg)]/10 backdrop-blur-md p-8 rounded-3xl border border-[var(--bg)]/20 reveal" style="transition-delay: 200ms;">
-                        <div class="w-14 h-14 bg-[var(--earth)] text-[var(--mud)] rounded-full flex items-center justify-center text-2xl mb-6 shadow-lg">2</div>
-                        <h3 class="text-2xl font-serif font-bold mb-3">Energy & Soil</h3>
-                        <p class="text-[var(--bg)]/70 font-light text-sm">Manure fuels our biogas plant to power the farm. The resulting slurry feeds earthworms, creating Pure Kechua Khad.</p>
-                    </div>
-                    
-                    <div class="bg-[var(--bg)]/10 backdrop-blur-md p-8 rounded-3xl border border-[var(--bg)]/20 reveal" style="transition-delay: 300ms;">
-                        <div class="w-14 h-14 bg-white text-[var(--mud)] rounded-full flex items-center justify-center text-2xl mb-6 shadow-lg">3</div>
-                        <h3 class="text-2xl font-serif font-bold mb-3">Spirituality</h3>
-                        <p class="text-[var(--bg)]/70 font-light text-sm">Any remaining dung is blended with botanical herbs and temple florals to craft chemical-free Tharparkar Dhoop.</p>
-                    </div>
-                </div>
-                
-                <div class="mt-20 flex flex-wrap justify-center gap-6 reveal">
-                    <div class="flex items-center gap-3 bg-[var(--bg)]/5 px-6 py-3 rounded-full border border-[var(--bg)]/20">
-                        <i class="fas fa-certificate text-[var(--earth)]"></i>
-                        <span class="text-sm font-medium tracking-wide">ZED Bronze Certified</span>
-                    </div>
-                    <div class="flex items-center gap-3 bg-[var(--bg)]/5 px-6 py-3 rounded-full border border-[var(--bg)]/20">
-                        <i class="fas fa-file-signature text-[var(--earth)]"></i>
-                        <span class="text-sm font-medium tracking-wide">UDYAM-RJ-21-0104324</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="webhook-section" class="py-24 bg-white px-4 sm:px-6 lg:px-8 relative">
-            <div class="max-w-5xl mx-auto bg-[var(--bg)] rounded-[2.5rem] shadow-2xl border border-[var(--border)] overflow-hidden flex flex-col md:flex-row reveal">
-                <div class="md:w-5/12 bg-[var(--mud)] p-12 text-white flex flex-col justify-between relative overflow-hidden">
-                    <div class="absolute top-[-20%] right-[-20%] w-64 h-64 bg-white/5 rounded-full"></div>
-                    <div class="absolute bottom-[-10%] left-[-10%] w-48 h-48 bg-[var(--terracotta)]/20 rounded-full"></div>
-                    
-                    <div class="relative z-10">
-                        <i class="fas fa-link text-4xl text-[var(--earth)] mb-6 block"></i>
-                        <h2 class="text-3xl font-serif font-bold mb-4">Connect to the Source</h2>
-                        <p class="text-white/70 font-light leading-relaxed mb-8">Whether you want to place a B2B bulk order, schedule a farm stay, or sponsor a calf, your details route directly to our secure internal network.</p>
-                    </div>
-                    
-                    <div class="relative z-10 text-sm text-white/50">
-                        <p><i class="fas fa-envelope mr-2"></i> thetharparkarpilani@gmail.com</p>
-                    </div>
-                </div>
-                
-                <div class="md:w-7/12 p-12 lg:p-16">
-                    <form id="webhook-form" class="space-y-6">
-                        <div class="grid grid-cols-2 gap-6">
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold uppercase tracking-wider text-[var(--mud)]/70">First Name</label>
-                                <input type="text" class="w-full p-4 rounded-xl bg-white border border-[var(--border)] focus:outline-none focus:border-[var(--terracotta)] focus:ring-1 focus:ring-[var(--terracotta)] transition" required>
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold uppercase tracking-wider text-[var(--mud)]/70">Last Name</label>
-                                <input type="text" class="w-full p-4 rounded-xl bg-white border border-[var(--border)] focus:outline-none focus:border-[var(--terracotta)] focus:ring-1 focus:ring-[var(--terracotta)] transition" required>
-                            </div>
-                        </div>
-                        
-                        <div class="space-y-2">
-                            <label class="text-xs font-bold uppercase tracking-wider text-[var(--mud)]/70">Email Address</label>
-                            <input type="email" class="w-full p-4 rounded-xl bg-white border border-[var(--border)] focus:outline-none focus:border-[var(--terracotta)] focus:ring-1 focus:ring-[var(--terracotta)] transition" required>
-                        </div>
-                        
-                        <div class="space-y-2">
-                            <label class="text-xs font-bold uppercase tracking-wider text-[var(--mud)]/70">I am interested in...</label>
-                            <select class="w-full p-4 rounded-xl bg-white border border-[var(--border)] focus:outline-none focus:border-[var(--terracotta)] focus:ring-1 focus:ring-[var(--terracotta)] transition text-[var(--mud)]">
-                                <option>B2B Bulk Ghee Order</option>
-                                <option>Adopt-a-Cow Sponsorship</option>
-                                <option>Bhunga Farm Stay Booking</option>
-                                <option>General Inquiry</option>
-                            </select>
-                        </div>
-                        
-                        <button type="submit" class="w-full primary-btn py-4 rounded-xl font-bold text-lg mt-4 flex justify-center items-center gap-2">
-                            Secure Submit <i class="fas fa-paper-plane"></i>
-                        </button>
-                        <p class="text-center text-xs text-[var(--mud)]/50 mt-4"><i class="fas fa-lock mr-1"></i> Form hooked to secure Google Sheets webhook</p>
-                    </form>
-                </div>
-            </div>
-        </section>
-    </main>
-    
-    <footer class="bg-[var(--mud)] py-8 border-t border-white/10 text-center text-white/50 text-sm">
-        <p>© 2026 Lado Organics. Based in Pilani, Rajasthan. All Rights Reserved.</p>
-    </footer>
-
-    <div id="ai-chat-window" class="fixed bottom-24 right-6 w-80 sm:w-96 bg-white rounded-2xl shadow-[0_20px_50px_rgba(120,53,15,0.2)] border border-[var(--border)] overflow-hidden chat-hidden z-50 flex flex-col">
-        <div class="bg-gradient-to-r from-[var(--mud)] to-[#5c270b] text-[var(--bg)] p-5 flex justify-between items-center shadow-md z-10">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center relative">
-                    <i class="fas fa-robot text-[var(--earth)]"></i>
-                    <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-[var(--mud)] rounded-full"></span>
-                </div>
-                <div>
-                    <span class="font-bold text-sm block">Lado AI Concierge</span>
-                    <span class="text-xs text-white/70">Usually replies instantly</span>
-                </div>
-            </div>
-            <button id="close-chat" class="hover:text-[var(--earth)] transition-colors w-8 h-8 rounded-full bg-white/10 flex items-center justify-center"><i class="fas fa-times"></i></button>
+  <main>
+    <!-- Hero Section with Live YouTube Build-in-Public Video -->
+    <section class="relative pt-28 pb-20 lg:pt-40 lg:pb-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <div class="absolute top-[-5%] left-[-10%] w-96 h-96 bg-[#f59e0b] rounded-full mix-blend-multiply filter blur-3xl opacity-15 pointer-events-none"></div>
+      <div class="absolute top-[15%] right-[-10%] w-96 h-96 bg-[#c2410c] rounded-full mix-blend-multiply filter blur-3xl opacity-15 pointer-events-none"></div>
+      
+      <div class="max-w-6xl mx-auto text-center relative z-10">
+        <div class="status-pill inline-flex items-center gap-2 px-4 py-2 rounded-full mb-7 text-[11px] sm:text-xs font-bold tracking-widest reveal">
+          <span class="w-2 h-2 rounded-full bg-green-600 animate-ping"></span>
+          <span data-i18n="hero_badge">DIRECT FROM PILANI • 100% PURE THARPARKAR TRADITION</span>
         </div>
         
-        <div class="p-5 h-72 bg-[var(--bg)] overflow-y-auto text-sm text-[var(--mud)] flex flex-col gap-4 relative">
-            <div class="text-center text-xs text-[var(--mud)]/40 font-medium">Today at 1:09 AM</div>
-            <div class="bg-white p-4 rounded-2xl rounded-tl-sm shadow-sm border border-[var(--border)] w-5/6 self-start transform transition-all duration-300">
-                Namaste! 🙏 I am the Lado Organics AI. I can answer FAQs about our A2 Ghee purity, shipping policies, or how our zero-waste ecosystem works. How can I help you today?
-            </div>
+        <h1 class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-bold leading-[1.06] mb-6 text-[var(--mud)] reveal">
+          <span data-i18n="hero_title_1">Spiritual Heritage,</span><br>
+          <span data-i18n="hero_title_2" class="text-[var(--terracotta)] italic font-normal">Consciously Crafted.</span>
+        </h1>
+        
+        <p data-i18n="hero_sub" class="text-base sm:text-lg md:text-xl text-[var(--mud)]/75 mb-10 leading-relaxed font-light max-w-2xl mx-auto reveal">
+          Rooted in the "Cow as a Coconut" zero-waste Hindu philosophy. Empowering 100+ Pilani farming families while delivering unadulterated A2 wellness directly to you.
+        </p>
+        
+        <div class="flex flex-col sm:flex-row justify-center gap-4 mb-16 reveal">
+          <a href="#store" class="primary-btn px-8 py-4 rounded-full font-bold shadow-xl flex items-center justify-center gap-3">
+            <i class="fas fa-shopping-bag"></i> <span data-i18n="hero_cta_shop">Shop The Collection</span>
+          </a>
+          <a href="https://www.youtube.com/@TheTharparkar" target="_blank" rel="noopener" class="bg-white/90 text-[var(--mud)] border border-[var(--border)] px-8 py-4 rounded-full font-bold hover:bg-white hover:shadow-lg transition-all flex items-center justify-center gap-3">
+            <i class="fab fa-youtube text-red-600 text-lg"></i> <span data-i18n="hero_cta_story">Watch Build in Public</span>
+          </a>
         </div>
         
-        <div class="p-4 border-t border-[var(--border)] bg-white">
-            <div class="flex items-center bg-[var(--bg)] rounded-full border border-[var(--border)] px-4 py-2 focus-within:border-[var(--terracotta)] transition-colors">
-                <input type="text" placeholder="Ask a question..." class="w-full text-sm outline-none bg-transparent text-[var(--mud)]">
-                <button class="text-[var(--terracotta)] hover:scale-110 transition-transform w-8 h-8 flex items-center justify-center"><i class="fas fa-paper-plane"></i></button>
-            </div>
+        <!-- Real Embedded YouTube Documentary -->
+        <div class="max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-2xl border-4 border-white glass-card reveal">
+          <div class="bg-[var(--mud)] text-white px-5 py-3 flex items-center justify-between text-xs">
+            <span class="font-bold tracking-wider uppercase flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-red-500"></span> Build in Public • @TheTharparkar
+            </span>
+            <a href="https://www.youtube.com/@TheTharparkar" target="_blank" rel="noopener" class="text-[var(--earth)] hover:underline font-semibold">
+              Subscribe on YouTube <i class="fas fa-external-link-alt ml-1"></i>
+            </a>
+          </div>
+          <div class="aspect-video w-full bg-black">
+            <iframe class="w-full h-full" src="https://www.youtube.com/embed/JAhshRN6F28?si=Aym6zruA0iyXk4hh" title="The Tharparkar Pilani - Build in Public" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>
         </div>
+      </div>
+    </section>
+
+    <!-- The Circular Store -->
+    <section id="store" class="py-24 bg-white px-4 sm:px-6 lg:px-8 border-t border-[var(--border)]">
+      <div class="max-w-7xl mx-auto">
+        <header class="text-center mb-16 reveal">
+          <span data-i18n="store_tag" class="text-xs font-sans tracking-widest text-[var(--earth)] mb-2 uppercase block font-bold">THE CIRCULAR STORE</span>
+          <h2 data-i18n="store_title" class="text-4xl md:text-5xl font-serif font-bold text-[var(--mud)]">Ethical & Unadulterated</h2>
+          <p data-i18n="store_sub" class="text-[var(--mud)]/65 mt-3 max-w-xl mx-auto font-light">Click any product to place an instant direct-from-farm order on WhatsApp.</p>
+        </header>
+        <div id="product-catalog-grid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8"></div>
+      </div>
+    </section>
+
+    <!-- Adopt a Cow Community -->
+    <section id="adopt" class="py-24 bg-[var(--bg)] px-4 sm:px-6 lg:px-8 border-y border-[var(--border)]">
+      <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-14 items-center">
+        <div class="reveal">
+          <img src="./assets/images/calves.jpg" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1596733430284-f74370603094?auto=format&fit=crop&q=80&w=900';" alt="Tharparkar Calves Dholi Sheri, Tara, and Roshni" class="rounded-3xl shadow-2xl border-8 border-white w-full object-cover aspect-[4/3]">
+        </div>
+        <div class="reveal">
+          <span data-i18n="adopt_tag" class="text-xs font-sans tracking-widest text-[var(--earth)] mb-2 uppercase block font-bold">COMMUNITY INITIATIVE</span>
+          <h2 data-i18n="adopt_title" class="text-4xl md:text-5xl font-serif font-bold mb-6 text-[var(--mud)]">Adopt a Tharparkar Calf</h2>
+          <p data-i18n="adopt_desc" class="text-[var(--mud)]/80 font-light mb-8 text-lg leading-relaxed">
+            Digitally sponsor our indigenous calves—<strong>Dholi Sheri, Tara, and Roshni</strong>—to directly fund organic fodder, shelter, and veterinary care at our Pilani Gaushala.
+          </p>
+          <div class="grid sm:grid-cols-3 gap-4 mb-9">
+            <div class="bg-white p-4 rounded-2xl border border-[var(--border)] text-center shadow-sm">
+              <div class="text-[var(--terracotta)] font-serif font-bold text-lg">Dholi Sheri</div>
+              <div class="text-xs text-[var(--mud)]/60 mt-1">Pure Tharparkar</div>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-[var(--border)] text-center shadow-sm">
+              <div class="text-[var(--terracotta)] font-serif font-bold text-lg">Tara</div>
+              <div class="text-xs text-[var(--mud)]/60 mt-1">Pure Tharparkar</div>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-[var(--border)] text-center shadow-sm">
+              <div class="text-[var(--terracotta)] font-serif font-bold text-lg">Roshni</div>
+              <div class="text-xs text-[var(--mud)]/60 mt-1">Pure Tharparkar</div>
+            </div>
+          </div>
+          <a href="https://wa.me/919636100337?text=Namaste%20Lado%20Organics!%20%F0%9F%99%8F%20I%20would%20like%20to%20adopt%2Fsponsor%20one%20of%20your%20Tharparkar%20calves%20(Dholi%20Sheri%2C%20Tara%2C%20or%20Roshni)." target="_blank" rel="noopener" class="primary-btn px-8 py-4 rounded-full font-bold shadow-xl inline-flex items-center gap-3">
+            <i class="fab fa-whatsapp text-xl text-[#25D366]"></i> <span data-i18n="adopt_cta">Sponsor a Calf on WhatsApp</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Transparency / The Blueprint -->
+    <section id="blueprint" class="py-24 bg-[var(--mud)] text-[var(--bg)] px-4 sm:px-6 lg:px-8">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16 reveal">
+          <span data-i18n="blueprint_tag" class="text-xs font-sans tracking-widest text-[var(--earth)] mb-2 uppercase block font-bold">ZERO-WASTE PHILOSOPHY</span>
+          <h2 data-i18n="blueprint_title" class="text-4xl md:text-5xl font-serif font-bold">The Cow as a Coconut</h2>
+          <p data-i18n="blueprint_sub" class="mt-4 text-[var(--bg)]/75 max-w-2xl mx-auto font-light leading-relaxed">Like the sacred coconut tree where every part serves life, our Pilani ecosystem operates on a closed-loop circular cycle.</p>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="bg-[var(--bg)]/10 backdrop-blur-md p-8 rounded-3xl border border-[var(--bg)]/20 reveal">
+            <div class="w-12 h-12 bg-[var(--terracotta)] rounded-full flex items-center justify-center text-xl font-bold mb-5 text-white">1</div>
+            <h3 class="text-2xl font-serif font-bold mb-3">A2 Nourishment</h3>
+            <p class="text-[var(--bg)]/75 font-light text-sm leading-relaxed">Calves feed first. Surplus Tharparkar A2 milk is cultured into curd and hand-churned via the Vedic Bilona method.</p>
+          </div>
+          
+          <div class="bg-[var(--bg)]/10 backdrop-blur-md p-8 rounded-3xl border border-[var(--bg)]/20 reveal">
+            <div class="w-12 h-12 bg-[var(--earth)] text-[var(--mud)] rounded-full flex items-center justify-center text-xl font-bold mb-5">2</div>
+            <h3 class="text-2xl font-serif font-bold mb-3">Biogas & Soil</h3>
+            <p class="text-[var(--bg)]/75 font-light text-sm leading-relaxed">Cow dung fuels our biogas plant for clean energy; nutrient-rich slurry feeds earthworms to create Pure Kechua Khad.</p>
+          </div>
+          
+          <div class="bg-[var(--bg)]/10 backdrop-blur-md p-8 rounded-3xl border border-[var(--bg)]/20 reveal">
+            <div class="w-12 h-12 bg-white text-[var(--mud)] rounded-full flex items-center justify-center text-xl font-bold mb-5">3</div>
+            <h3 class="text-2xl font-serif font-bold mb-3">Sacred Dhoop</h3>
+            <p class="text-[var(--bg)]/75 font-light text-sm leading-relaxed">Sun-dried dung is blended with natural guggal, herbs, and temple florals to craft chemical-free Tharparkar Dhoop.</p>
+          </div>
+        </div>
+        
+        <div class="mt-16 flex flex-wrap justify-center gap-4 reveal">
+          <div class="flex items-center gap-3 bg-[var(--bg)]/10 px-6 py-3 rounded-full border border-[var(--bg)]/20">
+            <i class="fas fa-award text-[var(--earth)]"></i>
+            <span class="text-sm font-medium">ZED Bronze Certified</span>
+          </div>
+          <div class="flex items-center gap-3 bg-[var(--bg)]/10 px-6 py-3 rounded-full border border-[var(--bg)]/20">
+            <i class="fas fa-file-contract text-[var(--earth)]"></i>
+            <span class="text-sm font-medium">MSME: UDYAM-RJ-21-0104324</span>
+          </div>
+          <div class="flex items-center gap-3 bg-[var(--bg)]/10 px-6 py-3 rounded-full border border-[var(--bg)]/20">
+            <i class="fas fa-users text-[var(--earth)]"></i>
+            <span class="text-sm font-medium">100+ Pilani Farming Families</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Journal / Blogs Section -->
+    <section id="journal" class="py-24 bg-[var(--bg)] px-4 sm:px-6 lg:px-8 border-b border-[var(--border)]">
+      <div class="max-w-7xl mx-auto">
+        <header class="text-center mb-16 reveal">
+          <span data-i18n="journal_tag" class="text-xs font-sans tracking-widest text-[var(--earth)] mb-2 uppercase block font-bold">THE PILANI JOURNAL</span>
+          <h2 data-i18n="journal_title" class="text-4xl md:text-5xl font-serif font-bold text-[var(--mud)]">Wisdom, Soil & Science</h2>
+        </header>
+        <div id="blog-catalog-grid" class="grid md:grid-cols-3 gap-8"></div>
+      </div>
+    </section>
+
+    <!-- Contact / Lead Capture Section -->
+    <section id="webhook-section" class="py-24 bg-white px-4 sm:px-6 lg:px-8">
+      <div class="max-w-5xl mx-auto bg-[var(--bg)] rounded-[2rem] shadow-xl border border-[var(--border)] overflow-hidden flex flex-col md:flex-row reveal">
+        <div class="md:w-5/12 bg-[var(--mud)] p-10 lg:p-12 text-white flex flex-col justify-between">
+          <div>
+            <i class="fas fa-seedling text-3xl text-[var(--earth)] mb-5 block"></i>
+            <h2 data-i18n="contact_title" class="text-3xl font-serif font-bold mb-4">Connect to the Source</h2>
+            <p data-i18n="contact_sub" class="text-white/75 font-light leading-relaxed mb-8 text-sm">Bulk B2B A2 Ghee orders, Bhunga farm stays, or Gaushala sponsorships—reach our Pilani team directly.</p>
+          </div>
+          <div class="space-y-3 text-sm text-white/80">
+            <p><i class="fas fa-location-dot text-[var(--earth)] mr-2"></i> Pilani, Jhunjhunu, Rajasthan</p>
+            <p><i class="fas fa-envelope text-[var(--earth)] mr-2"></i> thetharparkarpilani@gmail.com</p>
+            <p><i class="fab fa-whatsapp text-[#25D366] mr-2"></i> +91 96361 00337</p>
+          </div>
+        </div>
+        
+        <div class="md:w-7/12 p-10 lg:p-12">
+          <form id="webhook-form" class="space-y-5">
+            <div class="grid sm:grid-cols-2 gap-5">
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-[var(--mud)]/70 mb-1.5">First Name</label>
+                <input id="lead-fname" type="text" class="w-full p-3.5 rounded-xl bg-white border border-[var(--border)] focus:outline-none focus:border-[var(--terracotta)]" required>
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-[var(--mud)]/70 mb-1.5">Last Name</label>
+                <input id="lead-lname" type="text" class="w-full p-3.5 rounded-xl bg-white border border-[var(--border)] focus:outline-none focus:border-[var(--terracotta)]" required>
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-[var(--mud)]/70 mb-1.5">Email Address</label>
+              <input id="lead-email" type="email" class="w-full p-3.5 rounded-xl bg-white border border-[var(--border)] focus:outline-none focus:border-[var(--terracotta)]" required>
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-[var(--mud)]/70 mb-1.5">I am interested in...</label>
+              <select id="lead-interest" class="w-full p-3.5 rounded-xl bg-white border border-[var(--border)] focus:outline-none focus:border-[var(--terracotta)] text-[var(--mud)]">
+                <option>A2 Bilona Ghee Order</option>
+                <option>Bhunga "Deep Work" Farm Stay</option>
+                <option>Adopt-a-Cow Sponsorship</option>
+                <option>B2B / Wholesale Partnership</option>
+              </select>
+            </div>
+            <button type="submit" class="w-full primary-btn py-4 rounded-xl font-bold text-base flex justify-center items-center gap-2 cursor-pointer">
+              <span data-i18n="contact_submit">Save & Send Inquiry</span> <i class="fas fa-paper-plane"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-[var(--mud)] py-10 border-t border-white/10 text-center text-white/70 text-sm px-4">
+    <p class="font-serif text-white text-lg mb-2">LADO ORGANICS • PILANI, RAJASTHAN</p>
+    <p class="text-xs text-white/50">MSME UDYAM-RJ-21-0104324 • ZED Bronze Certified • © 2026 Lado Organics</p>
+  </footer>
+
+  <!-- Blog Reader Modal -->
+  <div id="blog-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4" onclick="if(event.target===this) closeBlogModal()">
+    <div class="bg-[var(--bg)] max-w-3xl w-full max-h-[90vh] overflow-y-auto rounded-3xl p-6 sm:p-10 relative shadow-2xl border border-[var(--border)]">
+      <button onclick="closeBlogModal()" aria-label="Close article" class="sticky top-0 float-right w-10 h-10 rounded-full bg-white shadow border border-[var(--border)] text-[var(--mud)] hover:text-[var(--terracotta)] flex items-center justify-center cursor-pointer">
+        <i class="fas fa-times"></i>
+      </button>
+      <div id="blog-modal-body" class="clear-both pt-2"></div>
+    </div>
+  </div>
+
+  <!-- Floating WhatsApp CTA (Bottom Left) -->
+  <a href="https://wa.me/919636100337?text=Namaste%20Lado%20Organics!%20%F0%9F%99%8F%20I%20visited%20ladoorganics.in%20and%20have%20a%20question." target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" class="whatsapp-float flex items-center gap-3 px-4 py-3.5 rounded-full font-bold text-sm">
+    <i class="fab fa-whatsapp text-2xl"></i>
+    <span class="hidden sm:inline">Chat on WhatsApp</span>
+  </a>
+
+  <!-- Interactive AI Concierge Window (Bottom Right) -->
+  <div id="ai-chat-window" class="fixed bottom-24 right-5 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-[var(--border)] overflow-hidden chat-hidden z-50 flex flex-col">
+    <div class="bg-[var(--mud)] text-[var(--bg)] p-4 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center relative">
+          <i class="fas fa-robot text-[var(--earth)]"></i>
+          <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-400 border-2 border-[var(--mud)] rounded-full"></span>
+        </div>
+        <div>
+          <span class="font-bold text-sm block">Lado AI Concierge</span>
+          <span class="text-[11px] text-white/70">Ask about Ghee, Stays or Calves</span>
+        </div>
+      </div>
+      <button id="close-chat" aria-label="Close chat" class="hover:text-[var(--earth)] w-8 h-8 rounded-full bg-white/10 flex items-center justify-center cursor-pointer"><i class="fas fa-times"></i></button>
     </div>
     
-    <button id="chat-trigger" class="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-r from-[var(--terracotta)] to-[#e85417] text-white rounded-full shadow-[0_10px_25px_rgba(194,65,12,0.4)] flex items-center justify-center hover:scale-110 hover:shadow-[0_15px_35px_rgba(194,65,12,0.6)] transition-all z-50 text-2xl group">
-        <i class="fas fa-sparkles absolute top-1 right-2 text-xs text-[var(--earth)] opacity-0 group-hover:opacity-100 transition-opacity"></i>
-        <i class="fas fa-comment-dots"></i>
-    </button>
+    <div id="ai-chat-messages" class="p-4 h-64 bg-[var(--bg)] overflow-y-auto text-sm text-[var(--mud)] flex flex-col gap-3">
+      <div class="bg-white p-3.5 rounded-2xl rounded-tl-sm shadow-sm border border-[var(--border)] w-5/6 self-start">
+        Namaste! 🙏 Ask me anything about our Tharparkar A2 Bilona Ghee, Bhunga Farm Stay, or adopting Dholi Sheri, Tara & Roshni.
+      </div>
+    </div>
+
+    <div class="px-3 py-2 bg-[var(--bg)] border-t border-[var(--border)] flex gap-1.5 overflow-x-auto text-[11px]">
+      <button type="button" onclick="sendQuickQuestion('Tell me about A2 Ghee')" class="whitespace-nowrap bg-white border border-[var(--border)] px-2.5 py-1 rounded-full hover:border-[var(--terracotta)] cursor-pointer">A2 Ghee Price</button>
+      <button type="button" onclick="sendQuickQuestion('Bhunga Farm Stay details')" class="whitespace-nowrap bg-white border border-[var(--border)] px-2.5 py-1 rounded-full hover:border-[var(--terracotta)] cursor-pointer">Bhunga Stay</button>
+      <button type="button" onclick="sendQuickQuestion('Adopt a calf')" class="whitespace-nowrap bg-white border border-[var(--border)] px-2.5 py-1 rounded-full hover:border-[var(--terracotta)] cursor-pointer">Adopt a Cow</button>
+    </div>
+    
+    <form id="ai-chat-form" class="p-3 border-t border-[var(--border)] bg-white flex items-center gap-2">
+      <input id="ai-chat-input" type="text" placeholder="Type your question..." class="w-full text-sm outline-none bg-[var(--bg)] rounded-full px-4 py-2 text-[var(--mud)] border border-[var(--border)] focus:border-[var(--terracotta)]">
+      <button type="submit" aria-label="Send message" class="w-9 h-9 rounded-full bg-[var(--terracotta)] text-white flex items-center justify-center hover:opacity-90 cursor-pointer shrink-0">
+        <i class="fas fa-paper-plane text-xs"></i>
+      </button>
+    </form>
+  </div>
+  
+  <button id="chat-trigger" aria-label="Open AI Concierge" class="fixed bottom-6 right-5 w-14 h-14 bg-[var(--terracotta)] text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-105 transition z-50 text-xl cursor-pointer">
+    <i class="fas fa-comment-dots"></i>
+  </button>
 
 </body>
 </html>
