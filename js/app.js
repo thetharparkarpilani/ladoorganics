@@ -1,202 +1,418 @@
 ﻿const WHATSAPP_NUMBER = "919636100337";
+const GOOGLE_SHEETS_WEBHOOK = "https://script.google.com/macros/s/AKfycbx-lUmYJISZwTFuuh4gx4GqqNUJDf0wEFIL6fRD_gB1q9gSyPxeWbo1Zj2QIH0aKQa2/exec";
 
 const TRANSLATIONS = {
   en: {
-    nav_store: "THE STORE",
+    nav_store: "STORE",
+    nav_calc: "CALCULATOR",
+    nav_founder: "FOUNDER",
     nav_adopt: "ADOPT-A-COW",
-    nav_blueprint: "BLUEPRINT",
     nav_journal: "JOURNAL",
-    hero_badge: "DIRECT FROM PILANI • 100% PURE THARPARKAR TRADITION",
-    hero_title_1: "Spiritual Heritage,",
-    hero_title_2: "Consciously Crafted.",
-    hero_sub: "Rooted in the 'Cow as a Coconut' zero-waste Hindu philosophy. Empowering 100+ Pilani farming families while delivering unadulterated A2 wellness directly to you.",
-    hero_cta_shop: "Shop The Collection",
-    hero_cta_story: "Watch Build in Public",
-    store_tag: "THE CIRCULAR STORE",
+    hero_badge: "PILANI, RAJASTHAN • BITS PILANI ALUMNUS BACKED • ZED BRONZE",
+    hero_title_1: "Pure Tharparkar Tradition,",
+    hero_title_2: "Engineered With Transparency.",
+    hero_sub: "Rooted in the 'Cow as a Coconut' zero-waste philosophy. Empowering 100+ Pilani farming families with verifiable A2 Bilona Ghee, Cow Dung Dhoop, Biogas Vermicompost & Deep Work Bhunga Stays.",
+    hero_cta_shop: "Shop Circular Store",
+    hero_cta_calc: "Calculate Custom Order",
+    store_tag: "01. THE CIRCULAR STORE",
     store_title: "Ethical & Unadulterated",
-    store_sub: "Click any product to place an instant direct-from-farm order on WhatsApp.",
-    adopt_tag: "COMMUNITY INITIATIVE",
+    store_sub: "Direct-from-Pilani farm batches. Instant WhatsApp checkout with zero middlemen.",
+    calc_tag: "02. INTERACTIVE_ORDER_&_STAY_PLANNER",
+    calc_title: "Instant Bundle & Farm Stay Calculator",
+    founder_tag: "03. FOUNDER_&_SYSTEMS_ARCHITECTURE",
+    founder_title: "From BITS Pilani Mathematics to Regenerative Farming",
+    adopt_tag: "04. GAUSHALA_COMMUNITY",
     adopt_title: "Adopt a Tharparkar Calf",
-    adopt_desc: "Digitally sponsor our indigenous calves—Dholi Sheri, Tara, and Roshni—to directly fund fodder, shelter, and veterinary care at our Pilani Gaushala.",
-    adopt_cta: "Sponsor a Calf on WhatsApp",
-    blueprint_tag: "ZERO-WASTE PHILOSOPHY",
+    blueprint_tag: "05. ZERO-WASTE_CYCLE",
     blueprint_title: "The Cow as a Coconut",
-    blueprint_sub: "Like the sacred coconut tree where every part serves life, our Pilani ecosystem operates on a closed-loop circular cycle.",
-    journal_tag: "THE PILANI JOURNAL",
-    journal_title: "Wisdom, Soil & Science",
+    journal_tag: "06. THE_PILANI_JOURNAL",
+    journal_title: "Wisdom, Soil & Systems Science",
     contact_title: "Connect to the Source",
-    contact_sub: "Bulk B2B A2 Ghee orders, Bhunga farm stays, or Gaushala sponsorships—reach our Pilani team directly.",
-    contact_submit: "Save & Send Inquiry"
+    contact_sub: "Bulk B2B A2 Ghee orders, Bhunga farm stays, or Gaushala sponsorships—reach our Pilani team directly."
   },
   hi: {
-    nav_store: "उत्पाद भंडार",
+    nav_store: "भंडार",
+    nav_calc: "कैलकुलेटर",
+    nav_founder: "संस्थापक",
     nav_adopt: "गौ सेवा",
-    nav_blueprint: "शून्य-अपशिष्ट मॉडल",
-    nav_journal: "ब्लॉग और ज्ञान",
-    hero_badge: "सीधे पिलानी से • 100% शुद्ध थारपारकर परंपरा",
-    hero_title_1: "आध्यात्मिक विरासत,",
-    hero_title_2: "शुद्धता के साथ निर्मित।",
-    hero_sub: "'गाय एक कल्पवृक्ष (नारियल)' के शून्य-अपशिष्ट सिद्धांत पर आधारित। पिलानी के 100+ किसान परिवारों को सशक्त बनाते हुए शुद्ध A2 उत्पाद सीधे आपके घर तक।",
+    nav_journal: "ब्लॉग",
+    hero_badge: "पिलानी, राजस्थान • BITS पिलानी पूर्व छात्र द्वारा संचालित • ZED प्रमाणित",
+    hero_title_1: "शुद्ध थारपारकर परंपरा,",
+    hero_title_2: "पूर्ण पारदर्शिता के साथ।",
+    hero_sub: "'गाय एक कल्पवृक्ष (नारियल)' के शून्य-अपशिष्ट सिद्धांत पर आधारित। पिलानी के 100+ किसान परिवारों को सशक्त बनाते हुए शुद्ध A2 बिलोना घी, धूप, केंचुआ खाद और भुंगा फार्म स्टे।",
     hero_cta_shop: "उत्पाद देखें",
-    hero_cta_story: "हमारी यात्रा देखें",
-    store_tag: "सर्कुलर स्टोर",
+    hero_cta_calc: "ऑर्डर कैलकुलेटर",
+    store_tag: "01. सर्कुलर स्टोर",
     store_title: "शुद्ध और नैतिक उत्पाद",
-    store_sub: "सीधे व्हाट्सएप पर ऑर्डर करने के लिए किसी भी उत्पाद पर क्लिक करें।",
-    adopt_tag: "सामुदायिक पहल",
+    store_sub: "सीधे पिलानी फार्म से आपके घर तक। बिना किसी बिचौलिए के व्हाट्सएप पर ऑर्डर करें।",
+    calc_tag: "02. ऑर्डर और फार्म स्टे कैलकुलेटर",
+    calc_title: "अपना बंडल और स्टे प्लान करें",
+    founder_tag: "03. संस्थापक परिचय",
+    founder_title: "BITS पिलानी गणित से जैविक कृषि तक",
+    adopt_tag: "04. गौशाला समुदाय",
     adopt_title: "थारपारकर बछड़ा गोद लें",
-    adopt_desc: "हमारी देसी बछियों—धोली शेरी, तारा और रोशनी—के चारे और देखभाल के लिए डिजिटल रूप से सहयोग करें।",
-    adopt_cta: "व्हाट्सएप पर सहयोग करें",
-    blueprint_tag: "शून्य-अपशिष्ट दर्शन",
+    blueprint_tag: "05. शून्य-अपशिष्ट चक्र",
     blueprint_title: "गाय: एक संपूर्ण पारिस्थितिकी तंत्र",
-    blueprint_sub: "नारियल के पेड़ की तरह जिसका हर हिस्सा उपयोगी है, हमारी गौशाला में कुछ भी व्यर्थ नहीं जाता।",
-    journal_tag: "पिलानी जर्नल",
+    journal_tag: "06. पिलानी जर्नल",
     journal_title: "आयुर्वेद, मिट्टी और विज्ञान",
     contact_title: "सीधे फार्म से जुड़ें",
-    contact_sub: "थोक A2 घी ऑर्डर, भुंगा फार्म स्टे या गौशाला सहयोग के लिए संपर्क करें।",
-    contact_submit: "जानकारी भेजें"
+    contact_sub: "थोक A2 घी ऑर्डर, भुंगा फार्म स्टे या गौशाला सहयोग के लिए संपर्क करें।"
   },
   ma: {
     nav_store: "हाट बाजार",
+    nav_calc: "हिसाब-किताब",
+    nav_founder: "आपणो परिचय",
     nav_adopt: "गऊ सेवा",
-    nav_blueprint: "आपणो सिद्धांत",
     nav_journal: "बातां और ज्ञान",
-    hero_badge: "सीधो पिलानी सूं • 100% चोखो थारपारकर",
-    hero_title_1: "पुरखां री विरासत,",
-    hero_title_2: "चोखाई सूं बण्योड़ी।",
-    hero_sub: "'गाय नारियल ज्यूं गुणकारी' — पिलानी रा 100+ किसान परिवारों रे साथे मिलर, बिना मिलावट रो शुद्ध A2 घी और देसी उत्पाद सीधो आपरे आंगणे।",
+    hero_badge: "पिलानी, राजस्थान • BITS पिलानी इंजीनियर री पहल • ZED प्रमाणित",
+    hero_title_1: "पुरखां री चोखी विरासत,",
+    hero_title_2: "पूरी ईमानदारी रे साथे।",
+    hero_sub: "'गाय नारियल ज्यूं गुणकारी' — पिलानी रा 100+ किसान परिवारों रे साथे मिलर, शुद्ध A2 बिलोना घी, देसी धूप, केंचुआ खाद और भुंगा फार्म स्टे।",
     hero_cta_shop: "सामान देखो",
-    hero_cta_story: "आपणो काम देखो",
-    store_tag: "देसी हाट",
+    hero_cta_calc: "ऑर्डर हिसाब लगाओ",
+    store_tag: "01. देसी हाट",
     store_title: "असली और चोखो माल",
-    store_sub: "सीधो व्हाट्सएप माथे ऑर्डर करण खातिर नीचे बटन दबाओ।",
-    adopt_tag: "गऊ वंश सेवा",
+    store_sub: "सीधो पिलानी फार्म सूं आपरे आंगणे। व्हाट्सएप माथे सीधो ऑर्डर करो।",
+    calc_tag: "02. ऑर्डर और स्टे कैलकुलेटर",
+    calc_title: "आपणो ऑर्डर खुद बणाओ",
+    founder_tag: "03. संस्थापक री बात",
+    founder_title: "BITS पिलानी री पढ़ाई सूं धरती री सेवा तक",
+    adopt_tag: "04. गऊ वंश सेवा",
     adopt_title: "थारपारकर बाछड़ी गोद ल्यो",
-    adopt_desc: "आपणी देसी बाछड़ियां—धोली शेरी, तारा और रोशनी—री सेवा और चारा-पाणी में सहयोग करो।",
-    adopt_cta: "व्हाट्सएप माथे जुड़ो",
-    blueprint_tag: "जीरो-वेस्ट खेती",
+    blueprint_tag: "05. जीरो-वेस्ट खेती",
     blueprint_title: "गाय: हर चीज़ काम री",
-    blueprint_sub: "ज्यूं नारियल रो हर हिस्सो काम आवे, बियां ही आपणी गौशाला में गोबर सूं गैस, खाद और धूप बणे है।",
-    journal_tag: "पिलानी री बातां",
+    journal_tag: "06. पिलानी री बातां",
     journal_title: "देसी ज्ञान और खेती",
     contact_title: "सीधो संपर्क करो",
-    contact_sub: "थोक घी, भुंगा फार्म स्टे या गऊ सेवा खातिर अठे लिखो।",
-    contact_submit: "संदेश भेजो"
+    contact_sub: "थोक घी, भुंगा फार्म स्टे या गऊ सेवा खातिर अठे लिखो।"
   }
 };
 
-document.addEventListener("DOMContentLoaded", () => {
-  initEnterpriseApp();
-});
+let PRODUCTS_CACHE = [];
+let BLOGS_CACHE = [];
 
-async function initEnterpriseApp() {
-  await Promise.all([renderCatalog(), renderBlogs()]);
+document.addEventListener("DOMContentLoaded", () => {
+  initTheme();
+  initAmbientEcoCanvas();
+  initTypingHero();
+  initScrollProgress();
+  initAppData();
   setupAIChat();
   setupWebhookRouting();
   setupLanguageToggle();
+  setupCommandPalette();
+});
+
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 3400);
+}
+
+/* Theme Toggle (Sun-Baked Sand vs Desert Dusk) */
+function initTheme() {
+  const saved = localStorage.getItem("lado_theme") || "light";
+  document.documentElement.setAttribute("data-theme", saved);
+  const btn = document.getElementById("themeToggle");
+  if (btn) btn.textContent = saved === "dusk" ? "☀️ Sand" : "🌙 Dusk";
+}
+
+window.toggleTheme = function () {
+  const cur = document.documentElement.getAttribute("data-theme") || "light";
+  const next = cur === "light" ? "dusk" : "light";
+  document.documentElement.setAttribute("data-theme", next);
+  localStorage.setItem("lado_theme", next);
+  const btn = document.getElementById("themeToggle");
+  if (btn) btn.textContent = next === "dusk" ? "☀️ Sand" : "🌙 Dusk";
+};
+
+/* Scroll Progress Bar */
+function initScrollProgress() {
+  const bar = document.getElementById("scroll-progress");
+  if (!bar) return;
+  window.addEventListener("scroll", () => {
+    const h = document.documentElement;
+    const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+    bar.style.width = `${Math.min(100, Math.max(0, pct))}%`;
+  });
+}
+
+/* Smooth Typing Sub-Headline (Inspired by Akash's Portfolio Hero) */
+function initTypingHero() {
+  const el = document.getElementById("typed-hero");
+  if (!el) return;
+  const phrases = [
+    "100% Vedic Hand-Churned Tharparkar A2 Bilona Ghee",
+    "Zero-Waste 'Cow as a Coconut' Circular Gaushala",
+    "Deep Work Bhunga Mud Stays • 4 Hrs from Gurugram",
+    "Empowering 100+ Farming Families in Pilani, Rajasthan"
+  ];
+  let p = 0, c = 0, del = false;
+  (function tick() {
+    const cur = phrases[p];
+    el.textContent = del ? cur.substring(0, c--) : cur.substring(0, c++);
+    let speed = del ? 32 : 68;
+    if (!del && c === cur.length + 1) { speed = 2000; del = true; }
+    else if (del && c === 0) { del = false; p = (p + 1) % phrases.length; speed = 350; }
+    setTimeout(tick, speed);
+  })();
+}
+
+/* Interactive Floating Farm & Zero-Waste Canvas (Inspired by Akash's Math Canvas) */
+function initAmbientEcoCanvas() {
+  const canvas = document.getElementById("eco-canvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  let w = (canvas.width = window.innerWidth);
+  let h = (canvas.height = window.innerHeight);
+
+  const glyphs = ["🌿", "🌾", "☀️", "🏺", "💧", "✦", "ॐ"];
+  const nodes = [
+    { label: "A2 Bilona Ghee: 30L Tharparkar Milk → 1L Golden Ghee", x: w * 0.12, y: h * 0.25, r: 24, vx: 0.16, vy: 0.11, icon: "🏺" },
+    { label: "Biogas Loop: Fresh Dung → Clean Cooking Fuel & Slurry", x: w * 0.86, y: h * 0.28, r: 24, vx: -0.14, vy: 0.14, icon: "🔥" },
+    { label: "Pure Kechua Khad: Biogas Slurry → Vermicompost", x: w * 0.15, y: h * 0.75, r: 24, vx: 0.13, vy: -0.12, icon: "🌱" },
+    { label: "ZED Bronze & MSME Registered (UDYAM-RJ-21-0104324)", x: w * 0.84, y: h * 0.72, r: 24, vx: -0.15, vy: -0.11, icon: "🏅" }
+  ];
+
+  const particles = Array.from({ length: 18 }, () => ({
+    x: Math.random() * w,
+    y: Math.random() * h,
+    vx: (Math.random() - 0.5) * 0.22,
+    vy: -0.1 - Math.random() * 0.18,
+    glyph: glyphs[Math.floor(Math.random() * glyphs.length)],
+    size: 13 + Math.floor(Math.random() * 6)
+  }));
+
+  const tip = document.getElementById("ecoTooltip");
+  let mx = -999, my = -999;
+
+  window.addEventListener("mousemove", (e) => {
+    mx = e.clientX;
+    my = e.clientY;
+    if (!tip) return;
+    const hit = nodes.find((n) => Math.hypot(mx - n.x, my - n.y) <= n.r + 14);
+    if (hit) {
+      tip.style.display = "block";
+      tip.style.left = Math.min(window.innerWidth - 310, mx + 14) + "px";
+      tip.style.top = my + 14 + "px";
+      tip.textContent = "✨ " + hit.label;
+    } else {
+      tip.style.display = "none";
+    }
+  });
+
+  window.addEventListener("resize", () => {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  });
+
+  function frame() {
+    ctx.clearRect(0, 0, w, h);
+    ctx.globalAlpha = 0.26;
+    particles.forEach((p) => {
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.y < -20) { p.y = h + 20; p.x = Math.random() * w; }
+      if (p.x < -20) p.x = w + 20;
+      if (p.x > w + 20) p.x = -20;
+      ctx.font = `${p.size}px serif`;
+      ctx.fillText(p.glyph, p.x, p.y);
+    });
+
+    nodes.forEach((n) => {
+      n.x += n.vx;
+      n.y += n.vy;
+      if (n.x < 40 || n.x > w - 40) n.vx *= -1;
+      if (n.y < 90 || n.y > h - 40) n.vy *= -1;
+      const hover = Math.hypot(mx - n.x, my - n.y) <= n.r + 14;
+      ctx.globalAlpha = hover ? 0.85 : 0.35;
+      ctx.strokeStyle = hover ? "#c2410c" : "#f59e0b";
+      ctx.lineWidth = hover ? 2 : 1.2;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.font = "18px serif";
+      ctx.fillText(n.icon, n.x - 9, n.y + 6);
+    });
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+/* Interactive CLI Terminal Switcher (Adapted from Akash's Portfolio) */
+window.runFarmCmd = function (key) {
+  const body = document.getElementById("farm-terminal-body");
+  if (!body) return;
+  const cmds = {
+    purity: {
+      c: "./verify_a2_batch.sh",
+      o: `[PASS] Breed: 100% Indigenous Tharparkar (Pilani Herd)<br>[PASS] Method: Curd-Churned Wooden Bilona (~30L Milk -> 1L Ghee)<br>[PASS] Additives: 0% Preservatives, 0% Palm/Vegetable Oil`
+    },
+    cycle: {
+      c: "./cow_as_coconut.py --audit",
+      o: `"milk": "A2 Bilona Ghee (Calves Dholi Sheri, Tara & Roshni fed first)",<br>"dung_1": "Anaerobic Biogas Digester -> Clean Farm Energy",<br>"slurry": "Vermicompost Beds -> Pure Kechua Khad",<br>"dung_2": "Herbal Resin Blend -> Zero-Charcoal Tharparkar Dhoop"`
+    },
+    impact: {
+      c: "./pilani_impact.sh",
+      o: `• Network: 100+ Local Pilani Farming Families Empowered<br>• Credentials: MSME (UDYAM-RJ-21-0104324) | ZED Bronze Certified<br>• Traceability: Direct Farm-to-Doorstep Batch Logs`
+    },
+    founder: {
+      c: "./whoami --founder",
+      o: `Akash Saini • Integrated M.Sc. Mathematics, BITS Pilani<br>Applying quantitative rigor & zero-waste systems design to Gau Sanskriti.`
+    }
+  };
+  const item = cmds[key] || cmds.purity;
+  body.innerHTML = `<div><span style="color:#4ade80;">➜</span> ${item.c}</div><div class="mt-2 pl-3 border-l-2 border-[#f59e0b] text-[#fde68a]/85 leading-relaxed">${item.o}</div>`;
+};
+
+/* Load Products & Blogs */
+async function initAppData() {
+  try {
+    const [prodRes, blogRes] = await Promise.all([
+      fetch("./data/products.json"),
+      fetch("./data/blogs.json")
+    ]);
+    if (prodRes.ok) PRODUCTS_CACHE = await prodRes.json();
+    if (blogRes.ok) BLOGS_CACHE = await blogRes.json();
+  } catch (e) {
+    console.error("Data load error:", e);
+  }
+  renderCatalog();
+  renderBlogs();
+  updateOrderCalculator();
   initScrollAnimations();
 }
 
-function openWhatsAppOrder(productName, price, unit) {
-  const text = `Namaste Lado Organics! 🙏\nI would like to order:\n• *Item:* ${productName}\n• *Price:* ₹${price} / ${unit}\n\nPlease share availability and payment details.`;
-  const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
-  window.open(url, "_blank", "noopener,noreferrer");
-}
+window.openWhatsAppOrder = function (productName, priceFormatted, unit) {
+  const text = `Namaste Lado Organics! 🙏\nI would like to order:\n• *Item:* ${productName}\n• *Price:* ₹${priceFormatted} / ${unit}\n\nPlease share availability and delivery details.`;
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
+};
 
-async function renderCatalog() {
+function renderCatalog() {
   const grid = document.getElementById("product-catalog-grid");
-  if (!grid) return;
+  if (!grid || !PRODUCTS_CACHE.length) return;
 
-  try {
-    const response = await fetch("./data/products.json");
-    if (!response.ok) throw new Error("Failed to load products");
-    const products = await response.json();
-
-    grid.innerHTML = products
-      .map(
-        (product, index) => `
-      <article class="bg-[var(--surface)] rounded-3xl shadow-md border border-[var(--border)] overflow-hidden group hover:shadow-2xl transition duration-500 flex flex-col reveal" style="transition-delay: ${index * 100}ms">
-        <div class="h-60 bg-[var(--earth)]/10 relative overflow-hidden border-b border-[var(--border)]">
-          <img src="${product.image}" onerror="this.onerror=null;this.src='${product.fallbackImage}';" alt="${product.name}" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-700" />
-          ${product.badge ? `<span class="absolute top-4 right-4 bg-[var(--terracotta)] text-white text-[10px] uppercase font-bold tracking-widest px-3.5 py-1.5 rounded-full shadow-md">${product.badge}</span>` : ""}
-        </div>
-        <div class="p-7 flex flex-col flex-grow">
-          <h3 class="text-2xl font-serif font-bold text-[var(--mud)] mb-2">${product.name}</h3>
-          <p class="text-sm text-[var(--mud)]/75 mb-6 font-light flex-grow leading-relaxed">${product.desc}</p>
-          <div class="flex justify-between items-end mb-6 pt-4 border-t border-[var(--border)]">
-            <div>
-              <span class="block text-[11px] uppercase tracking-wider text-[var(--mud)]/50 mb-0.5">Per ${product.unit}</span>
-              <span class="text-3xl font-serif font-bold text-[var(--terracotta)]">₹${product.price}</span>
-            </div>
-            <span class="text-xs text-green-700 font-medium bg-green-50 px-2.5 py-1 rounded-full border border-green-200">In Stock</span>
+  grid.innerHTML = PRODUCTS_CACHE.map(
+    (p, idx) => `
+    <article class="glass-card rounded-3xl overflow-hidden flex flex-col reveal" style="transition-delay: ${idx * 80}ms">
+      <div class="h-56 bg-[var(--earth)]/10 relative overflow-hidden border-b border-[var(--border)]">
+        <img src="${p.image}" onerror="this.onerror=null;this.src='${p.fallbackImage}';" alt="${p.name}" class="w-full h-full object-cover hover:scale-105 transition duration-700" />
+        ${p.badge ? `<span class="absolute top-3.5 right-3.5 bg-[var(--terracotta)] text-white text-[10px] uppercase font-bold tracking-widest px-3 py-1 rounded-full shadow">${p.badge}</span>` : ""}
+      </div>
+      <div class="p-6 flex flex-col flex-grow">
+        <h3 class="text-xl font-serif font-bold text-[var(--mud)] mb-2">${p.name}</h3>
+        <p class="text-sm text-[var(--muted)]/85 mb-5 font-light flex-grow leading-relaxed">${p.desc}</p>
+        <div class="flex justify-between items-end mb-5 pt-3 border-t border-[var(--border)]">
+          <div>
+            <span class="block text-[11px] uppercase tracking-wider text-[var(--muted)]/60">Per ${p.unit}</span>
+            <span class="text-2xl font-serif font-bold text-[var(--terracotta)]">₹${p.priceFormatted}</span>
           </div>
-          <button onclick='openWhatsAppOrder(${JSON.stringify(product.name)}, ${JSON.stringify(product.price)}, ${JSON.stringify(product.unit)})' class="w-full primary-btn py-3.5 rounded-xl font-semibold text-sm flex justify-center items-center gap-2 cursor-pointer">
-            <i class="fab fa-whatsapp text-lg text-[#25D366]"></i> ${product.cta}
-          </button>
+          <span class="text-[11px] font-semibold text-[var(--green)] bg-green-500/10 px-2.5 py-1 rounded-full border border-green-500/30">Fresh Batch</span>
         </div>
-      </article>
-    `
-      )
-      .join("");
-  } catch (error) {
-    grid.innerHTML = `<p class="col-span-full text-center text-[var(--terracotta)] p-8">Unable to load catalog. Please message us directly on WhatsApp (+91 96361 00337).</p>`;
-  }
+        <button onclick='openWhatsAppOrder(${JSON.stringify(p.name)}, ${JSON.stringify(p.priceFormatted)}, ${JSON.stringify(p.unit)})' class="w-full primary-btn py-3.5 rounded-xl font-semibold text-sm flex justify-center items-center gap-2 cursor-pointer">
+          <i class="fab fa-whatsapp text-lg text-[#25D366]"></i> ${p.cta}
+        </button>
+      </div>
+    </article>
+  `
+  ).join("");
 }
 
-let loadedBlogs = [];
+/* Interactive Bundle & Farm Stay Calculator (Inspired by Akash's Sprint Estimator) */
+window.updateOrderCalculator = function () {
+  const gheeQty = parseInt(document.getElementById("calcGhee")?.value || "1", 10);
+  const dhoopQty = parseInt(document.getElementById("calcDhoop")?.value || "0", 10);
+  const khadQty = parseInt(document.getElementById("calcKhad")?.value || "0", 10);
+  const stayNights = parseInt(document.getElementById("calcStay")?.value || "0", 10);
 
-async function renderBlogs() {
+  document.getElementById("valGhee").textContent = `${gheeQty} L`;
+  document.getElementById("valDhoop").textContent = `${dhoopQty} Box`;
+  document.getElementById("valKhad").textContent = `${khadQty} Bag (5kg)`;
+  document.getElementById("valStay").textContent = `${stayNights} Night(s)`;
+
+  const subtotal = gheeQty * 5000 + dhoopQty * 1000 + khadQty * 2000 + stayNights * 4000;
+  const totalEl = document.getElementById("calcTotalDisplay");
+  const breakdownEl = document.getElementById("calcBreakdownDisplay");
+  if (totalEl) totalEl.textContent = `₹${subtotal.toLocaleString("en-IN")}`;
+
+  const parts = [];
+  if (gheeQty > 0) parts.push(`${gheeQty}L A2 Bilona Ghee`);
+  if (dhoopQty > 0) parts.push(`${dhoopQty}x Tharparkar Dhoop`);
+  if (khadQty > 0) parts.push(`${khadQty}x Kechua Khad (5kg)`);
+  if (stayNights > 0) parts.push(`${stayNights} Night Bhunga Stay`);
+  if (breakdownEl) {
+    breakdownEl.textContent = parts.length ? parts.join(" + ") : "Select at least 1 item or stay night above.";
+  }
+};
+
+window.sendCalculatedBundleWhatsApp = function () {
+  const gheeQty = parseInt(document.getElementById("calcGhee")?.value || "0", 10);
+  const dhoopQty = parseInt(document.getElementById("calcDhoop")?.value || "0", 10);
+  const khadQty = parseInt(document.getElementById("calcKhad")?.value || "0", 10);
+  const stayNights = parseInt(document.getElementById("calcStay")?.value || "0", 10);
+  const subtotal = gheeQty * 5000 + dhoopQty * 1000 + khadQty * 2000 + stayNights * 4000;
+
+  if (subtotal === 0) {
+    showToast("⚠️ Please select at least 1 item or night first!");
+    return;
+  }
+
+  let lines = ["Namaste Lado Organics! 🙏", "I built a custom order on ladoorganics.in:"];
+  if (gheeQty > 0) lines.push(`• A2 Bilona Ghee: ${gheeQty} Litre (₹${(gheeQty * 5000).toLocaleString("en-IN")})`);
+  if (dhoopQty > 0) lines.push(`• Tharparkar Dhoop: ${dhoopQty} Box (₹${(dhoopQty * 1000).toLocaleString("en-IN")})`);
+  if (khadQty > 0) lines.push(`• Pure Kechua Khad: ${khadQty} x 5kg Bag (₹${(khadQty * 2000).toLocaleString("en-IN")})`);
+  if (stayNights > 0) lines.push(`• 'Deep Work' Bhunga Stay: ${stayNights} Night(s) (₹${(stayNights * 4000).toLocaleString("en-IN")})`);
+  lines.push(`\n*Estimated Total:* ₹${subtotal.toLocaleString("en-IN")}`);
+  lines.push("Please confirm dispatch / booking availability!");
+
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(lines.join("\n"))}`, "_blank", "noopener,noreferrer");
+};
+
+/* Render Blogs & Full Reader Modal */
+function renderBlogs() {
   const grid = document.getElementById("blog-catalog-grid");
-  if (!grid) return;
+  if (!grid || !BLOGS_CACHE.length) return;
 
-  try {
-    const response = await fetch("./data/blogs.json");
-    if (!response.ok) throw new Error("Failed to load blogs");
-    loadedBlogs = await response.json();
-
-    grid.innerHTML = loadedBlogs
-      .map(
-        (blog, index) => `
-      <article class="bg-[var(--surface)] rounded-3xl shadow-md border border-[var(--border)] overflow-hidden flex flex-col group hover:shadow-xl transition duration-500 reveal" style="transition-delay: ${index * 100}ms">
-        <div class="h-52 overflow-hidden relative">
-          <img src="${blog.image}" alt="${blog.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" />
-          <span class="absolute top-4 left-4 bg-white/90 backdrop-blur text-[var(--mud)] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">${blog.category}</span>
-        </div>
-        <div class="p-7 flex flex-col flex-grow">
-          <div class="flex items-center gap-3 text-xs text-[var(--mud)]/50 mb-3">
-            <span>${blog.date}</span> • <span>${blog.readTime}</span>
-          </div>
-          <h3 class="text-xl font-serif font-bold text-[var(--mud)] mb-3 group-hover:text-[var(--terracotta)] transition-colors">${blog.title}</h3>
-          <p class="text-sm text-[var(--mud)]/75 font-light leading-relaxed mb-6 flex-grow">${blog.excerpt}</p>
-          <button onclick="openBlogModal('${blog.id}')" class="text-left text-sm font-bold text-[var(--terracotta)] hover:text-[var(--mud)] transition-colors inline-flex items-center gap-2 cursor-pointer">
-            Read Full Article <i class="fas fa-arrow-right text-xs"></i>
-          </button>
-        </div>
-      </article>
-    `
-      )
-      .join("");
-  } catch (err) {
-    console.error(err);
-  }
+  grid.innerHTML = BLOGS_CACHE.map(
+    (b, idx) => `
+    <article class="glass-card rounded-3xl overflow-hidden flex flex-col reveal" style="transition-delay: ${idx * 80}ms">
+      <div class="h-48 overflow-hidden relative">
+        <img src="${b.image}" alt="${b.title}" class="w-full h-full object-cover hover:scale-105 transition duration-700" />
+        <span class="absolute top-3.5 left-3.5 bg-[var(--surface-solid)] text-[var(--mud)] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-[var(--border)]">${b.category}</span>
+      </div>
+      <div class="p-6 flex flex-col flex-grow">
+        <div class="text-xs text-[var(--muted)]/60 mb-2 font-mono">${b.date} • ${b.readTime}</div>
+        <h3 class="text-lg font-serif font-bold text-[var(--mud)] mb-2.5 leading-snug">${b.title}</h3>
+        <p class="text-sm text-[var(--muted)]/80 font-light leading-relaxed mb-5 flex-grow">${b.excerpt}</p>
+        <button onclick="openBlogModal('${b.id}')" class="text-left text-sm font-bold text-[var(--terracotta)] hover:underline inline-flex items-center gap-2 cursor-pointer">
+          Read Full Article <i class="fas fa-arrow-right text-xs"></i>
+        </button>
+      </div>
+    </article>
+  `
+  ).join("");
 }
 
-window.openBlogModal = function (blogId) {
-  const blog = loadedBlogs.find((b) => b.id === blogId);
+window.openBlogModal = function (id) {
+  const b = BLOGS_CACHE.find((x) => x.id === id);
   const modal = document.getElementById("blog-modal");
   const body = document.getElementById("blog-modal-body");
-  if (!blog || !modal || !body) return;
+  if (!b || !modal || !body) return;
 
   body.innerHTML = `
-    <span class="text-xs font-bold uppercase tracking-widest text-[var(--terracotta)]">${blog.category} • ${blog.readTime}</span>
-    <h2 class="text-3xl md:text-4xl font-serif font-bold text-[var(--mud)] mt-2 mb-6 leading-tight">${blog.title}</h2>
-    <img src="${blog.image}" alt="${blog.title}" class="w-full h-64 md:h-80 object-cover rounded-2xl mb-8" />
-    <div class="space-y-5 text-[var(--mud)]/85 leading-relaxed text-base md:text-lg font-light">
-      ${blog.content.map((p) => `<p>${p}</p>`).join("")}
+    <span class="text-xs font-mono font-bold uppercase tracking-widest text-[var(--terracotta)]">${b.category} • ${b.readTime}</span>
+    <h2 class="text-2xl sm:text-4xl font-serif font-bold text-[var(--mud)] mt-2 mb-5 leading-tight">${b.title}</h2>
+    <img src="${b.image}" alt="${b.title}" class="w-full h-60 sm:h-72 object-cover rounded-2xl mb-6" />
+    <div class="space-y-4 text-[var(--text)]/90 leading-relaxed text-base font-light">
+      ${b.content.map((p) => `<p>${p}</p>`).join("")}
     </div>
-    <div class="mt-10 pt-6 border-t border-[var(--border)] flex flex-col sm:flex-row items-center justify-between gap-4">
-      <p class="text-sm font-medium text-[var(--mud)]">Want to experience this firsthand in Pilani?</p>
-      <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Namaste! I just read your article on '" + blog.title + "' and would love to know more.")}" target="_blank" class="primary-btn px-6 py-3 rounded-full text-sm font-bold inline-flex items-center gap-2">
-        <i class="fab fa-whatsapp text-[#25D366]"></i> Chat With Founder
+    <div class="mt-8 pt-5 border-t border-[var(--border)] flex flex-wrap items-center justify-between gap-4">
+      <span class="text-xs font-mono text-[var(--muted)]">Written by Akash Saini • BITS Pilani Alumnus</span>
+      <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Namaste Akash! I read your article '" + b.title + "' on ladoorganics.in.")}" target="_blank" class="primary-btn px-5 py-2.5 rounded-full text-xs font-bold inline-flex items-center gap-2">
+        <i class="fab fa-whatsapp text-[#25D366] text-base"></i> Discuss on WhatsApp
       </a>
     </div>
   `;
@@ -205,146 +421,181 @@ window.openBlogModal = function (blogId) {
 };
 
 window.closeBlogModal = function () {
-  const modal = document.getElementById("blog-modal");
-  if (modal) {
-    modal.classList.add("hidden");
-    document.body.style.overflow = "";
-  }
+  document.getElementById("blog-modal")?.classList.add("hidden");
+  document.body.style.overflow = "";
 };
 
+/* Multi-Language Switcher (EN / हिंदी / मारवाड़ी) */
 function setupLanguageToggle() {
   const toggle = document.getElementById("lang-toggle");
   if (!toggle) return;
-
   toggle.addEventListener("change", (e) => {
-    const lang = e.target.value;
-    const dict = TRANSLATIONS[lang] || TRANSLATIONS.en;
-
+    const dict = TRANSLATIONS[e.target.value] || TRANSLATIONS.en;
     document.body.style.opacity = "0.65";
     setTimeout(() => {
       document.querySelectorAll("[data-i18n]").forEach((el) => {
         const key = el.getAttribute("data-i18n");
-        if (dict[key]) {
-          el.textContent = dict[key];
-        }
+        if (dict[key]) el.textContent = dict[key];
       });
       document.body.style.opacity = "1";
-    }, 180);
+      showToast(`✓ Language switched to ${e.target.options[e.target.selectedIndex].text}`);
+    }, 160);
   });
 }
 
+/* Grounded AI Concierge (Bottom Right) */
 function setupAIChat() {
   const trigger = document.getElementById("chat-trigger");
-  const chatWindow = document.getElementById("ai-chat-window");
+  const win = document.getElementById("ai-chat-window");
   const closeBtn = document.getElementById("close-chat");
   const form = document.getElementById("ai-chat-form");
   const input = document.getElementById("ai-chat-input");
   const messages = document.getElementById("ai-chat-messages");
-
-  if (!trigger || !chatWindow || !closeBtn) return;
+  if (!trigger || !win || !closeBtn) return;
 
   trigger.addEventListener("click", () => {
-    chatWindow.classList.toggle("chat-hidden");
-    chatWindow.classList.toggle("chat-visible");
+    win.classList.toggle("chat-hidden");
+    win.classList.toggle("chat-visible");
   });
-
   closeBtn.addEventListener("click", () => {
-    chatWindow.classList.remove("chat-visible");
-    chatWindow.classList.add("chat-hidden");
+    win.classList.remove("chat-visible");
+    win.classList.add("chat-hidden");
   });
 
-  const getBotReply = (q) => {
-    const query = q.toLowerCase();
-    if (query.includes("ghee") || query.includes("price") || query.includes("a2")) {
-      return "Our A2 Bilona Ghee is ₹5,000/Litre, hand-churned from curd of indigenous Tharparkar cows in Pilani (~28–30L milk per litre of ghee). Would you like to order via WhatsApp?";
+  const replyFor = (q) => {
+    const s = q.toLowerCase();
+    if (s.includes("ghee") || s.includes("bilona") || s.includes("price")) {
+      return "Our A2 Bilona Ghee is ₹5,000/Litre, hand-churned from indigenous Tharparkar cow curd (~30L milk per 1L ghee). Use the Order Calculator or click any WhatsApp button to order!";
     }
-    if (query.includes("stay") || query.includes("bhunga") || query.includes("wifi") || query.includes("pilani")) {
-      return "Our 'Deep Work' Bhunga Farm Stay is ₹4,000/night in Pilani, Rajasthan. It features climate-responsive mud architecture, high-speed internet, and pure A2 satvik meals.";
+    if (s.includes("stay") || s.includes("bhunga") || s.includes("wifi") || s.includes("work")) {
+      return "Our 'Deep Work' Bhunga Farm Stay is ₹4,000/Night in Pilani, Rajasthan (~4 hrs from Gurugram/NCR). Includes fiber Wi-Fi, climate-responsive mud house & A2 satvik meals.";
     }
-    if (query.includes("adopt") || query.includes("cow") || query.includes("calf") || query.includes("tara")) {
-      return "You can digitally sponsor our Tharparkar calves—Dholi Sheri, Tara, and Roshni! Sponsors receive monthly video updates and complimentary farm stay perks.";
+    if (s.includes("founder") || s.includes("akash") || s.includes("bits")) {
+      return "Lado Organics is founded by Akash Saini (Integrated M.Sc. Mathematics, BITS Pilani) to bring scientific transparency, zero-waste engineering, and fair income to 100+ Pilani farming families.";
     }
-    if (query.includes("dhoop") || query.includes("khad") || query.includes("compost")) {
-      return "Tharparkar Dhoop is ₹1,000/box (zero charcoal, pure cow dung & herbs) and Pure Kechua Khad vermicompost is ₹2,000 per 5kg bag.";
+    if (s.includes("adopt") || s.includes("cow") || s.includes("calf") || s.includes("tara")) {
+      return "You can sponsor our Tharparkar calves—Dholi Sheri, Tara, and Roshni! Sponsors fund fodder & veterinary care and receive monthly farm updates.";
     }
-    if (query.includes("zed") || query.includes("msme") || query.includes("certificate")) {
-      return "Lado Organics is MSME registered (UDYAM-RJ-21-0104324) and ZED Bronze Certified under our zero-waste 'Cow as a Coconut' model.";
-    }
-    return "Thank you for asking! For live batch availability, custom orders, or farm bookings, click the green WhatsApp button on the bottom-left to chat directly with our Pilani team (+91 96361 00337).";
+    return "Namaste! 🙏 For instant orders, bulk B2B inquiries, or farm stay dates, tap the green WhatsApp button on the bottom-left (+91 96361 00337).";
   };
 
-  window.sendQuickQuestion = function (text) {
+  window.sendQuickQuestion = function (txt) {
     if (!input || !form) return;
-    input.value = text;
+    input.value = txt;
     form.dispatchEvent(new Event("submit"));
   };
 
-  if (form && input && messages) {
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const userText = input.value.trim();
-      if (!userText) return;
+  form?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const val = input.value.trim();
+    if (!val) return;
+    const u = document.createElement("div");
+    u.className = "bg-[var(--terracotta)] text-white p-3 rounded-2xl rounded-tr-sm w-5/6 self-end text-xs";
+    u.textContent = val;
+    messages.appendChild(u);
+    input.value = "";
+    messages.scrollTop = messages.scrollHeight;
 
-      const userBubble = document.createElement("div");
-      userBubble.className = "bg-[var(--terracotta)] text-white p-3.5 rounded-2xl rounded-tr-sm shadow-sm w-5/6 self-end";
-      userBubble.textContent = userText;
-      messages.appendChild(userBubble);
-      input.value = "";
+    setTimeout(() => {
+      const b = document.createElement("div");
+      b.className = "bg-[var(--surface-solid)] text-[var(--text)] p-3 rounded-2xl rounded-tl-sm border border-[var(--border)] w-5/6 self-start text-xs leading-relaxed";
+      b.textContent = replyFor(val);
+      messages.appendChild(b);
       messages.scrollTop = messages.scrollHeight;
-
-      setTimeout(() => {
-        const botBubble = document.createElement("div");
-        botBubble.className = "bg-white p-3.5 rounded-2xl rounded-tl-sm shadow-sm border border-[var(--border)] w-5/6 self-start";
-        botBubble.textContent = getBotReply(userText);
-        messages.appendChild(botBubble);
-        messages.scrollTop = messages.scrollHeight;
-      }, 450);
-    });
-  }
+    }, 380);
+  });
 }
 
+/* Lead Form -> Google Apps Script Webhook + WhatsApp Routing */
 function setupWebhookRouting() {
   const form = document.getElementById("webhook-form");
   if (!form) return;
 
-  form.addEventListener("submit", async (e) => {
+  form.addEventListener("submit", (e) => {
     e.preventDefault();
-    const firstName = document.getElementById("lead-fname").value.trim();
-    const lastName = document.getElementById("lead-lname").value.trim();
+    const fname = document.getElementById("lead-fname").value.trim();
+    const lname = document.getElementById("lead-lname").value.trim();
     const email = document.getElementById("lead-email").value.trim();
     const interest = document.getElementById("lead-interest").value;
 
-    // Save locally in browser CRM storage
-    const existingLeads = JSON.parse(localStorage.getItem("lado_leads") || "[]");
-    existingLeads.push({ firstName, lastName, email, interest, date: new Date().toISOString() });
-    localStorage.setItem("lado_leads", JSON.stringify(existingLeads));
+    // 1. Send silently to Google Apps Script Webhook
+    fetch(GOOGLE_SHEETS_WEBHOOK, {
+      method: "POST",
+      mode: "no-cors",
+      body: JSON.stringify({
+        name: `[Lado Organics] ${fname} ${lname}`,
+        email,
+        message: `Interest: ${interest}`
+      })
+    }).catch(() => {});
 
-    // Also route directly to WhatsApp so no lead is ever lost without Google Apps Script
-    const waMsg = `Namaste Lado Organics! 🙏\nNew Website Inquiry:\n• *Name:* ${firstName} ${lastName}\n• *Email:* ${email}\n• *Interest:* ${interest}`;
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waMsg)}`, "_blank", "noopener,noreferrer");
+    // 2. Open pre-filled WhatsApp confirmation
+    const msg = `Namaste Lado Organics! 🙏\nNew Website Inquiry:\n• *Name:* ${fname} ${lname}\n• *Email:* ${email}\n• *Interest:* ${interest}`;
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank", "noopener,noreferrer");
 
-    const btn = form.querySelector('button[type="submit"]');
-    const originalHTML = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-check"></i> Saved & Routed to WhatsApp';
-    btn.classList.add("!bg-green-700");
+    showToast("✓ Inquiry logged & opened in WhatsApp!");
     form.reset();
+  });
+}
 
-    setTimeout(() => {
-      btn.innerHTML = originalHTML;
-      btn.classList.remove("!bg-green-700");
-    }, 3500);
+/* Ctrl+K Quick Command Palette (Inspired by Akash's Portfolio) */
+const LADO_COMMANDS = [
+  { label: "🛒 Jump to Circular Store (A2 Ghee, Dhoop, Khad)", run: () => document.getElementById("store")?.scrollIntoView({ behavior: "smooth" }) },
+  { label: "🧮 Open Instant Order & Bhunga Stay Calculator", run: () => document.getElementById("calculator")?.scrollIntoView({ behavior: "smooth" }) },
+  { label: "🎓 Meet the Founder (Akash Saini • BITS Pilani)", run: () => document.getElementById("founder")?.scrollIntoView({ behavior: "smooth" }) },
+  { label: "🐄 Adopt a Tharparkar Calf (Dholi Sheri, Tara, Roshni)", run: () => document.getElementById("adopt")?.scrollIntoView({ behavior: "smooth" }) },
+  { label: "📖 Read The Pilani Journal (Blogs)", run: () => document.getElementById("journal")?.scrollIntoView({ behavior: "smooth" }) },
+  { label: "💬 Direct WhatsApp Order (+91 96361 00337)", run: () => window.open(`https://wa.me/${WHATSAPP_NUMBER}`, "_blank") },
+  { label: "🌓 Toggle Sand / Desert Dusk Theme", run: () => window.toggleTheme() }
+];
+
+window.toggleCommandPalette = function () {
+  const box = document.getElementById("cmd-palette");
+  if (!box) return;
+  const open = !box.classList.contains("hidden");
+  if (open) {
+    box.classList.add("hidden");
+  } else {
+    box.classList.remove("hidden");
+    const inp = document.getElementById("cmd-search");
+    if (inp) { inp.value = ""; inp.focus(); }
+    filterLadoCommands("");
+  }
+};
+
+window.filterLadoCommands = function (q) {
+  const list = document.getElementById("cmd-list");
+  if (!list) return;
+  const term = (q || "").toLowerCase();
+  const hits = LADO_COMMANDS.filter((c) => c.label.toLowerCase().includes(term));
+  list.innerHTML = hits
+    .map(
+      (c) => `<button type="button" onclick="toggleCommandPalette(); LADO_COMMANDS[${LADO_COMMANDS.indexOf(c)}].run();" class="w-full text-left px-4 py-2.5 rounded-xl bg-[var(--code-bg)] hover:border-[var(--terracotta)] border border-[var(--border)] text-xs font-mono text-[var(--text)] cursor-pointer transition">${c.label}</button>`
+    )
+    .join("");
+};
+
+function setupCommandPalette() {
+  document.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+      e.preventDefault();
+      window.toggleCommandPalette();
+    } else if (e.key === "Escape") {
+      document.getElementById("cmd-palette")?.classList.add("hidden");
+      window.closeBlogModal();
+    }
   });
 }
 
 function initScrollAnimations() {
   const reveals = document.querySelectorAll(".reveal");
-  const observer = new IntersectionObserver(
+  const obs = new IntersectionObserver(
     (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) entry.target.classList.add("active");
+      entries.forEach((en) => {
+        if (en.isIntersecting) en.target.classList.add("active");
       });
     },
     { threshold: 0.08 }
   );
-  reveals.forEach((el) => observer.observe(el));
+  reveals.forEach((el) => obs.observe(el));
 }
