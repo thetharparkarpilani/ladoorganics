@@ -2,49 +2,39 @@
   {
     "id": "a2-ghee",
     "name": "A2 Bilona Ghee",
-    "price": 5000,
-    "priceFormatted": "5,000",
+    "price": "5,000",
     "unit": "Litre",
-    "desc": "Ethically sourced, hand-churned from indigenous Tharparkar cow curd using the Vedic wooden Bilona method (~30L milk per 1L ghee).",
-    "image": "./assets/images/ghee.jpg",
-    "fallbackImage": "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&q=80&w=800",
-    "badge": "Flagship • 100% A2",
-    "cta": "Order via WhatsApp"
+    "desc": "Traditionally churned from indigenous Tharparkar cow milk using the Vedic Bilona method.",
+    "icon": "fa-jar",
+    "badge": "Flagship",
+    "cta": "⚡ Order via WhatsApp"
   },
   {
     "id": "dhoop",
-    "name": "Tharparkar Dhoop",
-    "price": 1000,
-    "priceFormatted": "1,000",
+    "name": "Tharparkar Dhoop (Havan Cups)",
+    "price": "1,000",
     "unit": "Box",
-    "desc": "Zero-charcoal aromatic dhoop hand-rolled from pure indigenous cow dung, sacred guggal, loban, and botanical resins.",
-    "image": "./assets/images/dhoop.jpg",
-    "fallbackImage": "https://images.unsplash.com/photo-1602928321679-560bb453f190?auto=format&fit=crop&q=80&w=800",
-    "badge": "Zero Charcoal",
-    "cta": "Order via WhatsApp"
+    "desc": "Made from pure cow dung, botanical herbs, and temple florals for air purification and spiritual wellness.",
+    "icon": "fa-fire",
+    "cta": "⚡ Order via WhatsApp"
   },
   {
     "id": "compost",
     "name": "Pure Kechua Khad",
-    "price": 2000,
-    "priceFormatted": "2,000",
+    "price": "2,000",
     "unit": "5kg Bag",
-    "desc": "Nutrient-dense organic vermicompost enriched by biogas plant slurry. Restores soil microbiome for terrace and kitchen gardens.",
-    "image": "./assets/images/compost.jpg",
-    "fallbackImage": "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&q=80&w=800",
-    "badge": "Biogas Slurry Fed",
-    "cta": "Order via WhatsApp"
+    "desc": "Nutrient-dense organic vermicompost produced via biogas slurry conversion for organic home gardens.",
+    "icon": "fa-seedling",
+    "cta": "⚡ Order via WhatsApp"
   },
   {
     "id": "farm-stay",
-    "name": "\"Deep Work\" Bhunga Stay",
-    "price": 4000,
-    "priceFormatted": "4,000",
+    "name": "\"Deep Work\" Bhunga Farm Stay",
+    "price": "4,000",
     "unit": "Night",
-    "desc": "Climate-responsive Rajasthani mud architecture in Pilani with high-speed fiber Wi-Fi, pure A2 satvik meals, and desert stargazing.",
-    "image": "./assets/images/bhunga.jpg",
-    "fallbackImage": "https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&q=80&w=800",
-    "badge": "NCR Tech Escape",
-    "cta": "Book Stay on WhatsApp"
+    "desc": "Experience authentic Rajasthani mud architecture, star-gazing, and farm-fresh organic meals in Pilani.",
+    "icon": "fa-house-chimney",
+    "badge": "Agro-Tourism",
+    "cta": "📅 Book Stay on WhatsApp"
   }
 ]
