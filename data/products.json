@@ -1,0 +1,40 @@
+﻿[
+  {
+    "id": "a2-ghee",
+    "name": "A2 Bilona Ghee",
+    "price": "5,000",
+    "unit": "Liter",
+    "desc": "Ethically sourced, hand-churned from indigenous Tharparkar cow milk using the Vedic Bilona method.",
+    "icon": "fa-jar",
+    "badge": "Flagship",
+    "cta": "⚡ Buy Now via Razorpay"
+  },
+  {
+    "id": "dhoop",
+    "name": "Tharparkar Dhoop",
+    "price": "1,000",
+    "unit": "Box",
+    "desc": "Pure cow dung and natural binders for air purification, spiritual wellness, and a calming environment.",
+    "icon": "fa-fire",
+    "cta": "⚡ Buy Now via Razorpay"
+  },
+  {
+    "id": "compost",
+    "name": "Pure Kechua Khad",
+    "price": "2,000",
+    "unit": "5kg Bag",
+    "desc": "Nutrient-dense organic vermicompost fed by our biogas slurry. Perfect for organic home gardens.",
+    "icon": "fa-seedling",
+    "cta": "⚡ Buy Now via Razorpay"
+  },
+  {
+    "id": "farm-stay",
+    "name": "\"Deep Work\" Bhunga Stay",
+    "price": "4,000",
+    "unit": "Night",
+    "desc": "Climate-responsive mud-house architecture, high-speed internet, and pure A2 meals. Perfect for tech professionals.",
+    "icon": "fa-house-chimney",
+    "badge": "Agro-Tourism",
+    "cta": "📅 Book Your Stay"
+  }
+]
