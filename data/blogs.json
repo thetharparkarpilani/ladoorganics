@@ -5,12 +5,12 @@
     "readTime": "4 Min Read",
     "date": "November 2026",
     "title": "Why Indigenous Tharparkar A2 Bilona Ghee Outperforms Commercial Dairy",
-    "excerpt": "Discover why curd-churned Bilona ghee from desert-adapted Tharparkar cows is nutritionally distinct.",
+    "excerpt": "Most commercial 'A2' ghee is made directly from cream separation. Discover why curd-churned Bilona ghee from desert-adapted Tharparkar cows is nutritionally distinct.",
     "image": "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&q=80&w=900",
     "content": [
-      "In the arid heartlands of Shekhawati and the Thar desert, the indigenous Tharparkar cow has evolved to survive extreme temperatures by grazing on medicinal desert flora. Pure Tharparkar cows exclusively produce A2 beta-casein milk.",
-      "At Lado Organics in Pilani, we boil whole A2 milk, culture it overnight into probiotic curd, and hand-churn it using a wooden Bilona during Brahma Muhurta.",
-      "It takes nearly 30 litres of pure milk to yield just 1 litre of our golden Bilona Ghee, rich in butyric acid, fat-soluble vitamins, and CLA."
+      "In the arid heartlands of Shekhawati and the Thar desert, the indigenous Tharparkar cow has evolved over centuries to survive extreme temperatures by grazing on hardy, medicinal desert flora. Unlike crossbred commercial cattle that produce A1 beta-casein protein, pure Tharparkar cows exclusively produce A2 beta-casein milk.",
+      "At Lado Organics in Pilani, we never separate cream directly from raw milk. Instead, we boil whole A2 milk over slow cow-dung fires, culture it overnight into probiotic-rich curd (Dahi), and hand-churn it bi-directionally during Brahma Muhurta using a wooden Bilona.",
+      "It takes nearly 28 to 30 litres of pure Tharparkar milk to yield just 1 litre of our golden Bilona Ghee. Rich in butyric acid, fat-soluble vitamins A, D, E, and K2, and conjugated linoleic acid (CLA), every jar is traceable directly to our Pilani Gaushala."
     ]
   },
   {
@@ -19,13 +19,27 @@
     "readTime": "5 Min Read",
     "date": "November 2026",
     "title": "The 'Cow as a Coconut' Philosophy: Inside Pilani's Zero-Waste Ecosystem",
-    "excerpt": "How a single indigenous cow powers clean cooking gas, regenerates depleted desert soil, and sustains 100+ rural families.",
+    "excerpt": "How a single indigenous cow powers clean cooking gas, regenerates depleted desert soil, purifies indoor air, and sustains 100+ rural families.",
     "image": "https://images.unsplash.com/photo-1596733430284-f74370603094?auto=format&fit=crop&q=80&w=900",
     "content": [
-      "In traditional Indian wisdom, the coconut tree is revered because every part serves human life with zero waste. We apply this exact blueprint to Gau Sanskriti in Pilani.",
-      "1. Calves like Dholi Sheri, Tara, and Roshni drink first[cite: 4].",
-      "2. Fresh dung fuels our biogas digester, and bioslurry creates Pure Kechua Khad vermicompost.",
-      "3. Sun-dried dung is crafted into chemical-free Tharparkar Dhoop."
+      "In traditional Indian wisdom, the coconut tree is revered as Kalpavriksha because every single part—water, kernel, husk, shell, and leaf—serves human life with zero waste. At Lado Organics, we apply this exact systems-engineering blueprint to Gau Sanskriti.",
+      "1. Ethical Nourishment: Calves like Dholi Sheri, Tara, and Roshni always drink their fill first before morning milking begins.",
+      "2. Clean Biogas & Vermicompost: Fresh dung enters our anaerobic biogas digester, generating clean methane fuel for farm operations. The nutrient-rich bioslurry then feeds Eisenia fetida earthworms to create Pure Kechua Khad.",
+      "3. Sacred Aromatics: Remaining sun-dried cow dung is blended with natural guggal, loban, and botanical resins to craft Tharparkar Dhoop—replacing chemical mosquito coils and synthetic incense in urban homes."
+    ]
+  },
+  {
+    "id": "math-to-soil",
+    "category": "Founder Note",
+    "readTime": "4 Min Read",
+    "date": "November 2026",
+    "title": "From BITS Pilani Mathematics & AI Systems to Regenerative Farming",
+    "excerpt": "Why applying first-principles mathematical modeling and zero-hallucination transparency to rural dairy creates trust you can verify.",
+    "image": "https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&q=80&w=900",
+    "content": [
+      "After completing my Integrated M.Sc. in Mathematics at BITS Pilani and building high-reliability AI and data verification pipelines, one principle stood out: systems fail when inputs are opaque and waste is ignored.",
+      "Modern urban food supply chains suffer from the exact same problem—adulterated milk, unverified 'organic' claims, and exploited small-scale farmers. Returning to our roots in Pilani, Rajasthan, Lado Organics was built to apply verifiable batch transparency and closed-loop resource optimization to indigenous Tharparkar farming.",
+      "Whether you visit our Bhunga mud houses in Pilani for a weekend of uninterrupted deep work or order a single litre of Bilona Ghee, every input and output in our ecosystem is accounted for."
     ]
   }
 ]
