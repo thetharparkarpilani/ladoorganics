@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useMemo, useState } from "react";
 import type { LocaleCode, ProductDTO } from "@/types/domain";
@@ -9,13 +9,15 @@ interface StorefrontSectionProps {
   locale: LocaleCode;
   searchQuery: string;
   whatsappNumber: string;
+  onAddToBag: (item: { sku: string; title: string; unitPriceInr: number; quantity: number }) => void;
 }
 
 export default function StorefrontSection({
   products,
   locale,
   searchQuery,
-  whatsappNumber
+  whatsappNumber,
+  onAddToBag
 }: StorefrontSectionProps) {
   const dict = TRANSLATIONS[locale] ?? TRANSLATIONS.en;
   const [selectedVariantByProduct, setSelectedVariantByProduct] = useState<Record<string, string>>({});
@@ -29,22 +31,17 @@ export default function StorefrontSection({
     if (!q) return products;
     return products.filter((p) => {
       const title = (locale === "hi" ? p.nameHi : locale === "ma" ? p.nameMa : p.nameEn) || p.nameEn;
-      return title.toLowerCase().includes(q) ||
+      return (
+        title.toLowerCase().includes(q) ||
         p.nameEn.toLowerCase().includes(q) ||
-        p.descriptionEn.toLowerCase().includes(q);
+        p.descriptionEn.toLowerCase().includes(q)
+      );
     });
   }, [products, searchQuery, locale]);
 
-  const estimatedTotal = useMemo(
-    () => gheeLitres * 5000 + dhoopBoxes * 1000 + khadBags * 2000 + stayNights * 4000,
-    [gheeLitres, dhoopBoxes, khadBags, stayNights]
-  );
-
-  const openWhatsApp = (message: string) => {
-    const number = whatsappNumber.replace(/\D/g, "");
-    const url = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
-    window.open(url, "_blank", "noopener,noreferrer");
-  };
+  const estimatedTotal = useMemo(() => {
+    return gheeLitres * 5000 + dhoopBoxes * 1000 + khadBags * 2000 + stayNights * 4000;
+  }, [gheeLitres, dhoopBoxes, khadBags, stayNights]);
 
   const sendWhatsAppOrder = (productName: string, unitLabel: string, priceInr: number) => {
     const message = [
@@ -53,7 +50,8 @@ export default function StorefrontSection({
       `Listed Price: ₹${priceInr.toLocaleString("en-IN")}`,
       "Please share current batch availability and order details."
     ].join("\n");
-    openWhatsApp(message);
+    const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const sendCalculatorOrder = () => {
@@ -70,7 +68,8 @@ export default function StorefrontSection({
       `Estimated subtotal (before shipping/applicable taxes): ₹${estimatedTotal.toLocaleString("en-IN")}`,
       "Please confirm availability and final details."
     ].join("\n");
-    openWhatsApp(message);
+    const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -94,7 +93,8 @@ export default function StorefrontSection({
                 const displayName =
                   (locale === "hi" ? product.nameHi : locale === "ma" ? product.nameMa : product.nameEn) ||
                   product.nameEn;
-                const defaultVar = product.variants.find((v) => v.isDefault) ?? product.variants[0];
+                const defaultVar =
+                  product.variants.find((v) => v.isDefault) ?? product.variants[0];
                 const chosenSku = selectedVariantByProduct[product.id] ?? defaultVar?.sku;
                 const activeVariant =
                   product.variants.find((v) => v.sku === chosenSku) ?? defaultVar;
@@ -124,8 +124,8 @@ export default function StorefrontSection({
                                 }
                                 className={`px-3 py-1 rounded-full text-xs font-semibold border transition ${
                                   isSelected
-                                    ? "border-[var(--terracotta)] bg-[var(--terracotta)] text-white"
-                                    : "border-[var(--border)]"
+                                    ? "bg-[var(--mud)] text-white border-[var(--mud)]"
+                                    : "border-[var(--border)] hover:border-[var(--terracotta)]"
                                 }`}
                               >
                                 {variant.label}
@@ -146,19 +146,37 @@ export default function StorefrontSection({
                         </span>
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={() =>
-                          sendWhatsAppOrder(
-                            product.nameEn,
-                            activeVariant?.label ?? "Unit",
-                            activeVariant?.priceInr ?? 0
-                          )
-                        }
-                        className="w-full primary-btn py-3 rounded-xl text-sm font-semibold cursor-pointer"
-                      >
-                        Order via WhatsApp
-                      </button>
+                      <div className="space-y-2">
+                        {activeVariant && (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              onAddToBag({
+                                sku: activeVariant.sku,
+                                title: `${product.nameEn} (${activeVariant.label})`,
+                                unitPriceInr: activeVariant.priceInr,
+                                quantity: 1
+                              })
+                            }
+                            className="w-full primary-btn py-2.5 rounded-xl text-xs font-bold cursor-pointer"
+                          >
+                            Add to Bag
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            sendWhatsAppOrder(
+                              product.nameEn,
+                              activeVariant?.label ?? "Unit",
+                              activeVariant?.priceInr ?? 0
+                            )
+                          }
+                          className="w-full py-2.5 rounded-xl text-xs font-semibold border border-[var(--border)] hover:border-[var(--terracotta)] cursor-pointer"
+                        >
+                          Order via WhatsApp
+                        </button>
+                      </div>
                     </div>
                   </article>
                 );
@@ -182,45 +200,74 @@ export default function StorefrontSection({
               <label className="block text-xs font-bold uppercase mb-1">
                 A2 Bilona Ghee (1 litre): {gheeLitres}
               </label>
-              <input type="range" min={0} max={10} value={gheeLitres}
+              <input
+                type="range"
+                min={0}
+                max={10}
+                value={gheeLitres}
                 onChange={(e) => setGheeLitres(Number(e.target.value))}
-                className="w-full accent-[#c2410c]" />
+                className="w-full accent-[#c2410c]"
+              />
             </div>
+
             <div>
               <label className="block text-xs font-bold uppercase mb-1">
                 Tharparkar Dhoop (Box): {dhoopBoxes}
               </label>
-              <input type="range" min={0} max={10} value={dhoopBoxes}
+              <input
+                type="range"
+                min={0}
+                max={10}
+                value={dhoopBoxes}
                 onChange={(e) => setDhoopBoxes(Number(e.target.value))}
-                className="w-full accent-[#c2410c]" />
+                className="w-full accent-[#c2410c]"
+              />
             </div>
+
             <div>
               <label className="block text-xs font-bold uppercase mb-1">
                 Pure Kechua Khad (5 kg Bag): {khadBags}
               </label>
-              <input type="range" min={0} max={10} value={khadBags}
+              <input
+                type="range"
+                min={0}
+                max={10}
+                value={khadBags}
                 onChange={(e) => setKhadBags(Number(e.target.value))}
-                className="w-full accent-[#c2410c]" />
+                className="w-full accent-[#c2410c]"
+              />
             </div>
+
             <div>
               <label className="block text-xs font-bold uppercase mb-1">
                 “Deep Work” Bhunga Stay (Nights): {stayNights}
               </label>
-              <input type="range" min={0} max={7} value={stayNights}
+              <input
+                type="range"
+                min={0}
+                max={7}
+                value={stayNights}
                 onChange={(e) => setStayNights(Number(e.target.value))}
-                className="w-full accent-[#c2410c]" />
+                className="w-full accent-[#c2410c]"
+              />
             </div>
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-6 border-t border-[var(--border)]">
             <div>
-              <span className="block text-xs uppercase tracking-wider opacity-70">Estimated Subtotal</span>
+              <span className="block text-xs uppercase tracking-wider opacity-70">
+                Estimated Subtotal
+              </span>
               <span className="text-3xl font-serif font-bold text-[var(--terracotta)]">
                 ₹{estimatedTotal.toLocaleString("en-IN")}
               </span>
             </div>
-            <button type="button" onClick={sendCalculatorOrder}
-              className="primary-btn px-6 py-3.5 rounded-xl text-sm font-semibold cursor-pointer">
+
+            <button
+              type="button"
+              onClick={sendCalculatorOrder}
+              className="primary-btn px-6 py-3.5 rounded-xl text-sm font-semibold cursor-pointer"
+            >
               Send Selection on WhatsApp
             </button>
           </div>

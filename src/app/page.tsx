@@ -6,6 +6,7 @@ import { TRANSLATIONS } from "@/lib/i18n";
 import StorefrontSection from "@/components/StorefrontSection";
 import FarmExperienceSection from "@/components/FarmExperienceSection";
 import ConciergeWidget from "@/components/ConciergeWidget";
+import CartCheckoutDrawer, { type CartBagItem } from "@/components/CartCheckoutDrawer";
 
 const INITIAL_PRODUCTS: ProductDTO[] = [
   {
@@ -81,6 +82,8 @@ export default function HomePage() {
   const [theme, setTheme] = useState<"light" | "dusk">("light");
   const [searchQuery, setSearchQuery] = useState("");
   const [products, setProducts] = useState<ProductDTO[]>(INITIAL_PRODUCTS);
+  const [bagItems, setBagItems] = useState<CartBagItem[]>([]);
+  const [bagOpen, setBagOpen] = useState(false);
 
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919636100337";
   const dict = TRANSLATIONS[locale] ?? TRANSLATIONS.en;
@@ -105,6 +108,33 @@ export default function HomePage() {
       active = false;
     };
   }, []);
+
+  const handleAddToBag = (newItem: CartBagItem) => {
+    setBagItems((prev) => {
+      const existing = prev.find((x) => x.sku === newItem.sku);
+      if (existing) {
+        return prev.map((x) =>
+          x.sku === newItem.sku ? { ...x, quantity: x.quantity + newItem.quantity } : x
+        );
+      }
+      return [...prev, newItem];
+    });
+    setBagOpen(true);
+  };
+
+  const handleUpdateQty = (sku: string, delta: number) => {
+    setBagItems((prev) =>
+      prev
+        .map((x) => (x.sku === sku ? { ...x, quantity: x.quantity + delta } : x))
+        .filter((x) => x.quantity > 0)
+    );
+  };
+
+  const handleRemoveItem = (sku: string) => {
+    setBagItems((prev) => prev.filter((x) => x.sku !== sku));
+  };
+
+  const totalBagCount = bagItems.reduce((sum, x) => sum + x.quantity, 0);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -132,6 +162,14 @@ export default function HomePage() {
               aria-label="Search products"
               className="text-xs px-3 py-1.5 rounded-full border border-[var(--border)] bg-white/80 text-[#78350f] w-28 sm:w-36 focus:outline-none focus:border-[var(--terracotta)]"
             />
+
+            <button
+              type="button"
+              onClick={() => setBagOpen(true)}
+              className="text-xs font-bold px-3 py-1.5 rounded-full bg-[var(--terracotta)] text-white cursor-pointer"
+            >
+              Bag ({totalBagCount})
+            </button>
 
             <select
               aria-label="Language selector"
@@ -213,6 +251,7 @@ export default function HomePage() {
           locale={locale}
           searchQuery={searchQuery}
           whatsappNumber={whatsappNumber}
+          onAddToBag={handleAddToBag}
         />
 
         <section id="adopt" className="py-20 px-4 sm:px-6 lg:px-8 border-t border-[var(--border)]">
@@ -264,6 +303,16 @@ export default function HomePage() {
       <footer className="py-8 px-4 border-t border-[var(--border)] text-center text-xs opacity-75">
         <p>© 2026 Lado Organics • Pilani, Rajasthan • ladoorganics.in</p>
       </footer>
+
+      <CartCheckoutDrawer
+        isOpen={bagOpen}
+        onClose={() => setBagOpen(false)}
+        items={bagItems}
+        onUpdateQty={handleUpdateQty}
+        onRemoveItem={handleRemoveItem}
+        onClearBag={() => setBagItems([])}
+        whatsappNumber={whatsappNumber}
+      />
 
       <ConciergeWidget whatsappNumber={whatsappNumber} />
     </div>
