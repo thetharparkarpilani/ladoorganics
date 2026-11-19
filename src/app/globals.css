@@ -1,0 +1,73 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #FDF9F5;
+  --surface: #FFFFFF;
+  --mud: #78350f;
+  --terracotta: #c2410c;
+  --earth: #f59e0b;
+  --border: rgba(120, 53, 15, 0.16);
+  --whatsapp: #25D366;
+}
+
+[data-theme="dusk"] {
+  --bg: #1c110a;
+  --surface: #29180e;
+  --mud: #fef3c7;
+  --terracotta: #ea580c;
+  --earth: #fbbf24;
+  --border: rgba(251, 191, 36, 0.22);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--mud);
+  overflow-x: hidden;
+}
+
+.glass-nav {
+  background: rgba(253, 249, 245, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+[data-theme="dusk"] .glass-nav {
+  background: rgba(28, 17, 10, 0.88);
+}
+
+.primary-btn {
+  background-color: var(--mud);
+  color: var(--surface);
+  transition: transform 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.primary-btn:hover {
+  background-color: var(--terracotta);
+  transform: translateY(-2px);
+}
+
+.whatsapp-float {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 50;
+  background-color: var(--whatsapp);
+  color: #ffffff;
+  box-shadow: 0 10px 25px rgba(37, 211, 102, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .primary-btn,
+  .whatsapp-float {
+    transition: none;
+  }
+}
