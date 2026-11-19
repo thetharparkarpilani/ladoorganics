@@ -1,14 +1,21 @@
-﻿import { Pool } from "pg";
+import { Pool } from "pg";
 
 declare global {
   // eslint-disable-next-line no-var
   var __ladoPgPool: Pool | undefined;
 }
 
-function createPool(): Pool {
+function getPool(): Pool {
+  if (globalThis.__ladoPgPool) {
+    return globalThis.__ladoPgPool;
+  }
+
   const connectionString = process.env.DATABASE_URL;
+
   if (!connectionString) {
-    throw new Error("DATABASE_URL is not configured in environment variables.");
+    throw new Error(
+      "DATABASE_URL is not configured. Add it to your server environment before using database features."
+    );
   }
 
   const useSsl =
@@ -16,13 +23,25 @@ function createPool(): Pool {
     connectionString.includes("supabase.co") ||
     process.env.NODE_ENV === "production";
 
-  return new Pool({
+  const pool = new Pool({
     connectionString,
     ssl: useSsl ? { rejectUnauthorized: false } : undefined,
     max: 10
   });
+
+  globalThis.__ladoPgPool = pool;
+
+  return pool;
 }
 
-export const db: Pool =
-  globalThis.__ladoPgPool ??
-  (globalThis.__ladoPgPool = createPool());
+// The pool is created only when a database property is accessed.
+export const db: Pool = new Proxy({} as Pool, {
+  get(_target, property) {
+    const pool = getPool();
+    const value = Reflect.get(pool, property, pool);
+
+    return typeof value === "function"
+      ? value.bind(pool)
+      : value;
+  }
+});
