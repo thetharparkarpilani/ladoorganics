@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
 const SAMPLE_BATCH = {
@@ -44,13 +44,13 @@ export async function GET(
 
   try {
     const result = await db.query(
-      SELECT batch_code, product_slug, product_name, variant_label,
+      `SELECT batch_code, product_slug, product_name, variant_label,
               production_date, packaging_date, origin_location,
               production_process, quality_checks, lab_report_url,
               storage_instructions, best_before_date
        FROM product_batches
-       WHERE UPPER(batch_code) =  AND is_approved = TRUE
-       LIMIT 1,
+       WHERE UPPER(batch_code) = $1 AND is_approved = TRUE
+       LIMIT 1`,
       [normalizedCode]
     );
 

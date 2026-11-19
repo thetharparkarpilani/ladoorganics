@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useMemo, useState } from "react";
 import type { LocaleCode, ProductDTO } from "@/types/domain";
@@ -29,45 +29,48 @@ export default function StorefrontSection({
     if (!q) return products;
     return products.filter((p) => {
       const title = (locale === "hi" ? p.nameHi : locale === "ma" ? p.nameMa : p.nameEn) || p.nameEn;
-      return (
-        title.toLowerCase().includes(q) ||
+      return title.toLowerCase().includes(q) ||
         p.nameEn.toLowerCase().includes(q) ||
-        p.descriptionEn.toLowerCase().includes(q)
-      );
+        p.descriptionEn.toLowerCase().includes(q);
     });
   }, [products, searchQuery, locale]);
 
-  const estimatedTotal = useMemo(() => {
-    return gheeLitres * 5000 + dhoopBoxes * 1000 + khadBags * 2000 + stayNights * 4000;
-  }, [gheeLitres, dhoopBoxes, khadBags, stayNights]);
+  const estimatedTotal = useMemo(
+    () => gheeLitres * 5000 + dhoopBoxes * 1000 + khadBags * 2000 + stayNights * 4000,
+    [gheeLitres, dhoopBoxes, khadBags, stayNights]
+  );
+
+  const openWhatsApp = (message: string) => {
+    const number = whatsappNumber.replace(/\D/g, "");
+    const url = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
 
   const sendWhatsAppOrder = (productName: string, unitLabel: string, priceInr: number) => {
     const message = [
       "Namaste Lado Organics!",
-      Item:  (),
-      Listed Price: ₹,
+      `Item: ${productName} (${unitLabel})`,
+      `Listed Price: ₹${priceInr.toLocaleString("en-IN")}`,
       "Please share current batch availability and order details."
     ].join("\n");
-    const url = https://wa.me/?text=;
-    window.open(url, "_blank", "noopener,noreferrer");
+    openWhatsApp(message);
   };
 
   const sendCalculatorOrder = () => {
     const parts: string[] = [];
-    if (gheeLitres > 0) parts.push(${gheeLitres} x A2 Bilona Ghee (1 litre @ ₹5,000));
-    if (dhoopBoxes > 0) parts.push(${dhoopBoxes} x Tharparkar Dhoop (Box @ ₹1,000));
-    if (khadBags > 0) parts.push(${khadBags} x Pure Kechua Khad (5 kg Bag @ ₹2,000));
-    if (stayNights > 0) parts.push(${stayNights} x "Deep Work" Bhunga Stay (Night @ ₹4,000));
+    if (gheeLitres > 0) parts.push(`${gheeLitres} x A2 Bilona Ghee (1 litre @ ₹5,000)`);
+    if (dhoopBoxes > 0) parts.push(`${dhoopBoxes} x Tharparkar Dhoop (Box @ ₹1,000)`);
+    if (khadBags > 0) parts.push(`${khadBags} x Pure Kechua Khad (5 kg Bag @ ₹2,000)`);
+    if (stayNights > 0) parts.push(`${stayNights} x "Deep Work" Bhunga Stay (Night @ ₹4,000)`);
 
     const summary = parts.length > 0 ? parts.join(", ") : "Custom enquiry";
     const message = [
       "Namaste Lado Organics!",
-      Selected items: ,
-      Estimated subtotal (before shipping/applicable taxes): ₹,
+      `Selected items: ${summary}`,
+      `Estimated subtotal (before shipping/applicable taxes): ₹${estimatedTotal.toLocaleString("en-IN")}`,
       "Please confirm availability and final details."
     ].join("\n");
-    const url = https://wa.me/?text=;
-    window.open(url, "_blank", "noopener,noreferrer");
+    openWhatsApp(message);
   };
 
   return (
@@ -91,8 +94,7 @@ export default function StorefrontSection({
                 const displayName =
                   (locale === "hi" ? product.nameHi : locale === "ma" ? product.nameMa : product.nameEn) ||
                   product.nameEn;
-                const defaultVar =
-                  product.variants.find((v) => v.isDefault) ?? product.variants[0];
+                const defaultVar = product.variants.find((v) => v.isDefault) ?? product.variants[0];
                 const chosenSku = selectedVariantByProduct[product.id] ?? defaultVar?.sku;
                 const activeVariant =
                   product.variants.find((v) => v.sku === chosenSku) ?? defaultVar;
@@ -120,7 +122,11 @@ export default function StorefrontSection({
                                     [product.id]: variant.sku
                                   }))
                                 }
-                                className={px-3 py-1 rounded-full text-xs font-semibold border transition }
+                                className={`px-3 py-1 rounded-full text-xs font-semibold border transition ${
+                                  isSelected
+                                    ? "border-[var(--terracotta)] bg-[var(--terracotta)] text-white"
+                                    : "border-[var(--border)]"
+                                }`}
                               >
                                 {variant.label}
                               </button>
@@ -176,74 +182,45 @@ export default function StorefrontSection({
               <label className="block text-xs font-bold uppercase mb-1">
                 A2 Bilona Ghee (1 litre): {gheeLitres}
               </label>
-              <input
-                type="range"
-                min={0}
-                max={10}
-                value={gheeLitres}
+              <input type="range" min={0} max={10} value={gheeLitres}
                 onChange={(e) => setGheeLitres(Number(e.target.value))}
-                className="w-full accent-[#c2410c]"
-              />
+                className="w-full accent-[#c2410c]" />
             </div>
-
             <div>
               <label className="block text-xs font-bold uppercase mb-1">
                 Tharparkar Dhoop (Box): {dhoopBoxes}
               </label>
-              <input
-                type="range"
-                min={0}
-                max={10}
-                value={dhoopBoxes}
+              <input type="range" min={0} max={10} value={dhoopBoxes}
                 onChange={(e) => setDhoopBoxes(Number(e.target.value))}
-                className="w-full accent-[#c2410c]"
-              />
+                className="w-full accent-[#c2410c]" />
             </div>
-
             <div>
               <label className="block text-xs font-bold uppercase mb-1">
                 Pure Kechua Khad (5 kg Bag): {khadBags}
               </label>
-              <input
-                type="range"
-                min={0}
-                max={10}
-                value={khadBags}
+              <input type="range" min={0} max={10} value={khadBags}
                 onChange={(e) => setKhadBags(Number(e.target.value))}
-                className="w-full accent-[#c2410c]"
-              />
+                className="w-full accent-[#c2410c]" />
             </div>
-
             <div>
               <label className="block text-xs font-bold uppercase mb-1">
                 “Deep Work” Bhunga Stay (Nights): {stayNights}
               </label>
-              <input
-                type="range"
-                min={0}
-                max={7}
-                value={stayNights}
+              <input type="range" min={0} max={7} value={stayNights}
                 onChange={(e) => setStayNights(Number(e.target.value))}
-                className="w-full accent-[#c2410c]"
-              />
+                className="w-full accent-[#c2410c]" />
             </div>
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-6 border-t border-[var(--border)]">
             <div>
-              <span className="block text-xs uppercase tracking-wider opacity-70">
-                Estimated Subtotal
-              </span>
+              <span className="block text-xs uppercase tracking-wider opacity-70">Estimated Subtotal</span>
               <span className="text-3xl font-serif font-bold text-[var(--terracotta)]">
                 ₹{estimatedTotal.toLocaleString("en-IN")}
               </span>
             </div>
-
-            <button
-              type="button"
-              onClick={sendCalculatorOrder}
-              className="primary-btn px-6 py-3.5 rounded-xl text-sm font-semibold cursor-pointer"
-            >
+            <button type="button" onClick={sendCalculatorOrder}
+              className="primary-btn px-6 py-3.5 rounded-xl text-sm font-semibold cursor-pointer">
               Send Selection on WhatsApp
             </button>
           </div>

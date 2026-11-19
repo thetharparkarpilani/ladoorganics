@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 
@@ -35,7 +35,7 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
     if (!trimmed || loading) return;
 
     const userMsg: ChatMessage = {
-      id: u-,
+      id: `user-${Date.now()}`,
       sender: "user",
       text: trimmed
     };
@@ -57,13 +57,13 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
 
       setMessages((prev) => [
         ...prev,
-        { id: -, sender: "bot", text: replyText }
+        { id: `bot-${Date.now()}`, sender: "bot", text: replyText }
       ]);
     } catch {
       setMessages((prev) => [
         ...prev,
         {
-          id: err-,
+          id: `error-${Date.now()}`,
           sender: "bot",
           text: "Connection issue. Please tap WhatsApp on the bottom-left for immediate help."
         }
@@ -78,10 +78,12 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
     void askQuestion(input);
   };
 
+  const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/\D/g, "")}`;
+
   return (
     <>
       <a
-        href={https://wa.me/?text=}
+        href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat on WhatsApp"
@@ -123,7 +125,11 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
             {messages.map((m) => (
               <div
                 key={m.id}
-                className={p-3 rounded-2xl max-w-[88%] }
+                className={`p-3 rounded-2xl max-w-[88%] ${
+                  m.sender === "user"
+                    ? "self-end bg-[var(--terracotta)] text-white"
+                    : "self-start bg-[var(--bg)]"
+                }`}
               >
                 {m.text}
               </div>

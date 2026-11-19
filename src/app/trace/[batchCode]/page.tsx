@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -44,7 +44,7 @@ export default function BatchTracePage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(/api/trace/);
+      const res = await fetch(`/api/trace/${encodeURIComponent(clean)}`);
       const data = await res.json();
       if (!res.ok) {
         setBatch(null);
@@ -70,7 +70,7 @@ export default function BatchTracePage() {
     e.preventDefault();
     const clean = codeInput.trim().toUpperCase();
     if (!clean) return;
-    router.push(/trace/);
+    router.push(`/trace/${encodeURIComponent(clean)}`);
     void loadBatch(clean);
   };
 

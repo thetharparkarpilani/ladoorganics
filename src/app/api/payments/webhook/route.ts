@@ -1,4 +1,4 @@
-﻿import crypto from "crypto";
+import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
@@ -23,7 +23,6 @@ export async function POST(req: NextRequest) {
 
     const rawBody = await req.text();
     const signature = req.headers.get("x-razorpay-signature");
-
     if (!verifyRazorpaySignature(rawBody, signature, webhookSecret)) {
       return NextResponse.json({ error: "Invalid payment webhook signature." }, { status: 401 });
     }
@@ -32,7 +31,7 @@ export async function POST(req: NextRequest) {
     const eventType = typeof event?.event === "string" ? event.event : "unknown";
     const paymentEntity = event?.payload?.payment?.entity ?? {};
     const providerPaymentId =
-      typeof paymentEntity?.id === "string" ? paymentEntity.id : evt_;
+      typeof paymentEntity?.id === "string" ? paymentEntity.id : `evt_${Date.now()}`;
     const providerOrderId =
       typeof paymentEntity?.order_id === "string" ? paymentEntity.order_id : null;
     const amountInr =
@@ -47,15 +46,15 @@ export async function POST(req: NextRequest) {
             ? "refunded"
             : "authorized";
 
-    const idempotencyKey = ${eventType}:;
+    const idempotencyKey = `${eventType}:${providerPaymentId}`;
 
     const inserted = await db.query(
-      INSERT INTO payments (
+      `INSERT INTO payments (
         provider, provider_order_id, provider_payment_id, idempotency_key,
         amount_inr, status, event_type, verified_at
-      ) VALUES ('razorpay', , , , , , , NOW())
+      ) VALUES ('razorpay', $1, $2, $3, $4, $5, $6, NOW())
       ON CONFLICT (idempotency_key) DO NOTHING
-      RETURNING id, status,
+      RETURNING id, status`,
       [providerOrderId, providerPaymentId, idempotencyKey, amountInr, paymentStatus, eventType]
     );
 
@@ -64,8 +63,8 @@ export async function POST(req: NextRequest) {
     }
 
     await db.query(
-      INSERT INTO audit_logs (action, entity_type, entity_id, metadata)
-       VALUES ('PAYMENT_WEBHOOK_VERIFIED', 'payment', , ::jsonb),
+      `INSERT INTO audit_logs (action, entity_type, entity_id, metadata)
+       VALUES ('PAYMENT_WEBHOOK_VERIFIED', 'payment', $1, $2::jsonb)`,
       [inserted.rows[0].id, JSON.stringify({ eventType, providerPaymentId, amountInr, paymentStatus })]
     );
 
