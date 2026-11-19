@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import React, { useState } from "react";
+import AdminOperationsPanel from "@/components/AdminOperationsPanel";
 
 interface OrderSummary {
   id: string;
@@ -45,6 +46,7 @@ export default function DashboardPage() {
   const [tab, setTab] = useState<"customer" | "admin">("customer");
   const [email, setEmail] = useState("");
   const [adminToken, setAdminToken] = useState("");
+  const [adminUnlocked, setAdminUnlocked] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -64,6 +66,7 @@ export default function DashboardPage() {
     setLoading(true);
     setError(null);
     setMetrics(null);
+    setAdminUnlocked(false);
     try {
       const res = await fetch(`/api/dashboard?mode=customer&email=${encodeURIComponent(email.trim())}`);
       const data = await res.json();
@@ -81,24 +84,31 @@ export default function DashboardPage() {
     }
   };
 
+  const refreshAdminData = async (tokenOverride?: string) => {
+    const activeToken = (tokenOverride ?? adminToken).trim();
+    const res = await fetch("/api/dashboard?mode=admin", {
+      headers: { "x-admin-token": activeToken }
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      setAdminUnlocked(false);
+      setError(data?.error || "Admin authorization failed.");
+      return;
+    }
+    setAdminUnlocked(true);
+    setMetrics(data.metrics || null);
+    setOrders(data.orders || []);
+    setBookings(data.bookings || []);
+    setSponsorships(data.sponsorships || []);
+    setAuditLogs(data.auditLogs || []);
+  };
+
   const handleLoadAdmin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/dashboard?mode=admin", {
-        headers: { "x-admin-token": adminToken.trim() }
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data?.error || "Admin authorization failed.");
-      } else {
-        setMetrics(data.metrics || null);
-        setOrders(data.orders || []);
-        setBookings(data.bookings || []);
-        setSponsorships(data.sponsorships || []);
-        setAuditLogs(data.auditLogs || []);
-      }
+      await refreshAdminData(adminToken);
     } catch {
       setError("Network error while loading admin console.");
     } finally {
@@ -247,6 +257,7 @@ export default function DashboardPage() {
                     <span>₹{Number(o.total_inr).toLocaleString("en-IN")}</span>
                   </div>
                   <p className="opacity-75 mt-1">Status: {o.status}</p>
+                  {adminUnlocked && <p className="font-mono opacity-60 mt-1 break-all">ID: {o.id}</p>}
                 </li>
               ))}
             </ul>
@@ -268,6 +279,7 @@ export default function DashboardPage() {
                   <p className="opacity-75 mt-1">
                     {b.nights_count} night(s) • {b.guests_count} guest(s) • {b.status}
                   </p>
+                  {adminUnlocked && <p className="font-mono opacity-60 mt-1 break-all">ID: {b.id}</p>}
                 </li>
               ))}
             </ul>
@@ -289,12 +301,20 @@ export default function DashboardPage() {
                   <p className="opacity-75 mt-1">
                     Plan: {s.plan_type} • {s.status}
                   </p>
+                  {adminUnlocked && <p className="font-mono opacity-60 mt-1 break-all">ID: {s.id}</p>}
                 </li>
               ))}
             </ul>
           )}
         </div>
       </div>
+
+      {adminUnlocked && (
+        <AdminOperationsPanel
+          adminToken={adminToken}
+          onRefreshDashboard={() => refreshAdminData(adminToken)}
+        />
+      )}
 
       {auditLogs.length > 0 && (
         <div className="mt-8 bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6">
