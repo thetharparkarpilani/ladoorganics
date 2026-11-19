@@ -5,6 +5,8 @@ import type { LocaleCode, ProductDTO } from "@/types/domain";
 import { TRANSLATIONS } from "@/lib/i18n";
 import StorefrontSection from "@/components/StorefrontSection";
 import FarmExperienceSection from "@/components/FarmExperienceSection";
+import FarmCalculatorsSuite from "@/components/FarmCalculatorsSuite";
+import JournalLibrarySection from "@/components/JournalLibrarySection";
 import ConciergeWidget from "@/components/ConciergeWidget";
 import CartCheckoutDrawer, { type CartBagItem } from "@/components/CartCheckoutDrawer";
 
@@ -148,7 +150,8 @@ export default function HomePage() {
             <a href="#store" className="hover:text-[var(--terracotta)] transition">{dict.section_store}</a>
             <a href="#adopt" className="hover:text-[var(--terracotta)] transition">{dict.section_adopt}</a>
             <a href="#experiences" className="hover:text-[var(--terracotta)] transition">Stays & Seva</a>
-            <a href="#blueprint" className="hover:text-[var(--terracotta)] transition">{dict.section_blueprint}</a>
+            <a href="#calculators-suite" className="hover:text-[var(--terracotta)] transition">Calculators</a>
+            <a href="#journal" className="hover:text-[var(--terracotta)] transition">Journal</a>
             <a href="/trace/LO-PILANI-SAMPLE-001" className="hover:text-[var(--terracotta)] transition">Trace Batch</a>
             <a href="/dashboard" className="hover:text-[var(--terracotta)] transition">My Journey</a>
           </nav>
@@ -254,6 +257,8 @@ export default function HomePage() {
           onAddToBag={handleAddToBag}
         />
 
+        <FarmCalculatorsSuite locale={locale} />
+
         <section id="adopt" className="py-20 px-4 sm:px-6 lg:px-8 border-t border-[var(--border)]">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
@@ -284,6 +289,8 @@ export default function HomePage() {
         </section>
 
         <FarmExperienceSection whatsappNumber={whatsappNumber} />
+
+        <JournalLibrarySection locale={locale} />
 
         <section id="blueprint" className="py-20 px-4 sm:px-6 lg:px-8 border-t border-[var(--border)] bg-[var(--surface)]">
           <div className="max-w-5xl mx-auto text-center">

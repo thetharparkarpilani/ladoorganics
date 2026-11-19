@@ -10,7 +10,8 @@ export const TRANSLATIONS: Record<LocaleCode, Record<string, string>> = {
     section_store: "The Circular Store",
     section_adopt: "Adopt a Tharparkar Calf",
     section_blueprint: "The Cow as a Coconut",
-    section_journal: "The Pilani Journal"
+    section_journal: "The Pilani Journal & Knowledge Library",
+    section_calculators: "Farm & Household Calculators"
   },
   hi: {
     brand_tagline: "सीधे पिलानी से • 100% शुद्ध थारपारकर परंपरा",
@@ -21,7 +22,8 @@ export const TRANSLATIONS: Record<LocaleCode, Record<string, string>> = {
     section_store: "सर्कुलर स्टोर",
     section_adopt: "थारपारकर बछड़ा गोद लें",
     section_blueprint: "गाय: एक संपूर्ण पारिस्थितिकी तंत्र",
-    section_journal: "पिलानी जर्नल"
+    section_journal: "पिलानी जर्नल और नॉलेज लाइब्रेरी",
+    section_calculators: "फार्म और घरेलू कैलकुलेटर"
   },
   ma: {
     brand_tagline: "सीधो पिलानी सूं • 100% चोखो थारपारकर",
@@ -32,6 +34,7 @@ export const TRANSLATIONS: Record<LocaleCode, Record<string, string>> = {
     section_store: "देसी हाट",
     section_adopt: "थारपारकर बाछड़ी गोद ल्यो",
     section_blueprint: "गाय: हर चीज़ काम री",
-    section_journal: "पिलानी री बातां"
+    section_journal: "पिलानी री बातां अर पोथीघर",
+    section_calculators: "फार्म अर घर रा हिसाब"
   }
 };
