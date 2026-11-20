@@ -1,110 +1,143 @@
 ﻿"use client";
 
-import React, { useState } from "react";
-import { useCart } from "@/context/CartContext";
+import React, { useState, use } from "react";
 
-// In production, this data is fetched dynamically based on params.slug via Server Components.
-// We mock the client-side hydration for architectural demonstration.
-const PRODUCT_DATA = {
-  slug: "a2-bilona-ghee",
-  name: "A2 Bilona Ghee",
-  description: "Ethically sourced, hand-churned from indigenous Tharparkar cow curd using the Vedic wooden Bilona method (~30L milk per 1L ghee).",
-  variants: [
-    { sku: "LO-GHEE-250", label: "250 ml", priceInr: 1350 },
-    { sku: "LO-GHEE-500", label: "500 ml", priceInr: 2600 },
-    { sku: "LO-GHEE-1000", label: "1 Litre", priceInr: 5000 }
-  ],
-  traceability: "Pilani Gaushala, Rajasthan",
-  storage: "Store in a cool, dry place away from direct sunlight."
+interface ProductRecord {
+  slug: string;
+  name: string;
+  category: string;
+  description: string;
+  sourcing: string;
+  productionMethod: string;
+  storage: string;
+  variants: Array<{ sku: string; label: string; priceInr: number }>;
+}
+
+const CATALOG_DETAIL: Record<string, ProductRecord> = {
+  "a2-bilona-ghee": {
+    slug: "a2-bilona-ghee",
+    name: "A2 Bilona Ghee",
+    category: "Indigenous Tharparkar Dairy",
+    description: "Hand-churned from indigenous Tharparkar cow curd using the traditional Bilona process in Pilani, Rajasthan.",
+    sourcing: "Pilani Gaushala, Jhunjhunu, Rajasthan (MSME: UDYAM-RJ-21-0104324)",
+    productionMethod: "Whole A2 milk cultured into curd and hand-churned via traditional wooden Bilona",
+    storage: "Store in a cool, dry place away from direct sunlight. Always use a clean, dry spoon.",
+    variants: [
+      { sku: "LO-GHEE-250", label: "250 ml", priceInr: 1350 },
+      { sku: "LO-GHEE-500", label: "500 ml", priceInr: 2600 },
+      { sku: "LO-GHEE-1000", label: "1 litre", priceInr: 5000 }
+    ]
+  },
+  "tharparkar-dhoop": {
+    slug: "tharparkar-dhoop",
+    name: "Tharparkar Dhoop",
+    category: "Sacred Cow-Dung Aromatics",
+    description: "Crafted from indigenous Tharparkar cow dung and natural botanical binders in Pilani.",
+    sourcing: "Pilani Gaushala, Rajasthan",
+    productionMethod: "Sun-dried indigenous cow dung blended with natural botanicals",
+    storage: "Keep dry in an airtight container away from moisture.",
+    variants: [{ sku: "LO-DHOOP-BOX", label: "Box", priceInr: 1000 }]
+  },
+  "pure-kechua-khad": {
+    slug: "pure-kechua-khad",
+    name: "Pure Kechua Khad",
+    category: "Biogas-Slurry Vermicompost",
+    description: "Organic vermicompost enriched with biogas slurry from the Pilani circular ecosystem.",
+    sourcing: "Pilani Farm Ecosystem, Rajasthan",
+    productionMethod: "Anaerobic biogas slurry converted via vermicomposting beds",
+    storage: "Store in a shaded, ventilated place.",
+    variants: [{ sku: "LO-KHAD-5KG", label: "5 kg Bag", priceInr: 2000 }]
+  },
+  "deep-work-bhunga-stay": {
+    slug: "deep-work-bhunga-stay",
+    name: '"Deep Work" Bhunga Stay',
+    category: "Agro-Tourism & Rural Retreat",
+    description: "Climate-responsive Rajasthani mud architecture in Pilani designed for focused work and farm immersion.",
+    sourcing: "Pilani, Jhunjhunu, Rajasthan",
+    productionMethod: "Traditional mud-house accommodation with farm access",
+    storage: "Dates and meal preferences confirmed directly prior to arrival.",
+    variants: [{ sku: "LO-STAY-NIGHT", label: "Night", priceInr: 4000 }]
+  }
 };
 
-export default function ProductDetailPage({ params }: { params: { slug: string } }) {
-  const { addItem } = useCart();
-  const [selectedSku, setSelectedSku] = useState(PRODUCT_DATA.variants[2].sku);
-  const [quantity, setQuantity] = useState(1);
+// NEXT.JS 15 FIX: Type params as a Promise and unwrap with React.use()
+export default function ProductDetailPage(props: { params: Promise<{ slug: string }> }) {
+  const params = use(props.params);
+  const slug = decodeURIComponent(params.slug || "a2-bilona-ghee");
+  const product = CATALOG_DETAIL[slug] ?? CATALOG_DETAIL["a2-bilona-ghee"];
+  const [selectedIdx, setSelectedIdx] = useState(product.variants.length - 1);
 
-  const activeVariant = PRODUCT_DATA.variants.find(v => v.sku === selectedSku)!;
+  const activeVariant = product.variants[selectedIdx] ?? product.variants[0];
+  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919636100337";
 
-  const handleAddToCart = () => {
-    addItem({
-      sku: activeVariant.sku,
-      slug: PRODUCT_DATA.slug,
-      title: `${PRODUCT_DATA.name} (${activeVariant.label})`,
-      priceInr: activeVariant.priceInr
-    }, quantity);
-    alert("Added to Secure Cart!");
-  };
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+    `Namaste Lado Organics!\nProduct: ${product.name} (${activeVariant.label})\nListed Price: ₹${activeVariant.priceInr.toLocaleString("en-IN")}\nPlease share batch availability, shipping, and payment details.`
+  )}`;
 
   return (
-    <div className="min-h-screen py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <div className="mb-8 flex items-center text-xs font-bold uppercase tracking-widest text-[var(--muted)]">
-        <a href="/store" className="hover:text-[var(--terracotta)] transition">Store</a>
-        <span className="mx-3">/</span>
-        <span className="text-[var(--terracotta)]">{PRODUCT_DATA.name}</span>
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+        <a href="/#store" className="text-sm font-bold text-[var(--terracotta)] hover:underline">
+          ← Back to Circular Store
+        </a>
+        <a href="/trace/LO-PILANI-SAMPLE-001" className="text-xs font-bold underline">
+          Inspect Batch Traceability →
+        </a>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-12 lg:gap-20">
-        {/* Product Imagery */}
-        <div className="aspect-square bg-[#2b180c] rounded-3xl flex items-center justify-center border border-[var(--border)] relative overflow-hidden shadow-sm">
-           <i className="fas fa-jar text-9xl text-[#fbbf24] opacity-20"></i>
-           <div className="absolute bottom-6 left-6 right-6 flex gap-4">
-             <div className="bg-white/10 backdrop-blur px-4 py-2 rounded-xl text-[#fef3c7] text-xs font-mono border border-white/20">
-               Batch Traceable
-             </div>
-             <div className="bg-white/10 backdrop-blur px-4 py-2 rounded-xl text-[#fef3c7] text-xs font-mono border border-white/20">
-               100% A2 Beta-Casein
-             </div>
-           </div>
+      <div className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 sm:p-10 shadow-sm space-y-6">
+        <div>
+          <span className="text-xs font-bold uppercase tracking-widest text-[var(--terracotta)]">
+            {product.category}
+          </span>
+          <h1 className="text-3xl sm:text-5xl font-serif font-bold mt-1 mb-3">{product.name}</h1>
+          <p className="text-sm sm:text-base opacity-85 leading-relaxed">{product.description}</p>
         </div>
 
-        {/* Product Configuration */}
-        <div className="flex flex-col justify-center">
-          <h1 className="text-4xl sm:text-5xl font-serif font-bold text-[var(--mud)] mb-4">{PRODUCT_DATA.name}</h1>
-          <p className="text-3xl font-serif font-bold text-[var(--terracotta)] mb-8">₹{activeVariant.priceInr.toLocaleString("en-IN")}</p>
-          
-          <p className="text-sm text-[var(--muted)]/90 leading-relaxed mb-8">{PRODUCT_DATA.description}</p>
-
-          <div className="mb-8">
-            <span className="block text-xs font-bold uppercase tracking-widest mb-3">Select Size</span>
-            <div className="flex flex-wrap gap-3">
-              {PRODUCT_DATA.variants.map((v) => (
-                <button 
+        {product.variants.length > 1 && (
+          <div>
+            <p className="text-xs font-bold uppercase mb-2">Select Pack Size</p>
+            <div className="flex flex-wrap gap-2">
+              {product.variants.map((v, idx) => (
+                <button
                   key={v.sku}
-                  onClick={() => setSelectedSku(v.sku)}
-                  className={`px-5 py-3 rounded-xl border text-sm font-bold transition ${selectedSku === v.sku ? 'border-[var(--terracotta)] bg-[var(--terracotta)]/10 text-[var(--terracotta)]' : 'border-[var(--border)] hover:border-[var(--mud)] text-[var(--muted)]'}`}
+                  type="button"
+                  onClick={() => setSelectedIdx(idx)}
+                  className={`px-4 py-2 rounded-full text-xs font-bold border cursor-pointer ${
+                    idx === selectedIdx
+                      ? "bg-[var(--mud)] text-white border-[var(--mud)]"
+                      : "border-[var(--border)] hover:border-[var(--terracotta)]"
+                  }`}
                 >
-                  {v.label}
+                  {v.label} — ₹{v.priceInr.toLocaleString("en-IN")}
                 </button>
               ))}
             </div>
           </div>
+        )}
 
-          <div className="flex gap-4 mb-10">
-            <div className="flex items-center border border-[var(--border)] rounded-xl bg-[var(--bg)]">
-              <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-4 py-3 hover:text-[var(--terracotta)] transition"><i className="fas fa-minus text-xs"></i></button>
-              <span className="w-8 text-center font-bold text-sm">{quantity}</span>
-              <button onClick={() => setQuantity(Math.min(10, quantity + 1))} className="px-4 py-3 hover:text-[var(--terracotta)] transition"><i className="fas fa-plus text-xs"></i></button>
-            </div>
-            <button onClick={handleAddToCart} className="flex-1 primary-btn py-3 rounded-xl font-bold flex justify-center items-center gap-2">
-              <i className="fas fa-shopping-bag"></i> Add to Bag
-            </button>
+        <div className="p-5 rounded-2xl bg-[var(--bg)] border border-[var(--border)] flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <span className="block text-xs uppercase opacity-65">Selected Variant ({activeVariant.label})</span>
+            <span className="text-3xl font-serif font-bold text-[var(--terracotta)]">
+              ₹{activeVariant.priceInr.toLocaleString("en-IN")}
+            </span>
           </div>
-
-          <div className="space-y-4 pt-8 border-t border-[var(--border)]">
-             <div className="flex gap-4">
-               <i className="fas fa-map-marker-alt text-[var(--terracotta)] text-lg w-6"></i>
-               <div>
-                 <span className="block text-sm font-bold text-[var(--mud)] mb-1">Source Origin</span>
-                 <span className="text-xs text-[var(--muted)]">{PRODUCT_DATA.traceability}</span>
-               </div>
-             </div>
-             <div className="flex gap-4">
-               <i className="fas fa-box text-[var(--terracotta)] text-lg w-6"></i>
-               <div>
-                 <span className="block text-sm font-bold text-[var(--mud)] mb-1">Storage</span>
-                 <span className="text-xs text-[var(--muted)]">{PRODUCT_DATA.storage}</span>
-               </div>
-             </div>
+          <div className="flex flex-wrap gap-3">
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="primary-btn px-6 py-3 rounded-xl text-xs font-bold"
+            >
+              Order via WhatsApp (+91 96361 00337)
+            </a>
+            <a
+              href="/#store"
+              className="px-5 py-3 rounded-xl text-xs font-bold border border-[var(--border)] bg-[var(--surface)]"
+            >
+              Add in Main Store Bag
+            </a>
           </div>
         </div>
       </div>
