@@ -1,21 +1,20 @@
-﻿-- Lado Organics 2.0 Initial Seed Data (Pilani, Rajasthan)
-INSERT INTO categories (slug, name_en, name_hi, name_ma) VALUES
-  ('dairy-ghee', 'A2 Bilona Ghee', 'A2 बिलोना घी', 'A2 बिलोना घी'),
-  ('sacred-dhoop', 'Tharparkar Dhoop', 'थारपारकर धूप', 'थारपारकर धूप'),
-  ('soil-compost', 'Pure Kechua Khad', 'केंचुआ खाद', 'केंचुआ खाद'),
-  ('farm-stays', 'Bhunga Farm Stays', 'भुंगा फार्म स्टे', 'भुंगा स्टे')
+﻿-- seed.sql
+INSERT INTO products (id, slug, name_en, description_en) VALUES
+  ('11111111-1111-1111-1111-111111111111', 'a2-bilona-ghee', 'A2 Bilona Ghee', 'Ethically sourced, hand-churned from indigenous Tharparkar cow milk using the Vedic Bilona method.'),
+  ('22222222-2222-2222-2222-222222222222', 'tharparkar-dhoop', 'Tharparkar Dhoop', 'Pure cow dung and natural binders for air purification.'),
+  ('33333333-3333-3333-3333-333333333333', 'pure-kechua-khad', 'Pure Kechua Khad', 'Nutrient-dense organic vermicompost fed by our biogas slurry.'),
+  ('44444444-4444-4444-4444-444444444444', 'deep-work-bhunga-stay', '"Deep Work" Bhunga Stay', 'Climate-responsive mud-house architecture in Pilani.')
 ON CONFLICT (slug) DO NOTHING;
 
-INSERT INTO products (slug, name_en, name_hi, name_ma, description_en, sourcing_info, production_method, storage_instructions) VALUES
-  ('a2-bilona-ghee', 'A2 Bilona Ghee', 'A2 बिलोना घी', 'A2 बिलोना घी', 'Hand-churned from indigenous Tharparkar cow curd using the Vedic Bilona method.', 'Pilani Gaushala, Rajasthan', 'Curd-churned wooden Bilona process', 'Store in a cool, dry place away from direct sunlight.')
-ON CONFLICT (slug) DO NOTHING;
+INSERT INTO product_variants (product_id, sku, label, price_inr, stock_qty, is_default) VALUES
+  ('11111111-1111-1111-1111-111111111111', 'LO-GHEE-1L', '1 Liter', 5000, 25, TRUE),
+  ('22222222-2222-2222-2222-222222222222', 'LO-DHOOP-BOX', 'Box', 1000, 50, TRUE),
+  ('33333333-3333-3333-3333-333333333333', 'LO-KHAD-5KG', '5kg Bag', 2000, 30, TRUE),
+  ('44444444-4444-4444-4444-444444444444', 'LO-STAY-NIGHT', 'Night', 4000, 10, TRUE)
+ON CONFLICT (sku) DO NOTHING;
 
-INSERT INTO cow_profiles (slug, name, breed, story, sponsorship_available, monthly_amount_inr) VALUES
-  ('dholi-sheri', 'Dholi Sheri', 'Tharparkar', 'Indigenous Tharparkar calf at the Pilani Gaushala.', TRUE, NULL),
-  ('tara', 'Tara', 'Tharparkar', 'Indigenous Tharparkar calf at the Pilani Gaushala.', TRUE, NULL),
-  ('roshni', 'Roshni', 'Tharparkar', 'Indigenous Tharparkar calf at the Pilani Gaushala.', TRUE, NULL)
-ON CONFLICT (slug) DO NOTHING;
-
-INSERT INTO bhunga_stays (slug, title, nightly_rate_inr, max_guests, description) VALUES
-  ('deep-work-bhunga', '"Deep Work" Bhunga Stay', 4000, 2, 'Climate-responsive mud architecture in Pilani for focused work and farm living.')
-ON CONFLICT (slug) DO NOTHING;
+INSERT INTO cow_profiles (name, description) VALUES
+  ('Dholi Sheri', 'Pure Tharparkar Calf'),
+  ('Tara', 'Pure Tharparkar Calf'),
+  ('Roshni', 'Pure Tharparkar Calf')
+ON CONFLICT (name) DO NOTHING;
