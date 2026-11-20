@@ -8,102 +8,138 @@ interface AuthModalProps {
 }
 
 export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
-  const [method, setMethod] = useState<"otp" | "email">("otp");
-  const [identifier, setIdentifier] = useState("");
+  const [step, setStep] = useState<"phone" | "otp">("phone");
+  const [phone, setPhone] = useState("");
+  const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: "ok" | "err"; text: string } | null>(null);
 
   if (!isOpen) return null;
 
-  const handleRequestAuth = async (e: React.FormEvent) => {
+  const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
     
-    // Simulate network delay for Auth provider
-    setTimeout(() => {
-      setMessage({ 
-        type: "err", 
-        text: "Authentication provider not configured in .env.local. Please configure NEXT_PUBLIC_AUTH_PROVIDER to enable secure customer sessions." 
+    try {
+      const res = await fetch("/api/auth/otp/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone })
       });
+      const data = await res.json();
+      
+      if (!res.ok) throw new Error(data.error || "Failed to send OTP");
+      
+      setMessage({ type: "ok", text: data.message });
+      setStep("otp");
+    } catch (err) {
+      setMessage({ type: "err", text: err instanceof Error ? err.message : "Network error" });
+    } finally {
       setLoading(false);
-    }, 800);
+    }
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage(null);
+    
+    try {
+      const res = await fetch("/api/auth/otp/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone, otp })
+      });
+      const data = await res.json();
+      
+      if (!res.ok) throw new Error(data.error || "Invalid OTP");
+      
+      setMessage({ type: "ok", text: "Secure session established. Redirecting..." });
+      
+      // Force page reload to apply HttpOnly secure cookie across the app
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 1000);
+      
+    } catch (err) {
+      setMessage({ type: "err", text: err instanceof Error ? err.message : "Verification failed" });
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
       <div className="w-full max-w-md bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 sm:p-8 shadow-2xl relative">
-        <button 
-          onClick={onClose}
-          className="absolute top-4 right-4 text-xs font-bold uppercase tracking-widest opacity-60 hover:opacity-100"
-        >
+        <button onClick={onClose} className="absolute top-4 right-4 text-xs font-bold uppercase tracking-widest opacity-60 hover:opacity-100 transition">
           Close
         </button>
         
-        <div className="mb-6">
+        <div className="mb-6 text-center">
+          <div className="w-12 h-12 mx-auto bg-[#3b2314] text-[#fbbf24] rounded-full flex items-center justify-center text-xl mb-4 border border-[var(--border)]">
+             <i className="fas fa-leaf"></i>
+          </div>
           <h2 className="text-2xl font-serif font-bold mb-2">My Lado Journey</h2>
-          <p className="text-xs opacity-80">Log in to track orders, manage your subscription preferences, and view sponsorship records.</p>
+          <p className="text-xs opacity-80">Secure login to track A2 Ghee batches, Bhunga stays, and Gau Seva impact.</p>
         </div>
 
-        <div className="flex gap-2 mb-6 p-1 bg-[var(--bg)] rounded-xl border border-[var(--border)]">
-          <button 
-            type="button"
-            onClick={() => setMethod("otp")}
-            className={`flex-1 py-2 text-xs font-bold rounded-lg transition ${method === "otp" ? "bg-[var(--surface)] shadow-sm" : "opacity-60"}`}
-          >
-            Mobile OTP
-          </button>
-          <button 
-            type="button"
-            onClick={() => setMethod("email")}
-            className={`flex-1 py-2 text-xs font-bold rounded-lg transition ${method === "email" ? "bg-[var(--surface)] shadow-sm" : "opacity-60"}`}
-          >
-            Email Login
-          </button>
-        </div>
-
-        <form onSubmit={handleRequestAuth} className="space-y-4">
-          <div>
-            <label className="block text-xs font-bold uppercase mb-1">
-              {method === "otp" ? "Mobile Number" : "Email Address"}
-            </label>
-            <input
-              type={method === "otp" ? "tel" : "email"}
-              required
-              value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
-              placeholder={method === "otp" ? "+91..." : "you@example.com"}
-              className="w-full p-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-sm focus:outline-none focus:border-[var(--terracotta)]"
-            />
+        {message && (
+          <div className={`p-4 rounded-xl text-xs font-medium mb-4 border ${message.type === "ok" ? "bg-green-50 text-green-900 border-green-200" : "bg-red-50 text-red-900 border-red-200"}`}>
+            {message.text}
           </div>
+        )}
 
-          {message && (
-            <div className={`p-3 rounded-xl text-xs font-medium ${message.type === "ok" ? "bg-green-50 text-green-900" : "bg-red-50 text-red-900"}`}>
-              {message.text}
+        {step === "phone" ? (
+          <form onSubmit={handleSendOtp} className="space-y-4">
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-widest mb-1 opacity-70">Mobile Number</label>
+              <div className="flex bg-[var(--bg)] border border-[var(--border)] rounded-xl overflow-hidden focus-within:border-[var(--terracotta)] transition">
+                <span className="px-4 py-3 bg-[var(--surface)] border-r border-[var(--border)] text-sm font-bold text-[var(--muted)]">+91</span>
+                <input
+                  type="tel"
+                  required
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="98765 43210"
+                  className="w-full p-3 bg-transparent text-sm focus:outline-none text-[var(--mud)] font-medium"
+                />
+              </div>
             </div>
-          )}
 
-          <button 
-            type="submit" 
-            disabled={loading || !identifier}
-            className="w-full primary-btn py-3 rounded-xl text-sm font-bold disabled:opacity-50"
-          >
-            {loading ? "Verifying..." : (method === "otp" ? "Send Secure OTP" : "Continue with Email")}
-          </button>
+            <button type="submit" disabled={loading || phone.length < 10} className="w-full primary-btn py-3.5 rounded-xl text-sm font-bold disabled:opacity-50 transition shadow-md">
+              {loading ? "Transmitting..." : "Send Secure OTP"}
+            </button>
+            
+            <div className="pt-4 text-center">
+               <button type="button" className="text-xs font-bold border border-[var(--border)] px-6 py-3 rounded-xl hover:border-[var(--terracotta)] transition w-full">
+                 <i className="fab fa-google mr-2 text-[var(--terracotta)]"></i> Continue with Google OAuth
+               </button>
+            </div>
+          </form>
+        ) : (
+          <form onSubmit={handleVerifyOtp} className="space-y-4">
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-widest mb-1 opacity-70">Enter OTP sent to +91 {phone}</label>
+              <input
+                type="text"
+                required
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                placeholder="123456"
+                className="w-full p-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-center tracking-[0.5em] font-mono text-lg focus:outline-none focus:border-[var(--terracotta)] text-[var(--mud)]"
+                maxLength={6}
+              />
+            </div>
 
-          <div className="relative py-4 text-center">
-            <span className="bg-[var(--surface)] px-2 text-xs opacity-50 relative z-10">OR</span>
-            <div className="absolute top-1/2 left-0 w-full h-[1px] bg-[var(--border)]"></div>
-          </div>
-
-          <button 
-            type="button" 
-            onClick={handleRequestAuth}
-            className="w-full py-3 rounded-xl text-sm font-bold border border-[var(--border)] bg-[var(--bg)] hover:border-[var(--terracotta)] transition"
-          >
-            Continue with Google
-          </button>
-        </form>
+            <button type="submit" disabled={loading || otp.length < 4} className="w-full primary-btn py-3.5 rounded-xl text-sm font-bold disabled:opacity-50 transition shadow-md">
+              {loading ? "Verifying Token..." : "Authenticate Session"}
+            </button>
+            
+            <button type="button" onClick={() => setStep("phone")} className="w-full text-center text-xs font-bold text-[var(--muted)] hover:text-[var(--terracotta)] transition pt-2">
+              Change Mobile Number
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );
