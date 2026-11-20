@@ -1,10 +1,22 @@
 ﻿{
-  "name": "Lado Organics 2.0",
+  "name": "Lado Organics | Premium Ecosystem",
   "short_name": "Lado Organics",
-  "description": "Tharparkar A2 Bilona Ghee, Dhoop, Kechua Khad, Batch Traceability, and Bhunga Farm Stays from Pilani, Rajasthan.",
+  "description": "100% pure Tharparkar A2 Bilona Ghee, Cow Dung Dhoop, Biogas Vermicompost & Deep Work Bhunga Farm Stays from Pilani.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#FDF9F5",
-  "theme_color": "#78350f",
-  "icons": []
+  "theme_color": "#204E36",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }
