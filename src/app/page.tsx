@@ -8,6 +8,7 @@ import EssentialsClubSection from "@/components/EssentialsClubSection";
 import FarmCalculatorsSuite from "@/components/FarmCalculatorsSuite";
 import FarmExperienceSection from "@/components/FarmExperienceSection";
 import BuildYourOwnExperience from "@/components/BuildYourOwnExperience";
+import GauSevaTransparencySection from "@/components/GauSevaTransparencySection";
 import JournalLibrarySection from "@/components/JournalLibrarySection";
 import CorporateGiftingSection from "@/components/CorporateGiftingSection";
 import CowAsCoconutMap from "@/components/CowAsCoconutMap";
@@ -154,7 +155,7 @@ export default function HomePage() {
             <a href="#store" className="hover:text-[var(--terracotta)] transition">{dict.section_store}</a>
             <a href="#essentials-club" className="hover:text-[var(--terracotta)] transition">Essentials Club</a>
             <a href="#build-experience" className="hover:text-[var(--terracotta)] transition">Build Experience</a>
-            <a href="#calculators-suite" className="hover:text-[var(--terracotta)] transition">Calculators</a>
+            <a href="#transparency-faq" className="hover:text-[var(--terracotta)] transition">FAQ & Seva</a>
             <a href="#journal" className="hover:text-[var(--terracotta)] transition">Journal</a>
             <a href="#corporate" className="hover:text-[var(--terracotta)] transition">Corporate</a>
             <a href="/trace/LO-PILANI-SAMPLE-001" className="hover:text-[var(--terracotta)] transition">Trace Batch</a>
@@ -296,6 +297,8 @@ export default function HomePage() {
         <FarmExperienceSection whatsappNumber={whatsappNumber} />
 
         <BuildYourOwnExperience whatsappNumber={whatsappNumber} />
+
+        <GauSevaTransparencySection />
 
         <JournalLibrarySection locale={locale} />
 

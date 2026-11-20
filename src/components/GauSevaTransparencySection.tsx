@@ -1,0 +1,130 @@
+﻿"use client";
+
+import React, { useEffect, useState } from "react";
+
+interface TransparencyRow {
+  calf_name: string;
+  entries_count: number;
+  recorded_amount_inr: string | number;
+}
+
+const FAQS = [
+  {
+    q: "How is Lado Organics A2 Bilona Ghee made in Pilani?",
+    a: "It is crafted using traditional curd culturing and Bilona churning from indigenous Tharparkar cow milk in Pilani, Rajasthan, with batch records traceable at /trace/LO-PILANI-SAMPLE-001."
+  },
+  {
+    q: "How do 'Deep Work' Bhunga Stay bookings prevent double booking?",
+    a: "Stay requests check existing active date ranges on the server in PostgreSQL before recording a reservation at the ₹4,000/night listed baseline rate."
+  },
+  {
+    q: "Are shipping, taxes, or automatic recurring charges already finalized?",
+    a: "Listed prices (₹5,000/1L Ghee, ₹1,000/Box Dhoop, ₹2,000/5kg Kechua Khad, ₹4,000/Night Bhunga Stay) are baseline rates. Final shipping/taxes are confirmed prior to settlement, and recurring deliveries do not auto-debit until payment mandates are configured."
+  },
+  {
+    q: "Which calves are featured in our Pilani Gaushala sponsorship section?",
+    a: "Dholi Sheri, Tara, and Roshni are featured in our Pilani calf sponsorship workflow."
+  }
+];
+
+export default function GauSevaTransparencySection() {
+  const [rows, setRows] = useState<TransparencyRow[]>([]);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/sponsorships/transparency")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (active && Array.isArray(data?.summary)) {
+          setRows(data.summary);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const orgJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Lado Organics",
+    url: "https://ladoorganics.in",
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Pilani",
+      addressRegion: "Rajasthan",
+      addressCountry: "IN"
+    }
+  };
+
+  return (
+    <section id="transparency-faq" className="py-20 px-4 sm:px-6 lg:px-8 border-t border-[var(--border)]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+      />
+
+      <div className="max-w-6xl mx-auto grid lg:grid-cols-12 gap-8 items-start">
+        <div className="lg:col-span-5 bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 sm:p-8 shadow-sm">
+          <span className="text-xs font-bold uppercase tracking-widest text-[var(--terracotta)]">
+            Gau Seva Ledger
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-serif font-bold mt-1 mb-2">
+            Sponsorship Transparency
+          </h2>
+          <p className="text-xs opacity-80 mb-5 leading-relaxed">
+            Displays recorded entries for Dholi Sheri, Tara, and Roshni. Allocations for fodder, shelter, and veterinary care are managed transparently without unsupported tax-deduction claims.
+          </p>
+
+          {rows.length === 0 ? (
+            <p className="text-xs opacity-70 p-4 rounded-2xl bg-[var(--bg)] border border-[var(--border)]">
+              No recorded sponsorship totals displayed yet. Submit a request in the sponsorship form to log an entry once PostgreSQL is connected.
+            </p>
+          ) : (
+            <ul className="space-y-3 text-xs">
+              {rows.map((r) => (
+                <li
+                  key={r.calf_name}
+                  className="p-3.5 rounded-2xl bg-[var(--bg)] border border-[var(--border)] flex items-center justify-between"
+                >
+                  <div>
+                    <p className="font-bold text-sm">{r.calf_name}</p>
+                    <p className="opacity-70">{r.entries_count} recorded entry(s)</p>
+                  </div>
+                  <span className="font-serif font-bold text-base text-[var(--terracotta)]">
+                    ₹{Number(r.recorded_amount_inr).toLocaleString("en-IN")}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div className="lg:col-span-7 bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 sm:p-8 shadow-sm">
+          <span className="text-xs font-bold uppercase tracking-widest text-[var(--terracotta)]">
+            Frequently Asked Questions
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-serif font-bold mt-1 mb-5">
+            Clear Answers Before You Order or Visit
+          </h2>
+
+          <div className="space-y-3 text-xs sm:text-sm">
+            {FAQS.map((item) => (
+              <details
+                key={item.q}
+                className="rounded-2xl border border-[var(--border)] bg-[var(--bg)] p-4"
+              >
+                <summary className="font-bold cursor-pointer list-none flex items-center justify-between gap-2">
+                  <span>{item.q}</span>
+                  <span className="text-[var(--terracotta)] font-mono">+</span>
+                </summary>
+                <p className="mt-2.5 opacity-80 leading-relaxed text-xs sm:text-sm">{item.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
