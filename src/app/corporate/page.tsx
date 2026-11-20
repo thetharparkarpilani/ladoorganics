@@ -1,155 +1,143 @@
 ﻿"use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 
-export default function CorporatePortalPage() {
+export default function CorporateGiftingPage() {
+  const [formData, setFormData] = useState({
+    companyName: "", contactName: "", email: "", phone: "",
+    eventType: "Diwali Gifting", estimatedQuantity: "50-100", targetDate: "", requirements: ""
+  });
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<{ type: "ok" | "err"; text: string } | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
-
-    const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries());
+    setMessage(null);
 
     try {
-      const res = await fetch("/api/corporate", {
+      const res = await fetch("/api/b2b", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
+        body: JSON.stringify(formData)
       });
-
-      if (!res.ok) {
-        const json = await res.json();
-        throw new Error(json.error || "Failed to submit inquiry.");
-      }
-
-      setSuccess(true);
-      (e.target as HTMLFormElement).reset();
+      const data = await res.json();
+      
+      if (!res.ok) throw new Error(data.error);
+      setMessage({ type: "ok", text: data.message });
+      setFormData({ companyName: "", contactName: "", email: "", phone: "", eventType: "Diwali Gifting", estimatedQuantity: "50-100", targetDate: "", requirements: "" });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Network error");
+      setMessage({ type: "err", text: err instanceof Error ? err.message : "Network error. Please try again." });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg)]">
-      {/* Hero Section */}
-      <section className="bg-[var(--mud)] text-white py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <span className="text-xs font-bold uppercase tracking-widest text-[var(--earth)] mb-4 block">Module Q • B2B & Wholesale</span>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold mb-6">Corporate Partnerships</h1>
-          <p className="text-sm sm:text-base text-white/80 leading-relaxed max-w-2xl mx-auto">
-            Partner with Lado Organics for bulk A2 Bilona Ghee orders, premium corporate gifting, zero-waste consulting, and executive offsite retreats in our Bhunga farm stays.
+    <div className="min-h-screen organic-gradient py-20 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-start">
+        
+        {/* Editorial Value Proposition */}
+        <div className="pt-8">
+          <Link href="/" className="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] hover:text-[var(--accent-terracotta)] transition mb-8 inline-block">← Back to Ecosystem</Link>
+          <span className="text-xs font-bold tracking-[0.2em] text-[var(--accent-forest)] mb-4 uppercase block">Module Q • B2B & Wholesale</span>
+          <h1 className="text-4xl md:text-5xl font-serif font-bold text-[var(--text-charcoal)] mb-6 leading-tight">
+            Corporate Gifting, <br/>Rooted in Heritage.
+          </h1>
+          <p className="text-[var(--text-muted)] text-lg leading-relaxed font-light mb-8">
+            Elevate your corporate milestones and festival gifting with authentic, MSME-certified (UDYAM-RJ-21-0104324) Gau Sanskriti products. We offer custom packaging and volume-based pricing for our pure A2 Bilona Ghee and Tharparkar Dhoop boxes.
           </p>
-        </div>
-      </section>
-
-      {/* Main Content & Form */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto grid lg:grid-cols-2 gap-16">
-        <div>
-          <h2 className="text-3xl font-serif font-bold mb-8">Elevate Your Corporate Footprint</h2>
           
-          <div className="space-y-8">
-            <div className="flex gap-4">
-              <div className="w-12 h-12 shrink-0 bg-[var(--terracotta)]/10 text-[var(--terracotta)] rounded-xl flex items-center justify-center text-xl">
-                <i className="fas fa-gift"></i>
-              </div>
+          <ul className="space-y-6 mt-12 border-t border-[var(--border-light)] pt-10">
+            <li className="flex items-start gap-4">
+              <span className="w-10 h-10 rounded-full bg-[var(--accent-earth)]/20 text-[var(--text-mud)] flex items-center justify-center shrink-0"><i className="fas fa-box-open"></i></span>
               <div>
-                <h3 className="font-bold text-lg mb-2">Premium Corporate Gifting</h3>
-                <p className="text-sm text-[var(--muted)] leading-relaxed">Curated wellness boxes featuring 100% pure Tharparkar A2 Bilona Ghee and chemical-free Dhoop, packaged sustainably for your clients and team.</p>
+                <h4 className="font-bold text-[var(--text-charcoal)] mb-1">Custom Hampers</h4>
+                <p className="text-sm text-[var(--text-muted)] leading-relaxed">Tailored combinations of our zero-waste ecosystem products presented in premium, sustainable packaging.</p>
               </div>
-            </div>
-
-            <div className="flex gap-4">
-              <div className="w-12 h-12 shrink-0 bg-[var(--terracotta)]/10 text-[var(--terracotta)] rounded-xl flex items-center justify-center text-xl">
-                <i className="fas fa-store"></i>
-              </div>
+            </li>
+            <li className="flex items-start gap-4">
+              <span className="w-10 h-10 rounded-full bg-[var(--accent-forest)]/10 text-[var(--accent-forest)] flex items-center justify-center shrink-0"><i className="fas fa-file-invoice"></i></span>
               <div>
-                <h3 className="font-bold text-lg mb-2">Retail & Wholesale Distribution</h3>
-                <p className="text-sm text-[var(--muted)] leading-relaxed">Direct-from-farm supply chains for premium organic stores and Ayurvedic clinics with strict batch traceability and lab certifications.</p>
+                <h4 className="font-bold text-[var(--text-charcoal)] mb-1">GST Invoicing & Bulk Pricing</h4>
+                <p className="text-sm text-[var(--text-muted)] leading-relaxed">Fully compliant B2B invoicing with transparent, volume-based pricing structures for orders exceeding 50 units.</p>
               </div>
-            </div>
-
-            <div className="flex gap-4">
-              <div className="w-12 h-12 shrink-0 bg-[var(--terracotta)]/10 text-[var(--terracotta)] rounded-xl flex items-center justify-center text-xl">
-                <i className="fas fa-laptop-house"></i>
-              </div>
-              <div>
-                <h3 className="font-bold text-lg mb-2">Executive Offsites (Bhunga Stays)</h3>
-                <p className="text-sm text-[var(--muted)] leading-relaxed">Disconnect to reconnect. Host leadership retreats at our climate-responsive Pilani farm stays with high-speed fiber internet and satvik meals.</p>
-              </div>
-            </div>
-          </div>
+            </li>
+          </ul>
         </div>
 
-        <div className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-8 sm:p-10 shadow-sm">
-          <h3 className="text-2xl font-serif font-bold mb-6">Partnership Inquiry</h3>
+        {/* B2B Enquiry Form */}
+        <div className="card-earthy p-8 sm:p-12 shadow-xl">
+          <h3 className="text-2xl font-serif font-bold text-[var(--text-charcoal)] mb-6">Request a Corporate Proposal</h3>
           
-          {success ? (
-            <div className="bg-green-50 border border-green-200 text-green-900 p-6 rounded-2xl text-center">
-              <i className="fas fa-check-circle text-3xl mb-4 text-green-600"></i>
-              <h4 className="font-bold text-lg mb-2">Inquiry Received</h4>
-              <p className="text-sm">Our B2B team will contact you within 24 hours to discuss wholesale pricing and allocations.</p>
-              <button onClick={() => setSuccess(false)} className="mt-6 text-sm font-bold underline">Submit another inquiry</button>
+          {message && (
+            <div className={`p-4 rounded-xl text-sm font-bold mb-6 border ${message.type === "ok" ? "bg-green-50 text-green-900 border-green-200" : "bg-red-50 text-red-900 border-red-200"}`}>
+              {message.text}
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="grid sm:grid-cols-2 gap-5">
-                <div>
-                  <label className="block text-xs font-bold uppercase mb-1.5 opacity-70">Company Name</label>
-                  <input type="text" name="companyName" required className="w-full p-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-sm focus:outline-none focus:border-[var(--terracotta)]" />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold uppercase mb-1.5 opacity-70">GST Number (Optional)</label>
-                  <input type="text" name="gstNumber" className="w-full p-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-sm focus:outline-none focus:border-[var(--terracotta)]" />
-                </div>
-              </div>
+          )}
 
-              <div className="grid sm:grid-cols-2 gap-5">
-                <div>
-                  <label className="block text-xs font-bold uppercase mb-1.5 opacity-70">Contact Person</label>
-                  <input type="text" name="contactName" required className="w-full p-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-sm focus:outline-none focus:border-[var(--terracotta)]" />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold uppercase mb-1.5 opacity-70">Phone Number</label>
-                  <input type="tel" name="phone" required className="w-full p-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-sm focus:outline-none focus:border-[var(--terracotta)]" />
-                </div>
-              </div>
-
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="grid grid-cols-2 gap-5">
               <div>
-                <label className="block text-xs font-bold uppercase mb-1.5 opacity-70">Email Address</label>
-                <input type="email" name="email" required className="w-full p-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-sm focus:outline-none focus:border-[var(--terracotta)]" />
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] mb-2 block">Company Name *</label>
+                <input type="text" required value={formData.companyName} onChange={e => setFormData({...formData, companyName: e.target.value})} className="w-full p-3.5 rounded-xl bg-[var(--bg-sand)] border border-[var(--border-light)] focus:outline-none focus:border-[var(--accent-forest)] transition" />
               </div>
-
               <div>
-                <label className="block text-xs font-bold uppercase mb-1.5 opacity-70">Partnership Type</label>
-                <select name="partnershipType" required className="w-full p-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-sm focus:outline-none focus:border-[var(--terracotta)] text-[var(--mud)]">
-                  <option value="wholesale_ghee">Wholesale / Bulk A2 Ghee</option>
-                  <option value="corporate_gifting">Corporate Gifting Boxes</option>
-                  <option value="bhunga_retreat">Executive Farm Retreat</option>
-                  <option value="zero_waste_consulting">Zero-Waste / Biogas Consulting</option>
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] mb-2 block">Contact Person *</label>
+                <input type="text" required value={formData.contactName} onChange={e => setFormData({...formData, contactName: e.target.value})} className="w-full p-3.5 rounded-xl bg-[var(--bg-sand)] border border-[var(--border-light)] focus:outline-none focus:border-[var(--accent-forest)] transition" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-5">
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] mb-2 block">Corporate Email *</label>
+                <input type="email" required value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full p-3.5 rounded-xl bg-[var(--bg-sand)] border border-[var(--border-light)] focus:outline-none focus:border-[var(--accent-forest)] transition" />
+              </div>
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] mb-2 block">Phone Number *</label>
+                <input type="tel" required value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full p-3.5 rounded-xl bg-[var(--bg-sand)] border border-[var(--border-light)] focus:outline-none focus:border-[var(--accent-forest)] transition" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-5">
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] mb-2 block">Event / Occasion</label>
+                <select value={formData.eventType} onChange={e => setFormData({...formData, eventType: e.target.value})} className="w-full p-3.5 rounded-xl bg-[var(--bg-sand)] border border-[var(--border-light)] focus:outline-none focus:border-[var(--accent-forest)] transition">
+                  <option>Diwali Gifting</option>
+                  <option>Corporate Milestone</option>
+                  <option>Client Appreciation</option>
+                  <option>Employee Wellness</option>
+                  <option>Wholesale Resale</option>
                 </select>
               </div>
-
               <div>
-                <label className="block text-xs font-bold uppercase mb-1.5 opacity-70">Requirements & Details</label>
-                <textarea name="message" rows={4} required placeholder="Tell us about your estimated volumes, dates, or specific needs..." className="w-full p-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-sm focus:outline-none focus:border-[var(--terracotta)]"></textarea>
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] mb-2 block">Estimated Quantity *</label>
+                <select value={formData.estimatedQuantity} onChange={e => setFormData({...formData, estimatedQuantity: e.target.value})} className="w-full p-3.5 rounded-xl bg-[var(--bg-sand)] border border-[var(--border-light)] focus:outline-none focus:border-[var(--accent-forest)] transition">
+                  <option>25 - 50 Units</option>
+                  <option>50 - 100 Units</option>
+                  <option>100 - 500 Units</option>
+                  <option>500+ Units</option>
+                </select>
               </div>
+            </div>
 
-              {error && <div className="text-red-600 text-sm font-bold bg-red-50 p-3 rounded-xl">{error}</div>}
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] mb-2 block">Target Delivery Date</label>
+              <input type="date" value={formData.targetDate} onChange={e => setFormData({...formData, targetDate: e.target.value})} className="w-full p-3.5 rounded-xl bg-[var(--bg-sand)] border border-[var(--border-light)] focus:outline-none focus:border-[var(--accent-forest)] transition" />
+            </div>
 
-              <button type="submit" disabled={loading} className="w-full primary-btn py-4 rounded-xl text-sm font-bold disabled:opacity-50 transition">
-                {loading ? "Transmitting..." : "Submit Partnership Inquiry"}
-              </button>
-            </form>
-          )}
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] mb-2 block">Custom Requirements / Message</label>
+              <textarea rows={3} value={formData.requirements} onChange={e => setFormData({...formData, requirements: e.target.value})} className="w-full p-3.5 rounded-xl bg-[var(--bg-sand)] border border-[var(--border-light)] focus:outline-none focus:border-[var(--accent-forest)] transition"></textarea>
+            </div>
+
+            <button type="submit" disabled={loading} className="w-full btn-forest py-4 rounded-xl font-bold text-sm tracking-widest uppercase mt-4 disabled:opacity-50">
+              {loading ? "Transmitting..." : "Submit Corporate Enquiry"}
+            </button>
+          </form>
         </div>
-      </section>
+      </div>
     </div>
   );
 }
