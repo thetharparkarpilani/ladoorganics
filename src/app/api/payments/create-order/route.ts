@@ -1,82 +1,47 @@
-﻿import crypto from "crypto";
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
+import Razorpay from "razorpay";
 import { db } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
   try {
-    const keyId = process.env.RAZORPAY_KEY_ID;
-    const keySecret = process.env.RAZORPAY_KEY_SECRET;
+    const { amountInr, customerName, phone } = await req.json();
 
-    if (!keyId || !keySecret) {
+    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
       return NextResponse.json(
-        {
-          error:
-            "Razorpay server keys (RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET) are not configured yet. Use WhatsApp or recorded order request until gateway keys are added."
-        },
+        { error: "Payment gateway is not configured. Missing Razorpay keys." },
         { status: 503 }
       );
     }
 
-    const body = await req.json().catch(() => null);
-    const orderId = typeof body?.orderId === "string" ? body.orderId.trim() : "";
-
-    if (!orderId) {
-      return NextResponse.json({ error: "orderId is required." }, { status: 400 });
-    }
-
-    const orderRes = await db.query(
-      `SELECT id, order_number, total_inr, status FROM orders WHERE id = $1::uuid LIMIT 1`,
-      [orderId]
-    );
-
-    if (orderRes.rows.length === 0) {
-      return NextResponse.json({ error: "Order not found." }, { status: 404 });
-    }
-
-    const order = orderRes.rows[0];
-    const amountPaise = Math.max(100, Math.round(Number(order.total_inr) * 100));
-    const authHeader = Buffer.from(`${keyId}:${keySecret}`, "utf8").toString("base64");
-
-    const rzpRes = await fetch("https://api.razorpay.com/v1/orders", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Basic ${authHeader}`
-      },
-      body: JSON.stringify({
-        amount: amountPaise,
-        currency: "INR",
-        receipt: order.order_number,
-        notes: { lado_order_id: order.id }
-      })
+    const razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
     });
 
-    if (!rzpRes.ok) {
-      return NextResponse.json(
-        { error: "Unable to initialize gateway order with Razorpay." },
-        { status: 502 }
-      );
-    }
+    // Create Razorpay Order securely on the server
+    const options = {
+      amount: amountInr * 100, // Razorpay expects amount in paise
+      currency: "INR",
+      receipt: `receipt_${Date.now()}`,
+    };
 
-    const rzpOrder = await rzpRes.json();
-    const idempotencyKey = `create_order:${rzpOrder.id}:${crypto.randomUUID().slice(0, 8)}`;
+    const order = await razorpay.orders.create(options);
 
+    // Draft the pending order in PostgreSQL
     await db.query(
-      `INSERT INTO payments (
-        order_id, provider, provider_order_id, idempotency_key, amount_inr, status, event_type
-      ) VALUES ($1::uuid, 'razorpay', $2, $3, $4, 'created', 'order.created')`,
-      [order.id, rzpOrder.id, idempotencyKey, Number(order.total_inr)]
+      `INSERT INTO orders (id, status, total_inr, shipping_address) 
+       VALUES ($1, 'pending', $2, $3)`,
+      [order.id, amountInr, "Pending Verification"]
     );
 
     return NextResponse.json({
-      keyId,
-      razorpayOrderId: rzpOrder.id,
-      amountPaise,
-      currency: "INR",
-      orderNumber: order.order_number
+      orderId: order.id,
+      amount: order.amount,
+      currency: order.currency,
+      keyId: process.env.RAZORPAY_KEY_ID,
     });
   } catch (err) {
-    const detail = err instanceof Error ? err.message : "Payment order creation failed";
-    return NextResponse.json({ error: detail }, { status: 500 });
+    console.error("Razorpay Order Error:", err);
+    return NextResponse.json({ error: "Failed to initialize payment." }, { status: 500 });
   }
 }
