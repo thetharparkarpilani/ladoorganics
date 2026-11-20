@@ -4,9 +4,13 @@ import React, { useEffect, useState } from "react";
 import type { LocaleCode, ProductDTO } from "@/types/domain";
 import { TRANSLATIONS } from "@/lib/i18n";
 import StorefrontSection from "@/components/StorefrontSection";
-import FarmExperienceSection from "@/components/FarmExperienceSection";
+import EssentialsClubSection from "@/components/EssentialsClubSection";
 import FarmCalculatorsSuite from "@/components/FarmCalculatorsSuite";
+import FarmExperienceSection from "@/components/FarmExperienceSection";
+import BuildYourOwnExperience from "@/components/BuildYourOwnExperience";
 import JournalLibrarySection from "@/components/JournalLibrarySection";
+import CorporateGiftingSection from "@/components/CorporateGiftingSection";
+import CowAsCoconutMap from "@/components/CowAsCoconutMap";
 import ConciergeWidget from "@/components/ConciergeWidget";
 import CartCheckoutDrawer, { type CartBagItem } from "@/components/CartCheckoutDrawer";
 
@@ -146,12 +150,13 @@ export default function HomePage() {
             LADO <span className="text-[var(--terracotta)] font-normal">ORGANICS</span>
           </a>
 
-          <nav aria-label="Primary" className="hidden lg:flex items-center gap-5 text-xs font-bold uppercase tracking-widest">
+          <nav aria-label="Primary" className="hidden xl:flex items-center gap-4 text-xs font-bold uppercase tracking-widest">
             <a href="#store" className="hover:text-[var(--terracotta)] transition">{dict.section_store}</a>
-            <a href="#adopt" className="hover:text-[var(--terracotta)] transition">{dict.section_adopt}</a>
-            <a href="#experiences" className="hover:text-[var(--terracotta)] transition">Stays & Seva</a>
+            <a href="#essentials-club" className="hover:text-[var(--terracotta)] transition">Essentials Club</a>
+            <a href="#build-experience" className="hover:text-[var(--terracotta)] transition">Build Experience</a>
             <a href="#calculators-suite" className="hover:text-[var(--terracotta)] transition">Calculators</a>
             <a href="#journal" className="hover:text-[var(--terracotta)] transition">Journal</a>
+            <a href="#corporate" className="hover:text-[var(--terracotta)] transition">Corporate</a>
             <a href="/trace/LO-PILANI-SAMPLE-001" className="hover:text-[var(--terracotta)] transition">Trace Batch</a>
             <a href="/dashboard" className="hover:text-[var(--terracotta)] transition">My Journey</a>
           </nav>
@@ -214,6 +219,12 @@ export default function HomePage() {
                 {dict.cta_shop}
               </a>
               <a
+                href="#build-experience"
+                className="px-7 py-3.5 rounded-full font-bold text-sm border border-[var(--border)] bg-[var(--surface)] hover:border-[var(--terracotta)] transition"
+              >
+                Build Farm Experience
+              </a>
+              <a
                 href="/trace/LO-PILANI-SAMPLE-001"
                 className="px-7 py-3.5 rounded-full font-bold text-sm border border-[var(--border)] bg-[var(--surface)] hover:border-[var(--terracotta)] transition"
               >
@@ -224,14 +235,6 @@ export default function HomePage() {
                 className="px-7 py-3.5 rounded-full font-bold text-sm border border-[var(--border)] bg-[var(--surface)] hover:border-[var(--terracotta)] transition"
               >
                 My Lado Journey
-              </a>
-              <a
-                href="https://www.youtube.com/@TheTharparkar"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-7 py-3.5 rounded-full font-bold text-sm border border-[var(--border)] bg-[var(--surface)] hover:border-[var(--terracotta)] transition"
-              >
-                @TheTharparkar on YouTube
               </a>
             </div>
 
@@ -256,6 +259,8 @@ export default function HomePage() {
           whatsappNumber={whatsappNumber}
           onAddToBag={handleAddToBag}
         />
+
+        <EssentialsClubSection />
 
         <FarmCalculatorsSuite locale={locale} />
 
@@ -290,25 +295,17 @@ export default function HomePage() {
 
         <FarmExperienceSection whatsappNumber={whatsappNumber} />
 
+        <BuildYourOwnExperience whatsappNumber={whatsappNumber} />
+
         <JournalLibrarySection locale={locale} />
 
-        <section id="blueprint" className="py-20 px-4 sm:px-6 lg:px-8 border-t border-[var(--border)] bg-[var(--surface)]">
-          <div className="max-w-5xl mx-auto text-center">
-            <h2 className="text-3xl sm:text-4xl font-serif font-bold mb-4">{dict.section_blueprint}</h2>
-            <p className="text-sm sm:text-base opacity-80 max-w-3xl mx-auto mb-8 leading-relaxed">
-              Founded by Akash Saini (BITS Pilani) in Pilani, Rajasthan, Lado Organics applies a zero-waste circular approach inspired by traditional farm systems—connecting A2 Bilona dairy, biogas slurry vermicompost, and Tharparkar Dhoop with local farming families.
-            </p>
-            <div className="flex flex-wrap justify-center gap-3 text-xs font-bold">
-              <span className="px-4 py-2 rounded-full border border-[var(--border)]">MSME: UDYAM-RJ-21-0104324</span>
-              <span className="px-4 py-2 rounded-full border border-[var(--border)]">ZED Bronze Certified</span>
-              <span className="px-4 py-2 rounded-full border border-[var(--border)]">Pilani, Rajasthan</span>
-            </div>
-          </div>
-        </section>
+        <CorporateGiftingSection whatsappNumber={whatsappNumber} />
+
+        <CowAsCoconutMap />
       </main>
 
       <footer className="py-8 px-4 border-t border-[var(--border)] text-center text-xs opacity-75">
-        <p>© 2026 Lado Organics • Pilani, Rajasthan • ladoorganics.in</p>
+        <p>© 2026 Lado Organics • Pilani, Rajasthan • ladoorganics.in • <a href="/policies" className="underline">Policies & Legal</a></p>
       </footer>
 
       <CartCheckoutDrawer
