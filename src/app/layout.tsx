@@ -1,6 +1,7 @@
 ﻿import type { Metadata } from "next";
 import "./globals.css";
 import PremiumHeader from "@/components/PremiumHeader";
+import { CartProvider } from "@/context/CartContext";
 
 export const metadata: Metadata = {
   title: "Lado Organics | Pure Tharparkar A2 Tradition",
@@ -15,10 +16,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
       </head>
       <body className="antialiased bg-[var(--bg)] text-[var(--mud)] flex flex-col min-h-screen">
-        <PremiumHeader />
-        <main className="flex-1">
-          {children}
-        </main>
+        <CartProvider>
+          <PremiumHeader />
+          <main className="flex-1">
+            {children}
+          </main>
+        </CartProvider>
       </body>
     </html>
   );
