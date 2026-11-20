@@ -3,89 +3,54 @@
 @tailwind utilities;
 
 :root {
+  /* Premium Earthy Palette */
   --bg: #FDF9F5;
   --surface: #FFFFFF;
   --mud: #78350f;
   --terracotta: #c2410c;
   --earth: #f59e0b;
-  --border: rgba(120, 53, 15, 0.16);
-  --whatsapp: #25D366;
-}
-
-[data-theme="dusk"] {
-  --bg: #1c110a;
-  --surface: #29180e;
-  --mud: #fef3c7;
-  --terracotta: #ea580c;
-  --earth: #fbbf24;
-  --border: rgba(251, 191, 36, 0.22);
-}
-
-html {
-  scroll-behavior: smooth;
+  --border: rgba(120, 53, 15, 0.15);
+  --muted: rgba(120, 53, 15, 0.7);
 }
 
 body {
   background-color: var(--bg);
   color: var(--mud);
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
-.glass-nav {
-  background: rgba(253, 249, 245, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-}
-
-[data-theme="dusk"] .glass-nav {
-  background: rgba(28, 17, 10, 0.88);
-}
-
+/* Elegant Buttons */
 .primary-btn {
   background-color: var(--mud);
   color: var(--surface);
-  transition: transform 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .primary-btn:hover {
   background-color: var(--terracotta);
   transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(194, 65, 12, 0.15);
 }
 
-.whatsapp-float {
-  position: fixed;
-  bottom: 24px;
-  left: 24px;
-  z-index: 50;
-  background-color: var(--whatsapp);
-  color: #ffffff;
-  box-shadow: 0 10px 25px rgba(37, 211, 102, 0.35);
+/* Premium Trust Badge */
+.status-pill {
+  background: rgba(245, 158, 11, 0.05);
+  color: var(--mud);
+  border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-  .primary-btn,
-  .whatsapp-float {
-    transition: none;
-  }
+/* Slow, natural animations */
+@keyframes slowFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Running Discount Bar Animations */
-@keyframes gradientSlide {
-  0% { background-position: 0% center; }
-  100% { background-position: 200% center; }
+.animate-fade-in {
+  animation: slowFadeIn 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-.running-discount-bar {
-  background: linear-gradient(90deg, var(--mud), var(--terracotta), var(--mud));
-  background-size: 200% auto;
-  color: #FFFFFF;
-  animation: gradientSlide 6s linear infinite;
-}
-
-.glass-nav {
-  background: rgba(253, 249, 245, 0.95);
-  backdrop-filter: blur(10px);
+.animate-fade-in-delayed {
+  animation: slowFadeIn 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
+  opacity: 0;
 }
