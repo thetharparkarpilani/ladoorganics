@@ -1,262 +1,104 @@
 ﻿"use client";
 
-import React, { useState } from "react";
+import React from "react";
+import Link from "next/link";
+import { useCart } from "@/context/CartContext";
+import RazorpayCheckout from "@/components/RazorpayCheckout";
 
-export interface CartBagItem {
-  sku: string;
-  title: string;
-  unitPriceInr: number;
-  quantity: number;
-}
+export default function CartCheckoutDrawer() {
+  const { items, isDrawerOpen, setDrawerOpen, updateQuantity, removeItem, cartTotal, clearCart } = useCart();
 
-interface CartCheckoutDrawerProps {
-  isOpen: boolean;
-  onClose: () => void;
-  items: CartBagItem[];
-  onUpdateQty: (sku: string, delta: number) => void;
-  onRemoveItem: (sku: string) => void;
-  onClearBag: () => void;
-  whatsappNumber: string;
-}
+  if (!isDrawerOpen) return null;
 
-export default function CartCheckoutDrawer({
-  isOpen,
-  onClose,
-  items,
-  onUpdateQty,
-  onRemoveItem,
-  onClearBag,
-  whatsappNumber
-}: CartCheckoutDrawerProps) {
-  const [customerName, setCustomerName] = useState("");
-  const [customerPhone, setCustomerPhone] = useState("");
-  const [customerEmail, setCustomerEmail] = useState("");
-  const [shippingSummary, setShippingSummary] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [feedback, setFeedback] = useState<{ type: "ok" | "err"; text: string } | null>(null);
-
-  if (!isOpen) return null;
-
-  const subtotalInr = items.reduce((sum, item) => sum + item.unitPriceInr * item.quantity, 0);
-
-  const handlePlaceOrder = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setFeedback(null);
-
-    if (items.length === 0) {
-      setFeedback({ type: "err", text: "Your shopping bag is empty." });
-      return;
-    }
-
-    setSubmitting(true);
-    try {
-      const res = await fetch("/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          customerName,
-          customerPhone,
-          customerEmail,
-          shippingSummary,
-          items: items.map((i) => ({ sku: i.sku, quantity: i.quantity }))
-        })
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setFeedback({ type: "err", text: data?.error || "Could not create order." });
-      } else {
-        setFeedback({
-          type: "ok",
-          text: `Order ${data.order?.orderNumber} recorded (Subtotal: ₹${Number(data.order?.subtotalInr || subtotalInr).toLocaleString("en-IN")}). Shipping and applicable taxes are confirmed prior to payment.`
-        });
-        onClearBag();
-        setCustomerName("");
-        setCustomerPhone("");
-        setCustomerEmail("");
-        setShippingSummary("");
-      }
-    } catch {
-      setFeedback({ type: "err", text: "Network error while creating order." });
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const whatsappSummaryUrl = () => {
-    const lines = items.map(
-      (i) => `- ${i.title} x ${i.quantity} = ₹${(i.unitPriceInr * i.quantity).toLocaleString("en-IN")}`
-    );
-    const text = [
-      "Namaste Lado Organics!",
-      "Bag enquiry:",
-      ...lines,
-      `Subtotal: ₹${subtotalInr.toLocaleString("en-IN")}`,
-      "Please share shipping, tax, and payment details."
-    ].join("\n");
-    return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`;
+  const handlePaymentSuccess = () => {
+    clearCart();
+    // Redirect customer to their journey dashboard to track the order
+    window.location.href = "/dashboard";
   };
 
   return (
-    <div
-      role="dialog"
-      aria-label="Shopping Bag and Checkout"
-      className="fixed inset-0 z-50 bg-black/60 flex justify-end"
-    >
-      <div className="w-full max-w-md bg-[var(--surface)] text-[var(--mud)] h-full overflow-y-auto p-6 shadow-2xl flex flex-col justify-between">
-        <div>
-          <div className="flex items-center justify-between pb-4 mb-5 border-b border-[var(--border)]">
-            <div>
-              <h2 className="text-xl font-serif font-bold">Your Lado Bag</h2>
-              <p className="text-xs opacity-70">Direct from Pilani, Rajasthan</p>
-            </div>
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Close bag"
-              className="px-3 py-1 rounded-full border border-[var(--border)] text-xs font-bold cursor-pointer"
-            >
-              Close
-            </button>
-          </div>
+    <div className="fixed inset-0 z-[100] flex justify-end">
+      {/* Backdrop overlay */}
+      <div 
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" 
+        onClick={() => setDrawerOpen(false)}
+      ></div>
+      
+      {/* Drawer Panel */}
+      <div className="relative w-full max-w-md bg-[var(--bg-ivory)] h-full shadow-2xl flex flex-col border-l border-[var(--border-light)] animate-fade-in">
+        
+        {/* Header */}
+        <div className="p-6 border-b border-[var(--border-light)] flex justify-between items-center bg-[var(--bg-sand)]">
+          <h2 className="text-2xl font-serif font-bold text-[var(--text-charcoal)]">Your Ecosystem Bag</h2>
+          <button 
+            onClick={() => setDrawerOpen(false)} 
+            className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 border border-[var(--border-light)] rounded-lg hover:border-[var(--accent-forest)] transition"
+          >
+            Close
+          </button>
+        </div>
 
+        {/* Cart Items List */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {items.length === 0 ? (
-            <p className="text-sm opacity-75 py-8 text-center">
-              Your bag is currently empty. Add items from the Circular Store to begin.
-            </p>
+            <div className="text-center py-20">
+              <i className="fas fa-shopping-bag text-4xl text-[var(--text-muted)] opacity-30 mb-4"></i>
+              <p className="text-[var(--text-muted)] text-sm">Your bag is currently empty.</p>
+              <button 
+                onClick={() => setDrawerOpen(false)} 
+                className="mt-6 text-xs font-bold uppercase tracking-widest text-[var(--accent-forest)] hover:underline"
+              >
+                Explore the Store
+              </button>
+            </div>
           ) : (
-            <ul className="space-y-3 mb-6">
-              {items.map((item) => (
-                <li
-                  key={item.sku}
-                  className="p-3.5 rounded-2xl border border-[var(--border)] bg-[var(--bg)] flex items-center justify-between gap-3 text-xs"
-                >
-                  <div>
-                    <p className="font-bold text-sm">{item.title}</p>
-                    <p className="opacity-75 mt-0.5">
-                      ₹{item.unitPriceInr.toLocaleString("en-IN")} each
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => onUpdateQty(item.sku, -1)}
-                      className="w-7 h-7 rounded-full border border-[var(--border)] font-bold cursor-pointer"
-                    >
-                      -
-                    </button>
-                    <span className="font-bold w-5 text-center">{item.quantity}</span>
-                    <button
-                      type="button"
-                      onClick={() => onUpdateQty(item.sku, 1)}
-                      className="w-7 h-7 rounded-full border border-[var(--border)] font-bold cursor-pointer"
-                    >
-                      +
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => onRemoveItem(item.sku)}
-                      className="text-[var(--terracotta)] font-bold ml-1 cursor-pointer"
+            items.map(item => (
+              <div key={item.variantId} className="flex gap-4 border-b border-[var(--border-light)] pb-6">
+                <div className="flex-1">
+                  <h4 className="font-serif font-bold text-[var(--text-charcoal)] mb-1">{item.title}</h4>
+                  <p className="text-[10px] text-[var(--text-muted)] uppercase tracking-widest mb-4">SKU: {item.sku}</p>
+                  
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center border border-[var(--border-light)] rounded-lg bg-[var(--bg-sand)]">
+                      <button onClick={() => updateQuantity(item.variantId, -1)} className="px-3 py-1 font-bold text-[var(--text-charcoal)]">-</button>
+                      <span className="px-3 text-sm font-bold">{item.quantity}</span>
+                      <button onClick={() => updateQuantity(item.variantId, 1)} className="px-3 py-1 font-bold text-[var(--text-charcoal)]">+</button>
+                    </div>
+                    <button 
+                      onClick={() => removeItem(item.variantId)} 
+                      className="text-xs font-bold text-[var(--accent-terracotta)] hover:underline"
                     >
                       Remove
                     </button>
                   </div>
-                </li>
-              ))}
-            </ul>
-          )}
-
-          {items.length > 0 && (
-            <form onSubmit={handlePlaceOrder} className="space-y-3 text-xs">
-              <div className="flex justify-between items-baseline py-3 border-t border-[var(--border)]">
-                <span className="uppercase font-bold opacity-75">Item Subtotal</span>
-                <span className="text-2xl font-serif font-bold text-[var(--terracotta)]">
-                  ₹{subtotalInr.toLocaleString("en-IN")}
-                </span>
-              </div>
-
-              <div>
-                <label className="block font-bold uppercase mb-1">Full Name</label>
-                <input
-                  type="text"
-                  required
-                  value={customerName}
-                  onChange={(e) => setCustomerName(e.target.value)}
-                  placeholder="Your name"
-                  className="w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)]"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-2.5">
-                <div>
-                  <label className="block font-bold uppercase mb-1">Phone</label>
-                  <input
-                    type="tel"
-                    required
-                    value={customerPhone}
-                    onChange={(e) => setCustomerPhone(e.target.value)}
-                    placeholder="+91..."
-                    className="w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)]"
-                  />
                 </div>
-                <div>
-                  <label className="block font-bold uppercase mb-1">Email (For My Journey)</label>
-                  <input
-                    type="email"
-                    value={customerEmail}
-                    onChange={(e) => setCustomerEmail(e.target.value)}
-                    placeholder="you@example.com"
-                    className="w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)]"
-                  />
+                <div className="text-right font-serif font-bold text-[var(--text-charcoal)] text-lg">
+                  ₹{(item.priceInr * item.quantity).toLocaleString("en-IN")}
                 </div>
               </div>
-
-              <div>
-                <label className="block font-bold uppercase mb-1">Delivery Address & Pincode</label>
-                <textarea
-                  rows={2}
-                  required
-                  value={shippingSummary}
-                  onChange={(e) => setShippingSummary(e.target.value)}
-                  placeholder="House/street, city, state, PIN code"
-                  className="w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)]"
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={submitting}
-                className="w-full primary-btn py-3 rounded-xl font-bold text-xs cursor-pointer disabled:opacity-50"
-              >
-                {submitting ? "Recording Order..." : "Record Order Request"}
-              </button>
-
-              <a
-                href={whatsappSummaryUrl()}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block text-center py-2.5 rounded-xl border border-[var(--border)] font-bold text-xs hover:border-[var(--terracotta)]"
-              >
-                Confirm on WhatsApp (+91 96361 00337) ↗
-              </a>
-            </form>
-          )}
-
-          {feedback && (
-            <div
-              className={`mt-4 p-3.5 rounded-xl text-xs font-medium ${
-                feedback.type === "ok"
-                  ? "bg-green-50 text-green-900 border border-green-200"
-                  : "bg-red-50 text-red-900 border border-red-200"
-              }`}
-            >
-              {feedback.text}
-            </div>
+            ))
           )}
         </div>
 
-        <p className="text-[11px] opacity-65 pt-4 border-t border-[var(--border)] mt-6">
-          Live gateway checkout (Razorpay/Cashfree) activates once your server keys and webhook secret are configured.
-        </p>
+        {/* Checkout Footer */}
+        {items.length > 0 && (
+          <div className="p-6 bg-[var(--bg-sand)] border-t border-[var(--border-light)] shadow-[0_-10px_20px_rgba(0,0,0,0.03)]">
+            <div className="flex justify-between mb-2 text-sm">
+              <span className="text-[var(--text-muted)]">Subtotal</span>
+              <span className="font-bold text-[var(--text-charcoal)]">₹{cartTotal.toLocaleString("en-IN")}</span>
+            </div>
+            <div className="flex justify-between mb-6 text-sm">
+              <span className="text-[var(--text-muted)]">Shipping & Taxes</span>
+              <span className="text-[var(--text-muted)] text-xs italic">Calculated at secure checkout</span>
+            </div>
+            
+            <RazorpayCheckout amountInr={cartTotal} onSuccess={handlePaymentSuccess} />
+            
+            <p className="text-[10px] text-center text-[var(--text-muted)] mt-5 leading-relaxed">
+              By proceeding, you agree to our <Link href="/policies/terms" className="underline">Terms</Link> and <Link href="/policies/refunds" className="underline">Refund Policy</Link>. Orders dispatch from Pilani within 2-4 business days.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
