@@ -71,3 +71,21 @@ body {
     transition: none;
   }
 }
+
+/* Running Discount Bar Animations */
+@keyframes gradientSlide {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+.running-discount-bar {
+  background: linear-gradient(90deg, var(--mud), var(--terracotta), var(--mud));
+  background-size: 200% auto;
+  color: #FFFFFF;
+  animation: gradientSlide 6s linear infinite;
+}
+
+.glass-nav {
+  background: rgba(253, 249, 245, 0.95);
+  backdrop-filter: blur(10px);
+}
