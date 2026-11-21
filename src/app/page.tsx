@@ -1,290 +1,116 @@
-﻿"use client";
+"use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import type { LocaleCode, ProductDTO } from "@/types/domain";
+import { TRANSLATIONS } from "@/lib/i18n";
+import { useCart } from "@/context/CartContext";
+import StorefrontSection from "@/components/StorefrontSection";
+import EssentialsClubSection from "@/components/EssentialsClubSection";
+import FarmCalculatorsSuite from "@/components/FarmCalculatorsSuite";
+import FarmExperienceSection from "@/components/FarmExperienceSection";
+import BuildYourOwnExperience from "@/components/BuildYourOwnExperience";
+import GauSevaTransparencySection from "@/components/GauSevaTransparencySection";
+import JournalLibrarySection from "@/components/JournalLibrarySection";
+import CorporateGiftingSection from "@/components/CorporateGiftingSection";
+import CowAsCoconutMap from "@/components/CowAsCoconutMap";
+import ConciergeWidget from "@/components/ConciergeWidget";
+import CartCheckoutDrawer from "@/components/CartCheckoutDrawer";
 
-export default function LadoOrganicsPremiumHome() {
-  const [lang, setLang] = useState("en");
+const INITIAL_PRODUCTS: ProductDTO[] = [
+  { id: "a2-ghee", slug: "a2-bilona-ghee", nameEn: "A2 Bilona Ghee", nameHi: "A2 बिलोना घी", nameMa: "A2 बिलोना घी", descriptionEn: "Hand-churned from indigenous Tharparkar cow curd using the traditional Bilona method in Pilani, Rajasthan.", sourcingInfo: "Pilani Gaushala, Rajasthan", productionMethod: "Curd-cultured Bilona process", storageInstructions: "Store in a cool, dry place away from direct sunlight.", variants: [{ id: "ghee-250ml", sku: "LO-GHEE-250", label: "250 ml", priceInr: 1350, stockQty: 10, isDefault: false }, { id: "ghee-500ml", sku: "LO-GHEE-500", label: "500 ml", priceInr: 2600, stockQty: 10, isDefault: false }, { id: "ghee-1l", sku: "LO-GHEE-1000", label: "1 litre", priceInr: 5000, stockQty: 10, isDefault: true }] },
+  { id: "dhoop", slug: "tharparkar-dhoop", nameEn: "Tharparkar Dhoop", nameHi: "थारपारकर धूप", nameMa: "थारपारकर धूप", descriptionEn: "Crafted from indigenous cow dung and natural botanical binders in Pilani.", sourcingInfo: "Pilani Gaushala, Rajasthan", productionMethod: "Cow dung & natural botanicals", storageInstructions: "Keep dry in an airtight container.", variants: [{ id: "dhoop-box", sku: "LO-DHOOP-BOX", label: "Box", priceInr: 1000, stockQty: 15, isDefault: true }] },
+  { id: "compost", slug: "pure-kechua-khad", nameEn: "Pure Kechua Khad", nameHi: "केंचुआ खाद", nameMa: "केंचुआ खाद", descriptionEn: "Vermicompost enriched with biogas slurry for home, terrace, and organic gardens.", sourcingInfo: "Pilani Farm Ecosystem", productionMethod: "Biogas slurry vermicomposting", storageInstructions: "Store in a shaded, breathable bag.", variants: [{ id: "khad-5kg", sku: "LO-KHAD-5KG", label: "5 kg Bag", priceInr: 2000, stockQty: 20, isDefault: true }] },
+  { id: "farm-stay", slug: "deep-work-bhunga-stay", nameEn: '"Deep Work" Bhunga Stay', nameHi: '"डीप वर्क" भुंगा स्टे', nameMa: '"डीप वर्क" भुंगा स्टे', descriptionEn: "Climate-responsive Rajasthani mud architecture in Pilani designed for focused work and farm living.", sourcingInfo: "Pilani, Jhunjhunu, Rajasthan", productionMethod: "Traditional mud-house stay", storageInstructions: "Confirm stay dates and details directly with the team.", variants: [{ id: "stay-night", sku: "LO-STAY-NIGHT", label: "Night", priceInr: 4000, stockQty: 5, isDefault: true }] }
+];
+
+export default function HomePage() {
+  const [locale, setLocale] = useState<LocaleCode>("en");
+  const [theme, setTheme] = useState<"light" | "dusk">("light");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [products, setProducts] = useState<ProductDTO[]>(INITIAL_PRODUCTS);
+  const { addToCart, itemCount, setDrawerOpen } = useCart();
+  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919636100337";
+  const dict = TRANSLATIONS[locale] ?? TRANSLATIONS.en;
+
+  useEffect(() => { document.documentElement.setAttribute("data-theme", theme); }, [theme]);
+  useEffect(() => {
+    let active = true;
+    fetch("/api/catalog")
+      .then((res) => res.ok ? res.json() : null)
+      .then((data) => {
+        if (active && Array.isArray(data?.catalog) && data.catalog.length) setProducts(data.catalog);
+      })
+      .catch(() => { /* Use safe starter catalogue if database is not configured. */ });
+    return () => { active = false; };
+  }, []);
+
+  const handleAddToBag = (item: { sku: string; title: string; unitPriceInr: number; quantity: number }) => {
+    const product = products.find(p => p.variants.some(v => v.sku === item.sku));
+    const variant = product?.variants.find(v => v.sku === item.sku);
+    addToCart({
+      variantId: variant?.id || item.sku,
+      sku: item.sku,
+      title: item.title,
+      priceInr: item.unitPriceInr,
+      quantity: item.quantity,
+      maxStock: Math.max(1, variant?.stockQty || 20)
+    });
+  };
 
   return (
-    <div className="min-h-screen organic-gradient font-sans">
-      
-      {/* PREMIUM NAVIGATION */}
-      <header className="glass-nav-premium sticky top-0 z-50 transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <a href="#" className="text-2xl md:text-3xl font-serif font-bold tracking-widest text-[var(--accent-forest)] flex items-center gap-2">
-            LADO <span className="font-light text-[var(--accent-terracotta)]">ORGANICS</span>
-          </a>
-          
-          <div className="hidden lg:flex space-x-10 text-xs font-bold tracking-[0.15em] text-[var(--text-mud)] uppercase">
-            <a href="#store" className="hover:text-[var(--accent-forest)] transition-colors">The Store</a>
-            <a href="#blueprint" className="hover:text-[var(--accent-forest)] transition-colors">Our Farm</a>
-            <a href="#adopt" className="hover:text-[var(--accent-forest)] transition-colors">Gau Seva</a>
-            <a href="#journal" className="hover:text-[var(--accent-forest)] transition-colors">Journal</a>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <select 
-              value={lang} 
-              onChange={(e) => setLang(e.target.value)}
-              className="appearance-none bg-transparent border border-[var(--border-light)] text-[var(--text-mud)] text-xs font-bold py-1.5 px-3 rounded-full cursor-pointer focus:outline-none focus:border-[var(--accent-forest)]"
-            >
-              <option value="en">EN</option>
-              <option value="hi">हिंदी</option>
-              <option value="ma">मारवाड़ी</option>
+    <div className="min-h-screen flex flex-col">
+      <header className="glass-nav sticky top-0 z-40 border-b border-[var(--border)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-3">
+          <a href="#" className="text-xl sm:text-2xl font-serif font-bold tracking-wider">LADO <span className="text-[var(--terracotta)] font-normal">ORGANICS</span></a>
+          <nav aria-label="Primary" className="hidden xl:flex items-center gap-4 text-xs font-bold uppercase tracking-widest">
+            <a href="#store">{dict.section_store}</a><a href="#essentials-club">Essentials Club</a><a href="#build-experience">Build Experience</a><a href="#adopt">Gau Seva</a><a href="#journal">Journal</a><a href="#corporate">Corporate</a><Link href="/trace/LO-PILANI-SAMPLE-001">Trace Batch</Link><a href="/dashboard">My Journey</a>
+          </nav>
+          <div className="flex items-center gap-2">
+            <input type="search" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search products..." aria-label="Search products" className="text-xs px-3 py-1.5 rounded-full border border-[var(--border)] bg-white/80 w-28 sm:w-36" />
+            <button type="button" onClick={() => setDrawerOpen(true)} className="text-xs font-bold px-3 py-1.5 rounded-full bg-[var(--terracotta)] text-white">Bag ({itemCount})</button>
+            <select aria-label="Language selector" value={locale} onChange={e => setLocale(e.target.value as LocaleCode)} className="text-xs font-bold px-2.5 py-1.5 rounded-full border border-[var(--border)] bg-white/80">
+              <option value="en">EN</option><option value="hi">हिंदी</option><option value="ma">मारवाड़ी</option>
             </select>
-            <a href="#store" className="btn-forest px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest hidden sm:block">
-              Shop Now
-            </a>
+            <button type="button" onClick={() => setTheme(t => t === "light" ? "dusk" : "light")} className="text-xs font-bold px-3 py-1.5 rounded-full border border-[var(--border)]">{theme === "light" ? "Dusk" : "Sand"}</button>
           </div>
         </div>
       </header>
-
-      <main>
-        {/* HERO SECTION: Editorial & Grounded */}
-        <section className="relative pt-24 pb-20 lg:pt-40 lg:pb-32 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center overflow-hidden">
-          <div className="max-w-4xl mx-auto relative z-10">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-8 text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase text-[var(--accent-forest)] bg-[var(--accent-forest)]/5 border border-[var(--accent-forest)]/10">
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-terracotta)]"></span>
-              Direct from Pilani, Rajasthan • 100% Pure Tharparkar
+      <main className="flex-1">
+        <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-5xl mx-auto text-center">
+            <p className="inline-block text-[11px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full border border-[var(--earth)] mb-6">{dict.brand_tagline}</p>
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-serif font-bold leading-tight mb-6">{dict.hero_title}</h1>
+            <p className="text-base sm:text-xl opacity-85 max-w-2xl mx-auto mb-10 leading-relaxed">{dict.hero_subtitle}</p>
+            <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-12">
+              <a href="#store" className="primary-btn px-7 py-3.5 rounded-full font-bold text-sm">{dict.cta_shop}</a>
+              <a href="#build-experience" className="px-7 py-3.5 rounded-full font-bold text-sm border border-[var(--border)]">Build Farm Experience</a>
+              <Link href="/trace/LO-PILANI-SAMPLE-001" className="px-7 py-3.5 rounded-full font-bold text-sm border border-[var(--border)]">Verify Batch QR</Link>
+              <a href="/dashboard" className="px-7 py-3.5 rounded-full font-bold text-sm border border-[var(--border)]">My Lado Journey</a>
             </div>
-            
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-bold leading-[1.1] mb-6 text-[var(--text-charcoal)]">
-              Spiritual Heritage, <br/>
-              <span className="text-[var(--accent-terracotta)] italic font-light">Consciously Crafted.</span>
-            </h1>
-            
-            <p className="text-lg text-[var(--text-muted)] mb-10 leading-relaxed font-light max-w-2xl mx-auto">
-              Rooted in the &quot;Cow as a Coconut&quot; zero-waste philosophy. Empowering local farming families with verifiable A2 Bilona Ghee, pure botanicals, and Deep Work Bhunga Stays.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row justify-center gap-4 mb-20">
-              <a href="#store" className="btn-forest px-8 py-4 rounded-full font-bold text-sm tracking-wide shadow-lg">
-                Explore The Collection
-              </a>
-              <a href="#blueprint" className="btn-outline px-8 py-4 rounded-full font-bold text-sm tracking-wide">
-                Discover Our Ecosystem
-              </a>
-            </div>
-          </div>
-
-          {/* Premium Video/Image Placeholder */}
-          <div className="max-w-5xl mx-auto w-full relative rounded-t-[3rem] overflow-hidden shadow-2xl border-t-8 border-x-8 border-[var(--bg-ivory)]">
-            <div className="aspect-[21/9] w-full bg-[#204E36] relative flex items-center justify-center group cursor-pointer overflow-hidden">
-              {/* Replace this div with an actual image tag in production */}
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-all duration-700"></div>
-              <div className="w-24 h-24 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white z-10 border border-white/30 group-hover:scale-110 transition-transform duration-500">
-                <span className="ml-2 text-3xl">▶</span>
-              </div>
-              <div className="absolute bottom-8 left-8 text-left z-10">
-                <h3 className="text-white font-serif text-3xl mb-2">The Zero-Waste Ecosystem</h3>
-                <p className="text-white/80 text-sm tracking-widest uppercase font-bold">Watch The Documentary</p>
-              </div>
+            <div className="max-w-3xl mx-auto rounded-3xl overflow-hidden border border-[var(--border)] shadow-xl bg-black">
+              <div className="aspect-video w-full"><iframe className="w-full h-full" src="https://www.youtube.com/embed/JAhshRN6F28" title="Lado Organics Pilani - Build in Public" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div>
             </div>
           </div>
         </section>
-
-        {/* 01. THE CIRCULAR STORE */}
-        <section id="store" className="py-24 bg-[var(--bg-ivory)] px-4 sm:px-6 lg:px-8 border-y border-[var(--border-light)]">
-          <div className="max-w-7xl mx-auto">
-            <header className="text-center mb-16">
-              <span className="text-xs font-bold tracking-[0.2em] text-[var(--accent-earth)] mb-4 uppercase block">01. The Circular Store</span>
-              <h2 className="text-4xl md:text-5xl font-serif font-bold text-[var(--text-charcoal)]">Ethical & Unadulterated</h2>
-            </header>
-            
-            <div className="grid md:grid-cols-3 gap-8">
-              {/* Product 1 */}
-              <article className="card-earthy overflow-hidden flex flex-col group">
-                <div className="aspect-[4/3] bg-[var(--bg-sand)] p-8 flex items-center justify-center relative">
-                  <div className="absolute top-4 right-4 bg-white px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest text-[var(--accent-forest)] shadow-sm">Farm Direct</div>
-                  <div className="w-32 h-32 bg-[var(--accent-earth)]/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-700">
-                    <span className="text-5xl">🏺</span>
-                  </div>
-                </div>
-                <div className="p-8 flex flex-col flex-grow">
-                  <h3 className="text-2xl font-serif font-bold text-[var(--text-charcoal)] mb-3">A2 Bilona Ghee</h3>
-                  <p className="text-[var(--text-muted)] text-sm mb-6 leading-relaxed flex-grow">Hand-churned from indigenous Tharparkar cow curd using the traditional Vedic Bilona method.</p>
-                  <div className="flex items-center justify-between pt-6 border-t border-[var(--border-light)]">
-                    <span className="text-xl font-serif font-bold text-[var(--accent-terracotta)]">₹5,000 <span className="text-xs text-[var(--text-muted)] font-sans">/ 1L</span></span>
-                    <button className="text-xs font-bold uppercase tracking-widest text-[var(--accent-forest)] hover:underline">Add to Bag</button>
-                  </div>
-                </div>
-              </article>
-
-              {/* Product 2 */}
-              <article className="card-earthy overflow-hidden flex flex-col group">
-                <div className="aspect-[4/3] bg-[var(--bg-sand)] p-8 flex items-center justify-center relative">
-                  <div className="w-32 h-32 bg-[var(--accent-terracotta)]/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-700">
-                    <span className="text-5xl">🌿</span>
-                  </div>
-                </div>
-                <div className="p-8 flex flex-col flex-grow">
-                  <h3 className="text-2xl font-serif font-bold text-[var(--text-charcoal)] mb-3">Tharparkar Dhoop</h3>
-                  <p className="text-[var(--text-muted)] text-sm mb-6 leading-relaxed flex-grow">Crafted from indigenous cow dung and natural botanical binders for spiritual purification.</p>
-                  <div className="flex items-center justify-between pt-6 border-t border-[var(--border-light)]">
-                    <span className="text-xl font-serif font-bold text-[var(--accent-terracotta)]">₹1,000 <span className="text-xs text-[var(--text-muted)] font-sans">/ Box</span></span>
-                    <button className="text-xs font-bold uppercase tracking-widest text-[var(--accent-forest)] hover:underline">Add to Bag</button>
-                  </div>
-                </div>
-              </article>
-
-              {/* Product 3 */}
-              <article className="card-earthy overflow-hidden flex flex-col group">
-                <div className="aspect-[4/3] bg-[var(--bg-sand)] p-8 flex items-center justify-center relative">
-                  <div className="w-32 h-32 bg-[var(--accent-forest)]/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-700">
-                    <span className="text-5xl">🌱</span>
-                  </div>
-                </div>
-                <div className="p-8 flex flex-col flex-grow">
-                  <h3 className="text-2xl font-serif font-bold text-[var(--text-charcoal)] mb-3">Pure Kechua Khad</h3>
-                  <p className="text-[var(--text-muted)] text-sm mb-6 leading-relaxed flex-grow">Vermicompost enriched with biogas slurry for home, terrace, and organic gardens.</p>
-                  <div className="flex items-center justify-between pt-6 border-t border-[var(--border-light)]">
-                    <span className="text-xl font-serif font-bold text-[var(--accent-terracotta)]">₹2,000 <span className="text-xs text-[var(--text-muted)] font-sans">/ 5kg</span></span>
-                    <button className="text-xs font-bold uppercase tracking-widest text-[var(--accent-forest)] hover:underline">Add to Bag</button>
-                  </div>
-                </div>
-              </article>
-            </div>
+        <StorefrontSection products={products} locale={locale} searchQuery={searchQuery} whatsappNumber={whatsappNumber} onAddToBag={handleAddToBag} />
+        <EssentialsClubSection />
+        <FarmCalculatorsSuite locale={locale} />
+        <section id="adopt" className="py-20 px-4 sm:px-6 lg:px-8 border-t border-[var(--border)]">
+          <div className="max-w-6xl mx-auto"><div className="text-center mb-12"><h2 className="text-3xl sm:text-5xl font-serif font-bold">{dict.section_adopt}</h2><p className="mt-3 max-w-2xl mx-auto opacity-80">Meet our Tharparkar calves at Pilani Gaushala and enquire about responsible sponsorship.</p></div>
+            <div className="grid sm:grid-cols-3 gap-6">{["Dholi Sheri","Tara","Roshni"].map(name => <div key={name} className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 text-center"><h3 className="text-2xl font-serif font-bold text-[var(--terracotta)]">{name}</h3><p className="text-sm opacity-80 my-3">Tharparkar calf • Pilani Gaushala</p><a href="#experiences" className="primary-btn inline-block px-5 py-2.5 rounded-full text-xs font-bold">Sponsor {name}</a></div>)}</div>
           </div>
         </section>
-
-        {/* 02. ADOPT A COW */}
-        <section id="adopt" className="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
-            <div className="rounded-[2.5rem] overflow-hidden shadow-2xl aspect-[4/5] bg-[var(--accent-forest)] relative">
-              {/* Asset Placeholder */}
-              <div className="absolute inset-0 opacity-40 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMSIgZmlsbD0iI2ZmZiIvPjwvc3ZnPg==')]"></div>
-              <div className="absolute inset-0 flex items-center justify-center text-white/50 font-serif text-2xl px-12 text-center">
-                [ Beautiful imagery of Dholi Sheri, Tara, and Roshni ]
-              </div>
-            </div>
-            
-            <div>
-              <span className="text-xs font-bold tracking-[0.2em] text-[var(--accent-terracotta)] mb-4 uppercase block">02. Gaushala Community</span>
-              <h2 className="text-4xl md:text-6xl font-serif font-bold mb-6 text-[var(--text-charcoal)] leading-tight">Adopt a <br/>Tharparkar Calf.</h2>
-              <p className="text-[var(--text-muted)] font-light mb-10 text-lg leading-relaxed">
-                Join our inner circle. Digitally sponsor our indigenous calves—<span className="font-medium text-[var(--text-charcoal)]">Dholi Sheri, Tara, and Roshni</span>—to directly fund organic fodder and veterinary care at the Gaushala. 
-              </p>
-              
-              <div className="space-y-6 mb-12">
-                <div className="flex items-start gap-5">
-                  <div className="w-12 h-12 rounded-full bg-[var(--bg-ivory)] border border-[var(--border-light)] flex items-center justify-center text-[var(--accent-terracotta)] text-lg shrink-0">1</div>
-                  <div>
-                    <h4 className="font-bold text-[var(--text-charcoal)] text-lg mb-1">Direct Impact</h4>
-                    <p className="text-sm text-[var(--text-muted)] leading-relaxed">100% of sponsorship proceeds go directly to sustaining the herd and local farmers.</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-5">
-                  <div className="w-12 h-12 rounded-full bg-[var(--bg-ivory)] border border-[var(--border-light)] flex items-center justify-center text-[var(--accent-forest)] text-lg shrink-0">2</div>
-                  <div>
-                    <h4 className="font-bold text-[var(--text-charcoal)] text-lg mb-1">Farm Privileges</h4>
-                    <p className="text-sm text-[var(--text-muted)] leading-relaxed">Receive exclusive monthly updates and complimentary stays at our mud-house Bhunga farm.</p>
-                  </div>
-                </div>
-              </div>
-              
-              <a href="#contact" className="btn-forest px-10 py-4 rounded-full font-bold shadow-xl inline-block">
-                Sponsor a Calf Today
-              </a>
-            </div>
-          </div>
-        </section>
-
-        {/* 03. THE BLUEPRINT (Cow as a Coconut) */}
-        <section id="blueprint" className="py-24 bg-[#2D241E] text-[#FDF9F5] px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-20">
-              <span className="text-xs font-bold tracking-[0.2em] text-[var(--accent-earth)] mb-4 uppercase block">03. Zero-Waste Philosophy</span>
-              <h2 className="text-4xl md:text-5xl font-serif font-bold">The Cow as a Coconut</h2>
-              <p className="mt-6 text-[#FDF9F5]/70 max-w-2xl mx-auto font-light leading-relaxed text-lg">
-                Like the coconut tree where every part is utilized, our farm operates on an ancient circular model. Absolutely nothing goes to waste.
-              </p>
-            </div>
-            
-            <div className="grid md:grid-cols-3 gap-10">
-              <div className="bg-white/5 p-10 rounded-[2rem] border border-white/10 hover:bg-white/10 transition-colors">
-                <div className="w-16 h-16 bg-[var(--accent-terracotta)] rounded-full flex items-center justify-center text-2xl mb-8 font-serif">I</div>
-                <h3 className="text-2xl font-serif font-bold mb-4">Nourishment</h3>
-                <p className="text-white/60 font-light text-base leading-relaxed">Our Tharparkar cows produce ethical A2 milk, hand-churned into premium Bilona Ghee for your family&apos;s health.</p>
-              </div>
-              
-              <div className="bg-white/5 p-10 rounded-[2rem] border border-white/10 hover:bg-white/10 transition-colors">
-                <div className="w-16 h-16 bg-[var(--accent-earth)] text-[#2D241E] rounded-full flex items-center justify-center text-2xl mb-8 font-serif">II</div>
-                <h3 className="text-2xl font-serif font-bold mb-4">Energy & Soil</h3>
-                <p className="text-white/60 font-light text-base leading-relaxed">Manure fuels our biogas plant to power the farm. The resulting slurry feeds earthworms, creating Pure Kechua Khad.</p>
-              </div>
-              
-              <div className="bg-white/5 p-10 rounded-[2rem] border border-white/10 hover:bg-white/10 transition-colors">
-                <div className="w-16 h-16 bg-[var(--bg-sand)] text-[#2D241E] rounded-full flex items-center justify-center text-2xl mb-8 font-serif">III</div>
-                <h3 className="text-2xl font-serif font-bold mb-4">Spirituality</h3>
-                <p className="text-white/60 font-light text-base leading-relaxed">Any remaining dung is blended with botanical herbs and temple florals to craft chemical-free Tharparkar Dhoop.</p>
-              </div>
-            </div>
-
-            <div className="mt-20 pt-10 border-t border-white/10 flex flex-wrap justify-center gap-8">
-              <span className="text-sm font-bold tracking-widest uppercase text-white/50">ZED Bronze Certified</span>
-              <span className="text-sm font-bold tracking-widest uppercase text-white/50">MSME: UDYAM-RJ-21-0104324</span>
-            </div>
-          </div>
-        </section>
-
-        {/* 04. CONTACT / LEAD FORM */}
-        <section id="contact" className="py-24 px-4 sm:px-6 lg:px-8 border-t border-[var(--border-light)]">
-          <div className="max-w-5xl mx-auto card-earthy overflow-hidden flex flex-col md:flex-row shadow-xl">
-            <div className="md:w-5/12 bg-[var(--accent-forest)] p-12 text-white flex flex-col justify-between">
-              <div>
-                <h2 className="text-3xl font-serif font-bold mb-6">Connect to the Source</h2>
-                <p className="text-white/80 font-light leading-relaxed mb-8">
-                  Whether you want to place a B2B bulk order, schedule a Bhunga farm stay, or sponsor a calf, your details route directly to our secure internal network.
-                </p>
-              </div>
-              <div className="text-sm text-white/60 font-mono">
-                <p className="mb-2">📍 Pilani, Rajasthan</p>
-                <p>✉️ thetharparkarpilani@gmail.com</p>
-              </div>
-            </div>
-            
-            <div className="md:w-7/12 p-10 lg:p-14 bg-[var(--bg-ivory)]">
-              <form className="space-y-6">
-                <div className="grid grid-cols-2 gap-6">
-                  <div>
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] mb-2 block">First Name</label>
-                    <input type="text" className="w-full p-4 rounded-xl bg-[var(--bg-sand)] border border-[var(--border-light)] focus:outline-none focus:border-[var(--accent-forest)] transition" required />
-                  </div>
-                  <div>
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] mb-2 block">Last Name</label>
-                    <input type="text" className="w-full p-4 rounded-xl bg-[var(--bg-sand)] border border-[var(--border-light)] focus:outline-none focus:border-[var(--accent-forest)] transition" required />
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] mb-2 block">Email Address</label>
-                  <input type="email" className="w-full p-4 rounded-xl bg-[var(--bg-sand)] border border-[var(--border-light)] focus:outline-none focus:border-[var(--accent-forest)] transition" required />
-                </div>
-                
-                <div>
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] mb-2 block">I am interested in...</label>
-                  <select className="w-full p-4 rounded-xl bg-[var(--bg-sand)] border border-[var(--border-light)] focus:outline-none focus:border-[var(--accent-forest)] transition text-[var(--text-charcoal)]">
-                    <option>A2 Bilona Ghee Order</option>
-                    <option>Adopt-a-Cow Sponsorship</option>
-                    <option>Bhunga Farm Stay Booking</option>
-                    <option>B2B Wholesale</option>
-                  </select>
-                </div>
-                
-                <button type="submit" className="w-full btn-forest py-4 rounded-xl font-bold text-sm tracking-widest uppercase mt-4">
-                  Submit Inquiry
-                </button>
-              </form>
-            </div>
-          </div>
-        </section>
-
+        <FarmExperienceSection whatsappNumber={whatsappNumber} />
+        <BuildYourOwnExperience whatsappNumber={whatsappNumber} />
+        <GauSevaTransparencySection />
+        <JournalLibrarySection locale={locale} />
+        <CorporateGiftingSection whatsappNumber={whatsappNumber} />
+        <CowAsCoconutMap />
       </main>
-      
-      <footer className="bg-[var(--bg-ivory)] py-10 border-t border-[var(--border-light)] text-center text-[var(--text-muted)] text-xs font-bold tracking-widest uppercase">
-        <p>© 2026 Lado Organics. Based in Pilani, Rajasthan. All Rights Reserved.</p>
-      </footer>
-
+      <footer className="py-8 px-4 border-t border-[var(--border)] text-center text-xs opacity-75">© 2026 Lado Organics • Pilani, Rajasthan • ladoorganics.in • <a href="/policies" className="underline">Policies & Legal</a></footer>
+      <CartCheckoutDrawer />
+      <ConciergeWidget whatsappNumber={whatsappNumber} />
     </div>
   );
 }

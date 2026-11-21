@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 interface ShippingItem {
   quantity: number;
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Heavy order subsidy (Orders over ₹5000 get free shipping)
-    const cartSubtotal = items.reduce((sum: number, item: any) => sum + (item.priceInr * item.quantity), 0);
+    const cartSubtotal = items.reduce((sum: number, item: ShippingItem) => sum + (item.priceInr * item.quantity), 0);
     if (cartSubtotal >= 5000) {
       shippingCostInr = 0;
     }
