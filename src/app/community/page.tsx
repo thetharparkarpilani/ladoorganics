@@ -15,7 +15,7 @@ interface Review {
 export default function CommunityPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
-  const [pointsBalance, setPointsBalance] = useState<number | null>(null);
+  const [pointsBalance] = useState<number | null>(null);
 
   useEffect(() => {
     // Fetch approved community reviews
