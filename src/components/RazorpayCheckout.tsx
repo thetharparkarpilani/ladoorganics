@@ -3,6 +3,34 @@
 import React, { useState } from "react";
 import Script from "next/script";
 
+interface RazorpayPaymentResponse {
+  razorpay_payment_id: string;
+  razorpay_order_id?: string;
+  razorpay_signature?: string;
+}
+
+interface RazorpayOptions {
+  key: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  order_id: string;
+  handler: (response: RazorpayPaymentResponse) => void;
+  prefill: { name: string; contact: string };
+  theme: { color: string };
+}
+
+interface RazorpayInstance {
+  open: () => void;
+}
+
+declare global {
+  interface Window {
+    Razorpay?: new (options: RazorpayOptions) => RazorpayInstance;
+  }
+}
+
 interface CheckoutProps {
   amountInr: number;
   onSuccess: () => void;
@@ -28,14 +56,14 @@ export default function RazorpayCheckout({ amountInr, onSuccess }: CheckoutProps
         return;
       }
 
-      const options = {
+      const options: RazorpayOptions = {
         key: data.keyId,
         amount: data.amount,
         currency: data.currency,
         name: "Lado Organics",
         description: "Premium A2 Bilona Ecosystem",
         order_id: data.orderId,
-        handler: function (response: any) {
+        handler: function (response: RazorpayPaymentResponse) {
           alert(`Payment successful! Payment ID: ${response.razorpay_payment_id}`);
           onSuccess();
         },
@@ -48,7 +76,8 @@ export default function RazorpayCheckout({ amountInr, onSuccess }: CheckoutProps
         },
       };
 
-      const rzp = new (window as any).Razorpay(options);
+      if (!window.Razorpay) throw new Error("Razorpay checkout script is not available.");
+      const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (err) {
       alert("Network error. Please try again.");
