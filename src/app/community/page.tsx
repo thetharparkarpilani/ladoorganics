@@ -53,7 +53,7 @@ export default function CommunityPage() {
             <div>
               <h2 className="text-3xl font-serif font-bold mb-4">Lado Membership & Rewards</h2>
               <p className="text-white/80 leading-relaxed mb-8 font-light">
-                Earn "Gau Seva" points on every verified purchase of A2 Bilona Ghee or Bhunga farm stays. Redeem your points for exclusive farm experiences, wellness boxes, or direct calf sponsorships.
+                Earn &quot;Gau Seva&quot; points on every verified purchase of A2 Bilona Ghee or Bhunga farm stays. Redeem your points for exclusive farm experiences, wellness boxes, or direct calf sponsorships.
               </p>
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
@@ -104,7 +104,7 @@ export default function CommunityPage() {
                   ))}
                 </div>
                 <h3 className="font-bold text-[var(--text-charcoal)] mb-2">{review.title || "Lado Organics Experience"}</h3>
-                <p className="text-sm text-[var(--text-muted)] leading-relaxed flex-grow italic mb-6">"{review.comment}"</p>
+                <p className="text-sm text-[var(--text-muted)] leading-relaxed flex-grow italic mb-6">&quot;{review.comment}&quot;</p>
                 
                 <div className="pt-4 border-t border-[var(--border-light)] flex items-center justify-between">
                   <span className="text-xs font-bold text-[var(--text-charcoal)]">{review.full_name || "Community Member"}</span>
