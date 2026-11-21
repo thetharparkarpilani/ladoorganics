@@ -54,7 +54,7 @@ export default function LadoOrganicsPremiumHome() {
             </h1>
             
             <p className="text-lg text-[var(--text-muted)] mb-10 leading-relaxed font-light max-w-2xl mx-auto">
-              Rooted in the "Cow as a Coconut" zero-waste philosophy. Empowering local farming families with verifiable A2 Bilona Ghee, pure botanicals, and Deep Work Bhunga Stays.
+              Rooted in the &quot;Cow as a Coconut&quot; zero-waste philosophy. Empowering local farming families with verifiable A2 Bilona Ghee, pure botanicals, and Deep Work Bhunga Stays.
             </p>
             
             <div className="flex flex-col sm:flex-row justify-center gap-4 mb-20">
@@ -204,7 +204,7 @@ export default function LadoOrganicsPremiumHome() {
               <div className="bg-white/5 p-10 rounded-[2rem] border border-white/10 hover:bg-white/10 transition-colors">
                 <div className="w-16 h-16 bg-[var(--accent-terracotta)] rounded-full flex items-center justify-center text-2xl mb-8 font-serif">I</div>
                 <h3 className="text-2xl font-serif font-bold mb-4">Nourishment</h3>
-                <p className="text-white/60 font-light text-base leading-relaxed">Our Tharparkar cows produce ethical A2 milk, hand-churned into premium Bilona Ghee for your family's health.</p>
+                <p className="text-white/60 font-light text-base leading-relaxed">Our Tharparkar cows produce ethical A2 milk, hand-churned into premium Bilona Ghee for your family&apos;s health.</p>
               </div>
               
               <div className="bg-white/5 p-10 rounded-[2rem] border border-white/10 hover:bg-white/10 transition-colors">
