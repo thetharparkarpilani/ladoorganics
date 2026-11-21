@@ -1,5 +1,10 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 
+interface ShippingItem {
+  quantity: number;
+  priceInr: number;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { pincode, items } = await req.json();
