@@ -21,7 +21,7 @@ interface DashboardData {
 }
 
 export default function DashboardPage() {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -33,7 +33,7 @@ export default function DashboardPage() {
         return res.json();
       })
       .then((json) => {
-        setData(json);
+        setData(json as DashboardData);
         setLoading(false);
       })
       .catch((err) => {
@@ -79,14 +79,14 @@ export default function DashboardPage() {
           </div>
           {data.orders && data.orders.length > 0 ? (
             <div className="space-y-4">
-              {data.orders.map((o: any) => (
+              {data.orders.map((o: DashboardOrder) => (
                 <div key={o.id} className="p-4 rounded-2xl bg-[var(--bg)] border border-[var(--border)] flex justify-between items-center">
                   <div>
                     <span className="block text-xs font-mono font-bold text-[var(--mud)] mb-1">#{o.order_number}</span>
                     <span className="text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full bg-green-100 text-green-800 border border-green-200">{o.status.replace("_", " ")}</span>
                   </div>
                   <div className="text-right">
-                    <span className="block font-bold text-[var(--terracotta)]">₹{o.total_inr.toLocaleString("en-IN")}</span>
+                    <span className="block font-bold text-[var(--terracotta)]">₹{Number(o.total_inr).toLocaleString("en-IN")}</span>
                     <a href={`/trace/LO-PILANI-SAMPLE-001`} className="text-[10px] underline text-[var(--muted)]">Track Batch</a>
                   </div>
                 </div>
@@ -107,13 +107,13 @@ export default function DashboardPage() {
           </div>
           {data.sponsorships && data.sponsorships.length > 0 ? (
             <div className="space-y-4">
-              {data.sponsorships.map((s: any) => (
+              {data.sponsorships.map((s: DashboardSponsorship) => (
                 <div key={s.id} className="p-4 rounded-2xl bg-[var(--bg)] border border-[var(--border)] flex justify-between items-center">
                   <div>
                     <span className="block text-sm font-bold text-[var(--mud)]">{s.calf_name}</span>
                     <span className="text-xs text-[var(--muted)] capitalize">{s.plan_type.replace("_", " ")} Sponsorship</span>
                   </div>
-                  <span className="font-bold text-[var(--terracotta)]">₹{s.amount_inr}/mo</span>
+                  <span className="font-bold text-[var(--terracotta)]">₹{Number(s.amount_inr).toLocaleString("en-IN")}/mo</span>
                 </div>
               ))}
             </div>
