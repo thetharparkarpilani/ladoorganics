@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 
 interface ProductRecord {
   slug: string;
@@ -81,12 +82,12 @@ export default function ProductDetailPage() {
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-        <a href="/#store" className="text-sm font-bold text-[var(--terracotta)] hover:underline">
+        <Link href="/#store" className="text-sm font-bold text-[var(--terracotta)] hover:underline">
           ← Back to Circular Store
-        </a>
-        <a href="/trace/LO-PILANI-SAMPLE-001" className="text-xs font-bold underline">
+        </Link>
+        <Link href="/trace/LO-PILANI-SAMPLE-001" className="text-xs font-bold underline">
           Inspect Batch Traceability →
-        </a>
+        </Link>
       </div>
 
       <div className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 sm:p-10 shadow-sm space-y-6">
@@ -136,12 +137,12 @@ export default function ProductDetailPage() {
             >
               Order via WhatsApp (+91 96361 00337)
             </a>
-            <a
+            <Link
               href="/#store"
               className="px-5 py-3 rounded-xl text-xs font-bold border border-[var(--border)] bg-[var(--surface)]"
             >
               Add in Main Store Bag
-            </a>
+            </Link>
           </div>
         </div>
 

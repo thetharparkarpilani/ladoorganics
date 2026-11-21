@@ -1,8 +1,13 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 
+interface ShippingItem {
+  quantity: number;
+  priceInr: number;
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const { pincode, items } = await req.json();
+    const { pincode, items } = (await req.json()) as { pincode: string; items: ShippingItem[] };
 
     if (!pincode || pincode.length !== 6) {
       return NextResponse.json({ error: "Valid 6-digit Indian PIN code required." }, { status: 400 });
@@ -15,7 +20,7 @@ export async function POST(req: NextRequest) {
     // Baseline calculation: 
     // ₹50 base charge + ₹20 per item for standard packing weight
     const baseRate = 50;
-    const itemSurcharge = items.reduce((sum: number, item: any) => sum + (item.quantity * 20), 0);
+    const itemSurcharge = items.reduce((sum: number, item: ShippingItem) => sum + (item.quantity * 20), 0);
     let shippingCostInr = baseRate + itemSurcharge;
     let estimatedDays = 5;
 

@@ -65,8 +65,8 @@ export default function SmartSearchOverlay({ isOpen, onClose }: { isOpen: boolea
           
           {!loading && query.length >= 2 && results.length === 0 && (
             <div className="p-8 text-center">
-              <p className="text-sm text-[var(--muted)] mb-2">No direct matches found for "{query}".</p>
-              <p className="text-xs font-bold text-[var(--terracotta)]">Try searching for "Ghee", "Compost", or "Stay".</p>
+              <p className="text-sm text-[var(--muted)] mb-2">No direct matches found for &quot;{query}&quot;.</p>
+              <p className="text-xs font-bold text-[var(--terracotta)]">Try searching for &quot;Ghee&quot;, &quot;Compost&quot;, or &quot;Stay&quot;.</p>
             </div>
           )}
 

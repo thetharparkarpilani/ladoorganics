@@ -69,7 +69,7 @@ export default function InteractiveFarmMap() {
             Module J • My Lado Farm
           </span>
           <h2 className="text-3xl sm:text-5xl font-serif font-bold mb-4">
-            The "Cow as a Coconut" Ecosystem
+            The &quot;Cow as a Coconut&quot; Ecosystem
           </h2>
           <p className="text-sm opacity-80 max-w-2xl mx-auto leading-relaxed">
             Explore our zero-waste Pilani blueprint. Click the interactive nodes below to see how every resource flows through our closed-loop regenerative farm.

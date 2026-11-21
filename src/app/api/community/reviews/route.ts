@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
       LEFT JOIN users u ON r.user_id = u.id
       WHERE r.is_approved = TRUE
     `;
-    const params: any[] = [];
+    const params: (string | number | boolean | null)[] = [];
 
     if (productSlug) {
       query += ` AND r.product_slug = $1`;

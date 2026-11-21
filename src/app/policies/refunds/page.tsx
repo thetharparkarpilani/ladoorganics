@@ -10,7 +10,7 @@ export default function RefundsPolicyPage() {
       
       <div className="space-y-6 text-sm leading-relaxed text-[var(--text-charcoal)] font-light">
         <h2 className="text-xl font-serif font-bold mt-8 mb-4">1. Cancellations</h2>
-        <p>Product orders can be cancelled before they are dispatched from our Pilani hub. Once handed over to our delivery partners, standard orders cannot be cancelled. For "Deep Work" Bhunga Stay bookings, cancellations made 7 days prior to check-in are eligible for a full refund.</p>
+        <p>Product orders can be cancelled before they are dispatched from our Pilani hub. Once handed over to our delivery partners, standard orders cannot be cancelled. For &quot;Deep Work&quot; Bhunga Stay bookings, cancellations made 7 days prior to check-in are eligible for a full refund.</p>
         
         <h2 className="text-xl font-serif font-bold mt-8 mb-4">2. Returns and Replacements</h2>
         <p>As our products are perishable food and wellness items (Ghee, Dhoop, Compost), we do not accept returns. However, if your glass jar arrives damaged, leaking, or compromised, please contact us at thetharparkarpilani@gmail.com within 24 hours of delivery with photographic evidence, and we will issue a free replacement.</p>

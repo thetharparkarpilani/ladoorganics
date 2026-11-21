@@ -12,7 +12,7 @@ export default function PrivacyPolicyPage() {
         <p>At Lado Organics, operating from Pilani, Rajasthan, we respect your privacy and are committed to protecting your personal data in accordance with applicable Indian laws.</p>
         
         <h2 className="text-xl font-serif font-bold mt-8 mb-4">1. Data Collection</h2>
-        <p>We collect information you provide directly to us when you make a purchase, create a "My Lado Journey" account, subscribe to the Essentials Club, book a Bhunga stay, or sponsor a calf. This includes your name, email, phone number, and delivery address.</p>
+        <p>We collect information you provide directly to us when you make a purchase, create a &quot;My Lado Journey&quot; account, subscribe to the Essentials Club, book a Bhunga stay, or sponsor a calf. This includes your name, email, phone number, and delivery address.</p>
         
         <h2 className="text-xl font-serif font-bold mt-8 mb-4">2. Secure Payments</h2>
         <p>All payment transactions are processed securely through certified gateways (e.g., Razorpay/Cashfree). Lado Organics does not store your raw credit card, UPI, or banking information on our servers.</p>
