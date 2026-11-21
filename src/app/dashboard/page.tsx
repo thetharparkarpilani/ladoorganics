@@ -62,7 +62,7 @@ export default function DashboardPage() {
       <div className="bg-[#2b180c] p-8 sm:p-10 rounded-3xl text-[#fef3c7] relative overflow-hidden shadow-xl">
         <div className="relative z-10">
           <span className="text-xs font-mono uppercase tracking-widest text-[#fbbf24] mb-2 block">Lado Organics Ecosystem</span>
-          <h1 className="text-3xl sm:text-4xl font-serif font-bold mb-4">Namaste, {data.profile?.name || "Patron"}</h1>
+          <h1 className="text-3xl sm:text-4xl font-serif font-bold mb-4">Namaste, {data?.profile?.name || "Patron"}</h1>
           <p className="text-[#fde68a]/80 text-sm max-w-lg leading-relaxed">
             Welcome to your verified digital farm interface. Track your A2 Bilona Ghee batches, manage your Bhunga farm stay reservations, and view your Gau Seva impact in one secure place.
           </p>
@@ -77,7 +77,7 @@ export default function DashboardPage() {
             <h3 className="font-serif font-bold text-xl text-[var(--mud)]">Recent Orders</h3>
             <a href="/dashboard/orders" className="text-xs font-bold text-[var(--terracotta)] hover:underline">View All</a>
           </div>
-          {data.orders && data.orders.length > 0 ? (
+          {data?.orders && data.orders.length > 0 ? (
             <div className="space-y-4">
               {data.orders.map((o: DashboardOrder) => (
                 <div key={o.id} className="p-4 rounded-2xl bg-[var(--bg)] border border-[var(--border)] flex justify-between items-center">
@@ -105,7 +105,7 @@ export default function DashboardPage() {
             <h3 className="font-serif font-bold text-xl text-[var(--mud)]">Gau Seva Impact</h3>
             <a href="/dashboard/sponsorships" className="text-xs font-bold text-[var(--terracotta)] hover:underline">Manage</a>
           </div>
-          {data.sponsorships && data.sponsorships.length > 0 ? (
+          {data?.sponsorships && data.sponsorships.length > 0 ? (
             <div className="space-y-4">
               {data.sponsorships.map((s: DashboardSponsorship) => (
                 <div key={s.id} className="p-4 rounded-2xl bg-[var(--bg)] border border-[var(--border)] flex justify-between items-center">
