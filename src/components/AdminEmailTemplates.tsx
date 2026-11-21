@@ -52,7 +52,7 @@ export default function AdminEmailTemplates({ adminToken }: { adminToken: string
     }
   };
 
-  if (loading) return <div class="animate-pulse p-8">Loading communications matrix...</div>;
+if (loading) return <div className="animate-pulse p-8">Loading communications matrix...</div>;
 
   return (
     <div className="bg-[var(--bg-ivory)] rounded-2xl border border-[var(--border-light)] p-6 shadow-sm mt-8">
