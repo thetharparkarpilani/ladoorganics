@@ -5,9 +5,9 @@ export default function PoliciesPage() {
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
       <div className="mb-8 flex items-center justify-between gap-4">
-        <a href="/" className="text-sm font-bold text-[var(--terracotta)] hover:underline">
+        <Link href="/" className="text-sm font-bold text-[var(--terracotta)] hover:underline">
           ← Back to Lado Organics Home
-        </a>
+        </Link>
         <span className="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-[var(--border)] bg-[var(--surface)]">
           Draft Templates • Legal Review Required
         </span>
