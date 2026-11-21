@@ -67,3 +67,23 @@ body {
   border-color: var(--accent-earth);
   box-shadow: 0 15px 35px rgba(92, 56, 38, 0.05);
 }
+
+/* Compatibility aliases for restored Lado feature sections */
+:root {
+  --bg: var(--bg-sand);
+  --surface: var(--bg-ivory);
+  --mud: var(--text-mud);
+  --terracotta: var(--accent-terracotta);
+  --earth: var(--accent-earth);
+  --border: var(--border-light);
+  --whatsapp: #25D366;
+}
+:root[data-theme="dusk"] {
+  --bg: #201b17;
+  --surface: #2b241e;
+  --mud: #ead9c8;
+  --terracotta: #e58a68;
+  --earth: #d9a05b;
+  --border: rgba(234, 217, 200, 0.18);
+  color-scheme: dark;
+}

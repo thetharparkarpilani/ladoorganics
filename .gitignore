@@ -4,3 +4,20 @@
 !.env.example
 logs/
 *.log
+
+# Lado Organics - generated and temporary files
+*.tsbuildinfo
+_build_fix_backup*/
+_lado_backup*/
+backup/
+backups/
+coverage/
+dist/
+out/
+.vercel/
+.turbo/
+.DS_Store
+Thumbs.db
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
