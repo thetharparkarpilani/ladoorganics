@@ -2,6 +2,24 @@
 
 import React, { useEffect, useState } from "react";
 
+interface DashboardOrder {
+  id: string | number;
+  order_number: string;
+  status: string;
+  total_inr: number | string;
+}
+interface DashboardSponsorship {
+  id: string | number;
+  calf_name: string;
+  plan_type: string;
+  amount_inr: number | string;
+}
+interface DashboardData {
+  profile?: { name?: string | null } | null;
+  orders?: DashboardOrder[];
+  sponsorships?: DashboardSponsorship[];
+}
+
 export default function DashboardPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
