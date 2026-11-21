@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface BatchRecord {
   batchCode: string;
@@ -77,9 +78,9 @@ export default function BatchTracePage() {
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-        <a href="/" className="text-sm font-bold text-[var(--terracotta)] hover:underline">
+        <Link href="/" className="text-sm font-bold text-[var(--terracotta)] hover:underline">
           ← Back to Lado Organics Home
-        </a>
+        </Link>
         <span className="text-xs font-bold uppercase tracking-widest px-3.5 py-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)]">
           QR Batch Traceability • Pilani, Rajasthan
         </span>
