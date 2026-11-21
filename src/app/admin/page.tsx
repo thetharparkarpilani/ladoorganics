@@ -1,6 +1,7 @@
-﻿"use client";
+"use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 
 interface AdminStats {
   orders: number;
@@ -24,10 +25,10 @@ export default function AdminDashboardPage() {
         const res = await fetch("/api/admin/stats", {
           headers: { Authorization: `Bearer ${token}` }
         });
-        
+
         if (res.status === 401) throw new Error("Unauthorized: Invalid or missing ADMIN_ACCESS_TOKEN. Please log in securely.");
         if (!res.ok) throw new Error("Failed to load dashboard metrics. Database may be offline.");
-        
+
         const data = await res.json();
         setStats(data);
       } catch (err) {
@@ -46,9 +47,9 @@ export default function AdminDashboardPage() {
           <h1 className="text-3xl font-serif font-bold mb-2">Command Center Overview</h1>
           <p className="text-sm opacity-70">Monitor farm operations, inventory locks, and ecosystem revenue.</p>
         </div>
-        <a href="/" className="text-xs font-bold border border-[var(--border)] px-4 py-2 rounded-lg hover:border-[var(--terracotta)] transition bg-[var(--surface)]">
+        <Link href="/" className="text-xs font-bold border border-[var(--border)] px-4 py-2 rounded-lg hover:border-[var(--terracotta)] transition bg-[var(--surface)]">
           View Live Site ↗
-        </a>
+        </Link>
       </div>
 
       {error ? (
