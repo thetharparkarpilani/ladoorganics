@@ -2,6 +2,7 @@
 
 import React, { useState, use } from "react";
 import Link from "next/link";
+import ProductReviewsSection from "@/components/ProductReviewsSection";
 
 interface ProductRecord {
   slug: string;
@@ -142,6 +143,7 @@ export default function ProductDetailPage(props: { params: Promise<{ slug: strin
           </div>
         </div>
       </div>
+      <ProductReviewsSection productSlug={product.slug} />
     </div>
   );
 }
