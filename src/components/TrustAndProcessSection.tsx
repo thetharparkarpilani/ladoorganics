@@ -118,7 +118,7 @@ export default function TrustAndProcessSection({ whatsappNumber }: { whatsappNum
             <div className="space-y-3">
               {FAQS.map((item, index) => (
                 <details key={item.q} open={openFaq === index} onToggle={(event) => {
-                  if (event.currentTarget.open) setOpenFaq(index);
+                  setOpenFaq(event.currentTarget.open ? index : null);
                 }} className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4">
                   <summary className="cursor-pointer font-bold text-sm">{item.q}</summary>
                   <p className="text-sm opacity-80 leading-relaxed mt-3">{item.a}</p>
