@@ -104,6 +104,13 @@ export default function TrustAndProcessSection({ whatsappNumber }: { whatsappNum
           </article>
         </div>
 
+        <article className="rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-6 sm:p-8">
+          <p className="text-xs font-bold uppercase tracking-widest text-[var(--terracotta)]">Curated product enquiry</p>
+          <h2 className="font-serif text-2xl sm:text-3xl font-bold mt-2 mb-3">Pilani Starter Box</h2>
+          <p className="text-sm opacity-85 leading-relaxed">Ask the team about a curated combination of 500 ml A2 Bilona Ghee, one box of Tharparkar Dhoop and one 5 kg bag of Pure Kechua Khad. This is an enquiry only; no bundle discount, stock status or combined price is advertised.</p>
+          <a href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent("Namaste Lado Organics. Please share current availability and a quote for the Pilani Starter Box: 500 ml A2 Bilona Ghee, one box of Tharparkar Dhoop and one 5 kg bag of Pure Kechua Khad.")}`} target="_blank" rel="noopener noreferrer" className="primary-btn inline-flex mt-5 px-5 py-3 rounded-xl text-xs font-bold">Request starter-box quote</a>
+        </article>
+
         <div className="grid lg:grid-cols-2 gap-8 items-start">
           <div>
             <p className="text-xs font-bold uppercase tracking-widest text-[var(--terracotta)]">Helpful answers</p>
