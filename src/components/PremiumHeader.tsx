@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function PremiumHeader() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -29,8 +30,8 @@ export default function PremiumHeader() {
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
             
           {/* Brand Logo */}
-          <Link href="/" className="text-2xl md:text-3xl font-serif font-bold tracking-widest text-[var(--mud)]">
-            LADO <span className="text-[var(--terracotta)] font-normal">ORGANICS</span>
+          <Link href="/" aria-label="Lado Organics home" className="inline-flex items-center shrink-0">
+            <Image src="/lado-organics-logo.svg" alt="Lado Organics — Lado Love Pure" width={180} height={120} priority className="h-14 md:h-16 w-auto object-contain" />
           </Link>
 
           {/* Centralized Search Bar */}
