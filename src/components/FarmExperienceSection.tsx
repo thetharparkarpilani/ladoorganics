@@ -17,7 +17,7 @@ export default function FarmExperienceSection({ whatsappNumber }: FarmExperience
   // Calf Sponsorship state
   const [calfName, setCalfName] = useState<string>("Dholi Sheri");
   const [planType, setPlanType] = useState<string>("monthly");
-  const [amountInr, setAmountInr] = useState<string>("2100");
+  const [amountInr, setAmountInr] = useState<string>("");
   const [sponsorName, setSponsorName] = useState<string>("");
   const [sponsorEmail, setSponsorEmail] = useState<string>("");
   const [sponsorPhone, setSponsorPhone] = useState<string>("");
@@ -161,11 +161,12 @@ export default function FarmExperienceSection({ whatsappNumber }: FarmExperience
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase mb-1">Contribution Amount (₹ INR)</label>
+              <label className="block text-xs font-bold uppercase mb-1">Your chosen contribution amount (₹ INR)</label>
               <input
                 type="number"
-                min={100}
+                min={1}
                 max={1000000}
+                placeholder="Enter an amount you choose"
                 step={1}
                 required
                 value={amountInr}
@@ -231,7 +232,7 @@ export default function FarmExperienceSection({ whatsappNumber }: FarmExperience
                 {sponLoading ? "Submitting..." : "Submit Sponsorship Request"}
               </button>
               <a
-                href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Namaste Lado Organics! I would like to sponsor ${calfName} (${planType}, ₹${amountInr}).`)}`}
+                href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(amountInr ? `Namaste Lado Organics! I would like to enquire about sponsoring ${calfName} (${planType}) with a proposed contribution of ₹${amountInr}. Please confirm the details.` : `Namaste Lado Organics! I would like to enquire about sponsoring ${calfName} (${planType}). Please share the available contribution options and details.`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs font-bold text-[var(--terracotta)] hover:underline"
