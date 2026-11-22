@@ -132,7 +132,7 @@ export default function TrustAndProcessSection({ whatsappNumber }: { whatsappNum
             <h2 className="font-serif text-2xl sm:text-3xl font-bold mt-2 mb-3">What would you like us to explore next?</h2>
             <p className="text-sm opacity-80 leading-relaxed mb-5">Register interest in possible future products or workshops. This is not a pre-order, product availability claim or launch announcement.</p>
             <form onSubmit={joinWaitlist} className="space-y-3">
-              <label className="block text-xs font-bold" htmlFor="lado-interest">I'm interested in</label>
+              <label className="block text-xs font-bold" htmlFor="lado-interest">I&apos;m interested in</label>
               <select id="lado-interest" value={interest} onChange={(e) => setInterest(e.target.value)} className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg)] p-3 text-sm">
                 <option>Panchagavya product updates</option>
                 <option>Havan samagri and dhoop updates</option>
