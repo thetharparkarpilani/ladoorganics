@@ -86,10 +86,16 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
         href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Chat on WhatsApp"
-        className="whatsapp-float px-4 py-3.5 rounded-full font-bold text-sm flex items-center gap-2"
+        aria-label="Chat with Lado Organics on WhatsApp"
+        className="fixed bottom-6 left-6 z-50 flex flex-col items-center gap-2 text-[#777] no-underline"
       >
-        <span>WhatsApp</span>
+        <span className="relative flex h-[60px] w-[60px] items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_4px_16px_rgba(0,0,0,0.22)] transition-transform duration-200 hover:scale-105">
+          <span className="absolute inset-0 rounded-full bg-[#25D366] opacity-35 animate-ping motion-reduce:animate-none" aria-hidden="true" />
+          <svg viewBox="0 0 32 32" className="relative z-10 h-9 w-9 fill-current" aria-hidden="true">
+            <path d="M16.02 3C8.85 3 3.02 8.76 3.02 15.86c0 2.28.61 4.5 1.77 6.44L3 29l6.9-1.8a13.1 13.1 0 0 0 6.12 1.5h.01c7.17 0 13-5.77 13-12.86C29.03 8.75 23.2 3 16.02 3Zm0 23.52h-.01a10.9 10.9 0 0 1-5.55-1.51l-.4-.24-4.1 1.07 1.1-3.97-.26-.41a10.62 10.62 0 0 1-1.66-5.6c0-5.91 4.88-10.72 10.88-10.72 2.9 0 5.63 1.12 7.68 3.15a10.57 10.57 0 0 1 3.18 7.57c0 5.91-4.88 10.72-10.86 10.72Zm5.97-8.03c-.33-.16-1.94-.95-2.24-1.06-.3-.11-.52-.16-.74.16-.22.33-.85 1.06-1.04 1.28-.19.22-.38.25-.71.08-.33-.16-1.38-.5-2.63-1.59-.97-.84-1.62-1.88-1.81-2.2-.19-.33-.02-.5.14-.66.15-.15.33-.38.49-.57.16-.19.22-.33.33-.55.11-.22.05-.41-.03-.57-.08-.16-.74-1.75-1.01-2.4-.27-.63-.54-.54-.74-.55h-.63c-.22 0-.57.08-.87.41-.3.33-1.14 1.11-1.14 2.7 0 1.59 1.17 3.13 1.33 3.35.16.22 2.3 3.48 5.58 4.88.78.33 1.39.53 1.86.68.78.24 1.49.21 2.05.13.63-.09 1.94-.79 2.21-1.56.27-.77.27-1.43.19-1.56-.08-.14-.3-.22-.63-.38Z"/>
+          </svg>
+        </span>
+        <span className="text-xs font-medium tracking-wide">Talk to us?</span>
       </a>
 
       <button
