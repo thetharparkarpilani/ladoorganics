@@ -8,6 +8,7 @@ import { TRANSLATIONS } from "@/lib/i18n";
 import { useCart } from "@/context/CartContext";
 import StorefrontSection from "@/components/StorefrontSection";
 import EssentialsClubSection from "@/components/EssentialsClubSection";
+import TrustAndProcessSection from "@/components/TrustAndProcessSection";
 import FarmCalculatorsSuite from "@/components/FarmCalculatorsSuite";
 import FarmExperienceSection from "@/components/FarmExperienceSection";
 import BuildYourOwnExperience from "@/components/BuildYourOwnExperience";
@@ -96,6 +97,7 @@ export default function HomePage() {
         </section>
         <StorefrontSection products={products} locale={locale} searchQuery={searchQuery} whatsappNumber={whatsappNumber} onAddToBag={handleAddToBag} />
         <EssentialsClubSection />
+        <TrustAndProcessSection whatsappNumber={whatsappNumber} />
         <FarmCalculatorsSuite locale={locale} />
         <section id="adopt" className="py-20 px-4 sm:px-6 lg:px-8 border-t border-[var(--border)]">
           <div className="max-w-6xl mx-auto"><div className="text-center mb-12"><h2 className="text-3xl sm:text-5xl font-serif font-bold">{dict.section_adopt}</h2><p className="mt-3 max-w-2xl mx-auto opacity-80">Meet our Tharparkar calves at Pilani Gaushala and enquire about responsible sponsorship.</p></div>
