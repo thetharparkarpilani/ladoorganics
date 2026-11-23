@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
   if (!(await getAdminActor(req, "operations"))) return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   const params = req.nextUrl.searchParams;
   const kind = params.get("kind") as Kind | null;
-  if (!kind || !(kind in CONFIG)) return NextResponse.json({ error: "Choose orders, bookings or sponsorships." }, { status: 400 });
+  if (!kind || !Object.prototype.hasOwnProperty.call(CONFIG, kind)) return NextResponse.json({ error: "Choose orders, bookings or sponsorships." }, { status: 400 });
 
   const page = Math.max(1, Math.min(100000, Number.parseInt(params.get("page") || "1", 10) || 1));
   const pageSize = Math.max(5, Math.min(50, Number.parseInt(params.get("pageSize") || "25", 10) || 25));
@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
   const config = CONFIG[kind];
   const where: string[] = [];
   const values: (string | number)[] = [];
-  if (search) { values.push(`%${search}%`); where.push(config.search.replace(/\$1/g, `$${values.length}`)); }
+  if (search) { values.push(`%${search}%`); where.push(config.search.replaceAll("$1", "$" + values.length)); }
   if (status && status !== "all") { values.push(status); where.push(`status = $${values.length}`); }
   const clause = where.length ? `WHERE ${where.join(" AND ")}` : "";
   try {
