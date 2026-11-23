@@ -37,6 +37,26 @@ export default function HomePage() {
 
   useEffect(() => { document.documentElement.setAttribute("data-theme", theme); }, [theme]);
   useEffect(() => {
+    const sections = Array.from(document.querySelectorAll<HTMLElement>("main > section, main > [data-farm-reveal]"));
+    if (!("IntersectionObserver" in window)) {
+      sections.forEach((section) => section.classList.add("farm-visible"));
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("farm-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -48px 0px" });
+    sections.forEach((section) => {
+      section.classList.add("farm-reveal");
+      observer.observe(section);
+    });
+    return () => observer.disconnect();
+  }, []);
+  useEffect(() => {
     let active = true;
     fetch("/api/catalog")
       .then((res) => res.ok ? res.json() : null)
@@ -90,12 +110,12 @@ export default function HomePage() {
               <Link href="/trace/LO-PILANI-SAMPLE-001" className="px-7 py-3.5 rounded-full font-bold text-sm border border-[var(--border)]">Verify Batch QR</Link>
               <a href="/dashboard" className="px-7 py-3.5 rounded-full font-bold text-sm border border-[var(--border)]">My Lado Journey</a>
             </div>
-            <div className="max-w-3xl mx-auto rounded-3xl overflow-hidden border border-[var(--border)] shadow-xl bg-black">
+            <div className="farm-video-frame max-w-3xl mx-auto rounded-3xl overflow-hidden border border-[var(--border)] shadow-xl bg-black">
               <div className="aspect-video w-full"><iframe className="w-full h-full" src="https://www.youtube.com/embed/JAhshRN6F28" title="Lado Organics Pilani - Build in Public" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div>
             </div>
           </div>
         </section>
-        <StorefrontSection products={products} locale={locale} searchQuery={searchQuery} whatsappNumber={whatsappNumber} onAddToBag={handleAddToBag} />
+        <div data-farm-reveal><StorefrontSection products={products} locale={locale} searchQuery={searchQuery} whatsappNumber={whatsappNumber} onAddToBag={handleAddToBag} /></div>
         <EssentialsClubSection />
         <TrustAndProcessSection whatsappNumber={whatsappNumber} />
         <FarmCalculatorsSuite locale={locale} />
