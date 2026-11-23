@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { sendTemplatedNotification } from "@/lib/customer-notifications";
+import { sendAdminRequestAlert } from "@/lib/admin-notifications";
 
 const ALLOWED_CALVES = new Set(["Dholi Sheri", "Tara", "Roshni"]);
 const ALLOWED_PLANS = new Set(["one_time", "monthly", "yearly"]);
@@ -37,6 +38,15 @@ export async function POST(req: NextRequest) {
       calf_name: calfName,
       plan: planType,
       amount: amountInr,
+    });
+    await sendAdminRequestAlert("Gau Seva sponsorship request", {
+      "Calf": calfName,
+      "Sponsor": sponsorName,
+      "Email": sponsorEmail,
+      "Phone": sponsorPhone,
+      "Plan": planType,
+      "Requested amount (INR)": amountInr,
+      "Status": "pending",
     });
 
     return NextResponse.json({
