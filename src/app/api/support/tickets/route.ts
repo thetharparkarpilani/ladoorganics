@@ -65,7 +65,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
-  if (!adminAuthorized(req)) return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+  if (!(await getAdminActor(req, "support"))) return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   const body = await req.json().catch(() => null);
   const id = clean(body?.id, 50);
   const status = clean(body?.status, 30);
