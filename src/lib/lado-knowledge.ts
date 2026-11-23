@@ -37,14 +37,14 @@ function normalize(value: string): string {
 
 export function findLocalAnswer(question: string, entries: KnowledgeEntry[] = DEFAULT_LADO_KNOWLEDGE): KnowledgeEntry | null {
   const q = normalize(question);
-  if (!q) return null;
+  if (q.length < 3) return null;
   const qTokens = new Set(q.split(/\s+/).filter((t) => t.length > 2));
   let best: { entry: KnowledgeEntry; score: number } | null = null;
   for (const entry of entries) {
     const patterns = entry.question_patterns.split("|").map((p) => normalize(p)).filter(Boolean);
     let score = 0;
     for (const pattern of patterns) {
-      if (q === pattern || q.includes(pattern) || pattern.includes(q)) score = Math.max(score, 1);
+      if (q === pattern || q.includes(pattern) || (q.length >= 9 && q.split(" ").length >= 2 && pattern.includes(q))) score = Math.max(score, 1);
       else {
         const tokens = pattern.split(/\s+/).filter((t) => t.length > 2);
         if (!tokens.length) continue;
