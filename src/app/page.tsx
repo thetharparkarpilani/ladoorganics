@@ -30,6 +30,7 @@ const INITIAL_PRODUCTS: ProductDTO[] = [
 export default function HomePage() {
   const [locale, setLocale] = useState<LocaleCode>("en");
   const [theme, setTheme] = useState<"light" | "dusk">("light");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [products, setProducts] = useState<ProductDTO[]>(INITIAL_PRODUCTS);
   const { addToCart, itemCount, setDrawerOpen } = useCart();
@@ -90,6 +91,7 @@ export default function HomePage() {
             <a href="#store">{dict.section_store}</a><a href="#essentials-club">Essentials Club</a><a href="#build-experience">Build Experience</a><a href="#adopt">Gau Seva</a><a href="#journal">Journal</a><a href="#corporate">Corporate</a><Link href="/contact">Help & Support</Link><Link href="/trace/LO-PILANI-SAMPLE-001">Trace Batch</Link><a href="/dashboard">My Journey</a>
           </nav>
           <div className="flex items-center gap-2">
+            <button type="button" className="xl:hidden text-xs font-bold px-3 py-2 rounded-full border border-[var(--border)]" aria-expanded={mobileMenuOpen} aria-controls="lado-mobile-navigation" onClick={() => setMobileMenuOpen(open => !open)}>{mobileMenuOpen ? "Close" : "Menu"}</button>
             <input type="search" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search products..." aria-label="Search products" className="text-xs px-3 py-1.5 rounded-full border border-[var(--border)] bg-white/80 w-28 sm:w-36" />
             <button type="button" onClick={() => setDrawerOpen(true)} className="text-xs font-bold px-3 py-1.5 rounded-full bg-[var(--terracotta)] text-white">Bag ({itemCount})</button>
             <select aria-label="Language selector" value={locale} onChange={e => setLocale(e.target.value as LocaleCode)} className="text-xs font-bold px-2.5 py-1.5 rounded-full border border-[var(--border)] bg-white/80">
@@ -98,6 +100,17 @@ export default function HomePage() {
             <button type="button" onClick={() => setTheme(t => t === "light" ? "dusk" : "light")} className="text-xs font-bold px-3 py-1.5 rounded-full border border-[var(--border)]">{theme === "light" ? "Dusk" : "Sand"}</button>
           </div>
         </div>
+        {mobileMenuOpen && (
+          <nav id="lado-mobile-navigation" aria-label="Mobile primary" className="lado-mobile-navigation xl:hidden">
+            <a href="#store" onClick={() => setMobileMenuOpen(false)}>Shop the collection</a>
+            <a href="#farm-world" onClick={() => setMobileMenuOpen(false)}>Our farm story</a>
+            <a href="#essentials-club" onClick={() => setMobileMenuOpen(false)}>Essentials Club</a>
+            <a href="#adopt" onClick={() => setMobileMenuOpen(false)}>Gau Seva</a>
+            <a href="#journal" onClick={() => setMobileMenuOpen(false)}>Journal</a>
+            <Link href="/contact" onClick={() => setMobileMenuOpen(false)}>Help & Support</Link>
+            <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>My Lado Journey</Link>
+          </nav>
+        )}
       </header>
       <main className="flex-1">
         <section className="farm-hero farm-hero-editorial relative isolate overflow-hidden px-4 sm:px-6 lg:px-8">
