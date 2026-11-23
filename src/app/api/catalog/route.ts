@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
       // Fetch all active products and their variants
       const productsRes = await client.query(`
         SELECT 
-          id, slug, name_en, name_hi, name_ma, description_en, 
+          id, slug, name_en, name_hi, name_ma, description_en, image_url, 
           sourcing_info, production_method, storage_instructions 
         FROM products 
         WHERE is_active = TRUE 
@@ -44,6 +44,7 @@ export async function GET(req: NextRequest) {
           nameHi: p.name_hi,
           nameMa: p.name_ma,
           descriptionEn: p.description_en,
+          imageUrl: p.image_url,
           sourcingInfo: p.sourcing_info,
           productionMethod: p.production_method,
           storageInstructions: p.storage_instructions,
