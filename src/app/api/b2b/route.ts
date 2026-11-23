@@ -13,10 +13,10 @@ export async function POST(req: NextRequest) {
 
     const client = await db.getClient();
     try {
-      const result = await client.query(
+      await client.query(
         `INSERT INTO b2b_enquiries 
           (company_name, contact_name, email, phone, event_type, estimated_quantity, target_delivery_date, requirements) 
-         VALUES ($1, $2, $3, $4, $5, $6, $7::date, $8) RETURNING id`,
+         VALUES ($1, $2, $3, $4, $5, $6, $7::date, $8)`,
         [companyName, contactName, email, phone, eventType || null, estimatedQuantity, targetDate || null, requirements || null]
       );
 
