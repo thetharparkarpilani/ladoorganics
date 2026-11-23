@@ -12,6 +12,10 @@ interface AdminStats {
   products: number;
   inventory: number;
   bookings: number;
+  customers?: number;
+  openOrders?: number;
+  sponsorships?: number;
+  trend?: Array<{ day: string; revenue: number | string; orders: number | string }>;
 }
 
 export default function AdminDashboardPage() {
@@ -20,31 +24,46 @@ export default function AdminDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [adminToken, setAdminToken] = useState("");
   const [tokenDraft, setTokenDraft] = useState("");
+  const [adminRole, setAdminRole] = useState("owner");
 
   // In production, the token would be securely managed via HttpOnly cookies and NextAuth/Supabase sessions.
   // For safety, we enforce a strict authorization header requirement.
   useEffect(() => {
-    const fetchStats = async () => {
+    let active = true;
+    const initialize = async () => {
       try {
-        const token = localStorage.getItem("lado_admin_token") || "";
+        let token = localStorage.getItem("lado_admin_token") || "";
+        let role = "owner";
+        if (!token) {
+          const session = await fetch("/api/admin/session", { cache: "no-store" });
+          if (!session.ok) throw new Error("Enter your owner access token or sign in with an approved staff Google account.");
+          const sessionData = await session.json();
+          role = sessionData.actor?.role || "";
+          const destinations: Record<string,string> = {
+            orders: "/admin/orders", inventory: "/admin/inventory", support: "/admin/support",
+            content: "/admin/content", communications: "/admin/communications", viewer: "/admin/analytics"
+          };
+          if (role && role !== "manager") {
+            window.location.replace(destinations[role] || "/login?next=/admin");
+            return;
+          }
+          token = "__lado_staff_session__";
+        }
+        if (!active) return;
+        setAdminRole(role);
         setAdminToken(token);
-        if (!token) throw new Error("Enter your ADMIN_ACCESS_TOKEN below to open the admin tools.");
-        const res = await fetch("/api/admin/stats", {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-
-        if (res.status === 401) throw new Error("Unauthorized: Invalid or missing ADMIN_ACCESS_TOKEN. Please log in securely.");
-        if (!res.ok) throw new Error("Failed to load dashboard metrics. Database may be offline.");
-
-        const data = await res.json();
-        setStats(data);
+        const res = await fetch("/api/admin/stats", { headers: { Authorization: "Bearer " + token }, cache: "no-store" });
+        if (!res.ok) throw new Error("Unable to load admin metrics. Check your staff permissions and database.");
+        setStats(await res.json());
+      setAdminRole("owner");
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Network error");
+        if (active) setError(err instanceof Error ? err.message : "Network error");
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     };
-    fetchStats();
+    void initialize();
+    return () => { active = false; };
   }, []);
 
   const saveAdminToken = async (event: React.FormEvent) => {
@@ -90,7 +109,8 @@ export default function AdminDashboardPage() {
       {!adminToken && (
         <form onSubmit={saveAdminToken} className="mb-8 max-w-xl rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5">
           <h2 className="font-serif text-lg font-bold mb-2">Admin access</h2>
-          <p className="text-xs opacity-70 mb-3">Enter the same ADMIN_ACCESS_TOKEN configured in your Vercel environment variables.</p>
+          <p className="text-xs opacity-70 mb-3">Enter the owner ADMIN_ACCESS_TOKEN, or sign in with Google if the owner has added your email as staff.</p>
+          <Link href="/login?next=/admin" className="mb-3 inline-block text-xs font-bold underline">Staff Google sign-in</Link>
           <input type="password" autoComplete="current-password" value={tokenDraft} onChange={e => setTokenDraft(e.target.value)} className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg)] p-3 text-sm" placeholder="Admin access token" />
           <button type="submit" disabled={!tokenDraft.trim() || loading} className="primary-btn mt-3 rounded-xl px-5 py-2.5 text-sm font-bold disabled:opacity-50">Unlock admin tools</button>
         </form>
@@ -124,11 +144,11 @@ export default function AdminDashboardPage() {
         </div>
       ) : null}
 
-      {adminToken && <AdminNotificationCentre adminToken={adminToken} />}
+      {adminToken && (adminRole === "owner" || adminRole === "manager") && <AdminNotificationCentre adminToken={adminToken} />}
 
-      {adminToken && <AdminProductInventory adminToken={adminToken} />}
+      {adminToken && (adminRole === "owner" || adminRole === "manager") && <AdminProductInventory adminToken={adminToken} />}
 
-      {adminToken && <AdminOperationsPanel adminToken={adminToken} onRefreshDashboard={refreshDashboard} />}
+      {adminToken && (adminRole === "owner" || adminRole === "manager") && <AdminOperationsPanel adminToken={adminToken} onRefreshDashboard={refreshDashboard} />}
     </div>
   );
 }
