@@ -72,78 +72,100 @@ export default function ProductDetailPage(props: { params: Promise<{ slug: strin
   const activeVariant = product.variants[selectedIdx] ?? product.variants[0];
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919636100337";
 
+  const visual = product.slug.includes("ghee")
+    ? { kind: "ghee", symbol: "◉", label: "BILONA GHEE", note: "TRADITIONAL DAIRY" }
+    : product.slug.includes("dhoop")
+    ? { kind: "dhoop", symbol: "✺", label: "COW-DUNG DHOOP", note: "NATURAL AROMATICS" }
+    : product.slug.includes("khad") || product.slug.includes("compost")
+    ? { kind: "soil", symbol: "❧", label: "VERMICOMPOST", note: "LIVING SOIL" }
+    : product.slug.includes("stay")
+    ? { kind: "stay", symbol: "⌂", label: "BHUNGA STAY", note: "FARM RETREAT" }
+    : { kind: "earth", symbol: "✳", label: "FARM COLLECTION", note: "LADO ORGANICS" };
+
+
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
     `Namaste Lado Organics!\nProduct: ${product.name} (${activeVariant.label})\nListed Price: ₹${activeVariant.priceInr.toLocaleString("en-IN")}\nPlease share batch availability, shipping, and payment details.`
   )}`;
 
   return (
-    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-        <Link href="/#store" className="text-sm font-bold text-[var(--terracotta)] hover:underline">
-          ← Back to Circular Store
-        </Link>
-        <Link href="/trace/LO-PILANI-SAMPLE-001" className="text-xs font-bold underline">
-          Inspect Batch Traceability →
-        </Link>
+    <div className="product-detail-page min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-7">
+        <Link href="/#store" className="product-detail-back">← Back to the collection</Link>
+        <Link href="/trace/LO-PILANI-SAMPLE-001" className="product-detail-trace">Explore batch traceability ↗</Link>
       </div>
 
-      <div className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 sm:p-10 shadow-sm space-y-6">
-        <div>
-          <span className="text-xs font-bold uppercase tracking-widest text-[var(--terracotta)]">
-            {product.category}
-          </span>
-          <h1 className="text-3xl sm:text-5xl font-serif font-bold mt-1 mb-3">{product.name}</h1>
-          <p className="text-sm sm:text-base opacity-85 leading-relaxed">{product.description}</p>
+      <section className={`product-detail-hero product-detail-${visual.kind}`}>
+        <div className="product-detail-art" aria-label={`${product.name} illustrated product artwork`}>
+          <span className="product-detail-art-top">LADO ORGANICS <i>·</i> PILANI</span>
+          <span className="product-detail-art-orbit product-detail-orbit-one" />
+          <span className="product-detail-art-orbit product-detail-orbit-two" />
+          <span className="product-detail-art-symbol" aria-hidden="true">{visual.symbol}</span>
+          <span className="product-detail-art-name">{visual.label}</span>
+          <span className="product-detail-art-bottom">LADO LOVE PURE</span>
         </div>
+        <div className="product-detail-copy">
+          <p className="product-detail-kicker"><span /> {product.category}</p>
+          <h1>{product.name}</h1>
+          <p className="product-detail-description">{product.description}</p>
+          <div className="product-detail-tags">
+            <span>Made with care in Rajasthan</span>
+            <span>Thoughtful farm practices</span>
+          </div>
+          <div className="product-detail-note">
+            <span className="product-detail-note-mark">L</span>
+            <span><strong>{visual.note}</strong><small>A part of the Lado Organics farm story</small></span>
+          </div>
+        </div>
+      </section>
 
+      <section className="product-detail-buy">
+        <div className="product-detail-buy-heading">
+          <p className="product-detail-kicker">CHOOSE YOUR PACK</p>
+          <h2>Bring a little farm goodness home.</h2>
+        </div>
         {product.variants.length > 1 && (
-          <div>
-            <p className="text-xs font-bold uppercase mb-2">Select Pack Size</p>
-            <div className="flex flex-wrap gap-2">
-              {product.variants.map((v, idx) => (
-                <button
-                  key={v.sku}
-                  type="button"
-                  onClick={() => setSelectedIdx(idx)}
-                  className={`px-4 py-2 rounded-full text-xs font-bold border cursor-pointer ${
-                    idx === selectedIdx
-                      ? "bg-[var(--mud)] text-white border-[var(--mud)]"
-                      : "border-[var(--border)] hover:border-[var(--terracotta)]"
-                  }`}
-                >
-                  {v.label} — ₹{v.priceInr.toLocaleString("en-IN")}
-                </button>
-              ))}
-            </div>
+          <div className="product-detail-variants">
+            {product.variants.map((v, idx) => (
+              <button
+                key={v.sku}
+                type="button"
+                aria-pressed={idx === selectedIdx}
+                onClick={() => setSelectedIdx(idx)}
+                className={idx === selectedIdx ? "is-selected" : ""}
+              >
+                <span>{v.label}</span>
+                <strong>₹{v.priceInr.toLocaleString("en-IN")}</strong>
+              </button>
+            ))}
           </div>
         )}
-
-        <div className="p-5 rounded-2xl bg-[var(--bg)] border border-[var(--border)] flex flex-wrap items-center justify-between gap-4">
+        <div className="product-detail-checkout">
           <div>
-            <span className="block text-xs uppercase opacity-65">Selected Variant ({activeVariant.label})</span>
-            <span className="text-3xl font-serif font-bold text-[var(--terracotta)]">
-              ₹{activeVariant.priceInr.toLocaleString("en-IN")}
-            </span>
+            <span>Selected pack · {activeVariant.label}</span>
+            <strong>₹{activeVariant.priceInr.toLocaleString("en-IN")}</strong>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="primary-btn px-6 py-3 rounded-xl text-xs font-bold"
-            >
-              Order via WhatsApp (+91 96361 00337)
-            </a>
-            <Link
-              href="/#store"
-              className="px-5 py-3 rounded-xl text-xs font-bold border border-[var(--border)] bg-[var(--surface)]"
-            >
-              Add in Main Store Bag
-            </Link>
-          </div>
+          <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="product-detail-order">
+            Enquire & order on WhatsApp <span aria-hidden="true">↗</span>
+          </a>
         </div>
+        <p className="product-detail-order-note">We’ll confirm current batch availability, delivery and payment details with you before the order is finalised.</p>
+      </section>
+
+      <section className="product-detail-origin">
+        <div className="product-detail-origin-heading">
+          <p className="product-detail-kicker">KNOW WHAT YOU BRING HOME</p>
+          <h2>From our farm story to your everyday rituals.</h2>
+        </div>
+        <div className="product-detail-origin-grid">
+          <article><span>01</span><h3>Our sourcing</h3><p>{product.sourcing}</p></article>
+          <article><span>02</span><h3>How it is made</h3><p>{product.productionMethod}</p></article>
+          <article><span>03</span><h3>Care & storage</h3><p>{product.storage}</p></article>
+        </div>
+      </section>
+
+      <div className="product-detail-reviews">
+        <ProductReviewsSection productSlug={product.slug} />
       </div>
-      <ProductReviewsSection productSlug={product.slug} />
     </div>
   );
 }
