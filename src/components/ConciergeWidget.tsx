@@ -13,6 +13,7 @@ interface ChatMessage {
   text: string;
   actions?: SuggestedAction[];
   cartSuggestion?: CartSuggestion;
+  orders?: CustomerOrder[];
 }
 interface ConciergeWidgetProps { whatsappNumber: string; }
 
