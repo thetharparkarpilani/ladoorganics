@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { db } from "@/lib/db";
 import { sendTemplatedNotification } from "@/lib/customer-notifications";
+import { sendAdminRequestAlert } from "@/lib/admin-notifications";
 
 export const runtime = "nodejs";
 
@@ -162,6 +163,15 @@ export async function POST(req: NextRequest) {
       order_number: orderNumber,
       amount: total,
       payment_method: method === "cash_on_delivery" ? "Cash on Delivery" : "Manual UPI",
+    });
+    await sendAdminRequestAlert("customer order", {
+      "Order number": orderNumber,
+      "Customer": customerName,
+      "Email": email,
+      "Phone": phone,
+      "Total (INR)": total,
+      "Payment method": method === "cash_on_delivery" ? "Cash on Delivery" : "Manual UPI",
+      "Status": "pending_confirmation",
     });
     return NextResponse.json({
       success: true,
