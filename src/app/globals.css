@@ -656,3 +656,12 @@ footer {
   .lado-ai-panel { animation:none; }.lado-ai-typing i,.lado-ai-send-spinner { animation:none; }
   .lado-ai-launcher,.lado-whatsapp-icon,.lado-ai-actions a { transition:none; }
 }
+
+.lado-ai-cart-card { overflow:hidden; border:1px solid #d7d8c4; border-radius:15px; background:#f0f1e5; box-shadow:0 4px 14px rgba(52,69,50,.06); }
+.lado-ai-cart-heading { display:flex; flex-direction:column; gap:4px; padding:11px 12px 9px; border-bottom:1px solid #daddca; }
+.lado-ai-cart-heading span { color:#8d886b; font-size:8px; font-weight:900; letter-spacing:.16em; }
+.lado-ai-cart-heading strong { color:#3c543b; font-family:Georgia,serif; font-size:15px; }
+.lado-ai-cart-option { display:grid; grid-template-columns:1fr auto auto; align-items:center; gap:10px; width:100%; padding:10px 12px; border-bottom:1px solid #e0e1d2; background:transparent; color:#56614d; text-align:left; transition:background .18s ease; }
+.lado-ai-cart-option:last-child { border-bottom:0; }.lado-ai-cart-option:hover { background:#e5eadb; }
+.lado-ai-cart-option > span:first-child { font-size:10px; font-weight:750; }.lado-ai-cart-option > strong { font-family:Georgia,serif; font-size:14px; }
+.lado-ai-cart-add { padding:6px 9px; border-radius:999px; background:#405b43; color:#fff9e9; font-size:9px; font-weight:850; }
