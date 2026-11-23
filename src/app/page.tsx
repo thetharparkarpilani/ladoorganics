@@ -100,32 +100,22 @@ export default function HomePage() {
         </div>
       </header>
       <main className="flex-1">
-        <section className="farm-hero relative isolate overflow-hidden py-20 sm:py-28 px-4 sm:px-6 lg:px-8">
-          <div className="farm-hero-scene" aria-hidden="true">
-            <span className="farm-sun" />
-            <span className="farm-cloud farm-cloud-one" />
-            <span className="farm-cloud farm-cloud-two" />
-            <span className="farm-hill farm-hill-back" />
-            <span className="farm-hill farm-hill-front" />
-            <span className="farm-grass farm-grass-left" />
-            <span className="farm-grass farm-grass-right" />
-            <span className="farm-dust farm-dust-one" />
-            <span className="farm-dust farm-dust-two" />
-          </div>
-          <div className="farm-hero-content relative z-10 max-w-5xl mx-auto text-center">
-            <p className="inline-block text-[11px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full border border-[var(--earth)] mb-6">{dict.brand_tagline}</p>
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-serif font-bold leading-tight mb-6">{dict.hero_title}</h1>
-            <p className="text-base sm:text-xl opacity-85 max-w-2xl mx-auto mb-10 leading-relaxed">{dict.hero_subtitle}</p>
-            <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-12">
-              <a href="#store" className="primary-btn px-7 py-3.5 rounded-full font-bold text-sm">{dict.cta_shop}</a>
-              <a href="#build-experience" className="px-7 py-3.5 rounded-full font-bold text-sm border border-[var(--border)]">Build Farm Experience</a>
-              <Link href="/trace/LO-PILANI-SAMPLE-001" className="px-7 py-3.5 rounded-full font-bold text-sm border border-[var(--border)]">Verify Batch QR</Link>
-              <a href="/dashboard" className="px-7 py-3.5 rounded-full font-bold text-sm border border-[var(--border)]">My Lado Journey</a>
+        <section className="farm-hero farm-hero-editorial relative isolate overflow-hidden px-4 sm:px-6 lg:px-8">
+          <div className="farm-hero-shade" aria-hidden="true" />
+          <div className="farm-hero-content relative z-10 max-w-7xl mx-auto">
+            <div className="farm-hero-copy">
+              <p className="farm-hero-kicker"><span /> PILANI · RAJASTHAN · INDIA</p>
+              <h1>Rooted in the<br /><em>rhythm of the farm.</em></h1>
+              <p className="farm-hero-description">A more thoughtful connection between indigenous cattle, traditional making, living soil and the things we bring home.</p>
+              <div className="farm-hero-actions">
+                <a href="#store" className="farm-hero-primary">Explore the collection <span aria-hidden="true">↗</span></a>
+                <a href="#farm-world" className="farm-hero-secondary">Discover our farm story <span aria-hidden="true">↓</span></a>
+              </div>
+              <div className="farm-hero-signature"><span className="farm-signature-mark">L</span><span><strong>Lado Organics</strong><small>Lado Love Pure</small></span></div>
             </div>
-            <div className="farm-hero-proof max-w-3xl mx-auto">
-              <span>🐄 Indigenous Tharparkar heritage</span><span>✦</span><span>🌱 Circular farm thinking</span><span>✦</span><span>🤎 Rooted in Pilani</span>
-            </div>
+            <div className="farm-hero-side-note"><span className="farm-side-line" /><span>INDIGENOUS HERITAGE<br />EVERYDAY ROOTS</span></div>
           </div>
+          <a className="farm-hero-scroll" href="#farm-world"><span /> SCROLL TO EXPLORE</a>
         </section>
         <div data-farm-reveal><FarmWorldSection /></div>
         <div data-farm-reveal><StorefrontSection products={products} locale={locale} searchQuery={searchQuery} whatsappNumber={whatsappNumber} onAddToBag={handleAddToBag} /></div>
