@@ -2,6 +2,7 @@ import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getCustomerIdentity } from "@/lib/customer-auth";
+import { getAdminActor } from "@/lib/admin-auth";
 
 export const runtime = "nodejs";
 
@@ -43,7 +44,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  if (!adminAuthorized(req)) return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+  if (!(await getAdminActor(req, "support"))) return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   const page = Math.max(1, Number.parseInt(req.nextUrl.searchParams.get("page") || "1", 10) || 1);
   const pageSize = Math.max(5, Math.min(50, Number.parseInt(req.nextUrl.searchParams.get("pageSize") || "25", 10) || 25));
   const search = (req.nextUrl.searchParams.get("search") || "").trim().slice(0, 120);
