@@ -25,32 +25,14 @@ export default function FarmWorldSection() {
         </div>
 
         <div className="grid lg:grid-cols-[1.15fr_.85fr] gap-6 lg:gap-10 items-stretch">
-          <div className="farm-world-art relative min-h-[360px] sm:min-h-[500px] rounded-[2rem] overflow-hidden" aria-label="Illustrated Rajasthan farm landscape">
-            <div className="farm-art-sun" />
-            <div className="farm-art-cloud farm-art-cloud-a" />
-            <div className="farm-art-cloud farm-art-cloud-b" />
-            <div className="farm-art-hill farm-art-hill-back" />
-            <div className="farm-art-hill farm-art-hill-front" />
-            <div className="farm-art-tree farm-art-tree-one"><span /><i /></div>
-            <div className="farm-art-tree farm-art-tree-two"><span /><i /></div>
-            <div className="farm-art-grass" />
-            <div className="farm-art-cow" aria-hidden="true">
-              <svg viewBox="0 0 330 190" role="img" aria-label="Illustration of a white indigenous cow">
-                <path d="M67 82 Q74 55 111 51 L211 53 Q247 57 253 88 L270 95 Q292 90 300 107 L291 128 L267 132 L253 119 L248 157 L233 157 L231 119 L126 119 L122 157 L106 157 L103 116 L84 111 L79 157 L63 157 L65 111 Q48 105 50 91Z" fill="#fff9e9" stroke="#735b43" strokeWidth="4" strokeLinejoin="round"/>
-                <path d="M72 67 Q53 42 48 25 Q70 32 88 59 M93 60 Q101 35 119 25 Q119 49 108 66" fill="#fff9e9" stroke="#735b43" strokeWidth="4" strokeLinejoin="round"/>
-                <path d="M251 91 Q276 72 294 86 L311 108 L292 122 L267 116Z" fill="#fff9e9" stroke="#735b43" strokeWidth="4"/>
-                <path d="M299 86 Q318 65 322 54" fill="none" stroke="#735b43" strokeWidth="5" strokeLinecap="round"/>
-                <path d="M285 120 Q300 131 310 121" fill="none" stroke="#b57c69" strokeWidth="4" strokeLinecap="round"/>
-                <path d="M174 56 Q181 38 194 36 Q206 37 208 56" fill="#d8c7a9" stroke="#735b43" strokeWidth="3"/>
-                <path d="M142 119 L141 158 M219 119 L220 158" stroke="#735b43" strokeWidth="4" strokeLinecap="round"/>
-                <path d="M79 91 Q97 83 111 92" stroke="#d8c7a9" strokeWidth="6" strokeLinecap="round"/>
-                <circle cx="285" cy="101" r="3.5" fill="#3f3329"/>
-              </svg>
+          <div className="farm-world-art farm-world-photo relative min-h-[360px] sm:min-h-[500px] rounded-[2rem] overflow-hidden" aria-label="Photograph of a Tharparkar cow">
+            <div className="farm-world-photo-overlay" />
+            <div className="farm-photo-topline"><span>01 — THE HERD</span><span>THARPARKAR · INDIA</span></div>
+            <div className="farm-photo-bottomline">
+              <p>Where the story<br /><em>begins.</em></p>
+              <span>Breed reference photograph<br />Pavanaja / Wikimedia Commons<br />CC BY-SA 3.0</span>
             </div>
-            <div className="farm-art-caption"><span>THE LADO FARM ECOSYSTEM</span><span>PILANI · RAJASTHAN</span></div>
-            <span className="farm-art-bird bird-one">⌁</span><span className="farm-art-bird bird-two">⌁</span>
           </div>
-
           <div className="farm-world-panel flex flex-col justify-between rounded-[2rem] p-6 sm:p-9">
             <div>
               <p className="farm-eyebrow">Explore the cycle · {chapter.number}</p>
