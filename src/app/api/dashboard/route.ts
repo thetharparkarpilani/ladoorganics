@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
 
       const [ordersRes, bookingsRes, sponsorshipsRes, logsRes] = await Promise.all([
         db.query(
-          `SELECT id, order_number, guest_name, guest_email, guest_phone, total_inr, status, created_at
+          `SELECT id, order_number, guest_name, guest_email, guest_phone, total_inr, status, payment_method, payment_status, shipping_summary, created_at
            FROM orders ORDER BY created_at DESC LIMIT 20`
         ),
         db.query(
