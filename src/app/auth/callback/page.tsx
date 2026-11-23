@@ -17,7 +17,7 @@ export default function AuthCallbackPage() {
       const codeVerifier = window.sessionStorage.getItem("lado_supabase_pkce_verifier");
 
       if (error || !code || !codeVerifier) {
-        if (active) setMessage(error ? decodeURIComponent(error.replace(/\+/g, " ")) : "Sign-in could not be completed. Please return and try again.");
+        if (active) setMessage(error ? error.replace(/\+/g, " ") : "Sign-in could not be completed. Please return and try again.");
         window.sessionStorage.removeItem("lado_supabase_pkce_verifier");
         return;
       }
