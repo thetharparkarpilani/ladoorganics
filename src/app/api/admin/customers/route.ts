@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
   const pageSize = Math.max(5, Math.min(50, Number.parseInt(req.nextUrl.searchParams.get("pageSize") || "25", 10) || 25));
   const search = (req.nextUrl.searchParams.get("search") || "").trim().slice(0, 120);
   const values: (string | number)[] = [];
-  const where = search ? "WHERE (u.email ILIKE $1 OR u.full_name ILIKE $1 OR u.id::text ILIKE $1)" : "";
+  const where = search ? "WHERE u.role = 'customer' AND (u.email ILIKE $1 OR u.full_name ILIKE $1 OR u.id::text ILIKE $1)" : "WHERE u.role = 'customer'";
   if (search) values.push(`%${search}%`);
   try {
     const count = await db.query(`SELECT COUNT(*)::int AS total FROM users u ${where}`, values);
