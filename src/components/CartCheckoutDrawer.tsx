@@ -9,12 +9,14 @@ export default function CartCheckoutDrawer() {
   const { items, isDrawerOpen, setDrawerOpen, updateQuantity, removeItem, cartTotal, clearCart } = useCart();
   const [completedOrder, setCompletedOrder] = useState("");
   const [completedMethod, setCompletedMethod] = useState<"cash_on_delivery" | "manual_upi">("cash_on_delivery");
+  const [completedTotal, setCompletedTotal] = useState(0);
 
   if (!isDrawerOpen) return null;
 
-  const finishOrder = (orderNumber: string, method: "cash_on_delivery" | "manual_upi") => {
+  const finishOrder = (orderNumber: string, method: "cash_on_delivery" | "manual_upi", totalInr: number) => {
     setCompletedOrder(orderNumber);
     setCompletedMethod(method);
+    setCompletedTotal(totalInr);
     clearCart();
   };
 
@@ -24,6 +26,10 @@ export default function CartCheckoutDrawer() {
   };
 
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919636100337";
+  const upiId = process.env.NEXT_PUBLIC_UPI_ID || "";
+  const upiLink = upiId
+    ? `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent("Lado Organics")}&am=${completedTotal}&cu=INR&tn=${encodeURIComponent(completedOrder)}`
+    : "";
   const whatsappText = encodeURIComponent(
     `Namaste Lado Organics, I have placed order ${completedOrder}. Please confirm my order.` +
     (completedMethod === "manual_upi" ? " Please share your UPI payment details." : " I selected Cash on Delivery.")
@@ -49,6 +55,9 @@ export default function CartCheckoutDrawer() {
                   ? "Your order is recorded. Please pay when it is delivered."
                   : "Your order is recorded. Contact us on WhatsApp to receive UPI payment instructions."}
               </p>
+              {completedMethod === "manual_upi" && upiLink && (
+                <a href={upiLink} className="mt-5 mr-2 inline-flex rounded-full bg-[var(--accent-forest)] px-5 py-3 text-sm font-bold text-white">Pay ₹{completedTotal.toLocaleString("en-IN")} using UPI</a>
+              )}
               <a href={`https://wa.me/${whatsappNumber}?text=${whatsappText}`} target="_blank" rel="noreferrer" className="mt-5 inline-flex rounded-full bg-green-700 px-5 py-3 text-sm font-bold text-white">
                 {completedMethod === "manual_upi" ? "Get UPI details on WhatsApp" : "Confirm order on WhatsApp"}
               </a>
@@ -92,7 +101,7 @@ export default function CartCheckoutDrawer() {
                   <span className="font-bold text-[var(--text-charcoal)]">₹{cartTotal.toLocaleString("en-IN")}</span>
                 </div>
                 <p className="mb-4 text-[10px] text-[var(--text-muted)]">Final item prices are verified securely when you place your order. Delivery charges, if applicable, will be confirmed before dispatch.</p>
-                <ManualCheckout items={items.map(item => ({ sku: item.sku, quantity: item.quantity }))} onSuccess={(orderNumber, method) => finishOrder(orderNumber, method)} />
+                <ManualCheckout items={items.map(item => ({ sku: item.sku, quantity: item.quantity }))} onSuccess={(orderNumber, method, total) => finishOrder(orderNumber, method, total)} />
                 <p className="mt-5 text-center text-[10px] leading-relaxed text-[var(--text-muted)]">
                   By proceeding, you agree to our <Link href="/policies/terms" className="underline">Terms</Link> and <Link href="/policies/refunds" className="underline">Refund Policy</Link>.
                 </p>
