@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
   }
   try {
     const result = await db.query(
-      `SELECT p.id AS product_id, p.slug, p.name_en, p.is_active,
+      `SELECT p.id AS product_id, p.slug, p.name_en, p.is_active, p.image_url,
               v.id AS variant_id, v.sku, v.label, v.price_inr, v.stock_qty, v.is_default
          FROM products p
          LEFT JOIN product_variants v ON v.product_id = p.id
@@ -60,6 +60,37 @@ export async function POST(req: NextRequest) {
         [variantId, JSON.stringify({ priceInr: price, stockQty: stock })]
       );
       return NextResponse.json({ ok: true, variant: result.rows[0] });
+    }
+
+
+    if (action === "update_product_image") {
+      const productId = typeof body?.productId === "string" ? body.productId.trim() : "";
+      const imageUrl = typeof body?.imageUrl === "string" ? body.imageUrl.trim() : "";
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(productId)) {
+        return NextResponse.json({ error: "A valid product is required." }, { status: 400 });
+      }
+      if (imageUrl.length > 2048) {
+        return NextResponse.json({ error: "Image URL is too long." }, { status: 400 });
+      }
+      if (imageUrl) {
+        try {
+          const parsed = new URL(imageUrl);
+          if (parsed.protocol !== "https:" && parsed.protocol !== "http:") throw new Error("Invalid protocol");
+        } catch {
+          return NextResponse.json({ error: "Enter a valid public image URL beginning with https://." }, { status: 400 });
+        }
+      }
+      const result = await db.query(
+        "UPDATE products SET image_url = $2 WHERE id = $1 RETURNING id, slug, name_en, image_url",
+        [productId, imageUrl || null]
+      );
+      if (!result.rowCount) return NextResponse.json({ error: "Product not found." }, { status: 404 });
+      await db.query(
+        `INSERT INTO audit_logs (action, entity_type, entity_id, metadata)
+         VALUES ('PRODUCT_IMAGE_UPDATED', 'product', $1, $2::jsonb)`,
+        [productId, JSON.stringify({ imageUrl: imageUrl || null })]
+      );
+      return NextResponse.json({ ok: true, product: result.rows[0] });
     }
 
     if (action === "update_product_status") {
