@@ -1,9 +1,10 @@
 "use client";
 import React,{useEffect,useState} from "react";
+import { getAdminClientToken } from "@/lib/admin-client";
 type Item={content_key:string;title:string;body:string;is_published:boolean;updated_at?:string};
 export default function AdminSiteContent(){
  const [token,setToken]=useState("");const [items,setItems]=useState<Item[]>([]);const [loading,setLoading]=useState(true);const [busy,setBusy]=useState("");const [error,setError]=useState("");const [notice,setNotice]=useState("");
- useEffect(()=>{const t=localStorage.getItem("lado_admin_token")||"";setToken(t);if(!t){setLoading(false);return;}fetch("/api/admin/site-content",{headers:{"x-admin-token":t},cache:"no-store"}).then(async r=>{const d=await r.json();if(!r.ok)throw new Error(d.error||"Unable to load content.");setItems(d.items||[]);}).catch(e=>setError(e instanceof Error?e.message:"Unable to load content.")).finally(()=>setLoading(false));},[]);
+ useEffect(()=>{let active=true;void getAdminClientToken().then(t=>{if(!active)return;setToken(t);if(!t){setLoading(false);return;}fetch("/api/admin/site-content",{headers:{"x-admin-token":t},cache:"no-store"}).then(async r=>{const d=await r.json();if(!r.ok)throw new Error(d.error||"Unable to load content.");if(active)setItems(d.items||[]);}).catch(e=>{if(active)setError(e instanceof Error?e.message:"Unable to load content.");}).finally(()=>{if(active)setLoading(false);});});return()=>{active=false;};},[]);
  function change(key:string,field:"title"|"body"|"is_published",value:string|boolean){setItems(old=>old.map(x=>x.content_key===key?{...x,[field]:value}:x));}
  async function save(item:Item){setBusy(item.content_key);setError("");setNotice("");try{const r=await fetch("/api/admin/site-content",{method:"PUT",headers:{"Content-Type":"application/json","x-admin-token":token},body:JSON.stringify({contentKey:item.content_key,title:item.title,body:item.body,isPublished:item.is_published})});const d=await r.json();if(!r.ok)throw new Error(d.error||"Unable to save.");setNotice("Saved "+item.content_key+". Published changes may take a few seconds to appear.");}catch(e){setError(e instanceof Error?e.message:"Unable to save.");}finally{setBusy("");}}
  if(!token)return <p>Unlock Admin Command from <a className="underline" href="/admin">the overview</a> first.</p>;
