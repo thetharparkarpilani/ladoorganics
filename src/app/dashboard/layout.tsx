@@ -34,6 +34,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <Link href="/dashboard/stays" className="block px-4 py-3 rounded-xl text-[var(--muted)] hover:bg-[var(--earth)]/10 transition">Bhunga Stays</Link>
               <Link href="/dashboard/sponsorships" className="block px-4 py-3 rounded-xl text-[var(--muted)] hover:bg-[var(--earth)]/10 transition">Gau Seva</Link>
               <Link href="/dashboard/profile" className="block px-4 py-3 rounded-xl text-[var(--muted)] hover:bg-[var(--earth)]/10 transition">My Profile</Link>
+              <Link href="/dashboard/support" className="block px-4 py-3 rounded-xl text-[var(--muted)] hover:bg-[var(--earth)]/10 transition">Customer Support</Link>
             </nav>
 
             <div className="mt-8 pt-6 border-t border-[var(--border)]">
