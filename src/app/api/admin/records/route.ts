@@ -1,15 +1,6 @@
-﻿import crypto from "crypto";
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-
-function isAuthorizedAdmin(headerToken: string | null): boolean {
-  const expected = process.env.ADMIN_ACCESS_TOKEN;
-  if (!expected || !headerToken) return false;
-  const a = Buffer.from(headerToken, "utf8");
-  const b = Buffer.from(expected, "utf8");
-  if (a.length !== b.length) return false;
-  return crypto.timingSafeEqual(a, b);
-}
+import { getAdminActor } from "@/lib/admin-auth";
 
 const ORDER_STATUSES = new Set([
   "pending_confirmation",
@@ -25,8 +16,8 @@ const BOOKING_STATUSES = new Set(["pending", "confirmed", "cancelled", "complete
 const SPONSORSHIP_STATUSES = new Set(["pending", "active", "paused", "cancelled"]);
 
 export async function POST(req: NextRequest) {
-  const token = req.headers.get("x-admin-token");
-  if (!isAuthorizedAdmin(token)) {
+  const actor = await getAdminActor(req, "operations");
+  if (!actor) {
     return NextResponse.json(
       { error: "Unauthorized: valid server ADMIN_ACCESS_TOKEN required." },
       { status: 401 }
@@ -36,6 +27,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => null);
     const action = typeof body?.action === "string" ? body.action.trim() : "";
+    if (action === "create_batch" && actor.role !== "owner" && actor.role !== "manager") return NextResponse.json({ error: "Manager permission is required for batch publishing." }, { status: 403 });
 
     if (action === "create_batch") {
       const batchCode = typeof body?.batchCode === "string" ? body.batchCode.trim().toUpperCase() : "";
