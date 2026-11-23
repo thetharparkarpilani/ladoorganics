@@ -26,7 +26,7 @@ export default function PoliciesPage() {
         <section className="space-y-2 border-t border-[var(--border)] pt-6">
           <h2 className="text-xl font-serif font-bold">1. Privacy Policy (Template)</h2>
           <p className="text-sm opacity-85 leading-relaxed">
-            Lado Organics collects contact, shipping, booking, and enquiry details solely to fulfill orders, Bhunga stay reservations, calf sponsorship updates, and requested communications. Marketing notifications require explicit consent. Credentials and secrets are never exposed in client-side code.
+            Lado Organics collects contact, shipping, booking, and enquiry details to fulfil orders, Bhunga stay reservations, calf sponsorship updates, and requested communications. Messages submitted to Lado AI may be processed by an external AI service to generate replies; customers should not submit passwords, OTPs, UPI PINs, payment credentials, or sensitive personal information in chat. Marketing notifications require explicit consent. This privacy-policy template must be reviewed and finalized before commercial operation.
           </p>
         </section>
 
