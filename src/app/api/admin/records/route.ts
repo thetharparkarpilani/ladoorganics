@@ -162,6 +162,90 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    if (["approve_return", "reject_return", "receive_return", "record_refund"].includes(action)) {
+      const id = typeof body?.id === "string" ? body.id.trim() : "";
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) {
+        return NextResponse.json({ error: "A valid order UUID is required." }, { status: 400 });
+      }
+      const client = await db.getClient();
+      try {
+        await client.query("BEGIN");
+        const found = await client.query(
+          "SELECT r.id, r.order_id, r.status AS return_status, r.inventory_restocked_at, o.order_number, o.total_inr, o.payment_status, o.payment_method FROM order_returns r JOIN orders o ON o.id = r.order_id WHERE r.order_id = $1 FOR UPDATE OF r, o",
+          [id]
+        );
+        if (!found.rows[0]) {
+          await client.query("ROLLBACK");
+          return NextResponse.json({ error: "No return request exists for this order." }, { status: 404 });
+        }
+        const record = found.rows[0];
+        if (action === "approve_return" || action === "reject_return") {
+          if (record.return_status !== "requested") {
+            await client.query("ROLLBACK");
+            return NextResponse.json({ error: "This return request has already been reviewed." }, { status: 409 });
+          }
+          const next = action === "approve_return" ? "approved" : "rejected";
+          await client.query("UPDATE order_returns SET status = $2, reviewed_at = NOW(), reviewed_by = $3 WHERE id = $1", [record.id, next, actor.id || actor.email || "admin"]);
+          await client.query("INSERT INTO audit_logs (action, entity_type, entity_id, metadata) VALUES ($1, 'order_return', $2, $3::jsonb)", [action.toUpperCase(), record.id, JSON.stringify({ orderNumber: record.order_number })]);
+          await client.query("COMMIT");
+          return NextResponse.json({ ok: true, status: next });
+        }
+        if (action === "receive_return") {
+          if (record.return_status !== "approved") {
+            await client.query("ROLLBACK");
+            return NextResponse.json({ error: "Only an approved return can be marked received." }, { status: 409 });
+          }
+          const restock = body?.restock === true;
+          await client.query(
+            "UPDATE order_returns SET status = 'received', received_at = NOW(), inventory_restocked_at = CASE WHEN $2 THEN NOW() ELSE NULL END WHERE id = $1",
+            [record.id, restock]
+          );
+          if (restock) {
+            await client.query(
+              `UPDATE product_variants pv SET stock_qty = pv.stock_qty + oi.quantity
+                 FROM order_items oi JOIN order_returns r ON r.order_id = oi.order_id
+                WHERE r.id = $1 AND pv.sku = oi.variant_sku`,
+              [record.id]
+            );
+          }
+          await client.query("INSERT INTO audit_logs (action, entity_type, entity_id, metadata) VALUES ('RETURN_RECEIVED', 'order_return', $1, $2::jsonb)", [record.id, JSON.stringify({ orderNumber: record.order_number, inventoryRestocked: restock })]);
+          await client.query("COMMIT");
+          return NextResponse.json({ ok: true, status: "received", inventoryRestocked: restock });
+        }
+        const amount = Number(body?.amountInr);
+        const reference = typeof body?.reference === "string" ? body.reference.trim().slice(0, 120) : "";
+        const method = typeof body?.refundMethod === "string" ? body.refundMethod : "";
+        if (!Number.isSafeInteger(amount) || amount <= 0 || !reference || !["upi", "bank_transfer", "cash"].includes(method)) {
+          await client.query("ROLLBACK");
+          return NextResponse.json({ error: "Enter a valid refund amount, refund method and transaction/reference number." }, { status: 400 });
+        }
+        if (!["paid", "partially_refunded"].includes(String(record.payment_status))) {
+          await client.query("ROLLBACK");
+          return NextResponse.json({ error: "Only money already recorded as received can be refunded. COD must first be collected." }, { status: 409 });
+        }
+        const sums = await client.query("SELECT COALESCE(SUM(amount_inr), 0)::int AS refunded FROM order_refunds WHERE order_id = $1", [id]);
+        const remaining = Number(record.total_inr) - Number(sums.rows[0]?.refunded || 0);
+        if (amount > remaining) {
+          await client.query("ROLLBACK");
+          return NextResponse.json({ error: `Refund exceeds the remaining refundable balance of ₹${remaining}.` }, { status: 409 });
+        }
+        const refund = await client.query(
+          "INSERT INTO order_refunds (order_id, amount_inr, refund_method, reference, note, recorded_by) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id, amount_inr, created_at",
+          [id, amount, method, reference, typeof body?.note === "string" ? body.note.trim().slice(0, 500) : null, actor.id || actor.email || "admin"]
+        );
+        const totalRefunded = Number(sums.rows[0]?.refunded || 0) + amount;
+        const fullRefund = totalRefunded >= Number(record.total_inr);
+        await client.query("UPDATE orders SET payment_status = $2, status = CASE WHEN $3 THEN 'refunded' ELSE status END WHERE id = $1", [id, fullRefund ? "refunded" : "partially_refunded", fullRefund]);
+        if (fullRefund) await client.query("UPDATE payments SET status = 'refunded', event_type = 'manual_refund_recorded' WHERE order_id = $1 AND status = 'captured'", [id]);
+        await client.query("INSERT INTO audit_logs (action, entity_type, entity_id, metadata) VALUES ('ORDER_REFUND_RECORDED', 'order', $1, $2::jsonb)", [id, JSON.stringify({ amountInr: amount, totalRefundedInr: totalRefunded, fullRefund, method, reference })]);
+        await client.query("COMMIT");
+        return NextResponse.json({ ok: true, refund: refund.rows[0], totalRefundedInr: totalRefunded, remainingInr: Number(record.total_inr) - totalRefunded, fullRefund });
+      } catch (error) {
+        await client.query("ROLLBACK").catch(() => undefined);
+        throw error;
+      } finally { client.release(); }
+    }
+
     if (action === "confirm_cod_payment") {
       const id = typeof body?.id === "string" ? body.id.trim() : "";
       if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) {

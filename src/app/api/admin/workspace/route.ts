@@ -8,8 +8,8 @@ export const runtime = "nodejs";
 
 const CONFIG = {
   orders: {
-    table: "orders",
-    columns: "id, order_number, guest_name, guest_email, guest_phone, total_inr, status, payment_method, payment_status, shipping_summary, created_at",
+    table: "orders o",
+    columns: "o.id, o.order_number, o.guest_name, o.guest_email, o.guest_phone, o.total_inr, o.status, o.payment_method, o.payment_status, o.shipping_summary, o.created_at, (SELECT r.status FROM order_returns r WHERE r.order_id = o.id ORDER BY r.created_at DESC LIMIT 1) AS return_status, (SELECT r.reason FROM order_returns r WHERE r.order_id = o.id ORDER BY r.created_at DESC LIMIT 1) AS return_reason, (SELECT COALESCE(SUM(f.amount_inr),0)::int FROM order_refunds f WHERE f.order_id = o.id) AS refunded_inr",
     search: "(COALESCE(order_number,'') ILIKE $1 OR COALESCE(guest_name,'') ILIKE $1 OR COALESCE(guest_email,'') ILIKE $1 OR COALESCE(guest_phone,'') ILIKE $1 OR id::text ILIKE $1)",
   },
   bookings: {

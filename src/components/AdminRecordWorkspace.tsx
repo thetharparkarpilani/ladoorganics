@@ -6,7 +6,7 @@ import { getAdminClientToken } from "@/lib/admin-client";
 type Kind = "orders" | "bookings" | "sponsorships";
 type RecordItem = {
   id: string; status: string; created_at?: string;
-  order_number?: string; guest_name?: string; guest_email?: string; guest_phone?: string; payment_method?: string; payment_status?: string; shipping_summary?: string;
+  order_number?: string; guest_name?: string; guest_email?: string; guest_phone?: string; payment_method?: string; payment_status?: string; shipping_summary?: string; return_status?: string; return_reason?: string; refunded_inr?: number | string;
   total_inr?: number | string; check_in?: string; check_out?: string; guests_count?: number;
   nights_count?: number; total_amount_inr?: number | string; calf_name?: string;
   sponsor_name?: string; sponsor_email?: string; plan_type?: string; amount_inr?: number | string;
@@ -80,6 +80,35 @@ export default function AdminRecordWorkspace({ kind }: { kind: Kind }) {
   const confirmCollectedPayment = (id: string) => runPaymentAction(id, "confirm_cod_payment");
   const confirmManualPayment = (id: string) => runPaymentAction(id, "confirm_manual_upi_payment");
 
+  const returnAction = async (id: string, action: "approve_return" | "reject_return" | "receive_return") => {
+    if (!token) return;
+    const restock = action === "receive_return" && window.confirm("Are all returned items inspected and suitable for resale? Choose OK to restock them, or Cancel to receive without adding stock.");
+    if (!window.confirm(action === "approve_return" ? "Approve this return request?" : action === "reject_return" ? "Reject this return request?" : "Confirm that the returned parcel has physically arrived?")) return;
+    setBusyId(id); setError(""); setNotice("");
+    try {
+      const res = await fetch("/api/admin/records", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-token": token }, body: JSON.stringify({ action, id, restock }) });
+      const data = await res.json(); if (!res.ok) throw new Error(data.error || "Return update failed.");
+      setNotice(action === "receive_return" ? (data.inventoryRestocked ? "Return received; inspected stock restored." : "Return received without restocking.") : "Return request updated.");
+      await load(token, page, query, filter);
+    } catch (e) { setError(e instanceof Error ? e.message : "Return update failed."); } finally { setBusyId(""); }
+  };
+  const recordRefund = async (id: string) => {
+    if (!token) return;
+    const amount = Number(window.prompt("Enter the refund amount in whole rupees. Only enter money already sent back to the customer."));
+    if (!Number.isSafeInteger(amount) || amount <= 0) return;
+    const refundMethod = window.prompt("Refund method: upi, bank_transfer, or cash", "upi") || "";
+    const reference = window.prompt("Enter the actual UPI/bank transaction reference or cash receipt number.") || "";
+    if (!reference.trim() || !["upi", "bank_transfer", "cash"].includes(refundMethod)) { setError("A valid refund method and reference are required."); return; }
+    if (!window.confirm("Confirm this refund has already been sent to the customer?")) return;
+    setBusyId(id); setError(""); setNotice("");
+    try {
+      const res = await fetch("/api/admin/records", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-token": token }, body: JSON.stringify({ action: "record_refund", id, amountInr: amount, refundMethod, reference }) });
+      const data = await res.json(); if (!res.ok) throw new Error(data.error || "Refund could not be recorded.");
+      setNotice(`Refund recorded. Remaining refundable balance: ₹${Number(data.remainingInr).toLocaleString("en-IN")}.`);
+      await load(token, page, query, filter);
+    } catch (e) { setError(e instanceof Error ? e.message : "Refund recording failed."); } finally { setBusyId(""); }
+  };
+
   const updateStatus = async (id: string, status: string) => {
     if (!token || !window.confirm(`Update this ${config.singular} to "${status.replace(/_/g, " ")}"?`)) return;
     setBusyId(id); setError(""); setNotice("");
@@ -122,6 +151,10 @@ export default function AdminRecordWorkspace({ kind }: { kind: Kind }) {
         <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-[var(--border)] pt-4"><label className="text-xs font-bold">Update status</label><select aria-label="New status" defaultValue={r.status} onChange={e => void updateStatus(r.id,e.target.value)} disabled={busyId === r.id} className="rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 py-2 text-sm"><option value={r.status}>{r.status.replace(/_/g," ")}</option>{config.statuses.filter(s => s !== r.status).map(s => <option key={s} value={s}>{s.replace(/_/g," ")}</option>)}</select>
                 {kind === "orders" && r.payment_method === "cash_on_delivery" && r.payment_status === "pay_on_delivery" && ["processing", "shipped", "delivered"].includes(r.status) && <button onClick={() => void confirmCollectedPayment(r.id)} disabled={busyId === r.id} className="rounded-lg border border-[var(--border)] px-3 py-2 text-xs font-bold disabled:opacity-40">Mark COD received</button>}
         {kind === "orders" && r.payment_method === "manual_upi" && ["awaiting_manual_payment", "payment_submitted"].includes(r.payment_status || "") && <button onClick={() => void confirmManualPayment(r.id)} disabled={busyId === r.id} className="rounded-lg border border-[var(--border)] px-3 py-2 text-xs font-bold disabled:opacity-40">Verify UPI received</button>}
+                {kind === "orders" && r.return_status && <p className="w-full text-xs opacity-70">Return: <strong>{r.return_status}</strong>{r.return_reason ? ` · ${r.return_reason}` : ""} · Refunded: {money(r.refunded_inr)}</p>}
+        {kind === "orders" && r.return_status === "requested" && <><button onClick={() => void returnAction(r.id, "approve_return")} disabled={busyId === r.id} className="rounded-lg border px-3 py-2 text-xs font-bold">Approve return</button><button onClick={() => void returnAction(r.id, "reject_return")} disabled={busyId === r.id} className="rounded-lg border px-3 py-2 text-xs font-bold">Reject return</button></>}
+        {kind === "orders" && r.return_status === "approved" && <button onClick={() => void returnAction(r.id, "receive_return")} disabled={busyId === r.id} className="rounded-lg border px-3 py-2 text-xs font-bold">Mark return received</button>}
+        {kind === "orders" && ["paid", "partially_refunded"].includes(r.payment_status || "") && Number(r.refunded_inr || 0) < Number(r.total_inr || 0) && <button onClick={() => void recordRefund(r.id)} disabled={busyId === r.id} className="rounded-lg border px-3 py-2 text-xs font-bold">Record completed refund</button>}
         {contact(r) && <a href={`mailto:${contact(r)}?subject=${encodeURIComponent("Your Lado Organics request")}&body=${encodeURIComponent(msg)}`} className="rounded-lg border border-[var(--border)] px-3 py-2 text-xs font-bold">Email</a>}{phoneDigits && <a href={`https://wa.me/${phoneDigits.length===10?"91":""}${phoneDigits}?text=${encodeURIComponent(msg)}`} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-[var(--border)] px-3 py-2 text-xs font-bold">WhatsApp</a>}<button onClick={() => { void navigator.clipboard.writeText(r.id); setNotice("Record ID copied."); }} className="rounded-lg border border-[var(--border)] px-3 py-2 text-xs font-bold">Copy ID</button></div>
       </article>;
     })}</div>}
