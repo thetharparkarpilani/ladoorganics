@@ -3,6 +3,7 @@ import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import AnalyticsProvider from "@/components/AnalyticsProvider";
 import PWARegistration from "@/components/PWARegistration";
+import ConciergeWidget from "@/components/ConciergeWidget";
 
 export const metadata: Metadata = {
   title: "Lado Organics | Pure Tharparkar A2 Tradition",
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <main className="flex-1">
               {children}
             </main>
+            <ConciergeWidget whatsappNumber={process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919636100337"} />
           </CartProvider>
         </AnalyticsProvider>
       </body>
