@@ -245,7 +245,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const [catalogContext, cartSuggestion] = await Promise.all([liveCatalog(), getCartSuggestion(message)]);
-    const knowledgeContext = knowledge.map((item) => "Category: " + clean(item.category,40) + "\\nTopic: " + clean(item.title,160) + "\\nExample questions: " + clean(item.question_patterns,1200) + "\\nVerified answer: " + clean(item.answer,4000)).join("\\n\\n");
+    const knowledgeContext = knowledge.map((item) => "Category: " + clean(item.category,40) + "\nTopic: " + clean(item.title,160) + "\nExample questions: " + clean(item.question_patterns,1200) + "\nVerified answer: " + clean(item.answer,4000)).join("\n\n");
     const systemPrompt = SYSTEM.replace("{{CATALOG}}", catalogContext).replace("{{KNOWLEDGE}}", knowledgeContext);
     const completion = await openai.chat.completions.create({
       model: process.env.OPENAI_MODEL || "gpt-4o-mini",
