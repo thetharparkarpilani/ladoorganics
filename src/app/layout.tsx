@@ -4,6 +4,7 @@ import { CartProvider } from "@/context/CartContext";
 import AnalyticsProvider from "@/components/AnalyticsProvider";
 import PWARegistration from "@/components/PWARegistration";
 import ConciergeWidget from "@/components/ConciergeWidget";
+import SiteAnnouncement from "@/components/SiteAnnouncement";
 
 export const metadata: Metadata = {
   title: "Lado Organics | Pure Tharparkar A2 Tradition",
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <PWARegistration />
         <AnalyticsProvider>
           <CartProvider>
+            <SiteAnnouncement />
             <main className="flex-1">
               {children}
             </main>
