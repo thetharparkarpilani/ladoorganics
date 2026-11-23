@@ -11,19 +11,27 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Please sign in to view your rewards." }, { status: 401 });
     }
 
-    const result = await db.query(
-      `SELECT id, points, transaction_type, description, created_at
-       FROM loyalty_ledgers
-       WHERE user_id = $1
-       ORDER BY created_at DESC
-       LIMIT 100`,
-      [customer.databaseUserId]
-    );
+    const [balanceResult, historyResult] = await Promise.all([
+      db.query(
+        `SELECT COALESCE(SUM(points), 0) AS balance
+         FROM loyalty_ledgers
+         WHERE user_id = $1`,
+        [customer.databaseUserId]
+      ),
+      db.query(
+        `SELECT id, points, transaction_type, description, created_at
+         FROM loyalty_ledgers
+         WHERE user_id = $1
+         ORDER BY created_at DESC
+         LIMIT 100`,
+        [customer.databaseUserId]
+      ),
+    ]);
 
-    const entries = result.rows;
-    const balance = entries.reduce((total: number, entry: { points: number | string }) => total + Number(entry.points || 0), 0);
-
-    return NextResponse.json({ balance, entries }, {
+    return NextResponse.json({
+      balance: Number(balanceResult.rows[0]?.balance || 0),
+      entries: historyResult.rows,
+    }, {
       headers: { "Cache-Control": "private, no-store, max-age=0" },
     });
   } catch (err) {
