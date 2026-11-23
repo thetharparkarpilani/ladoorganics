@@ -30,23 +30,29 @@ export default function AdminRecordWorkspace({ kind }: { kind: Kind }) {
   const [busyId, setBusyId] = useState("");
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
 
-  const load = useCallback(async (adminToken: string) => {
+  const load = useCallback(async (adminToken: string, nextPage = page, searchText = query, statusFilter = filter) => {
     setLoading(true); setError("");
     try {
-      const res = await fetch("/api/dashboard?mode=admin", { headers: { "x-admin-token": adminToken }, cache: "no-store" });
+      const params = new URLSearchParams({ kind, page: String(nextPage), pageSize: "25", search: searchText, status: statusFilter });
+      const res = await fetch("/api/admin/workspace?" + params.toString(), { headers: { "x-admin-token": adminToken }, cache: "no-store" });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Unable to load records.");
-      setRecords(Array.isArray(data[kind]) ? data[kind] : []);
+      setRecords(Array.isArray(data.records) ? data.records : []);
+      setTotalPages(data.totalPages || 1);
+      setTotalRecords(data.total || 0);
     } catch (e) { setError(e instanceof Error ? e.message : "Unable to load records."); }
     finally { setLoading(false); }
-  }, [kind]);
+  }, [kind, page, query, filter]);
 
   useEffect(() => {
     const saved = localStorage.getItem("lado_admin_token") || "";
     setToken(saved);
-    if (saved) void load(saved); else setLoading(false);
-  }, [load]);
+    if (saved) void load(saved, page, query, filter); else setLoading(false);
+  }, [load, page, query, filter]);
 
   const filtered = useMemo(() => records.filter((r) => {
     const matchesStatus = filter === "all" || r.status === filter;
@@ -62,7 +68,7 @@ export default function AdminRecordWorkspace({ kind }: { kind: Kind }) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Status update failed.");
       setNotice("Status updated and recorded in the audit log.");
-      await load(token);
+      await load(token, page, query, filter);
     } catch (e) { setError(e instanceof Error ? e.message : "Unable to update status."); }
     finally { setBusyId(""); }
   };
@@ -82,8 +88,8 @@ export default function AdminRecordWorkspace({ kind }: { kind: Kind }) {
   if (!token) return <section className="rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-8"><h1 className="font-serif text-3xl font-bold">{config.title}</h1><p className="mt-3 text-sm opacity-70">Unlock the Admin Command Center first using your ADMIN_ACCESS_TOKEN on the main admin page.</p><a className="primary-btn mt-5 inline-flex rounded-xl px-5 py-3" href="/admin">Open Admin Login</a></section>;
 
   return <section className="space-y-6">
-    <header className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs uppercase tracking-[.2em] text-[var(--terracotta)]">Lado Command · Operations</p><h1 className="mt-2 font-serif text-3xl font-bold">{config.title}</h1><p className="mt-2 text-sm opacity-70">Review requests, contact customers and update workflow status.</p></div><div className="flex gap-2"><button onClick={() => void load(token)} disabled={loading} className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-bold">{loading ? "Refreshing…" : "Refresh"}</button><button onClick={exportCsv} disabled={!filtered.length} className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-bold disabled:opacity-40">Export CSV</button></div></header>
-    <div className="grid gap-3 sm:grid-cols-3"><div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4"><p className="text-xs opacity-60">Records loaded</p><p className="mt-1 text-2xl font-bold">{records.length}</p></div><div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4"><p className="text-xs opacity-60">Pending</p><p className="mt-1 text-2xl font-bold">{records.filter(r => r.status === "pending" || r.status === "pending_confirmation").length}</p></div><div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4"><p className="text-xs opacity-60">Showing</p><p className="mt-1 text-2xl font-bold">{filtered.length}</p></div></div>
+    <header className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs uppercase tracking-[.2em] text-[var(--terracotta)]">Lado Command · Operations</p><h1 className="mt-2 font-serif text-3xl font-bold">{config.title}</h1><p className="mt-2 text-sm opacity-70">Review requests, contact customers and update workflow status.</p></div><div className="flex gap-2"><button onClick={() => void load(token)} disabled={loading} className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-bold">{loading ? "Refreshing…" : "Refresh"}</button><button onClick={exportCsv} disabled={!filtered.length} className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-bold disabled:opacity-40">Export this page</button></div></header>
+    <div className="grid gap-3 sm:grid-cols-3"><div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4"><p className="text-xs opacity-60">Total records</p><p className="mt-1 text-2xl font-bold">{totalRecords}</p></div><div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4"><p className="text-xs opacity-60">Pending</p><p className="mt-1 text-2xl font-bold">{records.filter(r => r.status === "pending" || r.status === "pending_confirmation").length}</p></div><div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4"><p className="text-xs opacity-60">On this page</p><p className="mt-1 text-2xl font-bold">{filtered.length}</p></div></div>
     <div className="flex flex-col gap-3 sm:flex-row"><input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search name, email, phone, order or record ID…" className="min-w-0 flex-1 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm"/><select value={filter} onChange={e => setFilter(e.target.value)} className="rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm"><option value="all">All statuses</option>{config.statuses.map(s => <option key={s} value={s}>{s.replace(/_/g," ")}</option>)}</select></div>
     {error && <p role="alert" className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-800">{error}</p>}{notice && <p role="status" className="rounded-xl border border-green-200 bg-green-50 p-3 text-sm text-green-900">{notice}</p>}
     {loading ? <p className="py-12 text-center text-sm opacity-60">Loading records…</p> : filtered.length === 0 ? <div className="rounded-2xl border border-dashed border-[var(--border)] p-12 text-center"><h2 className="font-serif text-xl font-bold">No matching records</h2><p className="mt-2 text-sm opacity-60">Try changing your search or status filter.</p></div> : <div className="space-y-3">{filtered.map(r => {
@@ -97,6 +103,6 @@ export default function AdminRecordWorkspace({ kind }: { kind: Kind }) {
         {contact(r) && <a href={`mailto:${contact(r)}?subject=${encodeURIComponent("Your Lado Organics request")}&body=${encodeURIComponent(msg)}`} className="rounded-lg border border-[var(--border)] px-3 py-2 text-xs font-bold">Email</a>}{phoneDigits && <a href={`https://wa.me/${phoneDigits.length===10?"91":""}${phoneDigits}?text=${encodeURIComponent(msg)}`} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-[var(--border)] px-3 py-2 text-xs font-bold">WhatsApp</a>}<button onClick={() => { void navigator.clipboard.writeText(r.id); setNotice("Record ID copied."); }} className="rounded-lg border border-[var(--border)] px-3 py-2 text-xs font-bold">Copy ID</button></div>
       </article>;
     })}</div>}
-    <p className="text-xs opacity-60">The underlying admin API currently returns the latest 20 records per category. This workspace does not claim to show older records beyond that limit.</p>
+    <div className="flex items-center justify-between border-t border-[var(--border)] pt-4"><button onClick={() => { const next = Math.max(1, page - 1); setPage(next); void load(token, next, query, filter); }} disabled={page <= 1 || loading} className="rounded-lg border border-[var(--border)] px-4 py-2 text-sm disabled:opacity-40">Previous</button><span className="text-xs opacity-60">Page {page} of {totalPages} · {totalRecords} records</span><button onClick={() => { const next = Math.min(totalPages, page + 1); setPage(next); void load(token, next, query, filter); }} disabled={page >= totalPages || loading} className="rounded-lg border border-[var(--border)] px-4 py-2 text-sm disabled:opacity-40">Next</button></div>
   </section>;
 }
