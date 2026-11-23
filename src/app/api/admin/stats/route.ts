@@ -1,21 +1,11 @@
-import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { getAdminActor } from "@/lib/admin-auth";
 
 export const runtime = "nodejs";
 
-function authorized(req: NextRequest) {
-  const expected = process.env.ADMIN_ACCESS_TOKEN;
-  const header = req.headers.get("authorization") || "";
-  const supplied = header.startsWith("Bearer ") ? header.slice(7) : "";
-  if (!expected || !supplied) return false;
-  const a = Buffer.from(supplied, "utf8");
-  const b = Buffer.from(expected, "utf8");
-  return a.length === b.length && crypto.timingSafeEqual(a, b);
-}
-
 export async function GET(req: NextRequest) {
-  if (!authorized(req)) return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
+  if (!(await getAdminActor(req, "analytics"))) return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   try {
     const [orders, products, bookings, sponsorships, customers, trend] = await Promise.all([
       db.query(`SELECT COUNT(*)::int AS total_orders,
