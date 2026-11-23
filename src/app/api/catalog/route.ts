@@ -1,8 +1,8 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { ProductDTO, ProductVariantDTO } from "@/types/domain";
+import { ProductDTO } from "@/types/domain";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const client = await db.getClient();
     
