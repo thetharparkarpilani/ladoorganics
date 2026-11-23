@@ -51,7 +51,10 @@ export default function DashboardPage() {
       <div className="bg-red-50 border border-red-200 text-red-900 p-8 rounded-3xl text-center">
         <h2 className="text-xl font-bold mb-2">Authentication Required</h2>
         <p className="text-sm">{error}</p>
-        <button onClick={() => window.location.href = "/"} className="mt-6 primary-btn px-6 py-2 rounded-full text-sm">Return Home</button>
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <a href="/login" className="primary-btn rounded-full px-6 py-2 text-sm">Sign in with Google</a>
+          <a href="/" className="rounded-full border border-red-200 px-6 py-2 text-sm">Return Home</a>
+        </div>
       </div>
     );
   }
