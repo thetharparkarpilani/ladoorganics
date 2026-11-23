@@ -398,3 +398,15 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   #store article { padding:13px; border-radius:22px; }
   .product-art-symbol { width:72px; height:72px; font-size:40px; }
 }
+
+
+.lado-mobile-navigation { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; padding:0 18px 18px; background:rgba(250,247,239,.97); border-top:1px solid rgba(82,77,55,.1); backdrop-filter:blur(18px); }
+.lado-mobile-navigation a { display:flex; align-items:center; min-height:44px; padding:10px 13px; border:1px solid rgba(82,77,55,.12); border-radius:13px; color:#3d503b; font-size:11px; font-weight:750; }
+.lado-mobile-navigation a:active { background:#e8eadb; }
+@media (max-width:480px) {
+  .glass-nav > div:first-child { gap:8px; }
+  .glass-nav > div:first-child > a img { height:48px; }
+  .glass-nav input[type="search"] { width:96px; }
+  .glass-nav select { padding-left:7px; padding-right:7px; }
+  .lado-mobile-navigation { grid-template-columns:1fr 1fr; }
+}
