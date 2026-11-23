@@ -185,7 +185,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "This return request has already been reviewed." }, { status: 409 });
           }
           const next = action === "approve_return" ? "approved" : "rejected";
-          await client.query("UPDATE order_returns SET status = $2, reviewed_at = NOW(), reviewed_by = $3 WHERE id = $1", [record.id, next, actor.id || actor.email || "admin"]);
+          await client.query("UPDATE order_returns SET status = $2, reviewed_at = NOW(), reviewed_by = $3 WHERE id = $1", [record.id, next, actor.email || "admin"]);
           await client.query("INSERT INTO audit_logs (action, entity_type, entity_id, metadata) VALUES ($1, 'order_return', $2, $3::jsonb)", [action.toUpperCase(), record.id, JSON.stringify({ orderNumber: record.order_number })]);
           await client.query("COMMIT");
           return NextResponse.json({ ok: true, status: next });
@@ -231,7 +231,7 @@ export async function POST(req: NextRequest) {
         }
         const refund = await client.query(
           "INSERT INTO order_refunds (order_id, amount_inr, refund_method, reference, note, recorded_by) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id, amount_inr, created_at",
-          [id, amount, method, reference, typeof body?.note === "string" ? body.note.trim().slice(0, 500) : null, actor.id || actor.email || "admin"]
+          [id, amount, method, reference, typeof body?.note === "string" ? body.note.trim().slice(0, 500) : null, actor.email || "admin"]
         );
         const totalRefunded = Number(sums.rows[0]?.refunded || 0) + amount;
         const fullRefund = totalRefunded >= Number(record.total_inr);
