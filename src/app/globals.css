@@ -410,3 +410,103 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .glass-nav select { padding-left:7px; padding-right:7px; }
   .lado-mobile-navigation { grid-template-columns:1fr 1fr; }
 }
+
+
+/* Full-site farm atmosphere: the page should feel rooted in a landscape, not a white template. */
+html { background:#e9e4d3; }
+body {
+  position:relative;
+  isolation:isolate;
+  background:rgba(239,235,220,.42);
+}
+body::before {
+  content:"";
+  position:fixed;
+  z-index:-1;
+  inset:0;
+  pointer-events:none;
+  background-image:
+    linear-gradient(180deg,rgba(245,241,226,.82),rgba(238,235,218,.88)),
+    url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2200&q=80");
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  transform:translateZ(0);
+}
+body::after {
+  content:"";
+  position:fixed;
+  z-index:-1;
+  inset:0;
+  pointer-events:none;
+  opacity:.12;
+  background-image:radial-gradient(rgba(79,86,55,.5) .55px,transparent .7px);
+  background-size:7px 7px;
+}
+.glass-nav {
+  background:rgba(241,237,222,.82);
+  border-bottom-color:rgba(66,78,49,.16);
+}
+main > section:not(.farm-hero),
+main > div[data-farm-reveal] > section {
+  background-color:rgba(244,240,225,.72);
+  backdrop-filter:blur(1.5px);
+}
+#store {
+  background-image:linear-gradient(180deg,rgba(226,225,202,.78),rgba(245,241,226,.84));
+}
+#calculator {
+  background:linear-gradient(180deg,rgba(226,225,202,.5),rgba(245,241,226,.55));
+}
+.farm-world-section {
+  background:linear-gradient(180deg,rgba(226,225,202,.88),rgba(211,218,188,.9));
+}
+footer {
+  background:rgba(43,66,43,.9);
+  color:#f8f1df;
+  border-color:rgba(255,255,255,.16);
+}
+.farm-world-panel {
+  background:rgba(250,247,235,.86);
+  border-color:rgba(76,91,58,.2);
+}
+.farm-product-ribbon {
+  background:rgba(229,231,207,.76);
+  backdrop-filter:blur(12px);
+}
+.farm-product-link {
+  background:rgba(250,247,235,.8);
+}
+.farm-chapter-icon {
+  background:linear-gradient(145deg,#e5e9d3,#f2e5c9);
+  border:1px solid rgba(84,105,66,.15);
+}
+.farm-product-link span:first-child {
+  display:grid;
+  place-items:center;
+  width:38px;
+  height:38px;
+  flex:0 0 38px;
+  border-radius:13px;
+  background:linear-gradient(145deg,#e6ead6,#f1e4ca);
+  box-shadow:inset 0 0 0 1px rgba(75,93,55,.12);
+  font-size:20px;
+}
+#store article {
+  background:rgba(250,247,235,.91);
+  backdrop-filter:blur(9px);
+}
+#store article .product-art {
+  box-shadow:inset 0 0 50px rgba(255,255,255,.12);
+}
+@media (max-width:760px) {
+  body::before {
+    background-image:
+      linear-gradient(180deg,rgba(245,241,226,.88),rgba(238,235,218,.91)),
+      url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1100&q=75");
+    background-position:58% center;
+  }
+}
+@media (prefers-reduced-motion:reduce) {
+  body::before { transform:none; }
+}
