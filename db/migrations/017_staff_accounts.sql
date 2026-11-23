@@ -8,3 +8,5 @@ CREATE TABLE IF NOT EXISTS public.staff_accounts (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 CREATE INDEX IF NOT EXISTS idx_staff_accounts_active_email ON public.staff_accounts(lower(email)) WHERE is_active=TRUE;
+
+ALTER TABLE public.staff_accounts ENABLE ROW LEVEL SECURITY;
