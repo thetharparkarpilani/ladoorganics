@@ -129,6 +129,47 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, order: res.rows[0] });
     }
 
+    if (action === "confirm_manual_upi_payment") {
+      const id = typeof body?.id === "string" ? body.id.trim() : "";
+      if (!id) {
+        return NextResponse.json({ error: "A valid order UUID is required." }, { status: 400 });
+      }
+      const client = await db.getClient();
+      try {
+        await client.query("BEGIN");
+        const updated = await client.query(
+          `UPDATE orders
+              SET payment_status = 'paid', status = CASE WHEN status = 'pending_confirmation' THEN 'paid' ELSE status END
+            WHERE id = $1
+              AND payment_method = 'manual_upi'
+              AND payment_status IN ('awaiting_manual_payment', 'payment_submitted')
+            RETURNING id, order_number, status, payment_status`,
+          [id]
+        );
+        if (updated.rowCount === 0) {
+          await client.query("ROLLBACK");
+          return NextResponse.json({ error: "Manual UPI order not found or it is already processed." }, { status: 404 });
+        }
+        await client.query(
+          `UPDATE payments SET status = 'captured', event_type = 'manual_upi_verified'
+            WHERE order_id = $1 AND provider = 'manual_upi' AND status = 'created'`,
+          [id]
+        );
+        await client.query(
+          `INSERT INTO audit_logs (action, entity_type, entity_id, metadata)
+           VALUES ('MANUAL_UPI_PAYMENT_VERIFIED', 'order', $1, $2::jsonb)`,
+          [id, JSON.stringify({ paymentStatus: "paid" })]
+        );
+        await client.query("COMMIT");
+        return NextResponse.json({ ok: true, order: updated.rows[0] });
+      } catch (error) {
+        await client.query("ROLLBACK").catch(() => undefined);
+        throw error;
+      } finally {
+        client.release();
+      }
+    }
+
     if (action === "update_booking_status") {
       const id = typeof body?.id === "string" ? body.id.trim() : "";
       const status = typeof body?.status === "string" ? body.status.trim() : "";
