@@ -45,7 +45,7 @@ export default function AdminEmailTemplates({ adminToken }: { adminToken: string
       
       if (!res.ok) throw new Error(data.error);
       setMessage({ type: "ok", text: "Template securely updated." });
-    } catch (err) {
+    } catch {
       setMessage({ type: "err", text: "Failed to save template." });
     } finally {
       setSaving(false);
