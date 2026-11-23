@@ -14,16 +14,16 @@ export type CustomerIdentity = {
  * Never trust an email or user ID supplied in the request body/query string.
  */
 export async function getCustomerIdentity(req: NextRequest): Promise<CustomerIdentity | null> {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\\/$/, "");
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, "");
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
   const accessToken = req.cookies.get("lado_sb_access")?.value;
 
   if (!supabaseUrl || !supabaseKey || !accessToken) return null;
 
-  const response = await fetch(`${supabaseUrl}/auth/v1/user`, {
+  const response = await fetch(\`\${supabaseUrl}/auth/v1/user\`, {
     headers: {
       apikey: supabaseKey,
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: \`Bearer \${accessToken}\`,
     },
     cache: "no-store",
   });
@@ -32,7 +32,7 @@ export async function getCustomerIdentity(req: NextRequest): Promise<CustomerIde
 
   const user = await response.json();
   const email = typeof user.email === "string" ? user.email.trim().toLowerCase() : "";
-  if (!user.id || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) return null;
+  if (!user.id || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return null;
 
   const metadata = user.user_metadata || {};
   const fullName = String(
@@ -40,11 +40,11 @@ export async function getCustomerIdentity(req: NextRequest): Promise<CustomerIde
   ).trim().slice(0, 100) || "Customer";
 
   const result = await db.query(
-    `INSERT INTO users (email, full_name, role)
+    \`INSERT INTO users (email, full_name, role)
      VALUES ($1, $2, 'customer')
      ON CONFLICT (email) DO UPDATE
        SET full_name = COALESCE(NULLIF(EXCLUDED.full_name, ''), users.full_name)
-     RETURNING id`,
+     RETURNING id\`,
     [email, fullName]
   );
 
