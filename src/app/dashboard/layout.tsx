@@ -1,4 +1,5 @@
 ﻿import React from "react";
+import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -25,11 +26,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
             
             <nav className="space-y-2 text-sm font-semibold">
-              <a href="/dashboard" className="block px-4 py-3 rounded-xl bg-[var(--mud)] text-white shadow-md">Overview</a>
-              <a href="/dashboard/orders" className="block px-4 py-3 rounded-xl text-[var(--muted)] hover:bg-[var(--earth)]/10 transition">Order History</a>
-              <a href="/dashboard/subscriptions" className="block px-4 py-3 rounded-xl text-[var(--muted)] hover:bg-[var(--earth)]/10 transition">Essentials Club</a>
-              <a href="/dashboard/stays" className="block px-4 py-3 rounded-xl text-[var(--muted)] hover:bg-[var(--earth)]/10 transition">Bhunga Stays</a>
-              <a href="/dashboard/sponsorships" className="block px-4 py-3 rounded-xl text-[var(--muted)] hover:bg-[var(--earth)]/10 transition">Gau Seva</a>
+              <Link href="/dashboard" className="block px-4 py-3 rounded-xl bg-[var(--mud)] text-white shadow-md">Overview</Link>
+              <Link href="/dashboard/orders" className="block px-4 py-3 rounded-xl text-[var(--muted)] hover:bg-[var(--earth)]/10 transition">Order History</Link>
+              <Link href="/dashboard/subscriptions" className="block px-4 py-3 rounded-xl text-[var(--muted)] hover:bg-[var(--earth)]/10 transition">Essentials Club</Link>
+              <Link href="/dashboard/stays" className="block px-4 py-3 rounded-xl text-[var(--muted)] hover:bg-[var(--earth)]/10 transition">Bhunga Stays</Link>
+              <Link href="/dashboard/sponsorships" className="block px-4 py-3 rounded-xl text-[var(--muted)] hover:bg-[var(--earth)]/10 transition">Gau Seva</Link>
+              <Link href="/dashboard/profile" className="block px-4 py-3 rounded-xl text-[var(--muted)] hover:bg-[var(--earth)]/10 transition">My Profile</Link>
             </nav>
 
             <div className="mt-8 pt-6 border-t border-[var(--border)]">
