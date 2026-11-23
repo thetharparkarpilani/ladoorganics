@@ -1,4 +1,4 @@
-﻿import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(req: NextRequest) {
@@ -6,10 +6,12 @@ export function middleware(req: NextRequest) {
   
   // Protect Customer Dashboard
   if (path.startsWith("/dashboard")) {
-    const sessionCookie = req.cookies.get("lado_secure_session");
-    if (!sessionCookie) {
-      // In production, redirect to a proper /login page. For now, redirect home with an auth flag.
-      return NextResponse.redirect(new URL("/?auth=required", req.url));
+    // Google sign-in stores the Supabase session in these HttpOnly cookies.
+    // Accept either cookie here; the dashboard API validates and refreshes the token.
+    const accessCookie = req.cookies.get("lado_sb_access");
+    const refreshCookie = req.cookies.get("lado_sb_refresh");
+    if (!accessCookie && !refreshCookie) {
+      return NextResponse.redirect(new URL("/login?auth=required", req.url));
     }
   }
 
