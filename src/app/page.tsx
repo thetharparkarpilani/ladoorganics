@@ -116,20 +116,20 @@ export default function HomePage() {
           </div>
         </section>
         <div data-farm-reveal><StorefrontSection products={products} locale={locale} searchQuery={searchQuery} whatsappNumber={whatsappNumber} onAddToBag={handleAddToBag} /></div>
-        <EssentialsClubSection />
-        <TrustAndProcessSection whatsappNumber={whatsappNumber} />
-        <FarmCalculatorsSuite locale={locale} />
+        <div data-farm-reveal><EssentialsClubSection /></div>
+        <div data-farm-reveal><TrustAndProcessSection whatsappNumber={whatsappNumber} /></div>
+        <div data-farm-reveal><FarmCalculatorsSuite locale={locale} /></div>
         <section id="adopt" className="py-20 px-4 sm:px-6 lg:px-8 border-t border-[var(--border)]">
           <div className="max-w-6xl mx-auto"><div className="text-center mb-12"><h2 className="text-3xl sm:text-5xl font-serif font-bold">{dict.section_adopt}</h2><p className="mt-3 max-w-2xl mx-auto opacity-80">Meet our Tharparkar calves at Pilani Gaushala and enquire about responsible sponsorship.</p></div>
             <div className="grid sm:grid-cols-3 gap-6">{["Dholi Sheri","Tara","Roshni"].map(name => <div key={name} className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 text-center"><h3 className="text-2xl font-serif font-bold text-[var(--terracotta)]">{name}</h3><p className="text-sm opacity-80 my-3">Tharparkar calf • Pilani Gaushala</p><a href="#experiences" className="primary-btn inline-block px-5 py-2.5 rounded-full text-xs font-bold">Sponsor {name}</a></div>)}</div>
           </div>
         </section>
-        <FarmExperienceSection whatsappNumber={whatsappNumber} />
-        <BuildYourOwnExperience whatsappNumber={whatsappNumber} />
-        <GauSevaTransparencySection />
-        <JournalLibrarySection locale={locale} />
-        <CorporateGiftingSection whatsappNumber={whatsappNumber} />
-        <CowAsCoconutMap />
+        <div data-farm-reveal><FarmExperienceSection whatsappNumber={whatsappNumber} /></div>
+        <div data-farm-reveal><BuildYourOwnExperience whatsappNumber={whatsappNumber} /></div>
+        <div data-farm-reveal><GauSevaTransparencySection /></div>
+        <div data-farm-reveal><JournalLibrarySection locale={locale} /></div>
+        <div data-farm-reveal><CorporateGiftingSection whatsappNumber={whatsappNumber} /></div>
+        <div data-farm-reveal><CowAsCoconutMap /></div>
       </main>
       <footer className="py-8 px-4 border-t border-[var(--border)] text-center text-xs opacity-75">© 2026 Lado Organics • Pilani, Rajasthan • ladoorganics.in • <a href="/contact" className="underline">Help & Support</a> • <a href="/policies" className="underline">Policies & Legal</a></footer>
       <CartCheckoutDrawer />
