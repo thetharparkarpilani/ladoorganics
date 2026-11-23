@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
@@ -54,7 +55,7 @@ export default function AuthCallbackPage() {
         </div>
         <h1 className="mb-3 text-2xl font-serif font-bold">My Lado Journey</h1>
         <p className="text-sm text-[var(--muted)]" role="status">{message}</p>
-        <a href="/" className="mt-6 inline-block text-sm font-semibold text-[var(--terracotta)] underline">Return to Lado Organics</a>
+        <Link href="/" className="mt-6 inline-block text-sm font-semibold text-[var(--terracotta)] underline">Return to Lado Organics</Link>
       </div>
     </main>
   );
