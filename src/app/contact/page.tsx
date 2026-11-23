@@ -25,7 +25,7 @@ export default function ContactPage() {
     `https://wa.me/${WHATSAPP_NUMBER.replace(/\\D/g, "")}?text=${encodeURIComponent(message)}`;
 
   return (
-    <main className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
+    <main className="min-h-screen bg-[var(--bg)]">
       <header className="border-b border-[var(--border)] px-4 py-4">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
           <Link href="/" className="font-serif text-xl font-bold">Lado Organics</Link>
