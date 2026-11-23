@@ -17,3 +17,5 @@ CREATE TABLE IF NOT EXISTS public.support_tickets (
 CREATE INDEX IF NOT EXISTS idx_support_tickets_created_at ON public.support_tickets(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_support_tickets_email ON public.support_tickets(lower(customer_email));
 CREATE INDEX IF NOT EXISTS idx_support_tickets_status ON public.support_tickets(status);
+
+ALTER TABLE public.support_tickets ENABLE ROW LEVEL SECURITY;
