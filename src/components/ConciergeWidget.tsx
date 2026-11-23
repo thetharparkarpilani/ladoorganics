@@ -1,13 +1,17 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { useCart } from "@/context/CartContext";
 
 type SuggestedAction = { label: string; href: string };
+type CartVariantSuggestion = { variantId: string; sku: string; label: string; priceInr: number; maxStock: number };
+type CartSuggestion = { productName: string; variants: CartVariantSuggestion[] };
 interface ChatMessage {
   id: string;
   sender: "user" | "bot";
   text: string;
   actions?: SuggestedAction[];
+  cartSuggestion?: CartSuggestion;
 }
 interface ConciergeWidgetProps { whatsappNumber: string; }
 
@@ -32,6 +36,7 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([WELCOME]);
   const [error, setError] = useState("");
+  const { addToCart } = useCart();
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -73,17 +78,54 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
             !(item as SuggestedAction).href.startsWith("//")
           ).slice(0, 4)
         : [];
+      const rawCart = data.cartSuggestion && typeof data.cartSuggestion === "object" ? data.cartSuggestion : null;
+      const cartVariants = Array.isArray(rawCart?.variants)
+        ? rawCart.variants.filter((item: unknown): item is CartVariantSuggestion =>
+            !!item && typeof item === "object" &&
+            typeof (item as CartVariantSuggestion).variantId === "string" &&
+            typeof (item as CartVariantSuggestion).sku === "string" &&
+            typeof (item as CartVariantSuggestion).label === "string" &&
+            Number.isFinite(Number((item as CartVariantSuggestion).priceInr)) &&
+            Number((item as CartVariantSuggestion).priceInr) > 0 &&
+            Number.isFinite(Number((item as CartVariantSuggestion).maxStock)) &&
+            Number((item as CartVariantSuggestion).maxStock) > 0
+          ).slice(0, 8)
+        : [];
+      const cartSuggestion: CartSuggestion | undefined =
+        rawCart && typeof rawCart.productName === "string" && cartVariants.length
+          ? { productName: rawCart.productName.slice(0, 100), variants: cartVariants }
+          : undefined;
       setMessages((previous) => [...previous, {
         id: `bot-${Date.now()}`,
         sender: "bot",
         text: typeof data.reply === "string" ? data.reply : "I couldn't prepare an answer. Please contact our team.",
         actions,
+        cartSuggestion,
       }]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Connection issue. Please try again.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const addSuggestedVariant = (messageId: string, productName: string, variant: CartVariantSuggestion) => {
+    addToCart({
+      variantId: variant.variantId,
+      sku: variant.sku,
+      title: `${productName} (${variant.label})`,
+      priceInr: variant.priceInr,
+      quantity: 1,
+      maxStock: variant.maxStock,
+    });
+    setMessages((previous) => [
+      ...previous.map((message) => message.id === messageId ? { ...message, cartSuggestion: undefined } : message),
+      {
+        id: `cart-added-${Date.now()}`,
+        sender: "bot",
+        text: `Added ${productName} (${variant.label}) to your bag. Your bag is open so you can review it before checkout.`,
+      },
+    ]);
   };
 
   const resetChat = () => {
@@ -152,6 +194,26 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
                     <div className="lado-ai-actions">
                       {message.actions.map((action) => (
                         <a key={action.href} href={action.href}>{action.label} <span aria-hidden="true">↗</span></a>
+                      ))}
+                    </div>
+                  )}
+                  {message.cartSuggestion && (
+                    <div className="lado-ai-cart-card">
+                      <div className="lado-ai-cart-heading">
+                        <span>ADD TO YOUR BAG</span>
+                        <strong>{message.cartSuggestion.productName}</strong>
+                      </div>
+                      {message.cartSuggestion.variants.map((variant) => (
+                        <button
+                          key={variant.sku}
+                          type="button"
+                          onClick={() => addSuggestedVariant(message.id, message.cartSuggestion!.productName, variant)}
+                          className="lado-ai-cart-option"
+                        >
+                          <span>{variant.label}</span>
+                          <strong>₹{variant.priceInr.toLocaleString("en-IN")}</strong>
+                          <span className="lado-ai-cart-add">Add +</span>
+                        </button>
                       ))}
                     </div>
                   )}
