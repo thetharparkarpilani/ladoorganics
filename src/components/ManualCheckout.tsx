@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 
 type Props = {
   items: { sku: string; quantity: number }[];
-  onSuccess: (orderNumber: string, paymentMethod: PaymentMethod) => void;
+  onSuccess: (orderNumber: string, paymentMethod: PaymentMethod, totalInr: number) => void;
 };
 
 type PaymentMethod = "cash_on_delivery" | "manual_upi";
@@ -65,7 +65,7 @@ export default function ManualCheckout({ items, onSuccess }: Props) {
         paymentMethod,
         message: result.message
       });
-      onSuccess(result.orderNumber, paymentMethod);
+      onSuccess(result.orderNumber, paymentMethod, result.totalInr);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to place your order.");
     } finally {
