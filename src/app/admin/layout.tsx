@@ -15,6 +15,7 @@ const navigation = [
   { href: "/admin/customers", label: "Customers", icon: "♙" },
   { href: "/admin/support", label: "Support Centre", icon: "?" },
   { href: "/admin/content", label: "Website Content", icon: "▧" },
+  { href: "/admin/ai-knowledge", label: "Lado AI Knowledge", icon: "✦" },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
