@@ -239,6 +239,21 @@ export default function AdminOperationsPanel({
           />
         </div>
 
+        <div className="p-3.5 rounded-2xl border border-amber-200 bg-amber-50 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <span className="block font-bold text-amber-950">Manual UPI Payment</span>
+            <span className="text-[10px] text-amber-900">Use only after checking that the money reached your bank account.</span>
+          </div>
+          <button
+            type="button"
+            disabled={busy || !recordId.trim()}
+            onClick={() => void callAdminApi({ action: "confirm_manual_upi_payment", id: recordId.trim() })}
+            className="rounded-lg bg-amber-800 px-3.5 py-2 font-bold text-white disabled:opacity-50"
+          >
+            Confirm UPI Received
+          </button>
+        </div>
+
         <div className="p-3.5 rounded-2xl border border-[var(--border)] bg-[var(--bg)] flex flex-wrap items-center justify-between gap-2">
           <span className="font-bold">Order Status</span>
           <div className="flex gap-2">
