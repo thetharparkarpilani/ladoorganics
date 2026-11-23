@@ -1,12 +1,12 @@
 "use client";
-import React,{useEffect,useState} from "react";
+import React,{useCallback,useEffect,useState} from "react";
 import {getAdminClientToken} from "@/lib/admin-client";
 type Staff={id:string;email:string;role:string;is_active:boolean;created_at:string};
 const roles=["manager","orders","inventory","support","content","communications","viewer"];
 export default function AdminStaffManager(){
  const [token,setToken]=useState("");const [staff,setStaff]=useState<Staff[]>([]);const [email,setEmail]=useState("");const [role,setRole]=useState("orders");const [loading,setLoading]=useState(true);const [saving,setSaving]=useState(false);const [error,setError]=useState("");const [notice,setNotice]=useState("");
- async function load(t:string){const r=await fetch("/api/admin/staff",{headers:{"x-admin-token":t},cache:"no-store"});const d=await r.json();if(!r.ok)throw new Error(d.error||"Only the owner can manage staff.");setStaff(d.staff||[]);}
- useEffect(()=>{let active=true;void getAdminClientToken().then(async t=>{if(!active)return;setToken(t);if(!t){setLoading(false);return;}try{await load(t);}catch(e){setError(e instanceof Error?e.message:"Unable to load staff.");}finally{if(active)setLoading(false);}});return()=>{active=false;};},[]);
+ const load=useCallback(async(t:string)=>{const r=await fetch("/api/admin/staff",{headers:{"x-admin-token":t},cache:"no-store"});const d=await r.json();if(!r.ok)throw new Error(d.error||"Only the owner can manage staff.");setStaff(d.staff||[]);},[]);
+ useEffect(()=>{let active=true;void getAdminClientToken().then(async t=>{if(!active)return;setToken(t);if(!t){setLoading(false);return;}try{await load(t);}catch(e){setError(e instanceof Error?e.message:"Unable to load staff.");}finally{if(active)setLoading(false);}});return()=>{active=false;};},[load]);
  async function save(e:React.FormEvent){e.preventDefault();setSaving(true);setError("");setNotice("");try{const r=await fetch("/api/admin/staff",{method:"POST",headers:{"Content-Type":"application/json","x-admin-token":token},body:JSON.stringify({email,role,isActive:true})});const d=await r.json();if(!r.ok)throw new Error(d.error||"Unable to add staff.");setNotice("Staff access saved. The person must sign in using this Google account email.");setEmail("");await load(token);}catch(e){setError(e instanceof Error?e.message:"Unable to save staff.");}finally{setSaving(false);}}
  async function toggle(item:Staff){setSaving(true);setError("");try{const r=await fetch("/api/admin/staff",{method:"POST",headers:{"Content-Type":"application/json","x-admin-token":token},body:JSON.stringify({email:item.email,role:item.role,isActive:!item.is_active})});const d=await r.json();if(!r.ok)throw new Error(d.error||"Unable to update staff.");await load(token);}catch(e){setError(e instanceof Error?e.message:"Unable to update staff.");}finally{setSaving(false);}}
  if(!token)return <p>Sign in to the owner account from <a href="/admin" className="underline">Admin Command</a>.</p>;
