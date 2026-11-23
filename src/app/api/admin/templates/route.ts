@@ -1,6 +1,5 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { cookies } from "next/headers";
 
 function isAuthorized(req: NextRequest) {
   const token = req.headers.get("x-admin-token");
@@ -13,7 +12,7 @@ export async function GET(req: NextRequest) {
   try {
     const res = await db.query("SELECT id, subject, html_content, updated_at FROM email_templates ORDER BY id");
     return NextResponse.json({ templates: res.rows });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: "Failed to fetch templates" }, { status: 500 });
   }
 }
