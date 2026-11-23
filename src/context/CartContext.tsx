@@ -34,7 +34,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const saved = localStorage.getItem("lado_cart_v3");
     if (saved) {
-      try { setItems(JSON.parse(saved)); } catch (e) {}
+      try { setItems(JSON.parse(saved)); } catch {}
     }
     setIsLoaded(true);
   }, []);
