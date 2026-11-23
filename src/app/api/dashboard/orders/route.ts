@@ -34,6 +34,8 @@ export async function GET(req: NextRequest) {
   });
 
   if (!response.ok) {
+    const errorDetails = await response.text();
+    console.error("Customer order history RPC failed:", response.status, errorDetails);
     return NextResponse.json(
       { error: "Order history is temporarily unavailable. Please try again later." },
       { status: 502 }
