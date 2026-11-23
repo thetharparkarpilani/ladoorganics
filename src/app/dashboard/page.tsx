@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 
 interface DashboardOrder {
   id: string | number;
@@ -52,8 +53,8 @@ export default function DashboardPage() {
         <h2 className="text-xl font-bold mb-2">Authentication Required</h2>
         <p className="text-sm">{error}</p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <a href="/login" className="primary-btn rounded-full px-6 py-2 text-sm">Sign in with Google</a>
-          <a href="/" className="rounded-full border border-red-200 px-6 py-2 text-sm">Return Home</a>
+          <Link href="/login" className="primary-btn rounded-full px-6 py-2 text-sm">Sign in with Google</Link>
+          <Link href="/" className="rounded-full border border-red-200 px-6 py-2 text-sm">Return Home</Link>
         </div>
       </div>
     );
@@ -78,7 +79,7 @@ export default function DashboardPage() {
         <section className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 sm:p-8">
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-serif font-bold text-xl text-[var(--mud)]">Recent Orders</h3>
-            <a href="/dashboard/orders" className="text-xs font-bold text-[var(--terracotta)] hover:underline">View All</a>
+            <Link href="/dashboard/orders" className="text-xs font-bold text-[var(--terracotta)] hover:underline">View All</Link>
           </div>
           {data?.orders && data.orders.length > 0 ? (
             <div className="space-y-4">
@@ -90,7 +91,7 @@ export default function DashboardPage() {
                   </div>
                   <div className="text-right">
                     <span className="block font-bold text-[var(--terracotta)]">₹{Number(o.total_inr).toLocaleString("en-IN")}</span>
-                    <a href={`/trace/LO-PILANI-SAMPLE-001`} className="text-[10px] underline text-[var(--muted)]">Track Batch</a>
+                    <Link href="/trace/LO-PILANI-SAMPLE-001" className="text-[10px] underline text-[var(--muted)]">Track Batch</Link>
                   </div>
                 </div>
               ))}
@@ -106,7 +107,7 @@ export default function DashboardPage() {
         <section className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 sm:p-8">
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-serif font-bold text-xl text-[var(--mud)]">Gau Seva Impact</h3>
-            <a href="/dashboard/sponsorships" className="text-xs font-bold text-[var(--terracotta)] hover:underline">Manage</a>
+            <Link href="/dashboard/sponsorships" className="text-xs font-bold text-[var(--terracotta)] hover:underline">Manage</Link>
           </div>
           {data?.sponsorships && data.sponsorships.length > 0 ? (
             <div className="space-y-4">
