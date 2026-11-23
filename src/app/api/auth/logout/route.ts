@@ -1,13 +1,10 @@
-﻿import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const cookieStore = await cookies();
-  
-  // Clear customer and admin sessions completely
-  cookieStore.delete("lado_secure_session");
-  cookieStore.delete("lado_admin_token");
-
-  // Redirect to home page after destruction
-  return NextResponse.redirect(new URL("/", req.url));
+  const response = NextResponse.redirect(new URL("/", req.url));
+  response.cookies.delete("lado_sb_access");
+  response.cookies.delete("lado_sb_refresh");
+  response.cookies.delete("lado_secure_session");
+  response.cookies.delete("lado_admin_token");
+  return response;
 }
