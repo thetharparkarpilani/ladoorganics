@@ -1,6 +1,7 @@
-﻿import crypto from "crypto";
+import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { getCustomerIdentity } from "@/lib/customer-auth";
 
 function isAuthorizedAdmin(headerToken: string | null): boolean {
   const expected = process.env.ADMIN_ACCESS_TOKEN;
@@ -14,7 +15,6 @@ function isAuthorizedAdmin(headerToken: string | null): boolean {
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const mode = searchParams.get("mode") || "customer";
-  const email = (searchParams.get("email") || "").trim().toLowerCase();
 
   try {
     if (mode === "admin") {
@@ -65,10 +65,13 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    if (!email || !email.includes("@")) {
+    // Customer records are scoped to the verified Supabase session.
+    // The old ?email=... parameter is intentionally no longer trusted.
+    const customer = await getCustomerIdentity(req);
+    if (!customer) {
       return NextResponse.json(
-        { error: "Enter the email address used for your order, booking, or sponsorship." },
-        { status: 400 }
+        { error: "Please sign in to view your customer records." },
+        { status: 401 }
       );
     }
 
@@ -76,29 +79,29 @@ export async function GET(req: NextRequest) {
       db.query(
         `SELECT id, order_number, shipping_summary, subtotal_inr, total_inr, status, created_at
          FROM orders WHERE LOWER(guest_email) = $1 ORDER BY created_at DESC LIMIT 20`,
-        [email]
+        [customer.email]
       ),
       db.query(
         `SELECT id, stay_slug, check_in, check_out, guests_count, nights_count, total_amount_inr, status, created_at
          FROM bookings WHERE LOWER(guest_email) = $1 ORDER BY created_at DESC LIMIT 20`,
-        [email]
+        [customer.email]
       ),
       db.query(
         `SELECT id, calf_name, plan_type, amount_inr, status, created_at
          FROM sponsorships WHERE LOWER(sponsor_email) = $1 ORDER BY created_at DESC LIMIT 20`,
-        [email]
+        [customer.email]
       )
     ]);
 
     return NextResponse.json({
       mode: "customer",
-      email,
+      email: customer.email,
       orders: ordersRes.rows,
       bookings: bookingsRes.rows,
       sponsorships: sponsorshipsRes.rows
     });
   } catch (err) {
-    const detail = err instanceof Error ? err.message : "Database unavailable";
-    return NextResponse.json({ error: detail }, { status: 503 });
+    console.error("Customer dashboard request failed:", err);
+    return NextResponse.json({ error: "Customer records are temporarily unavailable." }, { status: 503 });
   }
 }
