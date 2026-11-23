@@ -157,7 +157,7 @@ export async function POST(req: NextRequest) {
     );
 
     await client.query("COMMIT");
-    void sendTemplatedNotification("order_received", email, {
+    await sendTemplatedNotification("order_received", email, {
       name: customerName,
       order_number: orderNumber,
       amount: total,
