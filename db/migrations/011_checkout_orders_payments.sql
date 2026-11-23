@@ -8,6 +8,7 @@ ALTER TABLE public.orders
   ADD COLUMN IF NOT EXISTS guest_email TEXT,
   ADD COLUMN IF NOT EXISTS guest_phone TEXT,
   ADD COLUMN IF NOT EXISTS shipping_summary TEXT,
+  ADD COLUMN IF NOT EXISTS shipping_address TEXT,
   ADD COLUMN IF NOT EXISTS subtotal_inr INTEGER,
   ADD COLUMN IF NOT EXISTS total_inr INTEGER;
 
@@ -16,8 +17,10 @@ UPDATE public.orders
  WHERE order_number IS NULL OR btrim(order_number) = '';
 
 UPDATE public.orders
-   SET shipping_summary = COALESCE(NULLIF(shipping_summary, ''), 'Address not recorded')
- WHERE shipping_summary IS NULL OR btrim(shipping_summary) = '';
+   SET shipping_summary = COALESCE(NULLIF(shipping_summary, ''), NULLIF(shipping_address, ''), 'Address not recorded'),
+       shipping_address = COALESCE(NULLIF(shipping_address, ''), NULLIF(shipping_summary, ''), 'Address not recorded')
+ WHERE shipping_summary IS NULL OR btrim(shipping_summary) = ''
+    OR shipping_address IS NULL OR btrim(shipping_address) = '';
 
 UPDATE public.orders
    SET subtotal_inr = COALESCE(subtotal_inr, total_inr, 0),
@@ -27,6 +30,7 @@ UPDATE public.orders
 ALTER TABLE public.orders
   ALTER COLUMN order_number SET NOT NULL,
   ALTER COLUMN shipping_summary SET NOT NULL,
+  ALTER COLUMN shipping_address SET NOT NULL,
   ALTER COLUMN subtotal_inr SET DEFAULT 0,
   ALTER COLUMN subtotal_inr SET NOT NULL,
   ALTER COLUMN total_inr SET DEFAULT 0,
@@ -43,7 +47,6 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_orders_order_number_unique ON public.order
 CREATE INDEX IF NOT EXISTS idx_orders_guest_email_lower ON public.orders(lower(guest_email));
 CREATE INDEX IF NOT EXISTS idx_payments_provider_order_id ON public.payments(provider, provider_order_id);
 
--- Keep the order item table aligned with the fields written by checkout.
 CREATE TABLE IF NOT EXISTS public.order_items (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   order_id UUID NOT NULL REFERENCES public.orders(id) ON DELETE CASCADE,
@@ -54,7 +57,6 @@ CREATE TABLE IF NOT EXISTS public.order_items (
   quantity INTEGER NOT NULL CHECK (quantity > 0)
 );
 
--- Payment rows retain the gateway's string order ID separately from the local UUID order ID.
 ALTER TABLE public.payments
   ADD COLUMN IF NOT EXISTS provider_order_id TEXT,
   ADD COLUMN IF NOT EXISTS provider_payment_id TEXT,
