@@ -128,6 +128,7 @@ function actionsFor(message: string): Array<{ label: string; href: string }> {
   if (/gau seva|sponsor|sponsorship|calf|cow adoption/.test(q)) add("Gau Seva sponsorship form", "/#experiences");
   if (/order status|my order|track|account|profile|reward|dashboard|login|sign in/.test(q)) add("My Lado Journey", "/dashboard");
   if (/delivery|shipping|refund|return|cancel|payment|policy|privacy|terms/.test(q)) add("Policies & Legal", "/policies");
+  if (/complaint|problem|issue|support ticket|support case/.test(q)) add("Submit a support request", "/login?next=/dashboard/support");
   if (/human|person|team|contact|complaint|problem|support|whatsapp/.test(q)) add("Contact our team", "/contact");
   if (/farm|cow|tharparkar|soil|tree|organic|process/.test(q)) add("Discover our farm story", "/#farm-world");
   return out.slice(0, 4);
