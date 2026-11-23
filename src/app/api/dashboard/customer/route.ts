@@ -39,10 +39,10 @@ export async function GET(req: NextRequest) {
         `SELECT id, stay_slug, check_in, check_out, guests_count, nights_count,
                 total_amount_inr, status, created_at
          FROM bookings
-         WHERE lower(COALESCE(guest_email, '')) = $1
+         WHERE lower(COALESCE(guest_email, '')) = $1 OR user_id = $2::uuid
          ORDER BY created_at DESC
          LIMIT 20`,
-        [customer.email]
+        [customer.email, customer.databaseUserId]
       ),
       db.query(
         `SELECT id, calf_name, plan_type, amount_inr, status, created_at
