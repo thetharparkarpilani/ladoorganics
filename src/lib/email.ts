@@ -18,7 +18,7 @@ export async function sendNotification(to: string, subject: string, htmlContent:
 
   try {
     await transporter.sendMail({
-      from: '"Lado Organics" <hello@ladoorganics.in>',
+      from: process.env.SMTP_FROM || '"Lado Organics" <hello@ladoorganics.in>',
       to,
       subject,
       html: htmlContent,
