@@ -1,13 +1,9 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-
-function isAuthorized(req: NextRequest) {
-  const token = req.headers.get("x-admin-token");
-  return token === process.env.ADMIN_ACCESS_TOKEN;
-}
+import { getAdminActor } from "@/lib/admin-auth";
 
 export async function GET(req: NextRequest) {
-  if (!isAuthorized(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!(await getAdminActor(req, "communications"))) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   
   try {
     const res = await db.query("SELECT id, subject, html_content, updated_at FROM email_templates ORDER BY id");
