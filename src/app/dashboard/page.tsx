@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
@@ -9,17 +9,38 @@ interface DashboardOrder {
   status: string;
   total_inr: number | string;
 }
-interface DashboardSponsorship {
-  id: string | number;
-  calf_name: string;
-  plan_type: string;
-  amount_inr: number | string;
-}
+
 interface DashboardData {
   profile?: { name?: string | null } | null;
   orders?: DashboardOrder[];
-  sponsorships?: DashboardSponsorship[];
 }
+
+const dashboardLinks = [
+  {
+    title: "Order History",
+    description: "View your purchases and delivery details.",
+    href: "/dashboard/orders",
+    label: "View orders",
+  },
+  {
+    title: "My Reviews",
+    description: "See the product feedback you have submitted.",
+    href: "/dashboard/reviews",
+    label: "View reviews",
+  },
+  {
+    title: "Lado Rewards",
+    description: "Check your loyalty points and activity.",
+    href: "/dashboard/rewards",
+    label: "View rewards",
+  },
+  {
+    title: "My Profile",
+    description: "Manage the details saved to your account.",
+    href: "/dashboard/profile",
+    label: "Edit profile",
+  },
+];
 
 export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
@@ -27,30 +48,32 @@ export default function DashboardPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // Fetch secure server-side profile data
-    fetch("/api/dashboard/customer")
-      .then((res) => {
-        if (!res.ok) throw new Error("Please log in to view your journey.");
-        return res.json();
-      })
-      .then((json) => {
+    fetch("/api/dashboard/customer", { cache: "no-store" })
+      .then(async (res) => {
+        const json = await res.json();
+        if (!res.ok) {
+          throw new Error(json.error || "Please log in to view your journey.");
+        }
         setData(json as DashboardData);
-        setLoading(false);
       })
       .catch((err) => {
-        setError(err.message);
-        setLoading(false);
-      });
+        setError(err instanceof Error ? err.message : "Unable to load your account.");
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   if (loading) {
-    return <div className="h-64 flex items-center justify-center font-mono text-sm text-[var(--muted)] animate-pulse">Decrypting secure ecosystem records...</div>;
+    return (
+      <div className="flex h-64 items-center justify-center text-sm text-[var(--muted)]">
+        Loading your Lado Organics account...
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 text-red-900 p-8 rounded-3xl text-center">
-        <h2 className="text-xl font-bold mb-2">Authentication Required</h2>
+      <div className="rounded-3xl border border-red-200 bg-red-50 p-8 text-center text-red-900">
+        <h2 className="mb-2 text-xl font-bold">Sign in required</h2>
         <p className="text-sm">{error}</p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <Link href="/login" className="primary-btn rounded-full px-6 py-2 text-sm">Sign in with Google</Link>
@@ -60,77 +83,99 @@ export default function DashboardPage() {
     );
   }
 
+  const orders = data?.orders || [];
+
   return (
     <div className="space-y-8">
-      {/* Welcome Banner */}
-      <div className="bg-[#2b180c] p-8 sm:p-10 rounded-3xl text-[#fef3c7] relative overflow-hidden shadow-xl">
+      <section className="relative overflow-hidden rounded-3xl bg-[#2b180c] p-8 text-[#fef3c7] shadow-xl sm:p-10">
         <div className="relative z-10">
-          <span className="text-xs font-mono uppercase tracking-widest text-[#fbbf24] mb-2 block">Lado Organics Ecosystem</span>
-          <h1 className="text-3xl sm:text-4xl font-serif font-bold mb-4">Namaste, {data?.profile?.name || "Patron"}</h1>
-          <p className="text-[#fde68a]/80 text-sm max-w-lg leading-relaxed">
-            Welcome to your verified digital farm interface. Track your A2 Bilona Ghee batches, manage your Bhunga farm stay reservations, and view your Gau Seva impact in one secure place.
+          <span className="mb-2 block text-xs uppercase tracking-widest text-[#fbbf24]">
+            Lado Organics · My Account
+          </span>
+          <h1 className="mb-3 font-serif text-3xl font-bold sm:text-4xl">
+            Namaste, {data?.profile?.name || "Customer"}
+          </h1>
+          <p className="max-w-lg text-sm leading-relaxed text-[#fde68a]/80">
+            Welcome to your Lado Organics account. Keep track of your orders,
+            product reviews, rewards and profile details from one place.
           </p>
         </div>
-        <i className="fas fa-leaf absolute -bottom-10 -right-10 text-[180px] text-white/5 rotate-[-20deg]"></i>
-      </div>
+        <span aria-hidden="true" className="absolute -bottom-10 -right-4 text-[150px] opacity-[0.07]">✿</span>
+      </section>
 
-      <div className="grid md:grid-cols-2 gap-6">
-        {/* Recent Orders */}
-        <section className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 sm:p-8">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="font-serif font-bold text-xl text-[var(--mud)]">Recent Orders</h3>
-            <Link href="/dashboard/orders" className="text-xs font-bold text-[var(--terracotta)] hover:underline">View All</Link>
+      <section aria-labelledby="account-shortcuts-heading">
+        <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 id="account-shortcuts-heading" className="font-serif text-2xl font-bold text-[var(--mud)]">
+              Your Account
+            </h2>
+            <p className="mt-1 text-sm text-[var(--muted)]">Quick access to your customer account.</p>
           </div>
-          {data?.orders && data.orders.length > 0 ? (
-            <div className="space-y-4">
-              {data.orders.map((o: DashboardOrder) => (
-                <div key={o.id} className="p-4 rounded-2xl bg-[var(--bg)] border border-[var(--border)] flex justify-between items-center">
-                  <div>
-                    <span className="block text-xs font-mono font-bold text-[var(--mud)] mb-1">#{o.order_number}</span>
-                    <span className="text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full bg-green-100 text-green-800 border border-green-200">{o.status.replace("_", " ")}</span>
-                  </div>
-                  <div className="text-right">
-                    <span className="block font-bold text-[var(--terracotta)]">₹{Number(o.total_inr).toLocaleString("en-IN")}</span>
-                    <Link href="/trace/LO-PILANI-SAMPLE-001" className="text-[10px] underline text-[var(--muted)]">Track Batch</Link>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="p-8 text-center bg-[var(--bg)] rounded-2xl border border-dashed border-[var(--border)]">
-              <p className="text-sm text-[var(--muted)]">No recent orders found.</p>
-            </div>
-          )}
-        </section>
+          <span className="rounded-full border border-[var(--border)] px-3 py-1 text-xs text-[var(--muted)]">
+            {orders.length} recent {orders.length === 1 ? "order" : "orders"}
+          </span>
+        </div>
 
-        {/* Gau Seva Impact */}
-        <section className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 sm:p-8">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="font-serif font-bold text-xl text-[var(--mud)]">Gau Seva Impact</h3>
-            <Link href="/dashboard/sponsorships" className="text-xs font-bold text-[var(--terracotta)] hover:underline">Manage</Link>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {dashboardLinks.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="group rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 transition hover:-translate-y-0.5 hover:border-[var(--terracotta)] hover:shadow-md"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <h3 className="font-serif text-lg font-bold text-[var(--mud)]">{item.title}</h3>
+                <span aria-hidden="true" className="text-lg text-[var(--terracotta)] transition group-hover:translate-x-1">→</span>
+              </div>
+              <p className="mt-2 text-sm text-[var(--muted)]">{item.description}</p>
+              <span className="mt-4 inline-block text-xs font-bold text-[var(--terracotta)]">{item.label}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-6 sm:p-8">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="font-serif text-xl font-bold text-[var(--mud)]">Recent Orders</h2>
+            <p className="mt-1 text-sm text-[var(--muted)]">Your latest purchases linked to this account.</p>
           </div>
-          {data?.sponsorships && data.sponsorships.length > 0 ? (
-            <div className="space-y-4">
-              {data.sponsorships.map((s: DashboardSponsorship) => (
-                <div key={s.id} className="p-4 rounded-2xl bg-[var(--bg)] border border-[var(--border)] flex justify-between items-center">
-                  <div>
-                    <span className="block text-sm font-bold text-[var(--mud)]">{s.calf_name}</span>
-                    <span className="text-xs text-[var(--muted)] capitalize">{s.plan_type.replace("_", " ")} Sponsorship</span>
-                  </div>
-                  <span className="font-bold text-[var(--terracotta)]">₹{Number(s.amount_inr).toLocaleString("en-IN")}/mo</span>
+          <Link href="/dashboard/orders" className="text-xs font-bold text-[var(--terracotta)] hover:underline">
+            View all orders
+          </Link>
+        </div>
+
+        {orders.length > 0 ? (
+          <div className="space-y-3">
+            {orders.slice(0, 5).map((order) => (
+              <article
+                key={order.id}
+                className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[var(--border)] bg-[var(--bg)] p-4"
+              >
+                <div>
+                  <p className="font-mono text-xs font-bold text-[var(--mud)]">#{order.order_number}</p>
+                  <p className="mt-1 text-xs capitalize text-[var(--muted)]">
+                    {(order.status || "processing").replaceAll("_", " ")}
+                  </p>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="p-8 text-center bg-[var(--bg)] rounded-2xl border border-dashed border-[var(--border)]">
-              <p className="text-sm text-[var(--muted)] mb-3">You are not currently sponsoring a calf.</p>
-              <button onClick={() => window.location.href = "/#adopt"} className="text-xs font-bold px-4 py-2 rounded-full border border-[var(--terracotta)] text-[var(--terracotta)] hover:bg-[var(--terracotta)] hover:text-white transition">
-                Sponsor Dholi Sheri
-              </button>
-            </div>
-          )}
-        </section>
-      </div>
+                <p className="font-bold text-[var(--terracotta)]">
+                  ₹{Number(order.total_inr || 0).toLocaleString("en-IN")}
+                </p>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg)] p-8 text-center">
+            <h3 className="font-serif text-lg font-bold text-[var(--mud)]">No orders yet</h3>
+            <p className="mt-2 text-sm text-[var(--muted)]">
+              Orders placed using this Google account email will appear here.
+            </p>
+            <Link href="/#products" className="primary-btn mt-5 inline-flex rounded-full px-6 py-3 text-sm font-bold">
+              Explore products
+            </Link>
+          </div>
+        )}
+      </section>
     </div>
   );
 }
