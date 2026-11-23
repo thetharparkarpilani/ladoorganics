@@ -9,6 +9,7 @@ const navigation = [
   { href: "/admin/inventory", label: "Products & Inventory", icon: "◈" },
   { href: "/admin/bookings", label: "Bhunga Stays", icon: "⌂" },
   { href: "/admin/sponsorships", label: "Gau Seva", icon: "♡" },
+  { href: "/admin/communications", label: "Communications", icon: "✉" },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
