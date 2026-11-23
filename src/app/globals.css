@@ -364,3 +364,37 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 @media (prefers-reduced-motion: reduce) {
   .farm-hero-primary,.farm-hero-secondary { transition:none; }
 }
+
+
+/* Product collection art direction */
+#store { background:linear-gradient(180deg,#f7f3e9 0%,#fbf9f3 100%); }
+#store article { padding:16px; background:#fffdf7; border:1px solid rgba(82,77,55,.12); box-shadow:0 12px 34px rgba(57,56,39,.045); }
+#store article h3 { color:#2f4634; font-size:1.45rem; letter-spacing:-.025em; }
+#store article > div:first-child > p { color:#6d6b5c; font-size:.83rem; line-height:1.75; }
+#store article .product-art { position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; overflow:hidden; isolation:isolate; border:1px solid rgba(72,74,48,.1); }
+.product-art::before,.product-art::after { content:""; position:absolute; z-index:-1; border:1px solid currentColor; border-radius:50%; opacity:.16; }
+.product-art::before { width:72%; aspect-ratio:1; }
+.product-art::after { width:96%; aspect-ratio:1; }
+.product-art-brand,.product-art-foot { position:absolute; left:16px; right:16px; color:currentColor; font-size:7px; font-weight:800; letter-spacing:.2em; text-align:center; }
+.product-art-brand { top:16px; }.product-art-brand i { color:#b87850; font-style:normal; }
+.product-art-foot { bottom:14px; opacity:.65; }
+.product-art-symbol { display:grid; place-items:center; width:86px; height:86px; border:1px solid currentColor; border-radius:50%; font-family:Georgia,serif; font-size:48px; line-height:1; box-shadow:0 12px 34px rgba(39,45,28,.1); }
+.product-art-name { margin-top:13px; color:currentColor; font-size:9px; font-weight:850; letter-spacing:.22em; }
+.product-art-ghee { color:#76552c; background:radial-gradient(circle at 50% 48%,#fff4cc 0 18%,transparent 19%),linear-gradient(135deg,#eee0bd,#d9b66d 52%,#f5e8c9); }
+.product-art-ghee .product-art-symbol { background:linear-gradient(145deg,#fff3c9,#d9a64c); }
+.product-art-dhoop { color:#f8ead0; background:radial-gradient(circle at 50% 50%,rgba(214,155,92,.5),transparent 38%),linear-gradient(135deg,#574537,#92704d 55%,#3d3a2d); }
+.product-art-dhoop .product-art-symbol { background:rgba(255,245,222,.1); }
+.product-art-soil { color:#f4ead7; background:radial-gradient(circle at 50% 50%,rgba(166,178,116,.42),transparent 38%),linear-gradient(135deg,#3f4a34,#718052 55%,#4b4933); }
+.product-art-soil .product-art-symbol { background:rgba(255,255,255,.08); }
+.product-art-milk { color:#47604b; background:radial-gradient(circle at 50% 48%,#fff 0 18%,transparent 19%),linear-gradient(135deg,#f5f4e9,#dbe6d7 58%,#f5eddb); }
+.product-art-milk .product-art-symbol { background:rgba(255,255,255,.65); }
+.product-art-kesar { color:#794b28; background:radial-gradient(circle at 50% 50%,rgba(226,154,70,.48),transparent 38%),linear-gradient(135deg,#f5e2c4,#d7a06b 56%,#f4e7c9); }
+.product-art-kesar .product-art-symbol { background:rgba(255,248,225,.55); }
+.product-art-earth { color:#536247; background:linear-gradient(135deg,#e7e4cc,#b8c39b 55%,#eee6ce); }
+#store article .primary-btn { min-height:44px; border-radius:999px; }
+#store article button:not(.primary-btn) { transition:background .25s ease,border-color .25s ease,transform .25s ease; }
+#store article button:not(.primary-btn):hover { transform:translateY(-1px); }
+@media (max-width:640px) {
+  #store article { padding:13px; border-radius:22px; }
+  .product-art-symbol { width:72px; height:72px; font-size:40px; }
+}
