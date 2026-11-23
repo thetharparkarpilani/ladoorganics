@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { sendTemplatedNotification } from "@/lib/customer-notifications";
 
 const ALLOWED_CALVES = new Set(["Dholi Sheri", "Tara", "Roshni"]);
 const ALLOWED_PLANS = new Set(["one_time", "monthly", "yearly"]);
@@ -30,6 +31,13 @@ export async function POST(req: NextRequest) {
        RETURNING id, calf_name, plan_type, amount_inr, status, created_at`,
       [calfName, sponsorName, sponsorEmail, sponsorPhone || null, planType, amountInr]
     );
+
+    void sendTemplatedNotification("sponsorship_request_received", sponsorEmail, {
+      name: sponsorName,
+      calf_name: calfName,
+      plan: planType,
+      amount: amountInr,
+    });
 
     return NextResponse.json({
       ok: true,
