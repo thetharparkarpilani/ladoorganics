@@ -37,6 +37,24 @@ function money(value: number | string | undefined) {
   return `₹${Number(value || 0).toLocaleString("en-IN")}`;
 }
 
+function whatsappNumber(value: string | undefined) {
+  const digits = (value || "").replace(/\D/g, "");
+  if (digits.length === 10) return "91" + digits;
+  if (digits.length === 12 && digits.startsWith("91")) return digits;
+  return "";
+}
+
+function ContactActions({ email, phone, message }: { email?: string; phone?: string; message: string }) {
+  const number = whatsappNumber(phone);
+  const subject = "Your Lado Organics request";
+  return (
+    <div className="mt-3 flex flex-wrap gap-2">
+      {email && <a href={`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`} className="rounded-lg border border-[var(--border)] px-3 py-2 text-xs font-bold">Email customer</a>}
+      {number && <a href={`https://wa.me/${number}?text=${encodeURIComponent(message)}`} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-[var(--border)] px-3 py-2 text-xs font-bold">WhatsApp customer</a>}
+    </div>
+  );
+}
+
 function date(value: string | undefined) {
   if (!value) return "—";
   const parsed = new Date(value);
@@ -127,6 +145,9 @@ export default function AdminNotificationCentre({ adminToken }: Props) {
                   <p className="mt-1 text-sm">{item.guest_name || "Customer"} · {money(item.total_inr)}</p>
                   <p className="text-xs opacity-65 break-all">{item.guest_email || "No email"}{item.guest_phone ? ` · ${item.guest_phone}` : ""}</p>
                   <p className="mt-2 text-[11px] opacity-60">Received {date(item.created_at)}</p>
+                  <ContactActions email={item.guest_email} phone={item.guest_phone} message={`Hello ${item.guest_name || "there"}, we have received your Lado Organics order ${item.order_number || ""}. Our team is reviewing it and will contact you with the next update.`} />
+                  <ContactActions email={item.guest_email} phone={item.guest_phone} message={`Hello ${item.guest_name || "there"}, we have received your Bhunga stay request for ${date(item.check_in)} to ${date(item.check_out)}. The dates are not confirmed yet; our team will contact you after checking availability.`} />
+                  <ContactActions email={item.sponsor_email} message={`Hello ${item.sponsor_name || "there"}, we have received your Gau Seva sponsorship request for ${item.calf_name || "the calf"} under the ${item.plan_type || "selected"} plan. Our team will contact you to confirm the details. This message is not a payment receipt.`} />
                   <button type="button" onClick={() => void copyId(item.id)} className="mt-3 text-xs font-bold underline">{copiedId === item.id ? "Copied ID" : "Copy record ID"}</button>
                 </article>)}
               </div>}
