@@ -29,6 +29,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <Link href="/dashboard" className="block px-4 py-3 rounded-xl bg-[var(--mud)] text-white shadow-md">Overview</Link>
               <Link href="/dashboard/orders" className="block px-4 py-3 rounded-xl text-[var(--muted)] hover:bg-[var(--earth)]/10 transition">Order History</Link>
               <Link href="/dashboard/reviews" className="block px-4 py-3 rounded-xl text-[var(--muted)] hover:bg-[var(--earth)]/10 transition">My Reviews</Link>
+              <Link href="/dashboard/rewards" className="block px-4 py-3 rounded-xl text-[var(--muted)] hover:bg-[var(--earth)]/10 transition">Lado Rewards</Link>
               <Link href="/dashboard/subscriptions" className="block px-4 py-3 rounded-xl text-[var(--muted)] hover:bg-[var(--earth)]/10 transition">Essentials Club</Link>
               <Link href="/dashboard/stays" className="block px-4 py-3 rounded-xl text-[var(--muted)] hover:bg-[var(--earth)]/10 transition">Bhunga Stays</Link>
               <Link href="/dashboard/sponsorships" className="block px-4 py-3 rounded-xl text-[var(--muted)] hover:bg-[var(--earth)]/10 transition">Gau Seva</Link>
