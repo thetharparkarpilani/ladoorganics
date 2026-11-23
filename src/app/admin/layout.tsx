@@ -10,6 +10,8 @@ const navigation = [
   { href: "/admin/bookings", label: "Bhunga Stays", icon: "⌂" },
   { href: "/admin/sponsorships", label: "Gau Seva", icon: "♡" },
   { href: "/admin/communications", label: "Communications", icon: "✉" },
+  { href: "/admin/analytics", label: "Analytics", icon: "▥" },
+  { href: "/admin/staff", label: "Staff Access", icon: "♙" },
   { href: "/admin/customers", label: "Customers", icon: "♙" },
   { href: "/admin/support", label: "Support Centre", icon: "?" },
   { href: "/admin/content", label: "Website Content", icon: "▧" },
@@ -17,9 +19,10 @@ const navigation = [
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const logout = () => {
+  const logout = async () => {
     localStorage.removeItem("lado_admin_token");
-    window.location.href = "/admin";
+    await fetch("/api/auth/logout", { method: "POST" }).catch(() => undefined);
+    window.location.href = "/login";
   };
   return (
     <div className="min-h-screen bg-[var(--bg)] flex flex-col md:flex-row">
