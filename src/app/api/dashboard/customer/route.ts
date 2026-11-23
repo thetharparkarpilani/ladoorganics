@@ -1,42 +1,71 @@
-﻿import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { NextRequest, NextResponse } from "next/server";
+
+export const runtime = "nodejs";
 
 export async function GET(req: NextRequest) {
-  try {
-    // 1. Authenticate user via secure HttpOnly cookie (mocked session extraction for architecture)
-    const sessionToken = req.cookies.get("lado_secure_session")?.value;
-    if (!sessionToken) {
-      return NextResponse.json({ error: "Unauthorized. Please log in." }, { status: 401 });
-    }
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  const accessToken = req.cookies.get("lado_sb_access")?.value;
+  const refreshToken = req.cookies.get("lado_sb_refresh")?.value;
 
-    // In a real implementation, decrypt sessionToken to get userId. 
-    // Using a placeholder UUID for the architectural scaffolding.
-    const userId = "00000000-0000-0000-0000-000000000000"; 
-
-    const client = await db.getClient();
-    try {
-      // Parallel safe queries enforcing Row-Level-Security equivalent via WHERE user_id
-      const [ordersRes, bookingsRes, sponsorshipsRes] = await Promise.all([
-        client.query(`SELECT id, order_number, total_inr, status, created_at FROM orders WHERE user_id = $1 ORDER BY created_at DESC LIMIT 10`, [userId]),
-        client.query(`SELECT id, check_in, check_out, status, guests_count, total_amount_inr FROM bookings WHERE user_id = $1 ORDER BY check_in DESC LIMIT 5`, [userId]),
-        client.query(`SELECT id, calf_name, plan_type, amount_inr, status FROM sponsorships WHERE user_id = $1 ORDER BY created_at DESC LIMIT 5`, [userId])
-      ]);
-
-      return NextResponse.json({
-        orders: ordersRes.rows,
-        bookings: bookingsRes.rows,
-        sponsorships: sponsorshipsRes.rows,
-        profile: {
-          name: "Verified Customer",
-          tier: "Lado Patron",
-          joined: "2026-11-20"
-        }
-      });
-    } finally {
-      client.release();
-    }
-  } catch (err) {
-    const detail = err instanceof Error ? err.message : "Internal Server Error";
-    return NextResponse.json({ error: detail }, { status: 500 });
+  if (!supabaseUrl || !supabaseKey || !accessToken) {
+    return NextResponse.json({ error: "Please sign in to view your customer account." }, { status: 401 });
   }
+
+  const baseUrl = supabaseUrl.replace(/\/$/, "");
+  let activeAccessToken = accessToken;
+  let userResponse = await fetch(`${baseUrl}/auth/v1/user`, {
+    headers: { apikey: supabaseKey, Authorization: `Bearer ${activeAccessToken}` },
+    cache: "no-store",
+  });
+
+  let refreshedTokens: { access_token?: string; refresh_token?: string; expires_in?: number } | null = null;
+  if (!userResponse.ok && refreshToken) {
+    const refreshResponse = await fetch(`${baseUrl}/auth/v1/token?grant_type=refresh_token`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", apikey: supabaseKey },
+      body: JSON.stringify({ refresh_token: refreshToken }),
+      cache: "no-store",
+    });
+    if (refreshResponse.ok) {
+      refreshedTokens = await refreshResponse.json();
+      if (refreshedTokens?.access_token && refreshedTokens.refresh_token) {
+        activeAccessToken = refreshedTokens.access_token;
+        userResponse = await fetch(`${baseUrl}/auth/v1/user`, {
+          headers: { apikey: supabaseKey, Authorization: `Bearer ${activeAccessToken}` },
+          cache: "no-store",
+        });
+      }
+    }
+  }
+
+  if (!userResponse.ok) {
+    const response = NextResponse.json({ error: "Your session has expired. Please sign in again." }, { status: 401 });
+    response.cookies.delete("lado_sb_access");
+    response.cookies.delete("lado_sb_refresh");
+    response.cookies.delete("lado_secure_session");
+    return response;
+  }
+
+  const user = await userResponse.json();
+  const metadata = user.user_metadata || {};
+  const name = metadata.full_name || metadata.name || user.email?.split("@")[0] || "Customer";
+  const response = NextResponse.json({
+    profile: { name, email: user.email || null },
+    orders: [],
+    bookings: [],
+    sponsorships: [],
+  });
+
+  if (refreshedTokens?.access_token && refreshedTokens.refresh_token) {
+    const secure = process.env.NODE_ENV === "production";
+    response.cookies.set("lado_sb_access", refreshedTokens.access_token, {
+      httpOnly: true, secure, sameSite: "lax", path: "/", maxAge: Math.max(60, Number(refreshedTokens.expires_in) || 3600),
+    });
+    response.cookies.set("lado_sb_refresh", refreshedTokens.refresh_token, {
+      httpOnly: true, secure, sameSite: "lax", path: "/", maxAge: 60 * 60 * 24 * 30,
+    });
+  }
+
+  return response;
 }
