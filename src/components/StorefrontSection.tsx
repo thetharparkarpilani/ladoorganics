@@ -105,6 +105,15 @@ export default function StorefrontSection({
                     className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 flex flex-col justify-between shadow-sm"
                   >
                     <div>
+                      {product.imageUrl ? (
+                        <div className="mb-4 aspect-[4/3] overflow-hidden rounded-2xl bg-[var(--bg)]">
+                          <img src={product.imageUrl} alt={displayName} loading="lazy" className="h-full w-full object-cover" />
+                        </div>
+                      ) : (
+                        <div className="mb-4 flex aspect-[4/3] items-center justify-center rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg)] text-xs opacity-50">
+                          Product image coming soon
+                        </div>
+                      )}
                       <h3 className="text-xl font-serif font-bold mb-2">{displayName}</h3>
                       <p className="text-sm opacity-80 leading-relaxed mb-4">{product.descriptionEn}</p>
 
