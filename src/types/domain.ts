@@ -25,6 +25,7 @@ export interface ProductDTO {
   nameHi?: string | null;
   nameMa?: string | null;
   descriptionEn: string;
+  imageUrl?: string | null;
   sourcingInfo?: string | null;
   productionMethod?: string | null;
   storageInstructions?: string | null;
