@@ -30,10 +30,10 @@ export async function GET(req: NextRequest) {
                   FROM order_items oi WHERE oi.order_id = o.id
                 ), '[]'::jsonb) AS items
          FROM orders o
-         WHERE lower(COALESCE(o.guest_email, '')) = $1
+         WHERE lower(COALESCE(o.guest_email, '')) = $1 OR o.user_id = $2::uuid
          ORDER BY o.created_at DESC
          LIMIT 20`,
-        [customer.email]
+        [customer.email, customer.databaseUserId]
       ),
       db.query(
         `SELECT id, stay_slug, check_in, check_out, guests_count, nights_count,
@@ -47,10 +47,10 @@ export async function GET(req: NextRequest) {
       db.query(
         `SELECT id, calf_name, plan_type, amount_inr, status, created_at
          FROM sponsorships
-         WHERE lower(COALESCE(sponsor_email, '')) = $1
+         WHERE lower(COALESCE(sponsor_email, '')) = $1 OR user_id = $2::uuid
          ORDER BY created_at DESC
          LIMIT 20`,
-        [customer.email]
+        [customer.email, customer.databaseUserId]
       ),
     ]);
 

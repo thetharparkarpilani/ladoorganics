@@ -69,8 +69,8 @@ export async function GET(req: NextRequest) {
     const [ordersRes, bookingsRes, sponsorshipsRes] = await Promise.all([
       db.query(
         `SELECT id, order_number, shipping_summary, subtotal_inr, total_inr, status, created_at
-         FROM orders WHERE LOWER(guest_email) = $1 ORDER BY created_at DESC LIMIT 20`,
-        [customer.email]
+         FROM orders WHERE LOWER(COALESCE(guest_email, '')) = $1 OR user_id = $2::uuid ORDER BY created_at DESC LIMIT 20`,
+        [customer.email, customer.databaseUserId]
       ),
       db.query(
         `SELECT id, stay_slug, check_in, check_out, guests_count, nights_count, total_amount_inr, status, created_at
@@ -79,8 +79,8 @@ export async function GET(req: NextRequest) {
       ),
       db.query(
         `SELECT id, calf_name, plan_type, amount_inr, status, created_at
-         FROM sponsorships WHERE LOWER(sponsor_email) = $1 ORDER BY created_at DESC LIMIT 20`,
-        [customer.email]
+         FROM sponsorships WHERE LOWER(COALESCE(sponsor_email, '')) = $1 OR user_id = $2::uuid ORDER BY created_at DESC LIMIT 20`,
+        [customer.email, customer.databaseUserId]
       )
     ]);
 

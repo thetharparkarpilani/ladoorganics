@@ -29,10 +29,10 @@ export async function GET(req: NextRequest) {
                 FROM order_items oi WHERE oi.order_id = o.id
               ), '[]'::jsonb) AS items
        FROM orders o
-       WHERE lower(COALESCE(o.guest_email, '')) = $1
+       WHERE lower(COALESCE(o.guest_email, '')) = $1 OR o.user_id = $2::uuid
        ORDER BY o.created_at DESC
        LIMIT 100`,
-      [customer.email]
+      [customer.email, customer.databaseUserId]
     );
 
     return NextResponse.json(
