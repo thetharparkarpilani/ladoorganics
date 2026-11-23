@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { sendTemplatedNotification } from "@/lib/customer-notifications";
+import { sendAdminRequestAlert } from "@/lib/admin-notifications";
 
 const NIGHTLY_RATE_INR = 4000;
 
@@ -61,6 +62,17 @@ export async function POST(req: NextRequest) {
       name: guestName,
       check_in: checkIn,
       check_out: checkOut,
+    });
+    await sendAdminRequestAlert("Bhunga stay request", {
+      "Guest": guestName,
+      "Email": guestEmail,
+      "Phone": guestPhone,
+      "Check-in": checkIn,
+      "Check-out": checkOut,
+      "Guests": guestsCount,
+      "Nights": nights,
+      "Estimated amount (INR)": totalAmountInr,
+      "Status": "pending",
     });
 
     return NextResponse.json({
