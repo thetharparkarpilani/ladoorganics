@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import type { LocaleCode, ProductDTO } from "@/types/domain";
 import { TRANSLATIONS } from "@/lib/i18n";
 
@@ -126,6 +127,11 @@ export default function StorefrontSection({
                       )}
                       <h3 className="text-xl font-serif font-bold mb-2">{displayName}</h3>
                       <p className="text-sm opacity-80 leading-relaxed mb-4">{product.descriptionEn}</p>
+                      {["a2-bilona-ghee", "tharparkar-dhoop", "pure-kechua-khad", "deep-work-bhunga-stay"].includes(product.slug) && (
+                        <Link href={`/store/${product.slug}`} className="inline-flex items-center gap-2 mb-4 text-[10px] font-extrabold uppercase tracking-[.14em] text-[var(--terracotta)] hover:gap-3 transition-all">
+                          Discover this product <span aria-hidden="true">↗</span>
+                        </Link>
+                      )}
 
                       {product.variants.length > 1 && (
                         <div className="flex flex-wrap gap-2 mb-4">
