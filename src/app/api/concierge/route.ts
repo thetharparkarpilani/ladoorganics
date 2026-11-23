@@ -63,31 +63,30 @@ type CartVariantSuggestion = { variantId: string; sku: string; label: string; pr
 type CartSuggestion = { productName: string; variants: CartVariantSuggestion[] };
 
 async function getCartSuggestion(message: string): Promise<CartSuggestion | null> {
-  const explicitAdd = /\\b(add|put|include|place)\\b.{0,90}\\b(cart|bag)\\b|\\b(add|put|include)\\b.{0,55}\\b(ghee|dhoop|khad|compost|milk|kesar)\\b/i.test(message);
+  const explicitAdd = /\b(add|put|include|place)\b.{0,90}\b(cart|bag)\b|\b(add|put|include)\b.{0,55}\b(ghee|dhoop|khad|compost|milk|kesar)\b/i.test(message);
   if (!explicitAdd) return null;
 
   try {
     const result = await db.query(
-      `SELECT p.name_en, p.slug, v.id AS variant_id, v.sku, v.label, v.price_inr, v.stock_qty
-       FROM products p
-       JOIN product_variants v ON v.product_id = p.id
-       WHERE p.is_active = TRUE AND v.stock_qty > 0
-       ORDER BY p.created_at ASC, v.is_default DESC LIMIT 80`
+      'SELECT p.name_en, p.slug, v.id AS variant_id, v.sku, v.label, v.price_inr, v.stock_qty ' +
+      'FROM products p JOIN product_variants v ON v.product_id = p.id ' +
+      'WHERE p.is_active = TRUE AND v.stock_qty > 0 ' +
+      'ORDER BY p.created_at ASC, v.is_default DESC LIMIT 80'
     );
-    const q = message.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+    const q = message.toLowerCase().replace(/[^a-z0-9]+/g, '');
     const aliases: Record<string, string[]> = {
-      "a2-bilona-ghee": ["ghee", "bilona", "clarified butter"],
-      "tharparkar-dhoop": ["dhoop", "incense"],
-      "pure-kechua-khad": ["khad", "compost", "vermicompost", "kechua", "earth manure"],
-      "deep-work-bhunga-stay": ["bhunga", "stay", "accommodation"],
+      'a2-bilona-ghee': ['ghee', 'bilona', 'clarified butter'],
+      'tharparkar-dhoop': ['dhoop', 'incense'],
+      'pure-kechua-khad': ['khad', 'compost', 'vermicompost', 'kechua', 'earth manure'],
+      'deep-work-bhunga-stay': ['bhunga', 'stay', 'accommodation'],
     };
-    const products = new Map<string, { name: string; slug: string; variants: CartVariantSuggestion[] }>();
+    const products = new Map<string, { name: string; variants: CartVariantSuggestion[] }>();
     for (const row of result.rows) {
-      const slug = String(row.slug || "");
-      const name = String(row.name_en || "");
-      const terms = [name.toLowerCase(), slug.replace(/-/g, " "), ...(aliases[slug] || [])];
-      if (!terms.some((term) => term && q.includes(term.toLowerCase()))) continue;
-      const current = products.get(slug) || { name, slug, variants: [] };
+      const slug = String(row.slug || '');
+      const name = String(row.name_en || '');
+      const terms = [name.toLowerCase(), slug.replace(/-/g, ' '), ...(aliases[slug] || [])];
+      if (!terms.some((term) => term && q.includes(term.toLowerCase().replace(/[^a-z0-9]+/g, '')))) continue;
+      const current = products.get(slug) || { name, variants: [] };
       current.variants.push({
         variantId: String(row.variant_id),
         sku: String(row.sku),
@@ -99,23 +98,20 @@ async function getCartSuggestion(message: string): Promise<CartSuggestion | null
     }
     if (products.size !== 1) return null;
     const product = Array.from(products.values())[0];
-    const variantText = q.replace(/\\b(please|add|put|include|place|in|into|the|my|cart|bag|to|a|an|some|one|of|for)\\b/g, " ");
     const matched = product.variants.filter((variant) => {
-      const normalized = variant.label.toLowerCase().replace(/[^a-z0-9]/g, "");
-      if (normalized && variantText.replace(/[^a-z0-9]/g, "").includes(normalized)) return true;
-      const size = variant.label.match(/(\\d+)\\s*(ml|l|kg|g)/i);
-      if (size) {
-        const number = size[1];
-        const unit = size[2].toLowerCase();
-        const userSize = new RegExp(\\`\\\\b${number}\\\\s?${unit === "l" ? "(?:l|litre|liter)" : unit}\\\\b\\`, "i");
-        return userSize.test(message);
-      }
-      return false;
+      const normalizedLabel = variant.label.toLowerCase().replace(/[^a-z0-9]/g, '');
+      if (normalizedLabel && q.includes(normalizedLabel)) return true;
+      const size = variant.label.match(/(\d+)\s*(ml|l|kg|g)/i);
+      if (!size) return false;
+      const number = size[1];
+      const unit = size[2].toLowerCase();
+      return q.includes(number + unit) ||
+        (unit === 'l' && q.includes(number + 'litre')) ||
+        (unit === 'kg' && q.includes(number + 'kilogram'));
     });
-    const variants = matched.length ? matched : product.variants;
-    return { productName: product.name, variants: variants.slice(0, 8) };
+    return { productName: product.name, variants: (matched.length ? matched : product.variants).slice(0, 8) };
   } catch (error) {
-    console.error("Lado AI cart suggestion unavailable:", error);
+    console.error('Lado AI cart suggestion unavailable:', error);
     return null;
   }
 }
