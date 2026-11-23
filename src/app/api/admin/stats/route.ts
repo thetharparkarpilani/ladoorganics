@@ -34,9 +34,9 @@ export async function GET(req: NextRequest) {
       db.query(`SELECT to_char(day,'DD Mon') AS day,
         COALESCE(SUM(o.total_inr) FILTER (WHERE o.payment_status='paid'),0)::bigint AS revenue,
         COUNT(o.id)::int AS orders
-        FROM generate_series(current_date - INTERVAL '13 days', current_date, INTERVAL '1 day') AS day
-        LEFT JOIN orders o ON date_trunc('day',o.created_at)=day
-        GROUP BY day ORDER BY day`)
+        FROM generate_series(current_date - INTERVAL '13 days', current_date, INTERVAL '1 day') AS calendar(day)
+        LEFT JOIN orders o ON date_trunc('day',o.created_at)=calendar.day
+        GROUP BY calendar.day ORDER BY calendar.day`)
     ]);
     return NextResponse.json({
       orders: Number(orders.rows[0]?.total_orders || 0),
