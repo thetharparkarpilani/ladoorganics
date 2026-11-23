@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { getAdminActor } from "@/lib/admin-auth";
 
 export const runtime = "nodejs";
 
@@ -34,7 +35,7 @@ const CONFIG = {
 type Kind = keyof typeof CONFIG;
 
 export async function GET(req: NextRequest) {
-  if (!authorized(req)) return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+  if (!(await getAdminActor(req, "operations"))) return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   const params = req.nextUrl.searchParams;
   const kind = params.get("kind") as Kind | null;
   if (!kind || !(kind in CONFIG)) return NextResponse.json({ error: "Choose orders, bookings or sponsorships." }, { status: 400 });
