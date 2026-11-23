@@ -123,8 +123,9 @@ function actionsFor(message: string): Array<{ label: string; href: string }> {
   if (/ghee|bilona/.test(q)) add("A2 Bilona Ghee", "/store/a2-bilona-ghee");
   if (/dhoop/.test(q)) add("Tharparkar Dhoop", "/store/tharparkar-dhoop");
   if (/khad|compost|vermi/.test(q)) add("Vermicompost", "/store/pure-kechua-khad");
-  if (/stay|bhunga|visit|booking|book/.test(q)) add("Bhunga stay & farm experiences", "/#experiences");
-  if (/gau seva|sponsor|sponsorship|calf|cow adoption/.test(q)) add("Gau Seva", "/#adopt");
+  if (/stay|bhunga|visit|booking|book/.test(q)) add("Bhunga stay request", "/#experiences");
+  if (/workshop|custom experience|experience package|farm activity/.test(q)) add("Build a farm experience", "/#build-experience");
+  if (/gau seva|sponsor|sponsorship|calf|cow adoption/.test(q)) add("Gau Seva sponsorship form", "/#experiences");
   if (/order status|my order|track|account|profile|reward|dashboard|login|sign in/.test(q)) add("My Lado Journey", "/dashboard");
   if (/delivery|shipping|refund|return|cancel|payment|policy|privacy|terms/.test(q)) add("Policies & Legal", "/policies");
   if (/human|person|team|contact|complaint|problem|support|whatsapp/.test(q)) add("Contact our team", "/contact");
