@@ -7,6 +7,7 @@ type CatalogRow = {
   slug: string;
   name_en: string;
   is_active: boolean;
+  image_url: string | null;
   variant_id: string | null;
   sku: string | null;
   label: string | null;
@@ -20,6 +21,7 @@ type Draft = { priceInr: string; stockQty: string };
 export default function AdminProductInventory({ adminToken }: { adminToken: string }) {
   const [rows, setRows] = useState<CatalogRow[]>([]);
   const [drafts, setDrafts] = useState<Record<string, Draft>>({});
+  const [imageDrafts, setImageDrafts] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState("");
   const [error, setError] = useState("");
@@ -37,6 +39,9 @@ export default function AdminProductInventory({ adminToken }: { adminToken: stri
       if (!response.ok) throw new Error(data?.error || "Unable to load inventory.");
       const nextRows: CatalogRow[] = Array.isArray(data.items) ? data.items : [];
       setRows(nextRows);
+      const nextImageDrafts: Record<string, string> = {};
+      for (const row of nextRows) nextImageDrafts[row.product_id] = row.image_url || "";
+      setImageDrafts(nextImageDrafts);
       const nextDrafts: Record<string, Draft> = {};
       for (const row of nextRows) {
         if (row.variant_id) nextDrafts[row.variant_id] = {
@@ -100,6 +105,37 @@ export default function AdminProductInventory({ adminToken }: { adminToken: stri
     }
   };
 
+  const saveImage = async (row: CatalogRow) => {
+    const imageUrl = (imageDrafts[row.product_id] || "").trim();
+    if (imageUrl) {
+      try {
+        const parsed = new URL(imageUrl);
+        if (parsed.protocol !== "https:" && parsed.protocol !== "http:") throw new Error("Invalid protocol");
+      } catch {
+        setError("Enter a valid public image URL beginning with https://.");
+        return;
+      }
+    }
+    setSaving(row.product_id + "-image");
+    setError("");
+    setNotice("");
+    try {
+      const response = await fetch("/api/admin/catalog", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-token": adminToken },
+        body: JSON.stringify({ action: "update_product_image", productId: row.product_id, imageUrl })
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data?.error || "Unable to save product image.");
+      setNotice(imageUrl ? `Image saved for ${row.name_en}.` : `Image removed for ${row.name_en}.`);
+      await load();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to save product image.");
+    } finally {
+      setSaving("");
+    }
+  };
+
   const toggleProduct = async (row: CatalogRow) => {
     setSaving(row.product_id);
     setError("");
@@ -142,6 +178,21 @@ export default function AdminProductInventory({ adminToken }: { adminToken: stri
             const product = group[0];
             return (
               <article key={product.product_id} className="rounded-2xl border border-[var(--border)] bg-[var(--bg)] p-4">
+                <div className="mb-4 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+                  {imageDrafts[product.product_id] ? (
+                    <img src={imageDrafts[product.product_id]} alt={product.name_en} className="h-40 w-full object-cover" />
+                  ) : (
+                    <div className="flex h-32 items-center justify-center text-xs opacity-50">No product image set</div>
+                  )}
+                  <div className="space-y-2 p-3">
+                    <label className="block text-xs font-semibold">Product image URL
+                      <input type="url" value={imageDrafts[product.product_id] ?? ""} onChange={(event) => setImageDrafts((current) => ({ ...current, [product.product_id]: event.target.value }))} placeholder="https://example.com/product-photo.jpg" className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--bg)] p-2.5 text-sm" />
+                    </label>
+                    <button type="button" disabled={saving === product.product_id + "-image"} onClick={() => void saveImage(product)} className="rounded-lg border border-[var(--border)] px-3 py-2 text-xs font-bold disabled:opacity-50">
+                      {saving === product.product_id + "-image" ? "Saving image…" : "Save product image"}
+                    </button>
+                  </div>
+                </div>
                 <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <h3 className="font-serif text-xl font-bold">{product.name_en}</h3>
