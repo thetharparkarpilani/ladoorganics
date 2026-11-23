@@ -216,3 +216,83 @@ body {
   .farm-hill-back { height: 29%; }
   .farm-hill-front { height: 22%; }
 }
+
+
+/* Lado Organics — living farm design system */
+:root {
+  --lado-forest: #244b35;
+  --lado-leaf: #718b58;
+  --lado-clay: #b66d4d;
+  --lado-sand: #f4ead8;
+  --lado-ink: #2f3025;
+}
+html { scroll-behavior: smooth; scroll-padding-top: 92px; }
+body { background: #faf7ef; color: var(--lado-ink); }
+::selection { background: #c9d8b5; color: #203b2b; }
+a, button { -webkit-tap-highlight-color: transparent; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 3px solid rgba(182,109,77,.55); outline-offset: 3px;
+}
+.glass-nav { background: rgba(250,247,239,.88); backdrop-filter: blur(18px) saturate(150%); }
+.primary-btn { background: var(--lado-forest); color: #fffaf0; box-shadow: 0 8px 24px rgba(36,75,53,.16); transition: transform .35s ease, box-shadow .35s ease, background .35s ease; }
+.primary-btn:hover { background: #173b29; transform: translateY(-3px); box-shadow: 0 14px 32px rgba(36,75,53,.23); }
+.farm-hero { min-height: 720px; display: flex; align-items: center; background: linear-gradient(180deg,#f4e5c7 0%,#f3ead5 48%,#cbd5ae 100%); }
+.farm-hero::after { content:""; position:absolute; inset:0; pointer-events:none; background: linear-gradient(90deg,rgba(250,247,239,.08),transparent 42%,rgba(250,247,239,.12)); }
+.farm-hero-content { width:100%; }
+.farm-hero-content h1 { color:#294331; text-wrap:balance; text-shadow:0 2px 30px rgba(255,255,255,.32); }
+.farm-hero-content > p:not(.inline-block) { color:#52624b; }
+.farm-hero-proof { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px; padding:15px 20px; border:1px solid rgba(65,91,59,.18); border-radius:999px; background:rgba(255,250,239,.48); backdrop-filter:blur(10px); color:#42583f; font-size:10px; font-weight:800; letter-spacing:.11em; text-transform:uppercase; }
+.farm-hero-proof > span:nth-child(even) { color:#b66d4d; }
+.farm-world-section { background:linear-gradient(180deg,#f9f5eb 0%,#f0eadb 100%); color:#2f3025; }
+.farm-world-grain { position:absolute; inset:0; opacity:.16; pointer-events:none; background-image:radial-gradient(#8c8064 .6px,transparent .6px); background-size:9px 9px; mask-image:linear-gradient(180deg,transparent,#000 20%,#000 80%,transparent); }
+.farm-eyebrow { color:#9b6547; font-size:10px; line-height:1.4; font-weight:800; letter-spacing:.22em; text-transform:uppercase; }
+.farm-display { color:#2e4533; font-family:Georgia,"Times New Roman",serif; font-size:clamp(2.8rem,6vw,5.6rem); line-height:.98; letter-spacing:-.055em; font-weight:500; }
+.farm-display em { color:#a56b4c; font-weight:400; }
+.farm-display-small { font-size:clamp(2.4rem,4vw,3.8rem); }
+.farm-world-art { isolation:isolate; background:linear-gradient(180deg,#e7d5b6 0%,#e7d8b9 42%,#aebd91 43%,#71875c 100%); box-shadow:0 28px 70px rgba(73,72,48,.13); }
+.farm-world-art::before { content:""; position:absolute; inset:0; z-index:1; background:linear-gradient(180deg,rgba(255,248,225,.12),transparent 45%,rgba(29,55,35,.22)); pointer-events:none; }
+.farm-art-sun { position:absolute; width:clamp(90px,12vw,150px); aspect-ratio:1; border-radius:50%; top:11%; right:17%; background:radial-gradient(circle,#fff8d9 0 44%,rgba(255,224,156,.75) 65%,transparent 70%); box-shadow:0 0 65px rgba(255,223,153,.48); animation:farm-sun-breathe 9s ease-in-out infinite; }
+.farm-art-cloud { position:absolute; width:150px; height:32px; border-radius:50px; background:rgba(255,255,255,.45); filter:blur(1px); animation:farm-cloud-drift 48s linear infinite; }
+.farm-art-cloud::before,.farm-art-cloud::after { content:""; position:absolute; bottom:8px; width:55px; height:55px; border-radius:50%; background:inherit; }
+.farm-art-cloud::before { left:22px; }.farm-art-cloud::after { left:70px; width:42px;height:42px; }
+.farm-art-cloud-a { top:19%; left:-180px; }.farm-art-cloud-b { top:31%; left:-230px; transform:scale(.72); animation-delay:-22s; animation-duration:62s; }
+.farm-art-hill { position:absolute; left:-10%; width:120%; border-radius:50% 50% 0 0/24% 24% 0 0; }
+.farm-art-hill-back { height:33%; bottom:19%; background:linear-gradient(180deg,#a3b18a,#788d68); transform:rotate(-3deg); }
+.farm-art-hill-front { height:25%; bottom:-6%; background:linear-gradient(180deg,#819766,#526e4b); transform:rotate(2deg); }
+.farm-art-tree { position:absolute; z-index:2; bottom:19%; width:80px; height:170px; transform-origin:bottom center; animation:farm-tree-sway 7s ease-in-out infinite alternate; }
+.farm-art-tree span { position:absolute; bottom:0; left:35px; width:13px; height:100px; border-radius:10px; background:#71523b; }
+.farm-art-tree i { position:absolute; bottom:67px; left:0; width:82px; height:88px; border-radius:48% 52% 45% 55%; background:radial-gradient(circle at 30% 30%,#91a56b,#496d4c 72%); box-shadow:inset -9px -8px 0 rgba(30,67,43,.14); }
+.farm-art-tree-one { left:9%; transform:scale(1.12); }.farm-art-tree-two { right:9%; bottom:18%; transform:scale(.78); animation-delay:-3s; }
+.farm-art-grass { position:absolute; z-index:4; bottom:0; left:0; right:0; height:17%; opacity:.45; background:repeating-linear-gradient(78deg,transparent 0 14px,rgba(34,67,38,.55) 15px 17px,transparent 18px 29px); transform-origin:bottom; animation:farm-grass-sway 5s ease-in-out infinite alternate; }
+.farm-art-cow { position:absolute; z-index:3; width:min(54%,390px); left:29%; bottom:14%; filter:drop-shadow(0 18px 12px rgba(39,50,31,.2)); animation:farm-cow-breathe 5s ease-in-out infinite; }
+.farm-art-caption { position:absolute; z-index:5; bottom:20px; left:24px; right:24px; display:flex; justify-content:space-between; gap:12px; color:rgba(255,250,230,.88); font-size:9px; font-weight:800; letter-spacing:.18em; }
+.farm-art-bird { position:absolute; z-index:3; color:#53684b; font-size:44px; font-weight:300; animation:farm-bird-flight 8s ease-in-out infinite; }
+.bird-one { top:25%; left:26%; }.bird-two { top:33%; left:38%; animation-delay:-4s; transform:scale(.65); }
+.farm-world-panel { background:rgba(255,253,246,.78); border:1px solid rgba(104,104,72,.14); box-shadow:0 24px 65px rgba(73,72,48,.08); backdrop-filter:blur(14px); }
+.farm-chapter-icon { display:grid; place-items:center; width:74px; height:74px; border-radius:24px; background:#e9eddb; font-size:37px; box-shadow:inset 0 0 0 1px rgba(56,86,55,.08); }
+.farm-chapter-button { display:flex; align-items:center; gap:9px; min-height:46px; border:1px solid rgba(84,93,66,.15); border-radius:13px; padding:9px 11px; color:#53604b; font-size:11px; font-weight:750; text-align:left; transition:all .28s ease; }
+.farm-chapter-button:hover { transform:translateY(-2px); border-color:#9bad7e; background:#f3f2e7; }
+.farm-chapter-button.is-active { color:#fffaf0; background:#31563c; border-color:#31563c; box-shadow:0 7px 18px rgba(49,86,60,.17); }
+.farm-product-ribbon { background:rgba(255,255,255,.65); border:1px solid rgba(104,104,72,.13); }
+.farm-product-link { display:flex; align-items:center; gap:10px; min-height:68px; padding:14px 16px; background:rgba(255,253,246,.75); color:#41523d; font-size:11px; font-weight:800; transition:background .25s ease, transform .25s ease; }
+.farm-product-link span:first-child { font-size:22px; }.farm-product-link span:last-child { margin-left:auto; opacity:.45; }
+.farm-product-link:hover { background:#e9eddb; transform:translateY(-2px); }
+#store article { border-radius:26px; overflow:hidden; }
+#store article:hover { box-shadow:0 24px 54px rgba(56,67,43,.13); }
+[data-farm-reveal] { will-change:transform,opacity; }
+@keyframes farm-tree-sway { from { rotate:-1.5deg; } to { rotate:1.5deg; } }
+@keyframes farm-cow-breathe { 0%,100% { translate:0 0; } 50% { translate:0 -4px; } }
+@keyframes farm-bird-flight { 0%,100% { translate:0 0; } 50% { translate:22px -13px; } }
+@media (max-width: 640px) {
+  .farm-hero { min-height:650px; padding-top:5rem; padding-bottom:4rem; }
+  .farm-hero-proof { border-radius:20px; gap:8px 10px; font-size:8px; }
+  .farm-world-art { min-height:350px; }
+  .farm-art-cow { width:64%; left:20%; bottom:16%; }
+  .farm-art-tree-one { left:1%; transform:scale(.82); }
+  .farm-art-tree-two { right:0; transform:scale(.62); }
+  .farm-art-caption { left:15px; right:15px; bottom:14px; font-size:7px; }
+  .farm-chapter-button { font-size:10px; gap:6px; padding:8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .farm-art-cow,.farm-art-tree,.farm-art-bird,.farm-art-cloud,.farm-art-sun { animation:none !important; }
+}
