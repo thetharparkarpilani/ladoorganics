@@ -125,7 +125,7 @@ export default function AdminDashboardPage() {
       ) : stats ? (
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           <div className="bg-[var(--surface)] border border-[var(--border)] p-6 rounded-2xl shadow-sm">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--terracotta)] block mb-1">Total Revenue</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--terracotta)] block mb-1">Collected Revenue</span>
             <span className="text-3xl font-serif font-bold">₹{stats.revenue.toLocaleString("en-IN")}</span>
           </div>
           <div className="bg-[var(--surface)] border border-[var(--border)] p-6 rounded-2xl shadow-sm">
