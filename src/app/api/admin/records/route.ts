@@ -123,6 +123,10 @@ export async function POST(req: NextRequest) {
           await client.query("ROLLBACK");
           return NextResponse.json({ error: "A shipped, delivered or refunded order cannot be cancelled here. Contact the owner to resolve it." }, { status: 409 });
         }
+        if (status === "cancelled" && current.rows[0].payment_status === "paid") {
+          await client.query("ROLLBACK");
+          return NextResponse.json({ error: "This order has already been paid. Resolve the refund or return first; stock will not be restored automatically." }, { status: 409 });
+        }
         if (status === "cancelled" && previousStatus !== "cancelled") {
           const released = await client.query(
             "UPDATE orders SET status = 'cancelled', inventory_released_at = NOW() WHERE id = $1 AND inventory_released_at IS NULL RETURNING id",

@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
   try {
     const gateway = new Razorpay({ key_id: keyId, key_secret: secret });
     const payment = await gateway.payments.fetch(paymentId);
-    if (payment.order_id !== orderId || payment.status !== "captured") {
+    if (payment.order_id !== orderId || payment.status !== "captured" || payment.currency !== "INR") {
       return NextResponse.json({ error: "Payment has not been captured yet. Please wait or contact support." }, { status: 409 });
     }
 
@@ -36,12 +36,16 @@ export async function POST(req: NextRequest) {
     try {
       await client.query("BEGIN");
       const found = await client.query(
-        "SELECT p.id AS payment_row_id, p.order_id, p.amount_inr, o.order_number FROM payments p JOIN orders o ON o.id = p.order_id WHERE p.provider = 'razorpay' AND p.provider_order_id = $1 FOR UPDATE OF p, o",
+        "SELECT p.id AS payment_row_id, p.order_id, p.amount_inr, o.order_number, o.status AS order_status FROM payments p JOIN orders o ON o.id = p.order_id WHERE p.provider = 'razorpay' AND p.provider_order_id = $1 FOR UPDATE OF p, o",
         [orderId]
       );
       if (!found.rows[0]) {
         await client.query("ROLLBACK");
         return NextResponse.json({ error: "We could not find this order. Please contact support with your payment ID." }, { status: 404 });
+      }
+      if (!["pending_confirmation", "paid"].includes(String(found.rows[0].order_status))) {
+        await client.query("ROLLBACK");
+        return NextResponse.json({ error: "This order is no longer awaiting payment. Please contact support before retrying." }, { status: 409 });
       }
       if (Number(payment.amount) !== Number(found.rows[0].amount_inr) * 100) {
         await client.query("ROLLBACK");
