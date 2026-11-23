@@ -92,7 +92,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Please provide your name, valid email, phone number and complete delivery address with a 6-digit PIN code." }, { status: 400 });
   }
 
-  const client = await db.getClient();
+  let client: Awaited<ReturnType<typeof db.getClient>>;
+  try {
+    client = await db.getClient();
+  } catch (error) {
+    console.error("Order database connection failed:", error);
+    return NextResponse.json(
+      { error: "Ordering is temporarily unavailable because the order database could not be reached. Your cart has not been submitted; please try again later or contact us on WhatsApp." },
+      { status: 503 }
+    );
+  }
+
   try {
     await client.query("BEGIN");
     const skus = [...quantities.keys()];

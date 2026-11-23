@@ -1,45 +1,67 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { cookies } from "next/headers";
+import { getCustomerIdentity } from "@/lib/customer-auth";
+
+export const runtime = "nodejs";
+
+type EssentialsRequest = {
+  frequencyDays?: unknown;
+  quantity?: unknown;
+  productInterest?: unknown;
+};
 
 export async function POST(req: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const sessionToken = cookieStore.get("lado_secure_session")?.value;
-    
-    if (!sessionToken) {
-      return NextResponse.json({ error: "Unauthorized. Please log in to join the Essentials Club." }, { status: 401 });
+    const customer = await getCustomerIdentity(req);
+    if (!customer) {
+      return NextResponse.json(
+        { error: "Please sign in to submit an Essentials Club enquiry." },
+        { status: 401 }
+      );
     }
 
-    const body = await req.json();
-    const { frequencyDays, quantity } = body;
-
-    // Enforce verified business pricing: A2 Bilona Ghee is ₹5,000 per litre[cite: 1]
-    const pricePerUnit = 5000;
-    const amountInr = pricePerUnit * quantity;
-
-    // We do not assume GST or shipping costs here; they must be configured by the admin later[cite: 1]
-    const client = await db.getClient();
+    let body: EssentialsRequest;
     try {
-      await client.query(
-        `INSERT INTO subscriptions (id, user_id, status, amount_inr, created_at)
-         VALUES (gen_random_uuid(), $1, 'pending_mandate', $2, NOW())`,
-        [sessionToken, amountInr]
-      );
-      
-      // Log the secure action to the audit_logs table[cite: 1]
-      await client.query(
-        `INSERT INTO audit_logs (action, entity_type, metadata)
-         VALUES ('SUBSCRIPTION_CREATED', 'subscription', $1::jsonb)`,
-        [JSON.stringify({ user: sessionToken, frequencyDays, quantity, amountInr })]
-      );
-    } finally {
-      client.release();
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid Essentials Club enquiry." }, { status: 400 });
     }
 
-    return NextResponse.json({ ok: true, message: "Subscription mandate initiated securely." });
-  } catch (err) {
-    console.error("Subscription API Error:", err);
-    return NextResponse.json({ error: "Failed to initialize subscription." }, { status: 500 });
+    const frequencyDays = Number(body.frequencyDays);
+    const quantity = Number(body.quantity);
+    const productInterest = typeof body.productInterest === "string"
+      ? body.productInterest.trim().slice(0, 100)
+      : "Essentials Club products";
+
+    if (![7, 14, 30].includes(frequencyDays) ||
+        !Number.isInteger(quantity) || quantity < 1 || quantity > 20 ||
+        !productInterest) {
+      return NextResponse.json(
+        { error: "Choose a valid delivery frequency, product and quantity (1–20)." },
+        { status: 400 }
+      );
+    }
+
+    const interest = `Repeat-delivery enquiry | Product: ${productInterest} | Frequency: every ${frequencyDays} days | Quantity: ${quantity}`;
+    await db.query(
+      `INSERT INTO prelaunch_waitlist (email, product_interest)
+       VALUES ($1, $2)
+       ON CONFLICT (email, product_interest) DO NOTHING`,
+      [customer.email, interest]
+    );
+
+    return NextResponse.json({
+      ok: true,
+      status: "enquiry_recorded",
+      message: "Your repeat-delivery enquiry has been recorded. The Lado Organics team will confirm availability, pricing and delivery with you. No payment or automatic subscription has been started.",
+    }, {
+      headers: { "Cache-Control": "no-store" },
+    });
+  } catch (error) {
+    console.error("Essentials Club enquiry failed:", error);
+    return NextResponse.json(
+      { error: "We could not record your enquiry. Please try again later." },
+      { status: 503 }
+    );
   }
 }
