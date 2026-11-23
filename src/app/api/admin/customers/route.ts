@@ -1,18 +1,10 @@
-import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getAdminActor } from "@/lib/admin-auth";
 
 export const runtime = "nodejs";
 
-function authorized(req: NextRequest) {
-  const expected = process.env.ADMIN_ACCESS_TOKEN;
-  const supplied = req.headers.get("x-admin-token");
-  if (!expected || !supplied) return false;
-  const a = Buffer.from(supplied, "utf8");
-  const b = Buffer.from(expected, "utf8");
-  return a.length === b.length && crypto.timingSafeEqual(a, b);
-}
+
 
 export async function GET(req: NextRequest) {
   if (!(await getAdminActor(req, "operations"))) return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
