@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
     );
     await client.query("COMMIT");
 
-    void sendTemplatedNotification("booking_request_received", guestEmail, {
+    await sendTemplatedNotification("booking_request_received", guestEmail, {
       name: guestName,
       check_in: checkIn,
       check_out: checkOut,
