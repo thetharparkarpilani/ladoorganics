@@ -1,6 +1,6 @@
 -- 019_runtime_schema_compatibility.sql
 -- Repair schema differences between the two historical 002 migration variants.
--- Safe to run after the existing migration set; does not rewrite legacy records.
+-- Safe to run after the existing migration set; preserves all legacy records.
 
 CREATE TABLE IF NOT EXISTS public.bookings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -23,27 +23,14 @@ CREATE INDEX IF NOT EXISTS idx_bookings_guest_email_lower
 CREATE INDEX IF NOT EXISTS idx_bookings_dates_status
   ON public.bookings (check_in, check_out, status);
 
--- The older sponsorships table used user_id/cow_id and did not contain
--- the contact and plan fields required by the current public request form.
+-- The legacy sponsorship table lacks contact and plan fields. Add nullable
+-- columns so historical rows remain valid; new requests populate all fields.
 ALTER TABLE public.sponsorships
   ADD COLUMN IF NOT EXISTS calf_name TEXT,
   ADD COLUMN IF NOT EXISTS sponsor_name TEXT,
   ADD COLUMN IF NOT EXISTS sponsor_email TEXT,
   ADD COLUMN IF NOT EXISTS sponsor_phone TEXT,
   ADD COLUMN IF NOT EXISTS plan_type TEXT;
-
-UPDATE public.sponsorships s
-   SET calf_name = COALESCE(s.calf_name, c.name)
-  FROM public.cow_profiles c
- WHERE s.cow_id = c.id
-   AND s.calf_name IS NULL;
-
-UPDATE public.sponsorships s
-   SET sponsor_name = COALESCE(s.sponsor_name, u.full_name),
-       sponsor_email = COALESCE(s.sponsor_email, u.email)
-  FROM public.users u
- WHERE s.user_id = u.id
-   AND (s.sponsor_name IS NULL OR s.sponsor_email IS NULL);
 
 CREATE INDEX IF NOT EXISTS idx_sponsorships_sponsor_email_lower
   ON public.sponsorships (lower(sponsor_email))
