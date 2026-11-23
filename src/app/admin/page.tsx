@@ -55,7 +55,6 @@ export default function AdminDashboardPage() {
         const res = await fetch("/api/admin/stats", { headers: { Authorization: "Bearer " + token }, cache: "no-store" });
         if (!res.ok) throw new Error("Unable to load admin metrics. Check your staff permissions and database.");
         setStats(await res.json());
-      setAdminRole("owner");
       } catch (err) {
         if (active) setError(err instanceof Error ? err.message : "Network error");
       } finally {
