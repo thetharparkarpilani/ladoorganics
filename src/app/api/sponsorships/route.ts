@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
       [calfName, sponsorName, sponsorEmail, sponsorPhone || null, planType, amountInr]
     );
 
-    void sendTemplatedNotification("sponsorship_request_received", sponsorEmail, {
+    await sendTemplatedNotification("sponsorship_request_received", sponsorEmail, {
       name: sponsorName,
       calf_name: calfName,
       plan: planType,
