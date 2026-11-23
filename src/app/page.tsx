@@ -16,6 +16,7 @@ import GauSevaTransparencySection from "@/components/GauSevaTransparencySection"
 import JournalLibrarySection from "@/components/JournalLibrarySection";
 import CorporateGiftingSection from "@/components/CorporateGiftingSection";
 import CowAsCoconutMap from "@/components/CowAsCoconutMap";
+import FarmWorldSection from "@/components/FarmWorldSection";
 import ConciergeWidget from "@/components/ConciergeWidget";
 import CartCheckoutDrawer from "@/components/CartCheckoutDrawer";
 
@@ -121,11 +122,12 @@ export default function HomePage() {
               <Link href="/trace/LO-PILANI-SAMPLE-001" className="px-7 py-3.5 rounded-full font-bold text-sm border border-[var(--border)]">Verify Batch QR</Link>
               <a href="/dashboard" className="px-7 py-3.5 rounded-full font-bold text-sm border border-[var(--border)]">My Lado Journey</a>
             </div>
-            <div className="farm-video-frame max-w-3xl mx-auto rounded-3xl overflow-hidden border border-[var(--border)] shadow-xl bg-black">
-              <div className="aspect-video w-full"><iframe className="w-full h-full" src="https://www.youtube.com/embed/JAhshRN6F28" title="Lado Organics Pilani - Build in Public" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div>
+            <div className="farm-hero-proof max-w-3xl mx-auto">
+              <span>🐄 Indigenous Tharparkar heritage</span><span>✦</span><span>🌱 Circular farm thinking</span><span>✦</span><span>🤎 Rooted in Pilani</span>
             </div>
           </div>
         </section>
+        <div data-farm-reveal><FarmWorldSection /></div>
         <div data-farm-reveal><StorefrontSection products={products} locale={locale} searchQuery={searchQuery} whatsappNumber={whatsappNumber} onAddToBag={handleAddToBag} /></div>
         <div data-farm-reveal><EssentialsClubSection /></div>
         <div data-farm-reveal><TrustAndProcessSection whatsappNumber={whatsappNumber} /></div>
