@@ -40,12 +40,12 @@ export async function POST(req: NextRequest) {
       `INSERT INTO order_returns (order_id, reason, customer_note)
        SELECT o.id, $3, $4 FROM orders o
         WHERE o.id = $1 AND (lower(COALESCE(o.guest_email,'')) = $2 OR o.user_id = $5::uuid)
-          AND o.status NOT IN ('cancelled','refunded')
+          AND o.status = 'delivered'
        ON CONFLICT (order_id) DO NOTHING
        RETURNING id, status, reason, requested_at`,
       [orderId, customer.email, reason, note, customer.databaseUserId]
     );
-    if (!result.rows[0]) return NextResponse.json({ error: "This order cannot accept another return request, or it does not belong to your account." }, { status: 409 });
+    if (!result.rows[0]) return NextResponse.json({ error: "Return requests are available for delivered orders only, and each order can have one return request." }, { status: 409 });
     return NextResponse.json({ ok: true, returnRequest: result.rows[0] }, { status: 201, headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     console.error("Customer return request failed:", error);

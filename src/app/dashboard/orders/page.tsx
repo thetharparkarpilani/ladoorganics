@@ -16,7 +16,7 @@ type CustomerOrder = {
   order_number: string;
   status: string;
   payment_method?: string;
-  payment_status?: string;
+  payment_status?: string;\n  return_status?: string | null;
   subtotal_inr: number;
   total_inr: number;
   shipping_summary: string;
@@ -119,7 +119,10 @@ export default function OrderHistoryPage() {
                   <span className="font-semibold">Delivery address: </span>{order.shipping_summary}
                 </p>
               )}
-              <div className="mt-4 flex justify-end border-t border-[var(--border)] pt-4">
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--border)] pt-4">
+                <div className="text-xs text-[var(--muted)]">
+                  {order.return_status ? <>Return request: <strong className="capitalize">{statusLabel(order.return_status)}</strong></> : order.status === "delivered" ? <button onClick={() => void requestReturn(order.id)} className="rounded-full border border-[var(--border)] px-4 py-2 font-semibold text-[var(--mud)]">Request a return</button> : null}
+                </div>
                 <p className="text-sm text-[var(--muted)]">Order total <span className="ml-2 text-lg font-bold text-[var(--terracotta)]">₹{Number(order.total_inr).toLocaleString("en-IN")}</span></p>
               </div>
             </article>
