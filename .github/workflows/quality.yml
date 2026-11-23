@@ -32,4 +32,4 @@ jobs:
       - name: Check TypeScript
         run: npm run typecheck
       - name: Run ESLint
-        run: npx eslint src
+        run: npm run lint
