@@ -22,7 +22,7 @@ const faqs = [
 
 export default function ContactPage() {
   const makeWhatsAppLink = (message: string) =>
-    `https://wa.me/${WHATSAPP_NUMBER.replace(/\\D/g, "")}?text=${encodeURIComponent(message)}`;
+    `https://wa.me/${WHATSAPP_NUMBER.replace(/\D/g, "")}?text=${encodeURIComponent(message)}`;
 
   return (
     <main className="min-h-screen bg-[var(--bg)]">
@@ -36,7 +36,7 @@ export default function ContactPage() {
       <section className="px-4 py-14 sm:py-20">
         <div className="mx-auto max-w-6xl">
           <div className="max-w-3xl">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--terracotta)]">We're here to help</p>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--terracotta)]">We&apos;re here to help</p>
             <h1 className="mt-3 font-serif text-4xl font-bold sm:text-6xl">Customer Support</h1>
             <p className="mt-5 text-base leading-7 opacity-75">Questions about an order, a Bhunga stay or Gau Seva? Choose a topic below to open WhatsApp with a message ready for our team.</p>
             <a href={makeWhatsAppLink("Hello Lado Organics, I need help.")}
