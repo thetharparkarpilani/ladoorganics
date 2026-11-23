@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { sendTemplatedNotification } from "@/lib/customer-notifications";
 
 const NIGHTLY_RATE_INR = 4000;
 
@@ -55,6 +56,12 @@ export async function POST(req: NextRequest) {
       [guestName, guestEmail, guestPhone, checkIn, checkOut, guestsCount, nights, totalAmountInr]
     );
     await client.query("COMMIT");
+
+    void sendTemplatedNotification("booking_request_received", guestEmail, {
+      name: guestName,
+      check_in: checkIn,
+      check_out: checkOut,
+    });
 
     return NextResponse.json({
       ok: true,
