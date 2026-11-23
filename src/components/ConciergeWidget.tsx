@@ -6,6 +6,7 @@ import { useCart } from "@/context/CartContext";
 type SuggestedAction = { label: string; href: string };
 type CartVariantSuggestion = { variantId: string; sku: string; label: string; priceInr: number; maxStock: number };
 type CartSuggestion = { productName: string; variants: CartVariantSuggestion[] };
+type CustomerOrder = { orderNumber: string; status: string; paymentMethod: string; paymentStatus: string; totalInr: number | null; createdAt: string | null; items: { title: string; quantity: number }[] };
 interface ChatMessage {
   id: string;
   sender: "user" | "bot";
@@ -109,6 +110,37 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
     }
   };
 
+  const loadMyOrders = async () => {
+    if (loading) return;
+    setError("");
+    setLoading(true);
+    try {
+      const response = await fetch("/api/concierge/orders", { method: "GET", cache: "no-store" });
+      const data = await response.json();
+      if (!response.ok) {
+        setMessages((previous) => [...previous, {
+          id: `orders-${Date.now()}`,
+          sender: "bot",
+          text: typeof data.error === "string" ? data.error : "Please sign in to view your orders.",
+          actions: data.signInRequired ? [{ label: "Sign in / My Account", href: "/dashboard" }] : [{ label: "Open Order History", href: "/dashboard/orders" }],
+        }]);
+        return;
+      }
+      const orders = Array.isArray(data.orders) ? data.orders as CustomerOrder[] : [];
+      setMessages((previous) => [...previous, {
+        id: `orders-${Date.now()}`,
+        sender: "bot",
+        text: orders.length ? "Here are your latest orders from your signed-in Lado account. This information is private to your account." : "I couldn't find any orders linked to this Google account yet. If you placed an order using another email address, sign in with that same account or contact our team.",
+        orders,
+        actions: [{ label: "Open full Order History", href: "/dashboard/orders" }],
+      }]);
+    } catch {
+      setError("We couldn't retrieve your orders. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const addSuggestedVariant = (messageId: string, productName: string, variant: CartVariantSuggestion) => {
     addToCart({
       variantId: variant.variantId,
@@ -197,6 +229,21 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
                       ))}
                     </div>
                   )}
+                  {message.orders && message.orders.length > 0 && (
+                    <div className="lado-ai-cart-card">
+                      <div className="lado-ai-cart-heading"><span>YOUR RECENT ORDERS</span></div>
+                      {message.orders.map((order) => (
+                        <div key={order.orderNumber} className="lado-ai-cart-option" style={{ display: "block", cursor: "default" }}>
+                          <strong>{order.orderNumber}</strong>
+                          <div className="text-sm mt-1">Status: {order.status.replace(/_/g, " ")}</div>
+                          <div className="text-sm">Payment: {order.paymentStatus.replace(/_/g, " ")} · {order.paymentMethod.replace(/_/g, " ")}</div>
+                          {order.totalInr !== null && <div className="text-sm">Total: ₹{order.totalInr.toLocaleString("en-IN")}</div>}
+                          {order.items.length > 0 && <div className="text-sm mt-1">{order.items.map((item) => `${item.title} × ${item.quantity}`).join(" · ")}</div>}
+                          {order.createdAt && <div className="text-xs mt-1 opacity-70">{new Date(order.createdAt).toLocaleDateString("en-IN")}</div>}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                   {message.cartSuggestion && (
                     <div className="lado-ai-cart-card">
                       <div className="lado-ai-cart-heading">
@@ -233,6 +280,7 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
             <div className="lado-ai-starters">
               <p>WHAT CAN I HELP YOU WITH?</p>
               <div>
+                <button type="button" onClick={() => void loadMyOrders()} disabled={loading}>Show my recent orders <span>↗</span></button>
                 {STARTERS.map((starter) => (
                   <button key={starter} type="button" onClick={() => void askQuestion(starter)} disabled={loading}>{starter} <span>↗</span></button>
                 ))}
