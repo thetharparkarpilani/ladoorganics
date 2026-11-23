@@ -34,8 +34,11 @@ export default function AuthCallbackPage() {
 
         if (!response.ok) throw new Error(result.error || "Google sign-in failed.");
         if (active) {
-          setMessage("Welcome to Lado Organics. Redirecting to your account...");
-          router.replace("/dashboard");
+          const requestedNext = window.sessionStorage.getItem("lado_post_auth_redirect") || "/dashboard";
+          const safeNext = requestedNext.startsWith("/") && !requestedNext.startsWith("//") ? requestedNext : "/dashboard";
+          window.sessionStorage.removeItem("lado_post_auth_redirect");
+          setMessage("Welcome to Lado Organics. Redirecting...");
+          router.replace(safeNext);
           router.refresh();
         }
       } catch (err) {
