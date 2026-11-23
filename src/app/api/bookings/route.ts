@@ -6,12 +6,15 @@ import { sendAdminRequestAlert } from "@/lib/admin-notifications";
 const NIGHTLY_RATE_INR = 4000;
 
 function validDate(value: unknown): value is string {
-  return typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(`${value}T00:00:00Z`));
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const parsed = new Date(`${value}T00:00:00.000Z`);
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
 }
 
 export async function POST(req: NextRequest) {
-  const client = await db.getClient();
+  let client: Awaited<ReturnType<typeof db.getClient>> | null = null;
   try {
+    client = await db.getClient();
     const body = await req.json();
     const guestName = typeof body.guestName === "string" ? body.guestName.trim() : "";
     const guestEmail = typeof body.guestEmail === "string" ? body.guestEmail.trim().toLowerCase() : "";
@@ -81,10 +84,10 @@ export async function POST(req: NextRequest) {
       message: "Stay request recorded as pending. The farm team must confirm availability and final details."
     }, { status: 201 });
   } catch (error) {
-    await client.query("ROLLBACK").catch(() => undefined);
+    if (client) await client.query("ROLLBACK").catch(() => undefined);
     console.error("Bhunga booking request error:", error);
     return NextResponse.json({ error: "Could not record the stay request. Please contact the farm team." }, { status: 500 });
   } finally {
-    client.release();
+    client?.release();
   }
 }

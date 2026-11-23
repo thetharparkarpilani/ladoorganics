@@ -1,4 +1,4 @@
-﻿import type { Metadata, Viewport } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import AnalyticsProvider from "@/components/AnalyticsProvider";
@@ -10,6 +10,10 @@ export const metadata: Metadata = {
   title: "Lado Organics | Pure Tharparkar A2 Tradition",
   description: "BITS Pilani-backed circular agriculture. Zero artificial additives, 100% indigenous A2 milk products.",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
