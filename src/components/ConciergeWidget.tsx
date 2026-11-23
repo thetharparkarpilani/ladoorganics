@@ -194,8 +194,8 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
             </button>
           </form>
           <footer className="lado-ai-footer">
-            <span>Answers are based on available Lado information.</span>
-            <a href="/contact">Talk to a person</a>
+            <span>AI can make mistakes. Never share OTPs, passwords or UPI PINs.</span>
+            <a href="/contact">Human support</a>
           </footer>
         </section>
       )}
