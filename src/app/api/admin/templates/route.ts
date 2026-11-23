@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
-  if (!isAuthorized(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!(await getAdminActor(req, "communications"))) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
     const { id, subject, html_content } = await req.json();
