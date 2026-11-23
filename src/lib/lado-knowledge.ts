@@ -32,13 +32,13 @@ export const DEFAULT_LADO_KNOWLEDGE: KnowledgeEntry[] = [
 ];
 
 function normalize(value: string): string {
-  return value.toLocaleLowerCase().normalize("NFKD").replace(/[\\u0300-\\u036f]/g,"").replace(/[^a-z0-9\\u0900-\\u097f]+/g," ").trim();
+  return value.toLocaleLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9\u0900-\u097f]+/g," ").trim();
 }
 
 export function findLocalAnswer(question: string, entries: KnowledgeEntry[] = DEFAULT_LADO_KNOWLEDGE): KnowledgeEntry | null {
   const q = normalize(question);
   if (!q) return null;
-  const qTokens = new Set(q.split(/\\s+/).filter((t) => t.length > 2));
+  const qTokens = new Set(q.split(/\s+/).filter((t) => t.length > 2));
   let best: { entry: KnowledgeEntry; score: number } | null = null;
   for (const entry of entries) {
     const patterns = entry.question_patterns.split("|").map((p) => normalize(p)).filter(Boolean);
@@ -46,7 +46,7 @@ export function findLocalAnswer(question: string, entries: KnowledgeEntry[] = DE
     for (const pattern of patterns) {
       if (q === pattern || q.includes(pattern) || pattern.includes(q)) score = Math.max(score, 1);
       else {
-        const tokens = pattern.split(/\\s+/).filter((t) => t.length > 2);
+        const tokens = pattern.split(/\s+/).filter((t) => t.length > 2);
         if (!tokens.length) continue;
         const overlap = tokens.filter((t) => qTokens.has(t)).length / tokens.length;
         const questionCoverage = tokens.filter((t) => qTokens.has(t)).length / Math.max(1, qTokens.size);
@@ -64,7 +64,7 @@ export async function getKnowledgeEntries(): Promise<KnowledgeEntry[]> {
       "SELECT id::text, category, title, question_patterns, answer FROM ai_knowledge WHERE is_published=TRUE ORDER BY sort_order ASC, updated_at DESC LIMIT 200"
     );
     const custom = result.rows as KnowledgeEntry[];
-    return [...DEFAULT_LADO_KNOWLEDGE, ...custom];
+    return [...custom, ...DEFAULT_LADO_KNOWLEDGE];
   } catch (error) {
     console.warn("Lado AI knowledge table unavailable; using built-in verified knowledge:", error);
     return DEFAULT_LADO_KNOWLEDGE;
