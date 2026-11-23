@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import AdminOperationsPanel from "@/components/AdminOperationsPanel";
+import AdminNotificationCentre from "@/components/AdminNotificationCentre";
 
 interface AdminStats {
   orders: number;
@@ -122,14 +123,9 @@ export default function AdminDashboardPage() {
         </div>
       ) : null}
 
-      {adminToken && <AdminOperationsPanel adminToken={adminToken} onRefreshDashboard={refreshDashboard} />}
+      {adminToken && <AdminNotificationCentre adminToken={adminToken} />}
 
-      <div className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl shadow-sm p-6 sm:p-8">
-        <h2 className="text-xl font-serif font-bold mb-6">Recent Operational Activity</h2>
-        <div className="text-center py-12 border border-dashed border-[var(--border)] rounded-xl bg-[var(--bg)]">
-          <p className="text-sm opacity-60">Audit logs and recent orders will populate here once transactions begin.</p>
-        </div>
-      </div>
+      {adminToken && <AdminOperationsPanel adminToken={adminToken} onRefreshDashboard={refreshDashboard} />}
     </div>
   );
 }
