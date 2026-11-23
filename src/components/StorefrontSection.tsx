@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import React, { useMemo, useState } from "react";
+import Image from "next/image";
 import type { LocaleCode, ProductDTO } from "@/types/domain";
 import { TRANSLATIONS } from "@/lib/i18n";
 
@@ -106,8 +107,8 @@ export default function StorefrontSection({
                   >
                     <div>
                       {product.imageUrl ? (
-                        <div className="mb-4 aspect-[4/3] overflow-hidden rounded-2xl bg-[var(--bg)]">
-                          <img src={product.imageUrl} alt={displayName} loading="lazy" className="h-full w-full object-cover" />
+                        <div className="relative mb-4 aspect-[4/3] overflow-hidden rounded-2xl bg-[var(--bg)]">
+                          <Image src={product.imageUrl} alt={displayName} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" unoptimized className="object-cover" />
                         </div>
                       ) : (
                         <div className="mb-4 flex aspect-[4/3] items-center justify-center rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg)] text-xs opacity-50">
