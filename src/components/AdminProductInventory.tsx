@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 
 type CatalogRow = {
   product_id: string;
@@ -180,7 +181,7 @@ export default function AdminProductInventory({ adminToken }: { adminToken: stri
               <article key={product.product_id} className="rounded-2xl border border-[var(--border)] bg-[var(--bg)] p-4">
                 <div className="mb-4 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)]">
                   {imageDrafts[product.product_id] ? (
-                    <img src={imageDrafts[product.product_id]} alt={product.name_en} className="h-40 w-full object-cover" />
+                    <Image src={imageDrafts[product.product_id]} alt={product.name_en} width={640} height={256} unoptimized className="h-40 w-full object-cover" />
                   ) : (
                     <div className="flex h-32 items-center justify-center text-xs opacity-50">No product image set</div>
                   )}
