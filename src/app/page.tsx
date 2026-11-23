@@ -99,8 +99,19 @@ export default function HomePage() {
         </div>
       </header>
       <main className="flex-1">
-        <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-5xl mx-auto text-center">
+        <section className="farm-hero relative isolate overflow-hidden py-20 sm:py-28 px-4 sm:px-6 lg:px-8">
+          <div className="farm-hero-scene" aria-hidden="true">
+            <span className="farm-sun" />
+            <span className="farm-cloud farm-cloud-one" />
+            <span className="farm-cloud farm-cloud-two" />
+            <span className="farm-hill farm-hill-back" />
+            <span className="farm-hill farm-hill-front" />
+            <span className="farm-grass farm-grass-left" />
+            <span className="farm-grass farm-grass-right" />
+            <span className="farm-dust farm-dust-one" />
+            <span className="farm-dust farm-dust-two" />
+          </div>
+          <div className="farm-hero-content relative z-10 max-w-5xl mx-auto text-center">
             <p className="inline-block text-[11px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full border border-[var(--earth)] mb-6">{dict.brand_tagline}</p>
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-serif font-bold leading-tight mb-6">{dict.hero_title}</h1>
             <p className="text-base sm:text-xl opacity-85 max-w-2xl mx-auto mb-10 leading-relaxed">{dict.hero_subtitle}</p>
