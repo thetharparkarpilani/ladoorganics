@@ -17,7 +17,7 @@ async function getProducts() {
       WHERE p.is_active = TRUE AND v.is_default = TRUE
     `);
     return res.rows;
-  } catch (e) {
+  } catch {
     console.error("Database connection failed, falling back to static verified catalog");
     return [
       { slug: "a2-bilona-ghee", name_en: "A2 Bilona Ghee", description_en: "Hand-churned from indigenous Tharparkar cow curd using the Vedic Bilona method.", sku: "LO-GHEE-1000", price_inr: 5000, label: "1 Litre" },
