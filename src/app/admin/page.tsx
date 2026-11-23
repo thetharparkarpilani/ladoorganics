@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import AdminOperationsPanel from "@/components/AdminOperationsPanel";
 import AdminNotificationCentre from "@/components/AdminNotificationCentre";
+import AdminProductInventory from "@/components/AdminProductInventory";
 
 interface AdminStats {
   orders: number;
@@ -124,6 +125,8 @@ export default function AdminDashboardPage() {
       ) : null}
 
       {adminToken && <AdminNotificationCentre adminToken={adminToken} />}
+
+      {adminToken && <AdminProductInventory adminToken={adminToken} />}
 
       {adminToken && <AdminOperationsPanel adminToken={adminToken} onRefreshDashboard={refreshDashboard} />}
     </div>
