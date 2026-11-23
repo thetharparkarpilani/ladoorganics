@@ -2,20 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
-type ProfilePayload = {
-  auth_user_id: string;
-  email: string;
-  display_name: string;
-  phone: string | null;
-  address_line1: string | null;
-  address_line2: string | null;
-  city: string | null;
-  state: string | null;
-  postal_code: string | null;
-  country: string;
-  updated_at?: string;
-};
-
 function config() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, "");
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
