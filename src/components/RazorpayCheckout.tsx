@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Script from "next/script";
 
 interface RazorpayPaymentResponse {
@@ -30,6 +30,29 @@ export default function RazorpayCheckout({ amountInr, items, onSuccess }: Checko
   const [details, setDetails] = useState({
     customerName: "", email: "", phone: "", addressLine1: "", addressLine2: "", city: "", state: "", postalCode: ""
   });
+  useEffect(() => {
+    let active = true;
+    fetch("/api/dashboard/profile", { cache: "no-store" })
+      .then(async response => response.ok ? response.json() : null)
+      .then(result => {
+        if (!active || !result?.profile) return;
+        const profile = result.profile;
+        setDetails(current => ({
+          ...current,
+          customerName: current.customerName || profile.display_name || "",
+          email: current.email || profile.email || "",
+          phone: current.phone || profile.phone || "",
+          addressLine1: current.addressLine1 || profile.address_line1 || "",
+          addressLine2: current.addressLine2 || profile.address_line2 || "",
+          city: current.city || profile.city || "",
+          state: current.state || profile.state || "",
+          postalCode: current.postalCode || profile.postal_code || ""
+        }));
+      })
+      .catch(() => undefined);
+    return () => { active = false; };
+  }, []);
+
   const update = (field: keyof typeof details, value: string) => setDetails(current => ({ ...current, [field]: value }));
 
   const handlePayment = async (event: React.FormEvent) => {
