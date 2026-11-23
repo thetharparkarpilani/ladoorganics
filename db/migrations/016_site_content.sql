@@ -12,3 +12,5 @@ VALUES
   ('announcement', 'A note from Lado Organics', '', FALSE),
   ('farm_note', 'A note from our farm', '', FALSE)
 ON CONFLICT (content_key) DO NOTHING;
+
+ALTER TABLE public.site_content ENABLE ROW LEVEL SECURITY;
