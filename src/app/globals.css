@@ -296,3 +296,71 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 @media (prefers-reduced-motion: reduce) {
   .farm-art-cow,.farm-art-tree,.farm-art-bird,.farm-art-cloud,.farm-art-sun { animation:none !important; }
 }
+
+
+/* Editorial farm experience — photographic, calm and tactile */
+.farm-hero-editorial {
+  min-height: min(820px, calc(100svh - 72px));
+  padding-top: 7rem;
+  padding-bottom: 7rem;
+  align-items: center;
+  background-color: #334331;
+  background-image:
+    linear-gradient(90deg, rgba(17,31,22,.78) 0%, rgba(25,40,28,.63) 42%, rgba(30,42,27,.16) 100%),
+    linear-gradient(0deg, rgba(17,31,22,.28), transparent 42%),
+    url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2400&q=85");
+  background-size: cover;
+  background-position: center 54%;
+  color: #fffaf0;
+}
+.farm-hero-editorial::after { display:none; }
+.farm-hero-editorial .farm-hero-content { display:flex; align-items:flex-end; justify-content:space-between; gap:3rem; }
+.farm-hero-copy { max-width:760px; }
+.farm-hero-kicker { display:flex; align-items:center; gap:12px; margin-bottom:28px; color:#f1d9ad; font-size:10px; font-weight:800; letter-spacing:.24em; }
+.farm-hero-kicker span { display:inline-block; width:34px; height:1px; background:#d7b17a; }
+.farm-hero-editorial .farm-hero-copy h1 { margin:0; color:#fffaf0; font-family:Georgia,"Times New Roman",serif; font-size:clamp(3.5rem,8vw,7.6rem); font-weight:400; line-height:.94; letter-spacing:-.065em; text-shadow:0 4px 34px rgba(0,0,0,.22); }
+.farm-hero-editorial .farm-hero-copy h1 em { color:#e6c99c; font-weight:400; }
+.farm-hero-description { max-width:540px; margin-top:28px; color:rgba(255,250,240,.86); font-size:clamp(1rem,1.5vw,1.2rem); line-height:1.8; }
+.farm-hero-actions { display:flex; flex-wrap:wrap; align-items:center; gap:14px; margin-top:34px; }
+.farm-hero-primary,.farm-hero-secondary { display:inline-flex; align-items:center; justify-content:center; gap:22px; min-height:54px; padding:0 23px; border-radius:999px; font-size:12px; font-weight:800; transition:transform .3s ease,background .3s ease,border-color .3s ease; }
+.farm-hero-primary { background:#e7d0a8; color:#283d2c; }
+.farm-hero-primary:hover { transform:translateY(-3px); background:#f3dfbb; }
+.farm-hero-secondary { color:#fffaf0; border:1px solid rgba(255,250,240,.5); background:rgba(255,255,255,.07); backdrop-filter:blur(10px); }
+.farm-hero-secondary:hover { transform:translateY(-3px); border-color:#e7d0a8; background:rgba(255,255,255,.14); }
+.farm-hero-signature { display:flex; align-items:center; gap:12px; margin-top:54px; color:#fffaf0; }
+.farm-signature-mark { display:grid; place-items:center; width:42px; height:42px; border:1px solid rgba(255,250,240,.65); border-radius:50%; font-family:Georgia,serif; font-size:23px; font-style:italic; }
+.farm-hero-signature strong,.farm-hero-signature small { display:block; }
+.farm-hero-signature strong { font-family:Georgia,serif; font-size:15px; font-weight:500; letter-spacing:.03em; }
+.farm-hero-signature small { margin-top:3px; color:rgba(255,250,240,.68); font-size:9px; letter-spacing:.2em; text-transform:uppercase; }
+.farm-hero-side-note { display:flex; align-items:center; gap:13px; margin:0 2% 26px 0; color:rgba(255,250,240,.82); font-size:9px; font-weight:800; line-height:1.8; letter-spacing:.18em; }
+.farm-side-line { width:42px; height:1px; background:#e7d0a8; }
+.farm-hero-scroll { position:absolute; bottom:28px; left:50%; display:flex; align-items:center; gap:12px; transform:translateX(-50%); color:rgba(255,250,240,.75); font-size:8px; font-weight:800; letter-spacing:.22em; }
+.farm-hero-scroll span { width:28px; height:1px; background:#e7d0a8; }
+.farm-world-photo {
+  background-image:url("https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d5/Tharparkar_02.JPG/1280px-Tharparkar_02.JPG");
+  background-size:cover;
+  background-position:center 44%;
+  box-shadow:0 30px 80px rgba(48,49,34,.2);
+}
+.farm-world-photo::before { z-index:1; background:linear-gradient(180deg,rgba(25,32,22,.12),transparent 35%,rgba(20,30,19,.72)); }
+.farm-world-photo-overlay { position:absolute; inset:0; z-index:1; background:linear-gradient(90deg,rgba(24,32,23,.12),transparent 60%); }
+.farm-photo-topline { position:absolute; z-index:3; top:24px; left:26px; right:26px; display:flex; justify-content:space-between; gap:12px; color:#fff8e9; font-size:9px; font-weight:800; letter-spacing:.2em; text-shadow:0 2px 10px rgba(0,0,0,.35); }
+.farm-photo-bottomline { position:absolute; z-index:3; left:28px; right:28px; bottom:25px; display:flex; align-items:flex-end; justify-content:space-between; gap:20px; color:#fffaf0; }
+.farm-photo-bottomline p { font-family:Georgia,serif; font-size:clamp(2.5rem,5vw,4.6rem); line-height:.94; letter-spacing:-.05em; }
+.farm-photo-bottomline p em { color:#e6c99c; font-weight:400; }
+.farm-photo-bottomline > span { color:rgba(255,250,240,.8); font-size:8px; line-height:1.7; text-align:right; }
+@media (max-width: 760px) {
+  .farm-hero-editorial { min-height:740px; padding-top:5rem; padding-bottom:6rem; background-position:58% center; }
+  .farm-hero-editorial .farm-hero-content { align-items:flex-start; }
+  .farm-hero-side-note { display:none; }
+  .farm-hero-editorial .farm-hero-copy h1 { font-size:clamp(3.35rem,14vw,5.4rem); }
+  .farm-hero-description { max-width:420px; }
+  .farm-hero-signature { margin-top:38px; }
+  .farm-hero-scroll { bottom:22px; white-space:nowrap; }
+  .farm-photo-bottomline { left:18px; right:18px; bottom:18px; }
+  .farm-photo-topline { left:18px; right:18px; top:18px; font-size:7px; }
+  .farm-photo-bottomline > span { font-size:7px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .farm-hero-primary,.farm-hero-secondary { transition:none; }
+}
