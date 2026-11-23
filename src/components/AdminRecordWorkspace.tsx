@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { getAdminClientToken } from "@/lib/admin-client";
 
 type Kind = "orders" | "bookings" | "sponsorships";
 type RecordItem = {
@@ -49,9 +50,13 @@ export default function AdminRecordWorkspace({ kind }: { kind: Kind }) {
   }, [kind, page, query, filter]);
 
   useEffect(() => {
-    const saved = localStorage.getItem("lado_admin_token") || "";
-    setToken(saved);
-    if (saved) void load(saved, page, query, filter); else setLoading(false);
+    let active = true;
+    void getAdminClientToken().then((saved) => {
+      if (!active) return;
+      setToken(saved);
+      if (saved) void load(saved, page, query, filter); else setLoading(false);
+    });
+    return () => { active = false; };
   }, [load, page, query, filter]);
 
   const filtered = useMemo(() => records.filter((r) => {
