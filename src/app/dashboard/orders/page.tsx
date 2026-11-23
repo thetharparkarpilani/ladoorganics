@@ -16,7 +16,8 @@ type CustomerOrder = {
   order_number: string;
   status: string;
   payment_method?: string;
-  payment_status?: string;\n  return_status?: string | null;
+  payment_status?: string;
+  return_status?: string | null;
   subtotal_inr: number;
   total_inr: number;
   shipping_summary: string;
@@ -42,6 +43,23 @@ export default function OrderHistoryPage() {
       .catch((err) => setError(err instanceof Error ? err.message : "Unable to load your orders."))
       .finally(() => setLoading(false));
   }, []);
+
+  const requestReturn = async (orderId: string) => {
+    const reason = window.prompt("Please describe why you need to return this order (at least 5 characters).");
+    if (!reason || reason.trim().length < 5) return;
+    try {
+      const response = await fetch("/api/dashboard/returns", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId, reason: reason.trim() }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Unable to submit return request.");
+      setOrders(current => current.map(order => order.id === orderId ? { ...order, return_status: "requested" } : order));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to submit return request.");
+    }
+  };
 
   return (
     <section className="space-y-6">
