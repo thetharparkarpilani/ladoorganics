@@ -15,6 +15,8 @@ type CustomerOrder = {
   id: string;
   order_number: string;
   status: string;
+  payment_method?: string;
+  payment_status?: string;
   subtotal_inr: number;
   total_inr: number;
   shipping_summary: string;
@@ -85,6 +87,19 @@ export default function OrderHistoryPage() {
                 <span className="rounded-full border border-[var(--border)] bg-[var(--bg)] px-3 py-1 text-xs font-semibold capitalize text-[var(--mud)]">
                   {statusLabel(order.status)}
                 </span>
+              </div>
+
+              <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                {order.payment_method && (
+                  <span className="rounded-full border border-[var(--border)] px-3 py-1 text-[var(--muted)]">
+                    Payment: {order.payment_method === "cash_on_delivery" ? "Cash on Delivery" : "UPI (manual)"}
+                  </span>
+                )}
+                {order.payment_status && (
+                  <span className="rounded-full border border-[var(--border)] px-3 py-1 text-[var(--muted)]">
+                    Payment status: {statusLabel(order.payment_status)}
+                  </span>
+                )}
               </div>
 
               <div className="space-y-3 py-4">
