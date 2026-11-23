@@ -1,16 +1,7 @@
-import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getCustomerIdentity } from "@/lib/customer-auth";
-
-function isAuthorizedAdmin(headerToken: string | null): boolean {
-  const expected = process.env.ADMIN_ACCESS_TOKEN;
-  if (!expected || !headerToken) return false;
-  const a = Buffer.from(headerToken, "utf8");
-  const b = Buffer.from(expected, "utf8");
-  if (a.length !== b.length) return false;
-  return crypto.timingSafeEqual(a, b);
-}
+import { getAdminActor } from "@/lib/admin-auth";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -18,8 +9,8 @@ export async function GET(req: NextRequest) {
 
   try {
     if (mode === "admin") {
-      const token = req.headers.get("x-admin-token");
-      if (!isAuthorizedAdmin(token)) {
+      const adminActor = await getAdminActor(req, "operations");
+      if (!adminActor) {
         return NextResponse.json(
           { error: "Unauthorized: valid server ADMIN_ACCESS_TOKEN required." },
           { status: 401 }
