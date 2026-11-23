@@ -197,7 +197,7 @@ async function answerFromLiveCatalog(message: string): Promise<string | null> {
     if (matched.size===1) {
       const slug=Array.from(matched)[0]; const selected=rows.filter(row=>String(row.slug)===slug); const name=String(selected[0]?.name_en||"This product");
       const variants=selected.filter(row=>row.variant_label).map(row=>String(row.variant_label)+" — ₹"+Number(row.price_inr).toLocaleString("en-IN"));
-      return variants.length ? "The current store listing for "+name+" shows:\\n"+variants.join("\\n")+". Prices and stock can change; please confirm final availability at checkout." : "I found "+name+" in the catalogue, but no in-stock pack and price are currently listed. Please contact the Lado team.";
+      return variants.length ? "The current store listing for "+name+" shows:\n"+variants.join("\n")+". Prices and stock can change; please confirm final availability at checkout." : "I found "+name+" in the catalogue, but no in-stock pack and price are currently listed. Please contact the Lado team.";
     }
     return "Which product would you like the current price or pack sizes for — A2 Bilona Ghee, Tharparkar Dhoop or Vermicompost?";
   } catch (error) { console.error("Lado AI live catalogue answer failed:",error); return null; }
