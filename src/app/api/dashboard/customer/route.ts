@@ -50,9 +50,25 @@ export async function GET(req: NextRequest) {
   const user = await userResponse.json();
   const metadata = user.user_metadata || {};
   const name = metadata.full_name || metadata.name || user.email?.split("@")[0] || "Customer";
+  let orders: unknown[] = [];
+  const ordersResponse = await fetch(`${baseUrl}/rest/v1/rpc/get_my_customer_orders`, {
+    method: "POST",
+    headers: {
+      apikey: supabaseKey,
+      Authorization: `Bearer ${activeAccessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: "{}",
+    cache: "no-store",
+  });
+  if (ordersResponse.ok) {
+    const result = await ordersResponse.json();
+    if (Array.isArray(result)) orders = result;
+  }
+
   const response = NextResponse.json({
     profile: { name, email: user.email || null },
-    orders: [],
+    orders,
     bookings: [],
     sponsorships: [],
   });
