@@ -2,6 +2,77 @@
 -- Repair schema differences between the two historical 002 migration variants.
 -- Safe to run after the existing migration set; preserves all legacy records.
 
+-- Normalize the order table even if an earlier migration stopped before 011.
+ALTER TABLE public.orders
+  ADD COLUMN IF NOT EXISTS order_number TEXT,
+  ADD COLUMN IF NOT EXISTS guest_name TEXT,
+  ADD COLUMN IF NOT EXISTS guest_email TEXT,
+  ADD COLUMN IF NOT EXISTS guest_phone TEXT,
+  ADD COLUMN IF NOT EXISTS shipping_summary TEXT,
+  ADD COLUMN IF NOT EXISTS shipping_address TEXT,
+  ADD COLUMN IF NOT EXISTS subtotal_inr INTEGER,
+  ADD COLUMN IF NOT EXISTS total_inr INTEGER,
+  ADD COLUMN IF NOT EXISTS payment_method TEXT NOT NULL DEFAULT 'cash_on_delivery',
+  ADD COLUMN IF NOT EXISTS payment_status TEXT NOT NULL DEFAULT 'pay_on_delivery';
+
+ALTER TABLE public.orders DROP CONSTRAINT IF EXISTS orders_status_check;
+UPDATE public.orders
+   SET status = 'pending_confirmation'
+ WHERE status = 'pending';
+
+UPDATE public.orders
+   SET order_number = 'LO-LEGACY-' || upper(replace(id::text, '-', ''))
+ WHERE order_number IS NULL OR btrim(order_number) = '';
+
+UPDATE public.orders
+   SET shipping_summary = COALESCE(NULLIF(shipping_summary, ''), NULLIF(shipping_address, ''), 'Address not recorded'),
+       shipping_address = COALESCE(NULLIF(shipping_address, ''), NULLIF(shipping_summary, ''), 'Address not recorded')
+ WHERE shipping_summary IS NULL OR btrim(shipping_summary) = ''
+    OR shipping_address IS NULL OR btrim(shipping_address) = '';
+
+UPDATE public.orders
+   SET subtotal_inr = COALESCE(subtotal_inr, total_inr, 0),
+       total_inr = COALESCE(total_inr, subtotal_inr, 0)
+ WHERE subtotal_inr IS NULL OR total_inr IS NULL;
+
+ALTER TABLE public.orders
+  ALTER COLUMN order_number SET NOT NULL,
+  ALTER COLUMN shipping_summary SET NOT NULL,
+  ALTER COLUMN shipping_address SET NOT NULL,
+  ALTER COLUMN subtotal_inr SET DEFAULT 0,
+  ALTER COLUMN subtotal_inr SET NOT NULL,
+  ALTER COLUMN total_inr SET DEFAULT 0,
+  ALTER COLUMN total_inr SET NOT NULL;
+
+ALTER TABLE public.orders
+  ADD CONSTRAINT orders_status_check CHECK (
+    status IN ('pending_confirmation', 'paid', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded')
+  );
+ALTER TABLE public.orders DROP CONSTRAINT IF EXISTS orders_payment_method_check;
+ALTER TABLE public.orders
+  ADD CONSTRAINT orders_payment_method_check
+  CHECK (payment_method IN ('cash_on_delivery', 'manual_upi'));
+ALTER TABLE public.orders DROP CONSTRAINT IF EXISTS orders_payment_status_check;
+ALTER TABLE public.orders
+  ADD CONSTRAINT orders_payment_status_check
+  CHECK (payment_status IN ('pay_on_delivery', 'awaiting_manual_payment', 'payment_submitted', 'paid', 'failed', 'refunded'));
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_orders_order_number_unique
+  ON public.orders (order_number);
+CREATE INDEX IF NOT EXISTS idx_orders_guest_email_lower
+  ON public.orders (lower(guest_email));
+
+CREATE TABLE IF NOT EXISTS public.order_items (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id UUID NOT NULL REFERENCES public.orders(id) ON DELETE CASCADE,
+  product_slug TEXT NOT NULL,
+  variant_sku TEXT NOT NULL,
+  item_title TEXT NOT NULL,
+  unit_price_inr INTEGER NOT NULL CHECK (unit_price_inr >= 0),
+  quantity INTEGER NOT NULL CHECK (quantity > 0)
+);
+
+-- Ensure the bookings table exists even when the legacy 002 file created only bhunga_bookings.
 CREATE TABLE IF NOT EXISTS public.bookings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   stay_slug TEXT NOT NULL DEFAULT 'deep-work-bhunga-stay',
