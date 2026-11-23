@@ -70,6 +70,7 @@ export default function ContactPage() {
 
           <div className="mt-12 flex flex-wrap gap-4 text-sm">
             <Link href="/dashboard" className="font-bold underline">My Lado Journey</Link>
+            <Link href="/login?next=/dashboard/support" className="font-bold underline">Submit a private support request</Link>
             <Link href="/policies" className="font-bold underline">Policies & Legal</Link>
             <Link href="/" className="font-bold underline">Continue shopping</Link>
           </div>
