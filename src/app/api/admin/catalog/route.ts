@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!authorized(req.headers.get("x-admin-token"))) {
+  if (!(await getAdminActor(req, "inventory"))) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
   try {
