@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
     const localId = randomUUID();
     const orderNumber = "LO-" + new Date().toISOString().slice(0, 10).replace(/-/g, "") + "-" + randomUUID().slice(0, 8).toUpperCase();
     await client.query(
-      "INSERT INTO orders (id, order_number, guest_name, guest_email, guest_phone, shipping_summary, subtotal_inr, total_inr, status) VALUES ($1,$2,$3,$4,$5,$6,$7,$7,'pending_confirmation')",
+      "INSERT INTO orders (id, order_number, guest_name, guest_email, guest_phone, shipping_summary, shipping_address, subtotal_inr, total_inr, status) VALUES ($1,$2,$3,$4,$5,$6,$6,$7,$7,'pending_confirmation')",
       [localId, orderNumber, customerName, email, phone, address, total]
     );
     for (const item of lineItems) {
