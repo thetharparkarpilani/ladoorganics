@@ -78,7 +78,6 @@ async function getCartSuggestion(message: string): Promise<CartSuggestion | null
       'a2-bilona-ghee': ['ghee', 'bilona', 'clarified butter'],
       'tharparkar-dhoop': ['dhoop', 'incense'],
       'pure-kechua-khad': ['khad', 'compost', 'vermicompost', 'kechua', 'earth manure'],
-      'deep-work-bhunga-stay': ['bhunga', 'stay', 'accommodation'],
     };
     const products = new Map<string, { name: string; variants: CartVariantSuggestion[] }>();
     for (const row of result.rows) {
