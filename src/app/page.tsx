@@ -17,7 +17,6 @@ import JournalLibrarySection from "@/components/JournalLibrarySection";
 import CorporateGiftingSection from "@/components/CorporateGiftingSection";
 import CowAsCoconutMap from "@/components/CowAsCoconutMap";
 import FarmWorldSection from "@/components/FarmWorldSection";
-import ConciergeWidget from "@/components/ConciergeWidget";
 import CartCheckoutDrawer from "@/components/CartCheckoutDrawer";
 
 const INITIAL_PRODUCTS: ProductDTO[] = [
@@ -149,7 +148,6 @@ export default function HomePage() {
       </main>
       <footer className="py-8 px-4 border-t border-[var(--border)] text-center text-xs opacity-75">© 2026 Lado Organics • Pilani, Rajasthan • ladoorganics.in • <a href="/contact" className="underline">Help & Support</a> • <a href="/policies" className="underline">Policies & Legal</a></footer>
       <CartCheckoutDrawer />
-      <ConciergeWidget whatsappNumber={whatsappNumber} />
     </div>
   );
 }
