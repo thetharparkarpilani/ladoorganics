@@ -53,6 +53,12 @@ const dashboardLinks = [
     label: "View sponsorships",
   },
   {
+    title: "Customer Support",
+    description: "Send a private request and get help from the Lado team.",
+    href: "/dashboard/support",
+    label: "Get help",
+  },
+  {
     title: "My Profile",
     description: "Manage the details saved to your account.",
     href: "/dashboard/profile",
