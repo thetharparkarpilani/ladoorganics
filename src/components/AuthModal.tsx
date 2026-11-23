@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 
@@ -7,139 +7,88 @@ interface AuthModalProps {
   onClose: () => void;
 }
 
+function base64UrlEncode(bytes: Uint8Array) {
+  let binary = "";
+  bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
 export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
-  const [step, setStep] = useState<"phone" | "otp">("phone");
-  const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<{ type: "ok" | "err"; text: string } | null>(null);
+  const [message, setMessage] = useState("");
 
   if (!isOpen) return null;
 
-  const handleSendOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleGoogleSignIn = async () => {
     setLoading(true);
-    setMessage(null);
-    
-    try {
-      const res = await fetch("/api/auth/otp/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone })
-      });
-      const data = await res.json();
-      
-      if (!res.ok) throw new Error(data.error || "Failed to send OTP");
-      
-      setMessage({ type: "ok", text: data.message });
-      setStep("otp");
-    } catch (err) {
-      setMessage({ type: "err", text: err instanceof Error ? err.message : "Network error" });
-    } finally {
-      setLoading(false);
-    }
-  };
+    setMessage("");
 
-  const handleVerifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage(null);
-    
     try {
-      const res = await fetch("/api/auth/otp/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, otp })
-      });
-      const data = await res.json();
-      
-      if (!res.ok) throw new Error(data.error || "Invalid OTP");
-      
-      setMessage({ type: "ok", text: "Secure session established. Redirecting..." });
-      
-      // Force page reload to apply HttpOnly secure cookie across the app
-      setTimeout(() => {
-        window.location.href = "/dashboard";
-      }, 1000);
-      
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      if (!supabaseUrl || !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) {
+        throw new Error("Google sign-in is not configured yet. Please contact Lado Organics.");
+      }
+
+      const randomBytes = crypto.getRandomValues(new Uint8Array(32));
+      const verifier = base64UrlEncode(randomBytes);
+      const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(verifier));
+      const challenge = base64UrlEncode(new Uint8Array(digest));
+      window.sessionStorage.setItem("lado_supabase_pkce_verifier", verifier);
+
+      const redirectTo = `${window.location.origin}/auth/callback`;
+      const authorizeUrl = new URL(`${supabaseUrl.replace(/\/$/, "")}/auth/v1/authorize`);
+      authorizeUrl.searchParams.set("provider", "google");
+      authorizeUrl.searchParams.set("redirect_to", redirectTo);
+      authorizeUrl.searchParams.set("code_challenge", challenge);
+      authorizeUrl.searchParams.set("code_challenge_method", "s256");
+
+      window.location.assign(authorizeUrl.toString());
     } catch (err) {
-      setMessage({ type: "err", text: err instanceof Error ? err.message : "Verification failed" });
+      setMessage(err instanceof Error ? err.message : "Unable to start Google sign-in.");
       setLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
-      <div className="w-full max-w-md bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 sm:p-8 shadow-2xl relative">
-        <button onClick={onClose} className="absolute top-4 right-4 text-xs font-bold uppercase tracking-widest opacity-60 hover:opacity-100 transition">
-          Close
-        </button>
-        
-        <div className="mb-6 text-center">
-          <div className="w-12 h-12 mx-auto bg-[#3b2314] text-[#fbbf24] rounded-full flex items-center justify-center text-xl mb-4 border border-[var(--border)]">
-             <i className="fas fa-leaf"></i>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+      <div className="relative w-full max-w-md rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-2xl sm:p-8">
+        <button onClick={onClose} className="absolute right-4 top-4 text-xs font-bold uppercase tracking-widest opacity-60 transition hover:opacity-100" aria-label="Close sign-in">Close</button>
+
+        <div className="mb-7 text-center">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-[var(--border)] bg-[#3b2314] text-xl text-[#fbbf24]">
+            <i className="fas fa-leaf" aria-hidden="true" />
           </div>
-          <h2 className="text-2xl font-serif font-bold mb-2">My Lado Journey</h2>
-          <p className="text-xs opacity-80">Secure login to track A2 Ghee batches, Bhunga stays, and Gau Seva impact.</p>
+          <h2 className="mb-2 text-2xl font-serif font-bold">My Lado Journey</h2>
+          <p className="text-xs opacity-80">Sign in securely to access your Lado Organics customer account.</p>
         </div>
 
-        {message && (
-          <div className={`p-4 rounded-xl text-xs font-medium mb-4 border ${message.type === "ok" ? "bg-green-50 text-green-900 border-green-200" : "bg-red-50 text-red-900 border-red-200"}`}>
-            {message.text}
-          </div>
-        )}
+        {message && <div role="alert" className="mb-4 rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-900">{message}</div>}
 
-        {step === "phone" ? (
-          <form onSubmit={handleSendOtp} className="space-y-4">
-            <div>
-              <label className="block text-[10px] font-bold uppercase tracking-widest mb-1 opacity-70">Mobile Number</label>
-              <div className="flex bg-[var(--bg)] border border-[var(--border)] rounded-xl overflow-hidden focus-within:border-[var(--terracotta)] transition">
-                <span className="px-4 py-3 bg-[var(--surface)] border-r border-[var(--border)] text-sm font-bold text-[var(--muted)]">+91</span>
-                <input
-                  type="tel"
-                  required
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="98765 43210"
-                  className="w-full p-3 bg-transparent text-sm focus:outline-none text-[var(--mud)] font-medium"
-                />
-              </div>
-            </div>
+        <button
+          type="button"
+          onClick={handleGoogleSignIn}
+          disabled={loading}
+          className="flex w-full items-center justify-center gap-3 rounded-xl border border-[var(--border)] bg-white px-5 py-3.5 text-sm font-bold text-[#262626] shadow-sm transition hover:bg-stone-50 disabled:cursor-wait disabled:opacity-60"
+        >
+          <svg aria-hidden="true" viewBox="0 0 48 48" className="h-5 w-5">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 3.06 13.22l7.98 6.19C12.93 13.72 18.02 9.5 24 9.5Z" />
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.76 7.18l7.73 6C44.42 37.95 46.98 31.8 46.98 24.55Z" />
+            <path fill="#FBBC05" d="M11.04 28.59A14.4 14.4 0 0 1 10.27 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.9 23.9 0 0 0 0 24c0 3.87.93 7.52 2.58 10.78l8.46-6.19Z" />
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.91-5.8l-7.73-6c-2.14 1.45-4.88 2.3-8.18 2.3-5.98 0-11.07-4.22-12.96-9.91l-8.46 6.19C6.03 42.62 14.14 48 24 48Z" />
+          </svg>
+          {loading ? "Connecting to Google..." : "Continue with Google"}
+        </button>
 
-            <button type="submit" disabled={loading || phone.length < 10} className="w-full primary-btn py-3.5 rounded-xl text-sm font-bold disabled:opacity-50 transition shadow-md">
-              {loading ? "Transmitting..." : "Send Secure OTP"}
-            </button>
-            
-            <div className="pt-4 text-center">
-               <button type="button" className="text-xs font-bold border border-[var(--border)] px-6 py-3 rounded-xl hover:border-[var(--terracotta)] transition w-full">
-                 <i className="fab fa-google mr-2 text-[var(--terracotta)]"></i> Continue with Google OAuth
-               </button>
-            </div>
-          </form>
-        ) : (
-          <form onSubmit={handleVerifyOtp} className="space-y-4">
-            <div>
-              <label className="block text-[10px] font-bold uppercase tracking-widest mb-1 opacity-70">Enter OTP sent to +91 {phone}</label>
-              <input
-                type="text"
-                required
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                placeholder="123456"
-                className="w-full p-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-center tracking-[0.5em] font-mono text-lg focus:outline-none focus:border-[var(--terracotta)] text-[var(--mud)]"
-                maxLength={6}
-              />
-            </div>
-
-            <button type="submit" disabled={loading || otp.length < 4} className="w-full primary-btn py-3.5 rounded-xl text-sm font-bold disabled:opacity-50 transition shadow-md">
-              {loading ? "Verifying Token..." : "Authenticate Session"}
-            </button>
-            
-            <button type="button" onClick={() => setStep("phone")} className="w-full text-center text-xs font-bold text-[var(--muted)] hover:text-[var(--terracotta)] transition pt-2">
-              Change Mobile Number
-            </button>
-          </form>
-        )}
+        <div className="my-6 flex items-center gap-3">
+          <div className="h-px flex-1 bg-[var(--border)]" />
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">Other sign-in methods</span>
+          <div className="h-px flex-1 bg-[var(--border)]" />
+        </div>
+        <div className="rounded-xl border border-dashed border-[var(--border)] bg-[var(--bg)] p-4 text-center">
+          <p className="text-sm font-semibold">Mobile OTP coming soon</p>
+          <p className="mt-1 text-xs text-[var(--muted)]">Phone sign-in will be enabled after a real SMS delivery provider is configured.</p>
+        </div>
+        <p className="mt-5 text-center text-[10px] leading-relaxed text-[var(--muted)]">By continuing, you agree to use your Google account to create or access your Lado Organics customer account.</p>
       </div>
     </div>
   );
