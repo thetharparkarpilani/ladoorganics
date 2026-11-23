@@ -35,6 +35,24 @@ const dashboardLinks = [
     label: "View rewards",
   },
   {
+    title: "Essentials Club",
+    description: "Review your repeat-delivery enquiries. These are not paid subscriptions.",
+    href: "/dashboard/subscriptions",
+    label: "View enquiries",
+  },
+  {
+    title: "Bhunga Stays",
+    description: "Track your farm stay requests and their confirmation status.",
+    href: "/dashboard/stays",
+    label: "View stay requests",
+  },
+  {
+    title: "Gau Seva",
+    description: "Follow your calf sponsorship enquiries and updates.",
+    href: "/dashboard/sponsorships",
+    label: "View sponsorships",
+  },
+  {
     title: "My Profile",
     description: "Manage the details saved to your account.",
     href: "/dashboard/profile",
