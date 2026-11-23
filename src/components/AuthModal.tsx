@@ -34,6 +34,9 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(verifier));
       const challenge = base64UrlEncode(new Uint8Array(digest));
       window.sessionStorage.setItem("lado_supabase_pkce_verifier", verifier);
+      const requestedNext = new URLSearchParams(window.location.search).get("next") || "";
+      const safeNext = requestedNext.startsWith("/") && !requestedNext.startsWith("//") ? requestedNext : "/dashboard";
+      window.sessionStorage.setItem("lado_post_auth_redirect", safeNext);
 
       const redirectTo = `${window.location.origin}/auth/callback`;
       const authorizeUrl = new URL(`${supabaseUrl.replace(/\/$/, "")}/auth/v1/authorize`);
