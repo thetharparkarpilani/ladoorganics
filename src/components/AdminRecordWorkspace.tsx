@@ -12,7 +12,7 @@ type RecordItem = {
   sponsor_name?: string; sponsor_email?: string; plan_type?: string; amount_inr?: number | string;
 };
 const CONFIG: Record<Kind, { title: string; singular: string; statuses: string[]; action: string }> = {
-  orders: { title: "Orders & Payments", singular: "order", statuses: ["pending_confirmation", "paid", "processing", "shipped", "delivered", "cancelled", "refunded"], action: "update_order_status" },
+  orders: { title: "Orders & Payments", singular: "order", statuses: ["pending_confirmation", "processing", "shipped", "delivered", "cancelled"], action: "update_order_status" },
   bookings: { title: "Bhunga Stay Requests", singular: "booking", statuses: ["pending", "confirmed", "cancelled", "completed"], action: "update_booking_status" },
   sponsorships: { title: "Gau Seva Sponsorships", singular: "sponsorship", statuses: ["pending", "active", "paused", "cancelled"], action: "update_sponsorship_status" },
 };
@@ -65,6 +65,21 @@ export default function AdminRecordWorkspace({ kind }: { kind: Kind }) {
     return matchesStatus && haystack.includes(query.toLowerCase());
   }), [records, filter, query]);
 
+  const runPaymentAction = async (id: string, action: "confirm_cod_payment" | "confirm_manual_upi_payment") => {
+    if (!token || !window.confirm(action === "confirm_cod_payment" ? "Confirm that the COD amount has actually been collected?" : "Confirm that the UPI amount has actually reached the Lado Organics bank account?")) return;
+    setBusyId(id); setError(""); setNotice("");
+    try {
+      const res = await fetch("/api/admin/records", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-token": token }, body: JSON.stringify({ action, id }) });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Payment update failed.");
+      setNotice("Payment marked received and recorded in the audit log.");
+      await load(token, page, query, filter);
+    } catch (e) { setError(e instanceof Error ? e.message : "Unable to update payment."); }
+    finally { setBusyId(""); }
+  };
+  const confirmCollectedPayment = (id: string) => runPaymentAction(id, "confirm_cod_payment");
+  const confirmManualPayment = (id: string) => runPaymentAction(id, "confirm_manual_upi_payment");
+
   const updateStatus = async (id: string, status: string) => {
     if (!token || !window.confirm(`Update this ${config.singular} to "${status.replace(/_/g, " ")}"?`)) return;
     setBusyId(id); setError(""); setNotice("");
@@ -105,6 +120,8 @@ export default function AdminRecordWorkspace({ kind }: { kind: Kind }) {
       return <article key={r.id} className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5"><div className="flex flex-wrap items-start justify-between gap-3"><div><p className="font-mono text-xs font-bold text-[var(--terracotta)]">{r.order_number || (kind === "sponsorships" ? r.calf_name : r.id)}</p><h2 className="mt-1 font-serif text-xl font-bold">{name}</h2><p className="mt-1 break-all text-sm opacity-70">{contact(r) || "No email recorded"}{phoneDigits ? ` · ${r.guest_phone}` : ""}</p></div><span className="rounded-full border border-[var(--border)] px-3 py-1 text-xs font-bold capitalize">{r.status.replace(/_/g," ")}</span></div>
         <div className="mt-4 grid gap-2 text-sm sm:grid-cols-3"><p><span className="opacity-60">Amount</span><br/><strong>{amount === undefined ? "—" : money(amount)}</strong></p><p><span className="opacity-60">{kind === "bookings" ? "Stay dates" : "Plan / details"}</span><br/><strong>{kind === "bookings" ? `${date(r.check_in)} – ${date(r.check_out)}` : r.plan_type || "—"}</strong></p><p><span className="opacity-60">Received</span><br/><strong>{date(r.created_at)}</strong></p>{kind === "orders" && <p><span className="opacity-60">Payment</span><br/><strong>{(r.payment_status || "—").replace(/_/g," ")} · {(r.payment_method || "—").replace(/_/g," ")}</strong></p>}</div>
         <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-[var(--border)] pt-4"><label className="text-xs font-bold">Update status</label><select aria-label="New status" defaultValue={r.status} onChange={e => void updateStatus(r.id,e.target.value)} disabled={busyId === r.id} className="rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 py-2 text-sm"><option value={r.status}>{r.status.replace(/_/g," ")}</option>{config.statuses.filter(s => s !== r.status).map(s => <option key={s} value={s}>{s.replace(/_/g," ")}</option>)}</select>
+                {kind === "orders" && r.payment_method === "cash_on_delivery" && r.payment_status === "pay_on_delivery" && ["processing", "shipped", "delivered"].includes(r.status) && <button onClick={() => void confirmCollectedPayment(r.id)} disabled={busyId === r.id} className="rounded-lg border border-[var(--border)] px-3 py-2 text-xs font-bold disabled:opacity-40">Mark COD received</button>}
+        {kind === "orders" && r.payment_method === "manual_upi" && ["awaiting_manual_payment", "payment_submitted"].includes(r.payment_status || "") && <button onClick={() => void confirmManualPayment(r.id)} disabled={busyId === r.id} className="rounded-lg border border-[var(--border)] px-3 py-2 text-xs font-bold disabled:opacity-40">Verify UPI received</button>}
         {contact(r) && <a href={`mailto:${contact(r)}?subject=${encodeURIComponent("Your Lado Organics request")}&body=${encodeURIComponent(msg)}`} className="rounded-lg border border-[var(--border)] px-3 py-2 text-xs font-bold">Email</a>}{phoneDigits && <a href={`https://wa.me/${phoneDigits.length===10?"91":""}${phoneDigits}?text=${encodeURIComponent(msg)}`} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-[var(--border)] px-3 py-2 text-xs font-bold">WhatsApp</a>}<button onClick={() => { void navigator.clipboard.writeText(r.id); setNotice("Record ID copied."); }} className="rounded-lg border border-[var(--border)] px-3 py-2 text-xs font-bold">Copy ID</button></div>
       </article>;
     })}</div>}

@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getAdminActor } from "@/lib/admin-auth";
 
@@ -103,22 +103,98 @@ export async function POST(req: NextRequest) {
     if (action === "update_order_status") {
       const id = typeof body?.id === "string" ? body.id.trim() : "";
       const status = typeof body?.status === "string" ? body.status.trim() : "";
-      if (!id || !ORDER_STATUSES.has(status)) {
-        return NextResponse.json({ error: "Valid order id and status are required." }, { status: 400 });
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id) ||
+          !ORDER_STATUSES.has(status) || status === "paid" || status === "refunded") {
+        return NextResponse.json({ error: "Choose a valid workflow status. Payments must be confirmed through the payment controls." }, { status: 400 });
       }
-      const res = await db.query(
-        `UPDATE orders SET status = $2 WHERE id = $1 RETURNING id, order_number, status`,
-        [id, status]
-      );
-      if (res.rowCount === 0) {
-        return NextResponse.json({ error: "Order not found." }, { status: 404 });
+      const client = await db.getClient();
+      try {
+        await client.query("BEGIN");
+        const current = await client.query(
+          "SELECT id, order_number, status, payment_status FROM orders WHERE id = $1 FOR UPDATE",
+          [id]
+        );
+        if (!current.rows[0]) {
+          await client.query("ROLLBACK");
+          return NextResponse.json({ error: "Order not found." }, { status: 404 });
+        }
+        const previousStatus = String(current.rows[0].status);
+        if (status === "cancelled" && ["shipped", "delivered", "refunded"].includes(previousStatus)) {
+          await client.query("ROLLBACK");
+          return NextResponse.json({ error: "A shipped, delivered or refunded order cannot be cancelled here. Contact the owner to resolve it." }, { status: 409 });
+        }
+        if (status === "cancelled" && previousStatus !== "cancelled") {
+          const released = await client.query(
+            "UPDATE orders SET status = 'cancelled', inventory_released_at = NOW() WHERE id = $1 AND inventory_released_at IS NULL RETURNING id",
+            [id]
+          );
+          if (released.rowCount) {
+            await client.query(
+              `UPDATE product_variants pv
+                  SET stock_qty = pv.stock_qty + oi.quantity
+                 FROM order_items oi
+                WHERE oi.order_id = $1 AND pv.sku = oi.variant_sku`,
+              [id]
+            );
+          } else {
+            await client.query("UPDATE orders SET status = 'cancelled' WHERE id = $1", [id]);
+          }
+        } else {
+          await client.query("UPDATE orders SET status = $2 WHERE id = $1", [id, status]);
+        }
+        await client.query(
+          `INSERT INTO audit_logs (action, entity_type, entity_id, metadata)
+           VALUES ('ORDER_STATUS_UPDATED', 'order', $1, $2::jsonb)`,
+          [id, JSON.stringify({ previousStatus, status, inventoryRestored: status === "cancelled" && previousStatus !== "cancelled" })]
+        );
+        const updated = await client.query("SELECT id, order_number, status, payment_status FROM orders WHERE id = $1", [id]);
+        await client.query("COMMIT");
+        return NextResponse.json({ ok: true, order: updated.rows[0] });
+      } catch (error) {
+        await client.query("ROLLBACK").catch(() => undefined);
+        throw error;
+      } finally {
+        client.release();
       }
-      await db.query(
-        `INSERT INTO audit_logs (action, entity_type, entity_id, metadata)
-         VALUES ('ORDER_STATUS_UPDATED', 'order', $1, $2::jsonb)`,
-        [id, JSON.stringify({ status })]
-      );
-      return NextResponse.json({ ok: true, order: res.rows[0] });
+    }
+
+    if (action === "confirm_cod_payment") {
+      const id = typeof body?.id === "string" ? body.id.trim() : "";
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) {
+        return NextResponse.json({ error: "A valid order UUID is required." }, { status: 400 });
+      }
+      const client = await db.getClient();
+      try {
+        await client.query("BEGIN");
+        const updated = await client.query(
+          `UPDATE orders SET payment_status = 'paid'
+            WHERE id = $1 AND payment_method = 'cash_on_delivery'
+              AND payment_status = 'pay_on_delivery'
+              AND status IN ('delivered', 'processing', 'shipped')
+            RETURNING id, order_number, status, payment_status`,
+          [id]
+        );
+        if (!updated.rows[0]) {
+          await client.query("ROLLBACK");
+          return NextResponse.json({ error: "COD payment can only be recorded once the order is being fulfilled or delivered." }, { status: 409 });
+        }
+        await client.query(
+          "UPDATE payments SET status = 'captured', event_type = 'cod_collected' WHERE order_id = $1 AND provider = 'cash_on_delivery' AND status = 'created'",
+          [id]
+        );
+        await client.query(
+          `INSERT INTO audit_logs (action, entity_type, entity_id, metadata)
+           VALUES ('COD_PAYMENT_COLLECTED', 'order', $1, $2::jsonb)`,
+          [id, JSON.stringify({ paymentStatus: "paid" })]
+        );
+        await client.query("COMMIT");
+        return NextResponse.json({ ok: true, order: updated.rows[0] });
+      } catch (error) {
+        await client.query("ROLLBACK").catch(() => undefined);
+        throw error;
+      } finally {
+        client.release();
+      }
     }
 
     if (action === "confirm_manual_upi_payment") {
