@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { db } from "@/lib/db";
+import { sendTemplatedNotification } from "@/lib/customer-notifications";
 
 export const runtime = "nodejs";
 
@@ -156,6 +157,12 @@ export async function POST(req: NextRequest) {
     );
 
     await client.query("COMMIT");
+    void sendTemplatedNotification("order_received", email, {
+      name: customerName,
+      order_number: orderNumber,
+      amount: total,
+      payment_method: method === "cash_on_delivery" ? "Cash on Delivery" : "Manual UPI",
+    });
     return NextResponse.json({
       success: true,
       orderId,
