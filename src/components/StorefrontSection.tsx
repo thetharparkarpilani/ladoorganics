@@ -94,6 +94,12 @@ export default function StorefrontSection({
                 const displayName =
                   (locale === "hi" ? product.nameHi : locale === "ma" ? product.nameMa : product.nameEn) ||
                   product.nameEn;
+                const productArt = product.slug.includes("ghee") ? { kind: "ghee", symbol: "◉", label: "BILONA GHEE" }
+                  : product.slug.includes("dhoop") ? { kind: "dhoop", symbol: "✺", label: "TRADITIONAL DHOOP" }
+                  : product.slug.includes("khad") || product.slug.includes("compost") ? { kind: "soil", symbol: "❧", label: "LIVING SOIL" }
+                  : product.slug.includes("milk") ? { kind: "milk", symbol: "◒", label: "FRESH MILK" }
+                  : product.slug.includes("kesar") ? { kind: "kesar", symbol: "✿", label: "PURE KESAR" }
+                  : { kind: "earth", symbol: "✳", label: "FARM COLLECTION" };
                 const defaultVar =
                   product.variants.find((v) => v.isDefault) ?? product.variants[0];
                 const chosenSku = selectedVariantByProduct[product.id] ?? defaultVar?.sku;
@@ -111,8 +117,11 @@ export default function StorefrontSection({
                           <Image src={product.imageUrl} alt={displayName} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" unoptimized className="object-cover" />
                         </div>
                       ) : (
-                        <div className="mb-4 flex aspect-[4/3] items-center justify-center rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg)] text-xs opacity-50">
-                          Product image coming soon
+                        <div className={`product-art product-art-${productArt.kind} mb-4 aspect-[4/3] rounded-2xl`} aria-label={`${displayName} product artwork placeholder`}>
+                          <span className="product-art-brand">LADO ORGANICS <i>·</i> PILANI</span>
+                          <span className="product-art-symbol" aria-hidden="true">{productArt.symbol}</span>
+                          <span className="product-art-name">{productArt.label}</span>
+                          <span className="product-art-foot">LADO LOVE PURE</span>
                         </div>
                       )}
                       <h3 className="text-xl font-serif font-bold mb-2">{displayName}</h3>
