@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { db } from "@/lib/db";
+import { enforceRateLimit } from "@/lib/rate-limit";
 import { findLocalAnswer, getKnowledgeEntries } from "@/lib/lado-knowledge";
 
 export const runtime = "nodejs";
@@ -203,6 +204,8 @@ async function answerFromLiveCatalog(message: string): Promise<string | null> {
   } catch (error) { console.error("Lado AI live catalogue answer failed:",error); return null; }
 }
 export async function POST(req: NextRequest) {
+  const rateLimited = await enforceRateLimit(req, "concierge", 18, 600);
+  if (rateLimited) return rateLimited;
   if (limited(clientKey(req))) return NextResponse.json(
     { error: "You've sent several messages in a short time. Please wait a few minutes and try again." },
     { status: 429, headers: { "Cache-Control": "no-store" } }
