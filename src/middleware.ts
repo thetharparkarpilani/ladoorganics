@@ -80,17 +80,20 @@ export async function middleware(req: NextRequest) {
       return login;
     }
     if (isDashboardApi) {
-      clearSession(expired);
-      return NextResponse.json({ error: "Your session has expired. Please sign in again." }, {
+      const unauthorized = NextResponse.json({ error: "Your session has expired. Please sign in again." }, {
         status: 401,
         headers: { "Cache-Control": "no-store" },
       });
+      clearSession(unauthorized);
+      return unauthorized;
     }
     return expired;
   }
 
   if (isDashboardPage && (!accessToken || !expiry || expiry <= Math.floor(Date.now() / 1000))) {
-    return NextResponse.redirect(new URL("/login?auth=required", req.url));
+    const login = NextResponse.redirect(new URL("/login?auth=required", req.url));
+    clearSession(login);
+    return login;
   }
 
   // Admin pages render the sign-in experience. Every admin data API performs
