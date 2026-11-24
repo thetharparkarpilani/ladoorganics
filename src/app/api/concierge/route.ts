@@ -193,10 +193,12 @@ async function answerFromLiveCatalog(message: string, locale: "en" | "hi" | "ma"
       const selected = Array.from(matched.values())[0];
       return localizedCatalogReply(selected.name, selected.variants, locale);
     }
-    return locale === "hi"
-      ? "आप किस उत्पाद की मौजूदा कीमत या पैक जानना चाहते हैं — A2 बिलोना घी, थारपारकर धूप या केंचुआ खाद?"
-      : locale === "ma" ? "थां किण सामान रो चालू भाव या पैक जाणणो चाहो हो — A2 बिलोना घी, थारपारकर धूप या केंचुआ खाद?"
-      : "Which product would you like the current price or pack sizes for — A2 Bilona Ghee, Tharparkar Dhoop or Vermicompost?";
+    return matched.size > 1
+      ? (locale === "hi"
+        ? "आप किस उत्पाद की मौजूदा कीमत या पैक जानना चाहते हैं — A2 बिलोना घी, थारपारकर धूप या केंचुआ खाद?"
+        : locale === "ma" ? "थां किण सामान रो चालू भाव या पैक जाणणो चाहो हो — A2 बिलोना घी, थारपारकर धूप या केंचुआ खाद?"
+        : "Which product would you like the current price or pack sizes for — A2 Bilona Ghee, Tharparkar Dhoop or Vermicompost?")
+      : null;
   } catch (error) {
     console.error("Lado AI live catalogue answer failed:", error);
     return null;
@@ -215,6 +217,10 @@ export async function POST(req: NextRequest) {
   const locale = detectLadoLocale(message, requestedLocale);
   if (message.length < 2) return NextResponse.json({ error: "Please type a little more detail." }, { status: 400 });
 
+  // Resolve live product prices and availability before broad FAQ matches.
+  const liveAnswer = await answerFromLiveCatalog(message, locale);
+  if (liveAnswer) return NextResponse.json({ reply: liveAnswer, actions: actionsFor(message, locale), answerSource: "live-catalog", locale }, { headers: { "Cache-Control": "no-store" } });
+
   const knowledge = await getKnowledgeEntries();
   const direct = findLocalAnswer(message, knowledge);
   if (direct) return NextResponse.json({ reply: localizedKnowledgeAnswer(direct.title, direct.answer, locale), actions: actionsFor(message, locale), answerSource: "lado-knowledge", locale }, { headers: { "Cache-Control": "no-store" } });
@@ -228,9 +234,6 @@ export async function POST(req: NextRequest) {
         : "I found the available options for " + cartSuggestion.productName + ". Choose the pack you want and tap Add to your bag.";
     return NextResponse.json({ reply, actions: actionsFor(message, locale), cartSuggestion, answerSource: "store-assistant", locale }, { headers: { "Cache-Control": "no-store" } });
   }
-
-  const liveAnswer = await answerFromLiveCatalog(message, locale);
-  if (liveAnswer) return NextResponse.json({ reply: liveAnswer, actions: actionsFor(message, locale), answerSource: "live-catalog", locale }, { headers: { "Cache-Control": "no-store" } });
 
   if (!openai) return NextResponse.json({
     reply: AI_COPY[locale].fallback + " WhatsApp: +91 96361 00337.",

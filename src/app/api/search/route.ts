@@ -19,9 +19,16 @@ export async function GET(req: NextRequest) {
     const res = await db.query(`
       SELECT p.slug, p.name_en, p.name_hi, p.name_ma, p.description_en, v.price_inr, v.label, v.sku
       FROM products p
-      JOIN product_variants v ON p.id = v.product_id
+      JOIN LATERAL (
+        SELECT price_inr, label, sku
+        FROM product_variants
+        WHERE product_id = p.id AND stock_qty > 0
+        ORDER BY is_default DESC, label ASC
+        LIMIT 1
+      ) v ON TRUE
       WHERE (p.name_en ILIKE $1 OR p.name_hi ILIKE $1 OR p.name_ma ILIKE $1 OR p.description_en ILIKE $1)
-        AND p.is_active = TRUE AND v.is_default = TRUE
+        AND p.is_active = TRUE
+      ORDER BY p.created_at ASC
       LIMIT 5
     `, [searchTerm]);
 

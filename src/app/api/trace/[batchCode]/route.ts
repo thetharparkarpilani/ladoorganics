@@ -24,6 +24,14 @@ export async function GET(_req: NextRequest, context: { params: Promise<{ batchC
   if (!/^[A-Z0-9][A-Z0-9-]{2,63}$/.test(normalizedCode)) {
     return NextResponse.json({ error: "Invalid batch code." }, { status: 400 });
   }
+  // This legacy sample record was seeded for development and is not evidence
+  // of an actual production batch. Never expose it as verified traceability.
+  if (normalizedCode === "LO-PILANI-SAMPLE-001") {
+    return NextResponse.json(
+      { error: "That is a demonstration code, not a verified production batch. Please use the batch code printed on your product label or contact the Lado team." },
+      { status: 404, headers: { "Cache-Control": "no-store" } }
+    );
+  }
 
   try {
     const result = await db.query(

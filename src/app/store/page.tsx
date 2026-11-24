@@ -16,12 +16,12 @@ type StoreProduct = {
 async function getProducts(): Promise<StoreProduct[]> {
   try {
     const res = await db.query(`
-      SELECT p.slug, p.name_en, p.name_hi, p.name_ma, p.description_en,
+      SELECT DISTINCT ON (p.id) p.slug, p.name_en, p.name_hi, p.name_ma, p.description_en,
              v.sku, v.price_inr, v.label
       FROM products p
-      JOIN product_variants v ON p.id = v.product_id
-      WHERE p.is_active = TRUE AND v.is_default = TRUE AND v.stock_qty > 0
-      ORDER BY p.created_at ASC
+      JOIN product_variants v ON p.id = v.product_id AND v.stock_qty > 0
+      WHERE p.is_active = TRUE
+      ORDER BY p.id, v.is_default DESC, v.label ASC
     `);
     return res.rows as StoreProduct[];
   } catch (error) {
