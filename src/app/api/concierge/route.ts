@@ -10,24 +10,6 @@ export const dynamic = "force-dynamic";
 type ChatTurn = { role: "user" | "assistant"; content: string };
 const openai = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
 
-// Best-effort per-instance limiter. Use a shared store such as Redis for multi-instance enforcement.
-const buckets = new Map<string, { count: number; resetAt: number }>();
-const WINDOW_MS = 10 * 60 * 1000;
-const MAX_REQUESTS = 18;
-
-function clientKey(req: NextRequest): string {
-  return req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || req.headers.get("x-real-ip") || "anonymous";
-}
-function limited(key: string): boolean {
-  const now = Date.now();
-  const bucket = buckets.get(key);
-  if (!bucket || bucket.resetAt <= now) {
-    buckets.set(key, { count: 1, resetAt: now + WINDOW_MS });
-    if (buckets.size > 2000) for (const [k, v] of buckets) if (v.resetAt <= now) buckets.delete(k);
-    return false;
-  }
-  return ++bucket.count > MAX_REQUESTS;
-}
 function clean(value: unknown, max: number): string {
   return typeof value === "string"
     ? value.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "").trim().slice(0, max)
@@ -206,11 +188,6 @@ async function answerFromLiveCatalog(message: string): Promise<string | null> {
 export async function POST(req: NextRequest) {
   const rateLimited = await enforceRateLimit(req, "concierge", 18, 600);
   if (rateLimited) return rateLimited;
-  if (limited(clientKey(req))) return NextResponse.json(
-    { error: "You've sent several messages in a short time. Please wait a few minutes and try again." },
-    { status: 429, headers: { "Cache-Control": "no-store" } }
-  );
-
   let body: unknown;
   try { body = await req.json(); }
   catch { return NextResponse.json({ error: "Please enter a question and try again." }, { status: 400 }); }

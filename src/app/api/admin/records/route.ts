@@ -306,35 +306,55 @@ export async function POST(req: NextRequest) {
 
     if (action === "confirm_manual_upi_payment") {
       const id = typeof body?.id === "string" ? body.id.trim() : "";
-      if (!id) {
-        return NextResponse.json({ error: "A valid order UUID is required." }, { status: 400 });
+      const reference = typeof body?.reference === "string" ? body.reference.trim().toUpperCase() : "";
+      const amountInr = Number(body?.amountInr);
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id) ||
+          !/^[A-Z0-9-]{6,80}$/.test(reference) || !Number.isSafeInteger(amountInr) || amountInr <= 0) {
+        return NextResponse.json({ error: "Enter a valid order UUID, UPI transaction reference and received amount." }, { status: 400 });
       }
       const client = await db.getClient();
       try {
         await client.query("BEGIN");
-        const updated = await client.query(
-          `UPDATE orders
-              SET payment_status = 'paid', status = CASE WHEN status = 'pending_confirmation' THEN 'paid' ELSE status END
-            WHERE id = $1
-              AND payment_method = 'manual_upi'
-              AND payment_status IN ('awaiting_manual_payment', 'payment_submitted')
-              AND status <> 'cancelled'
-            RETURNING id, order_number, status, payment_status`,
+        const order = await client.query(
+          `SELECT id, order_number, total_inr, status, payment_status
+             FROM orders WHERE id = $1 AND payment_method = 'manual_upi' FOR UPDATE`,
           [id]
         );
-        if (updated.rowCount === 0) {
+        if (!order.rows[0]) {
           await client.query("ROLLBACK");
-          return NextResponse.json({ error: "Manual UPI order not found or it is already processed." }, { status: 404 });
+          return NextResponse.json({ error: "Manual UPI order not found." }, { status: 404 });
         }
-        await client.query(
-          `UPDATE payments SET status = 'captured', event_type = 'manual_upi_verified'
-            WHERE order_id = $1 AND provider = 'manual_upi' AND status = 'created'`,
+        if (!["awaiting_manual_payment", "payment_submitted"].includes(String(order.rows[0].payment_status)) ||
+            order.rows[0].status === "cancelled") {
+          await client.query("ROLLBACK");
+          return NextResponse.json({ error: "This order is already processed or cancelled." }, { status: 409 });
+        }
+        if (amountInr !== Number(order.rows[0].total_inr)) {
+          await client.query("ROLLBACK");
+          return NextResponse.json({ error: "The received amount must exactly match the order total." }, { status: 409 });
+        }
+        const payment = await client.query(
+          `UPDATE payments SET provider_payment_id = $2, status = 'captured',
+                  amount_inr = $3, verified_at = NOW(), event_type = 'manual_upi_verified'
+            WHERE order_id = $1 AND provider = 'manual_upi' AND status = 'created'
+              AND provider_payment_id IS NULL
+            RETURNING id`,
+          [id, reference, amountInr]
+        );
+        if (!payment.rows[0]) {
+          await client.query("ROLLBACK");
+          return NextResponse.json({ error: "No unverified payment row exists, or this UPI reference has already been used." }, { status: 409 });
+        }
+        const updated = await client.query(
+          `UPDATE orders SET payment_status = 'paid',
+              status = CASE WHEN status = 'pending_confirmation' THEN 'paid' ELSE status END
+            WHERE id = $1 RETURNING id, order_number, status, payment_status`,
           [id]
         );
         await client.query(
           `INSERT INTO audit_logs (action, entity_type, entity_id, metadata)
            VALUES ('MANUAL_UPI_PAYMENT_VERIFIED', 'order', $1, $2::jsonb)`,
-          [id, JSON.stringify({ paymentStatus: "paid" })]
+          [id, JSON.stringify({ paymentStatus: "paid", amountInr, transactionReference: reference, verifiedBy: actor.email })]
         );
         await client.query("COMMIT");
         return NextResponse.json({ ok: true, order: updated.rows[0] });
