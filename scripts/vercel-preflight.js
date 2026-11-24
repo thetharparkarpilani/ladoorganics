@@ -2,7 +2,8 @@
 const path = require('path');
 require('dotenv').config({ path: '.env.local' });
 
-console.log("🚀 Initiating Lado Organics Vercel Pre-Flight Checks...\n");
+console.log("🚀 Initiating Lado Organics Vercel Pre-Flight Checks...
+");
 
 const requiredEnvs = [
   "DATABASE_URL",
@@ -36,10 +37,16 @@ requiredEnvs.forEach(env => {
   }
 });
 
-optionalEnvs.forEach(env => {\n  console.log(process.env[env] ? `ℹ️ CONFIGURED: ${env}` : `ℹ️ OPTIONAL: ${env} not set`);\n});\n\nif (errors > 0) {
-  console.error(`\n🚨 Pre-flight failed. You must add ${errors} missing secrets to Vercel before deploying.`);
+optionalEnvs.forEach(env => {
+  console.log(process.env[env] ? `ℹ️ CONFIGURED: ${env}` : `ℹ️ OPTIONAL: ${env} not set`);
+});
+
+if (errors > 0) {
+  console.error(`
+🚨 Pre-flight failed. You must add ${errors} missing secrets to Vercel before deploying.`);
   process.exit(1);
 } else {
-  console.log("\n✅ All critical secrets verified. Ready for Vercel production deployment.");
+  console.log("
+✅ All critical secrets verified. Ready for Vercel production deployment.");
   process.exit(0);
 }
