@@ -11,10 +11,11 @@ async function getProducts() {
   // In production, this fetches from the PostgreSQL database we set up in Phase 2
   try {
     const res = await db.query(`
-      SELECT p.slug, p.name_en, p.description_en, v.sku, v.price_inr, v.label
+      SELECT DISTINCT ON (p.id) p.slug, p.name_en, p.description_en, v.sku, v.price_inr, v.label
       FROM products p
-      JOIN product_variants v ON p.id = v.product_id
-      WHERE p.is_active = TRUE AND v.is_default = TRUE
+      JOIN product_variants v ON p.id = v.product_id AND v.stock_qty > 0
+      WHERE p.is_active = TRUE
+      ORDER BY p.id, v.is_default DESC, v.label ASC
     `);
     return res.rows;
   } catch (error) {
