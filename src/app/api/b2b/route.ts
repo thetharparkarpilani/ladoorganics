@@ -9,6 +9,8 @@ function clean(value: unknown, max: number): string {
 }
 
 export async function POST(req: NextRequest) {
+  const rateLimited = await enforceRateLimit(req, "b2b-enquiries", 5, 3600);
+  if (rateLimited) return rateLimited;
   try {
     const body = await req.json().catch(() => null);
     if (!body || typeof body !== "object") {
