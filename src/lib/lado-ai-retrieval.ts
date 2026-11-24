@@ -81,7 +81,7 @@ const EXPANDED_QUESTION_PATTERNS: Record<string, string[]> = {
     "khad kitri nakhu", "paudha mein khad kitti nakhu", "khad kiyan dalu", "खाद कितनी डालें", "पौधों में खाद कैसे डालें",
   ],
   "Dhoop usage": [
-    "how to use incense", "how to burn incense safely", "how do i light dhoop", "dhoop use instructions",
+    "how to use incense", "how to burn incense safely", "how do i light dhoop", "dhoop use instructions", "dhoop safety",
     "dhoop kiyan jalau", "dhoop kaiso jalave", "धूप कैसे जलाएं", "धूप जलाने का तरीका",
   ],
   "Current product prices and stock": [
@@ -125,7 +125,7 @@ const EXPANDED_QUESTION_PATTERNS: Record<string, string[]> = {
     "gau seva kiyan karu", "gai ri seva kiyan karu", "bachhri god levani hai", "गौ सेवा कैसे करें", "गाय को गोद लेना",
   ],
   "Essentials Club": [
-    "monthly essentials delivery", "is this a subscription", "recurring order plan", "essentials membership",
+    "monthly essentials delivery", "is this a subscription", "is this a subscription plan", "recurring order plan", "essentials membership",
     "essentials club su hai", "mahinavari saman avse ke", "क्या यह पेड सब्सक्रिप्शन है",
   ],
   "Lab reports and certifications": [
