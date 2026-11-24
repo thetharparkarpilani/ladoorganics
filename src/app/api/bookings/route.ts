@@ -17,7 +17,8 @@ export async function POST(req: NextRequest) {
   if (rateLimited) return rateLimited;
   let client: Awaited<ReturnType<typeof db.getClient>> | null = null;
   try {
-    const body = await req.json();
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body !== "object") return NextResponse.json({ error: "Invalid booking details." }, { status: 400 });
     const guestName = typeof body.guestName === "string" ? body.guestName.trim() : "";
     const guestEmail = typeof body.guestEmail === "string" ? body.guestEmail.trim().toLowerCase() : "";
     const guestPhone = typeof body.guestPhone === "string" ? body.guestPhone.trim() : "";
