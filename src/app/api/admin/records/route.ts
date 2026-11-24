@@ -117,7 +117,7 @@ export async function POST(req: NextRequest) {
       try {
         await client.query("BEGIN");
         const current = await client.query(
-          "SELECT id, order_number, status, payment_status FROM orders WHERE id = $1 FOR UPDATE",
+          "SELECT id, order_number, status, payment_status, payment_method FROM orders WHERE id = $1 FOR UPDATE",
           [id]
         );
         if (!current.rows[0]) {
@@ -137,6 +137,12 @@ export async function POST(req: NextRequest) {
         if (!(allowedTransitions[previousStatus] || []).includes(status)) {
           await client.query("ROLLBACK");
           return NextResponse.json({ error: "That order status transition is not permitted. Cancelled and completed orders cannot be reopened." }, { status: 409 });
+        }
+        if (status === "processing" &&
+            current.rows[0].payment_method === "manual_upi" &&
+            current.rows[0].payment_status !== "paid") {
+          await client.query("ROLLBACK");
+          return NextResponse.json({ error: "Manual UPI payment must be verified by a finance-authorized user before an order can enter processing." }, { status: 409 });
         }
         if (status === "cancelled" && ["shipped", "delivered", "refunded"].includes(previousStatus)) {
           await client.query("ROLLBACK");
