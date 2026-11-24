@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { sendTemplatedNotification } from "@/lib/customer-notifications";
 import { sendAdminRequestAlert } from "@/lib/admin-notifications";
 import { getCustomerIdentity } from "@/lib/customer-auth";
+import { enforceRateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -25,6 +26,8 @@ const clean = (value: unknown, max: number) =>
 
 
 export async function POST(req: NextRequest) {
+  const rateLimited = await enforceRateLimit(req, "orders", 5, 600);
+  if (rateLimited) return rateLimited;
   const idempotencyKey = req.headers.get("idempotency-key")?.trim() || "";
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(idempotencyKey)) {
     return NextResponse.json({ error: "Checkout session expired. Please refresh your bag and try again." }, { status: 400 });
