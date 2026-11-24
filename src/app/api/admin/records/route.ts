@@ -33,13 +33,13 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Finance permission is required for payment confirmation and refunds." }, { status: 403 });
       }
     }
-    if (action === "create_batch" && actor.role !== "owner" && actor.role !== "manager") return NextResponse.json({ error: "Manager permission is required for batch publishing." }, { status: 403 });
+    if (action === "create_batch" && body?.approveBatch === true && actor.role !== "owner" && actor.role !== "manager") return NextResponse.json({ error: "Only the owner or manager can publish a verified batch." }, { status: 403 });
 
     if (action === "create_batch") {
       const batchCode = typeof body?.batchCode === "string" ? body.batchCode.trim().toUpperCase() : "";
-      const productSlug = typeof body?.productSlug === "string" ? body.productSlug.trim() : "a2-bilona-ghee";
+      const productSlug = typeof body?.productSlug === "string" ? body.productSlug.trim() : "";
       const productName = typeof body?.productName === "string" ? body.productName.trim() : "";
-      const variantLabel = typeof body?.variantLabel === "string" ? body.variantLabel.trim() : "1 litre";
+      const variantLabel = typeof body?.variantLabel === "string" ? body.variantLabel.trim() : "";
       const productionDate = typeof body?.productionDate === "string" ? body.productionDate.trim() : "";
       const packagingDate = typeof body?.packagingDate === "string" ? body.packagingDate.trim() : "";
       const productionProcess =
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
           production_date, packaging_date, origin_location,
           production_process, quality_checks, lab_report_url,
           storage_instructions, best_before_date, is_approved
-        ) VALUES ($1, $2, $3, $4, $5::date, $6, 'Pilani, Jhunjhunu, Rajasthan', $7, $8, $9, $10, $11, TRUE)
+        ) VALUES ($1, $2, $3, $4, $5::date, $6, 'Pilani, Jhunjhunu, Rajasthan', $7, $8, $9, $10, $11, $12)
         ON CONFLICT (batch_code) DO UPDATE SET
           product_name = EXCLUDED.product_name,
           variant_label = EXCLUDED.variant_label,
@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
           lab_report_url = EXCLUDED.lab_report_url,
           storage_instructions = EXCLUDED.storage_instructions,
           best_before_date = EXCLUDED.best_before_date,
-          is_approved = TRUE
+          is_approved = EXCLUDED.is_approved
         RETURNING id, batch_code, product_name, variant_label`,
         [
           batchCode,
@@ -93,14 +93,15 @@ export async function POST(req: NextRequest) {
           qualityChecks,
           labReportUrl,
           storageInstructions,
-          bestBeforeDate || null
+          bestBeforeDate || null,
+          body?.approveBatch === true
         ]
       );
 
       await db.query(
         `INSERT INTO audit_logs (action, entity_type, entity_id, metadata)
-         VALUES ('BATCH_PUBLISHED', 'product_batch', $1, $2::jsonb)`,
-        [res.rows[0].id, JSON.stringify({ batchCode, productName, variantLabel })]
+         VALUES ($3, 'product_batch', $1, $2::jsonb)`,
+        [res.rows[0].id, JSON.stringify({ batchCode, productName, variantLabel, approved: body?.approveBatch === true }), body?.approveBatch === true ? 'BATCH_PUBLISHED' : 'BATCH_DRAFT_CREATED']
       );
 
       return NextResponse.json({ ok: true, batch: res.rows[0] }, { status: 201 });
@@ -164,6 +165,11 @@ export async function POST(req: NextRequest) {
                  FROM order_items oi
                 WHERE oi.order_id = $1 AND pv.sku = oi.variant_sku`,
               [id]
+            );
+            await client.query(
+              "INSERT INTO inventory_movements(product_variant_id,movement_type,quantity_delta,reference_type,reference_id,note,created_by) " +
+              "SELECT pv.id,'order_cancelled',oi.quantity,'order',$1,'Stock restored after order cancellation',$2 FROM order_items oi JOIN product_variants pv ON pv.sku=oi.variant_sku WHERE oi.order_id=$1",
+              [id,actor.email || "admin"]
             );
           } else {
             await client.query("UPDATE orders SET status = 'cancelled' WHERE id = $1", [id]);
@@ -231,6 +237,11 @@ export async function POST(req: NextRequest) {
                  FROM order_items oi JOIN order_returns r ON r.order_id = oi.order_id
                 WHERE r.id = $1 AND pv.sku = oi.variant_sku`,
               [record.id]
+            );
+            await client.query(
+              "INSERT INTO inventory_movements(product_variant_id,movement_type,quantity_delta,reference_type,reference_id,note,created_by) " +
+              "SELECT pv.id,'return_restock',oi.quantity,'order_return',$1,'Returned items received and approved for restocking',$2 FROM order_items oi JOIN product_variants pv ON pv.sku=oi.variant_sku WHERE oi.order_id=$3",
+              [record.id,actor.email || "admin",id]
             );
           }
           await client.query("INSERT INTO audit_logs (action, entity_type, entity_id, metadata) VALUES ('RETURN_RECEIVED', 'order_return', $1, $2::jsonb)", [record.id, JSON.stringify({ orderNumber: record.order_number, inventoryRestocked: restock })]);

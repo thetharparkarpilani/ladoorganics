@@ -11,23 +11,18 @@ export default function AdminOperationsPanel({
   adminToken,
   onRefreshDashboard
 }: AdminOperationsPanelProps) {
-  const [batchCode, setBatchCode] = useState("LO-PILANI-002");
-  const [productSlug, setProductSlug] = useState("a2-bilona-ghee");
-  const [productName, setProductName] = useState("A2 Bilona Ghee");
-  const [variantLabel, setVariantLabel] = useState("1 litre");
-  const [productionDate, setProductionDate] = useState("2026-11-15");
-  const [packagingDate, setPackagingDate] = useState("2026-11-18");
-  const [bestBeforeDate, setBestBeforeDate] = useState("2027-08-15");
+  const [batchCode, setBatchCode] = useState("");
+  const [productSlug, setProductSlug] = useState("");
+  const [productName, setProductName] = useState("");
+  const [variantLabel, setVariantLabel] = useState("");
+  const [productionDate, setProductionDate] = useState("");
+  const [packagingDate, setPackagingDate] = useState("");
+  const [bestBeforeDate, setBestBeforeDate] = useState("");
   const [labReportUrl, setLabReportUrl] = useState("");
-  const [productionProcess, setProductionProcess] = useState(
-    "Curd-cultured indigenous Tharparkar milk churned via traditional wooden Bilona method in Pilani."
-  );
-  const [qualityChecks, setQualityChecks] = useState(
-    "Inspected at Pilani production unit; third-party lab report attached only when verified and published."
-  );
-  const [storageInstructions, setStorageInstructions] = useState(
-    "Store in a cool, dry place away from direct sunlight."
-  );
+  const [productionProcess, setProductionProcess] = useState("");
+  const [qualityChecks, setQualityChecks] = useState("");
+  const [storageInstructions, setStorageInstructions] = useState("");
+  const [approveBatch, setApproveBatch] = useState(false);
 
   const [recordId, setRecordId] = useState("");
   const [upiReference, setUpiReference] = useState("");
@@ -79,7 +74,8 @@ export default function AdminOperationsPanel({
       labReportUrl: labReportUrl.trim() || null,
       productionProcess,
       qualityChecks,
-      storageInstructions
+      storageInstructions,
+      approveBatch
     });
   };
 
@@ -89,9 +85,9 @@ export default function AdminOperationsPanel({
         onSubmit={handlePublishBatch}
         className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 space-y-3 text-xs"
       >
-        <h2 className="text-xl font-serif font-bold mb-1">Publish QR Batch Traceability Record</h2>
+        <h2 className="text-xl font-serif font-bold mb-1">Create QR Batch Traceability Record</h2>
         <p className="opacity-75 mb-3">
-          Creates or updates an approved batch record for <code className="font-mono">/trace/[batchCode]</code>.
+          Creates a batch draft, or publishes it only after you confirm the details are verified, for <code className="font-mono">/trace/[batchCode]</code>.
         </p>
 
         <div className="grid sm:grid-cols-2 gap-3">
@@ -215,12 +211,14 @@ export default function AdminOperationsPanel({
           />
         </div>
 
+        <label className="flex items-start gap-2 text-xs"><input type="checkbox" checked={approveBatch} onChange={(e) => setApproveBatch(e.target.checked)} className="mt-0.5" /> I have verified all details and approve this batch for public QR traceability.</label>
+
         <button
           type="submit"
           disabled={busy}
           className="primary-btn px-5 py-2.5 rounded-xl font-bold cursor-pointer disabled:opacity-50"
         >
-          {busy ? "Saving..." : "Publish Batch Record"}
+          {busy ? "Saving..." : approveBatch ? "Publish Verified Batch" : "Save Draft Batch"}
         </button>
       </form>
 

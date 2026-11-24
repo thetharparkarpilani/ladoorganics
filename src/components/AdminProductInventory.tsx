@@ -219,7 +219,7 @@ export default function AdminProductInventory({ adminToken }: { adminToken: stri
                       </div>
                       <div className="grid grid-cols-2 gap-3">
                         <label className="text-xs font-semibold">Price (₹)
-                          <input type="number" min="0" step="0.01" value={draft.priceInr} onChange={(event) => updateDraft(id, "priceInr", event.target.value)}
+                          <input type="number" min="0" step="1" value={draft.priceInr} onChange={(event) => updateDraft(id, "priceInr", event.target.value)}
                             className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--bg)] p-2.5 text-sm" />
                         </label>
                         <label className="text-xs font-semibold">Stock quantity

@@ -38,20 +38,38 @@ export async function POST(req: NextRequest) {
       if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(variantId) ||
           !Number.isSafeInteger(price) || price < 0 || price > 100000000 ||
           !Number.isInteger(stock) || stock < 0 || stock > 1000000) {
-        return NextResponse.json({ error: "Enter a valid variant, price and whole-number stock quantity." }, { status: 400 });
+        return NextResponse.json({ error: "Enter a valid variant, whole-rupee price and whole-number stock quantity." }, { status: 400 });
       }
-      const result = await db.query(
-        `UPDATE product_variants SET price_inr = $2, stock_qty = $3
-          WHERE id = $1 RETURNING id, sku, price_inr, stock_qty`,
-        [variantId, price, stock]
-      );
-      if (!result.rowCount) return NextResponse.json({ error: "Product variant not found." }, { status: 404 });
-      await db.query(
-        `INSERT INTO audit_logs (action, entity_type, entity_id, metadata)
-         VALUES ('PRODUCT_INVENTORY_UPDATED', 'product_variant', $1, $2::jsonb)`,
-        [variantId, JSON.stringify({ priceInr: price, stockQty: stock })]
-      );
-      return NextResponse.json({ ok: true, variant: result.rows[0] });
+      const client = await db.getClient();
+      try {
+        await client.query("BEGIN");
+        const current = await client.query("SELECT id,sku,stock_qty FROM product_variants WHERE id=$1 FOR UPDATE",[variantId]);
+        if (!current.rows[0]) {
+          await client.query("ROLLBACK");
+          return NextResponse.json({ error: "Product variant not found." }, { status: 404 });
+        }
+        const previousStock = Number(current.rows[0].stock_qty || 0);
+        const result = await client.query(
+          "UPDATE product_variants SET price_inr=$2,stock_qty=$3 WHERE id=$1 RETURNING id,sku,price_inr,stock_qty",
+          [variantId,price,stock]
+        );
+        const delta = stock - previousStock;
+        if (delta !== 0) {
+          await client.query(
+            "INSERT INTO inventory_movements(product_variant_id,movement_type,quantity_delta,reference_type,reference_id,note,created_by) VALUES($1,'adjustment',$2,'admin_catalog',$1,$3,$4)",
+            [variantId,delta,"Manual stock quantity update from Product & Inventory screen","admin"]
+          );
+        }
+        await client.query(
+          "INSERT INTO audit_logs(action,entity_type,entity_id,metadata) VALUES('PRODUCT_INVENTORY_UPDATED','product_variant',$1,$2::jsonb)",
+          [variantId,JSON.stringify({priceInr:price,previousStock,stockQty:stock,stockDelta:delta})]
+        );
+        await client.query("COMMIT");
+        return NextResponse.json({ok:true,variant:result.rows[0]});
+      } catch (error) {
+        await client.query("ROLLBACK").catch(()=>undefined);
+        throw error;
+      } finally { client.release(); }
     }
 
 
