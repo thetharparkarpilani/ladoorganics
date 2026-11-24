@@ -165,6 +165,11 @@ export async function POST(req: NextRequest) {
                 WHERE oi.order_id = $1 AND pv.sku = oi.variant_sku`,
               [id]
             );
+            await client.query(
+              "INSERT INTO inventory_movements(product_variant_id,movement_type,quantity_delta,reference_type,reference_id,note,created_by) " +
+              "SELECT pv.id,'order_cancelled',oi.quantity,'order',$1,'Stock restored after order cancellation',$2 FROM order_items oi JOIN product_variants pv ON pv.sku=oi.variant_sku WHERE oi.order_id=$1",
+              [id,actor.email || "admin"]
+            );
           } else {
             await client.query("UPDATE orders SET status = 'cancelled' WHERE id = $1", [id]);
           }
@@ -231,6 +236,11 @@ export async function POST(req: NextRequest) {
                  FROM order_items oi JOIN order_returns r ON r.order_id = oi.order_id
                 WHERE r.id = $1 AND pv.sku = oi.variant_sku`,
               [record.id]
+            );
+            await client.query(
+              "INSERT INTO inventory_movements(product_variant_id,movement_type,quantity_delta,reference_type,reference_id,note,created_by) " +
+              "SELECT pv.id,'return_restock',oi.quantity,'order_return',$1,'Returned items received and approved for restocking',$2 FROM order_items oi JOIN product_variants pv ON pv.sku=oi.variant_sku WHERE oi.order_id=$3",
+              [record.id,actor.email || "admin",id]
             );
           }
           await client.query("INSERT INTO audit_logs (action, entity_type, entity_id, metadata) VALUES ('RETURN_RECEIVED', 'order_return', $1, $2::jsonb)", [record.id, JSON.stringify({ orderNumber: record.order_number, inventoryRestocked: restock })]);
