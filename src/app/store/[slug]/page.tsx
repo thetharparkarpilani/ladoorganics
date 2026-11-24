@@ -97,14 +97,14 @@ export default function ProductDetailPage(props: { params: Promise<{ slug: strin
   } : {
     category: product.category, description: product.description, sourcing: product.sourcing,
     productionMethod: product.productionMethod, storage: product.storage,
-    back: "{localized.back}", trace: "{localized.trace}",
+    back: "← Back to the collection", trace: "Explore batch traceability ↗",
     tags: ["Made with care in Rajasthan", "Thoughtful farm practices"],
     note: "A part of the Lado Organics farm story", choose: "CHOOSE YOUR PACK",
     bring: "Bring a little farm goodness home.", selected: "Selected pack",
     order: "Enquire & order on WhatsApp",
-    orderNote: "{localized.orderNote}",
-    know: "{localized.know}", origin: "{localized.origin}",
-    sourcingTitle: "{localized.sourcingTitle}", madeTitle: "{localized.madeTitle}", careTitle: "{localized.careTitle}",
+    orderNote: "We’ll confirm current batch availability, delivery and payment details with you before the order is finalised.",
+    know: "KNOW WHAT YOU BRING HOME", origin: "From our farm story to your everyday rituals.",
+    sourcingTitle: "Our sourcing", madeTitle: "How it is made", careTitle: "Care & storage",
     wa: "Namaste Lado Organics!", waProduct: "Product", waPrice: "Listed Price",
     waAsk: "Please share batch availability, shipping, and payment details.",
   };
