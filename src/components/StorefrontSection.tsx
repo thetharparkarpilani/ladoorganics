@@ -298,7 +298,7 @@ export default function StorefrontSection({
           <div className="grid sm:grid-cols-2 gap-6 mb-8">
             <div>
               <label className="block text-xs font-bold uppercase mb-1">
-                A2 Bilona Ghee (1 litre): {gheeLitres}
+                A2 Bilona Ghee (default pack): {gheeLitres}
               </label>
               <input
                 type="range"
@@ -312,7 +312,7 @@ export default function StorefrontSection({
 
             <div>
               <label className="block text-xs font-bold uppercase mb-1">
-                Tharparkar Dhoop (Box): {dhoopBoxes}
+                Tharparkar Dhoop (default pack): {dhoopBoxes}
               </label>
               <input
                 type="range"
@@ -326,7 +326,7 @@ export default function StorefrontSection({
 
             <div>
               <label className="block text-xs font-bold uppercase mb-1">
-                Pure Kechua Khad (5 kg Bag): {khadBags}
+                Pure Kechua Khad (default pack): {khadBags}
               </label>
               <input
                 type="range"
@@ -340,7 +340,7 @@ export default function StorefrontSection({
 
             <div>
               <label className="block text-xs font-bold uppercase mb-1">
-                “Deep Work” Bhunga Stay (Nights): {stayNights}
+                “Deep Work” Bhunga Stay (default night pack): {stayNights}
               </label>
               <input
                 type="range"
