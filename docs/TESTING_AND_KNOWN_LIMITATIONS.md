@@ -1,21 +1,58 @@
-﻿# Testing Report & Known Limitations — Lado Organics 2.0
+# Lado Organics — Verification Status & Known Limitations
 
-## 1. Verification Status Matrix
-- **Tested and passed:** None in this environment (no Node.js, PostgreSQL, or browser runtime was executed in the assistant session).
-- **Tested and failed:** None executed in this environment.
-- **Not tested (Run locally in `PS C:\Users\aksai\Desktop\LadoOrganics_Premium`):**
-  - `npm install`
-  - `npm run typecheck` (`tsc --noEmit`)
-  - `npm run lint` (`next lint`)
-  - `npm run build` (`next build`)
-  - PostgreSQL migration execution (`001`–`004` + `seed.sql`) and `/api/health` database check
-  - End-to-end API tests: `/api/orders`, `/api/bookings` (including overlapping-date 409 conflict rejection), `/api/sponsorships`, `/api/corporate`, `/api/subscriptions`, `/api/trace/LO-PILANI-SAMPLE-001`, `/api/payments/webhook` (HMAC signature check), and `/api/admin/records`
-- **Requires external credentials & business decisions:**
-  - `DATABASE_URL`, `ADMIN_ACCESS_TOKEN`, `RAZORPAY_KEY_ID` / `RAZORPAY_KEY_SECRET` / `RAZORPAY_WEBHOOK_SECRET`, `OPENAI_API_KEY`
-  - Full OAuth/OTP auth provider credentials (Supabase Auth or Firebase Auth + SMS provider)
-  - Business confirmation of GST/tax rates, shipping calculation rules, live inventory quantities, verified lab report PDFs, and legal review of `/policies`
+## 1. Verification status
 
-## 2. Known Limitations & Planned Expansions
-1. **Authentication:** Customer dashboard currently scopes records by customer email lookup and admin operations by server-verified `ADMIN_ACCESS_TOKEN`; full Google OAuth + Mobile OTP session cookies require configuring your Supabase/Firebase project keys.
-2. **Subscriptions:** `/api/subscriptions` records customer recurring preferences (`enquiry_logged`) without simulating auto-debits; live recurring charges require Razorpay/Cashfree e-mandate registration.
-3. **Multilingual Coverage:** Core navigation, hero, store, calculators, and journal headers support `EN`, `हिंदी`, and `मारवाड़ी`; full translation of legal/admin subpages requires reviewed Hindi/Marwari copy.
+### Automated checks
+
+The GitHub Actions quality workflow completed successfully for main commit `7bfe11a0d2e4594367cc9bb8c4caa26fb798db5e` on 24 November 2026. The run completed all of these steps:
+
+- `npm ci`
+- `npm run typecheck`
+- `npm run lint`
+- `npm run build`
+
+Run: https://github.com/thetharparkarpilani/ladoorganics/actions/runs/45409839336
+
+This verifies the code at that exact main commit. It does not automatically verify later changes on the `audit/complete-site-readiness` branch, production environment variables, database connectivity or browser workflows.
+
+### Deployment status
+
+The Vercel status reported `Deployment rate limited — retry in 24 hours` for the same main commit. A successful Vercel Production deployment and live runtime verification have therefore not been established by that status.
+
+### Runtime checks still required
+
+The following must be verified against a successful deployment and the real production environment:
+
+- PostgreSQL connection using `DATABASE_URL` and the trusted `SUPABASE_CA_CERT`.
+- Lado AI FAQ answers, live product lookup, OpenAI generation (if configured), and customer-facing error handling.
+- Live catalogue, product detail pages, cart, server-side price/stock validation and order creation.
+- Google sign-in, session refresh, customer profile and order-history ownership.
+- Admin login, staff roles/capabilities, finance actions, audit logging and support workspace.
+- Booking date conflicts and expiry, sponsorship enquiries, corporate enquiries, traceability and review moderation.
+- Email delivery, WhatsApp links, mobile layout, accessibility and browser-console errors.
+
+Do not mark these items passed based only on a successful build.
+
+## 2. Known product and integration limitations
+
+1. **Mobile OTP:** Intentionally unavailable until a real SMS provider is configured. The API rejects OTP requests rather than issuing demo or insecure codes.
+2. **Razorpay:** Gateway checkout remains disabled. Current checkout supports Cash on Delivery and manually verified UPI. Never treat a manual UPI request as paid until the Lado team verifies it.
+3. **Essentials Club:** The current form records repeat-delivery interest only. It does not create a paid subscription, auto-debit mandate or scheduled delivery.
+4. **Customer identity:** Customer sign-in uses Supabase Auth with Google. Order history is scoped to the verified signed-in customer identity; guest orders are not automatically attached to a Google account.
+5. **Shipping:** The current checkout does not integrate a courier service or provide a carrier-verified delivery promise. Shipping charges and delivery timing must be confirmed before dispatch.
+6. **Legal policies:** The Policies & Legal pages are draft templates requiring review by a qualified legal professional before being represented as final terms.
+7. **Multilingual coverage:** Core navigation and selected content support English, Hindi and Marwari. Not every admin, policy and support page is fully translated.
+8. **Product evidence:** Product ingredients, nutritional details, certifications and lab reports must come from current approved labels or batch records. The website and Lado AI must not infer or invent them.
+
+## 3. Production readiness criteria
+
+The site should be called ready for customers only after:
+
+- The current candidate commit passes TypeScript, lint and production build checks.
+- Vercel reports a successful Production deployment for that candidate.
+- Production database TLS and all required environment variables are verified without exposing their values.
+- Critical customer and admin workflows are tested end to end.
+- Checkout totals, inventory changes, payment status and order ownership are confirmed against production-safe test records.
+- Any remaining business decisions (prices, stock, shipping rules, approved claims, legal text and payment operations) are confirmed by the Lado team.
+
+Never execute production migrations, alter live data, weaken security controls or enable payment processing as part of a code-only verification.
