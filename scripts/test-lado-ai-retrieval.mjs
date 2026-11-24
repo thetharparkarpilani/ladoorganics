@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { findLocalAnswer } from "../src/lib/lado-ai-retrieval.ts";
+import { detectLadoLocale } from "../src/lib/lado-language.ts";
 
 const topics = [
   ["About Lado Organics", ["lado brand story","lado company information","lado organics introduction","tell me about lado organics","lado kya hai organics"]],
@@ -51,3 +52,11 @@ for (const question of ["hello", "xyz qwerty", "tell me something", "random unre
   assert.equal(findLocalAnswer(question, entries), null, `Expected no confident match for: ${question}`);
 }
 console.log("Ambiguity and unknown-question checks passed.");
+
+assert.equal(detectLadoLocale("How is A2 Bilona Ghee made?", "en"), "en");
+assert.equal(detectLadoLocale("मुझे घी की कीमत बताइए", "en"), "hi");
+assert.equal(detectLadoLocale("mujhe ghee ki keemat batao", "en"), "hi");
+assert.equal(detectLadoLocale("म्हाने घी रो भाव बतावो", "en"), "ma");
+assert.equal(detectLadoLocale("mhane ghee ro bhav batawo", "en"), "ma");
+assert.equal(detectLadoLocale("hello there", "hi"), "hi");
+console.log("Language detection checks passed.");
