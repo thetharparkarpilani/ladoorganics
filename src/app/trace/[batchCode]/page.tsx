@@ -72,7 +72,7 @@ export default function BatchTracePage() {
     noReport: "No third-party lab report file is published yet for this batch record.",
     journey: "Farm-to-Home Journey (6 Stages)", step: "STEP",
     lookupError: "Unable to reach traceability lookup right now.",
-  }
+  };
   const initialCode = decodeURIComponent(params?.batchCode || "LO-PILANI-SAMPLE-001").toUpperCase();
 
   const [codeInput, setCodeInput] = useState(initialCode);
