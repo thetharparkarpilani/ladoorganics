@@ -104,7 +104,7 @@ export default function ProductDetailPage(props: PageProps) {
     <main className="product-detail-page min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-7">
         <Link href="/#store" className="product-detail-back">← Back to the collection</Link>
-        <Link href="/trace/LO-PILANI-SAMPLE-001" className="product-detail-trace">Explore batch traceability ↗</Link>
+        <Link href="/contact" className="product-detail-trace">Ask about batch records ↗</Link>
       </div>
 
       <section className={`product-detail-hero product-detail-${visual.kind}`}>
