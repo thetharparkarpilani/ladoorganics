@@ -1,25 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-const SAMPLE_BATCH = {
-  batchCode: "LO-PILANI-SAMPLE-001",
-  productSlug: "a2-bilona-ghee",
-  productName: "A2 Bilona Ghee",
-  variantLabel: "1 litre",
-  productionDate: "2026-10-15",
-  packagingDate: "2026-10-20",
-  originLocation: "Pilani, Jhunjhunu, Rajasthan",
-  productionProcess:
-    "Curd-cultured indigenous Tharparkar milk churned via traditional wooden Bilona method.",
-  qualityChecks:
-    "Batch recorded in Pilani traceability ledger. Verified lab reports are attached only when published by an administrator.",
-  labReportUrl: null,
-  storageInstructions:
-    "Store in a cool, dry place away from direct sunlight. Keep lid tightly closed.",
-  bestBeforeDate: "2027-07-15",
-  source: "sample_reference"
-};
-
 function buildJourney(originLocation: string, productionDate: string, packagingDate: string | null) {
   return [
     { step: 1, stage: "Farm Origin", location: originLocation, date: productionDate, status: "recorded" },
@@ -31,14 +12,16 @@ function buildJourney(originLocation: string, productionDate: string, packagingD
   ];
 }
 
-export async function GET(
-  _req: NextRequest,
-  context: { params: Promise<{ batchCode: string }> }
-) {
+export async function GET(_req: NextRequest, context: { params: Promise<{ batchCode: string }> }) {
   const { batchCode } = await context.params;
-  const normalizedCode = decodeURIComponent(batchCode || "").trim().toUpperCase();
+  let normalizedCode = "";
+  try {
+    normalizedCode = decodeURIComponent(batchCode || "").trim().toUpperCase();
+  } catch {
+    return NextResponse.json({ error: "Invalid batch code." }, { status: 400 });
+  }
 
-  if (!normalizedCode || normalizedCode.length > 64) {
+  if (!/^[A-Z0-9][A-Z0-9-]{2,63}$/.test(normalizedCode)) {
     return NextResponse.json({ error: "Invalid batch code." }, { status: 400 });
   }
 
@@ -54,55 +37,36 @@ export async function GET(
       [normalizedCode]
     );
 
-    if (result.rows.length > 0) {
-      const row = result.rows[0];
-      return NextResponse.json({
-        batch: {
-          batchCode: row.batch_code,
-          productSlug: row.product_slug,
-          productName: row.product_name,
-          variantLabel: row.variant_label,
-          productionDate: row.production_date,
-          packagingDate: row.packaging_date,
-          originLocation: row.origin_location,
-          productionProcess: row.production_process,
-          qualityChecks: row.quality_checks,
-          labReportUrl: row.lab_report_url,
-          storageInstructions: row.storage_instructions,
-          bestBeforeDate: row.best_before_date,
-          source: "database"
-        },
-        journey: buildJourney(
-          row.origin_location,
-          String(row.production_date),
-          row.packaging_date ? String(row.packaging_date) : null
-        )
-      });
+    if (!result.rows[0]) {
+      return NextResponse.json({ error: "Approved batch record not found." }, { status: 404, headers: { "Cache-Control": "no-store" } });
     }
 
-    if (normalizedCode === SAMPLE_BATCH.batchCode) {
-      return NextResponse.json({
-        batch: SAMPLE_BATCH,
-        journey: buildJourney(
-          SAMPLE_BATCH.originLocation,
-          SAMPLE_BATCH.productionDate,
-          SAMPLE_BATCH.packagingDate
-        )
-      });
-    }
-
-    return NextResponse.json({ error: "Approved batch record not found." }, { status: 404 });
-  } catch {
-    if (normalizedCode === SAMPLE_BATCH.batchCode) {
-      return NextResponse.json({
-        batch: SAMPLE_BATCH,
-        journey: buildJourney(
-          SAMPLE_BATCH.originLocation,
-          SAMPLE_BATCH.productionDate,
-          SAMPLE_BATCH.packagingDate
-        )
-      });
-    }
-    return NextResponse.json({ error: "Unable to verify batch record right now." }, { status: 503 });
+    const row = result.rows[0];
+    const productionDate = String(row.production_date);
+    const packagingDate = row.packaging_date ? String(row.packaging_date) : null;
+    return NextResponse.json({
+      batch: {
+        batchCode: row.batch_code,
+        productSlug: row.product_slug,
+        productName: row.product_name,
+        variantLabel: row.variant_label,
+        productionDate: row.production_date,
+        packagingDate: row.packaging_date,
+        originLocation: row.origin_location,
+        productionProcess: row.production_process,
+        qualityChecks: row.quality_checks,
+        labReportUrl: row.lab_report_url,
+        storageInstructions: row.storage_instructions,
+        bestBeforeDate: row.best_before_date,
+        source: "database"
+      },
+      journey: buildJourney(row.origin_location, productionDate, packagingDate)
+    }, { headers: { "Cache-Control": "no-store" } });
+  } catch (error) {
+    console.error("Batch trace lookup failed:", error);
+    return NextResponse.json({ error: "Batch verification is temporarily unavailable. Please try again later." }, {
+      status: 503,
+      headers: { "Cache-Control": "no-store" }
+    });
   }
 }
