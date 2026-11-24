@@ -2,6 +2,8 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { useCart } from "@/context/CartContext";
+import { useLocale } from "@/context/LocaleContext";
+import { AI_COPY } from "@/lib/lado-language";
 
 type SuggestedAction = { label: string; href: string };
 type CartVariantSuggestion = { variantId: string; sku: string; label: string; priceInr: number; maxStock: number };
@@ -17,14 +19,11 @@ interface ChatMessage {
 }
 interface ConciergeWidgetProps { whatsappNumber: string; }
 
-const STARTERS = [
-  "What products do you have?",
-  "Tell me about your A2 Bilona Ghee",
-  "How does delivery work?",
-  "How can I check my order?",
-  "Tell me about Bhunga stays",
-  "How does Gau Seva work?",
-];
+const STARTERS: Record<"en" | "hi" | "ma", string[]> = {
+  en: ["What products do you have?", "Tell me about your A2 Bilona Ghee", "How does delivery work?", "How can I check my order?", "Tell me about Bhunga stays", "How does Gau Seva work?"],
+  hi: ["आपके पास कौन-कौन से उत्पाद हैं?", "A2 बिलोना घी कैसे बनता है?", "डिलीवरी कैसे होती है?", "मेरा ऑर्डर कैसे देखें?", "भुंगा स्टे के बारे में बताएं", "गौ सेवा कैसे काम करती है?"],
+  ma: ["थांरै कठै-कठै सामान मिलै है?", "A2 बिलोना घी किण रीति सूं बणै है?", "सामान घर तक किण रीति आवै?", "म्हारो ऑर्डर कियां देखूं?", "भुंगा ठहराव री जानकारी देवो", "गौ सेवा कियां चालै है?"],
+};
 
 const WELCOME: ChatMessage = {
   id: "welcome",
@@ -33,10 +32,13 @@ const WELCOME: ChatMessage = {
 };
 
 export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps) {
+  const { locale } = useLocale();
+  const copy = AI_COPY[locale];
+  const starters = STARTERS[locale];
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([WELCOME]);
+  const [messages, setMessages] = useState<ChatMessage[]>([{ ...WELCOME, text: AI_COPY.en.welcome }]);
   const [error, setError] = useState("");
   const { addToCart } = useCart();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -45,6 +47,12 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
   useEffect(() => {
     if (isOpen) inputRef.current?.focus();
   }, [isOpen]);
+
+  useEffect(() => {
+    setMessages((previous) => previous.length === 1 && previous[0].id === "welcome"
+      ? [{ ...WELCOME, text: copy.welcome }]
+      : previous);
+  }, [copy.welcome]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -67,7 +75,7 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
       const response = await fetch("/api/concierge", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text, history: priorHistory }),
+        body: JSON.stringify({ message: text, history: priorHistory, locale }),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(typeof data.error === "string" ? data.error : "Please try again in a moment.");
@@ -105,7 +113,7 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
         cartSuggestion,
       }]);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Connection issue. Please try again.");
+      setError(err instanceof Error ? err.message : copy.connectionError);
     } finally {
       setLoading(false);
     }
@@ -131,7 +139,7 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
       setMessages((previous) => [...previous, {
         id: `orders-${Date.now()}`,
         sender: "bot",
-        text: orders.length ? "Here are your latest orders from your signed-in Lado account. This information is private to your account." : "I couldn't find any orders linked to this Google account yet. If you placed an order using another email address, sign in with that same account or contact our team.",
+        text: orders.length ? copy.orderIntro : copy.noOrders,
         orders,
         actions: [{ label: "Open full Order History", href: "/dashboard/orders" }],
       }]);
@@ -156,13 +164,13 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
       {
         id: `cart-added-${Date.now()}`,
         sender: "bot",
-        text: `Added ${productName} (${variant.label}) to your bag. Your bag is open so you can review it before checkout.`,
+        text: copy.added(productName, variant.label),
       },
     ]);
   };
 
   const resetChat = () => {
-    setMessages([WELCOME]);
+    setMessages([{ ...WELCOME, text: copy.welcome }]);
     setInput("");
     setError("");
   };
@@ -172,7 +180,7 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
     void askQuestion(input);
   };
 
-  const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/\D/g, "")}?text=${encodeURIComponent("Namaste Lado Organics, I need help with a question from the website.")}`;
+  const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/\D/g, "")}?text=${encodeURIComponent(locale === "hi" ? "नमस्ते Lado Organics, मुझे वेबसाइट पर मदद चाहिए।" : locale === "ma" ? "खम्मा घणी Lado Organics, म्हाने वेबसाइट पर मदद चाहिजै।" : "Namaste Lado Organics, I need help with a question from the website.")}`;
 
   return (
     <>
@@ -196,28 +204,28 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
         onClick={() => setIsOpen((open) => !open)}
         aria-expanded={isOpen}
         aria-controls="lado-ai-panel"
-        aria-label={isOpen ? "Close Lado AI" : "Open Lado AI assistant"}
+        aria-label={isOpen ? copy.close : copy.launcher}
         className="lado-ai-launcher"
       >
         <span className="lado-ai-launcher-mark" aria-hidden="true">L</span>
-        <span>{isOpen ? "Close" : "Ask Lado AI"}</span>
+        <span>{isOpen ? copy.close : copy.launcher}</span>
         {!isOpen && <span className="lado-ai-online-dot" aria-label="Assistant available" />}
       </button>
 
       {isOpen && (
-        <section id="lado-ai-panel" role="dialog" aria-modal="false" aria-label="Lado AI customer assistant" className="lado-ai-panel">
+        <section id="lado-ai-panel" role="dialog" aria-modal="false" aria-label={copy.launcher} className="lado-ai-panel">
           <header className="lado-ai-header">
             <div className="lado-ai-avatar" aria-hidden="true">L</div>
             <div className="min-w-0 flex-1">
               <p className="lado-ai-title">Lado AI</p>
-              <p className="lado-ai-subtitle"><span /> Your Lado Organics guide · Pilani</p>
+              <p className="lado-ai-subtitle"><span /> {copy.subtitle}</p>
             </div>
-            <button type="button" onClick={resetChat} className="lado-ai-header-action" title="Start a new conversation">New chat</button>
+            <button type="button" onClick={resetChat} className="lado-ai-header-action" title={copy.newChat}>{copy.newChat}</button>
             <button type="button" onClick={() => setIsOpen(false)} className="lado-ai-close" aria-label="Close chat">×</button>
           </header>
 
           <div ref={scrollRef} className="lado-ai-messages" aria-live="polite" aria-relevant="additions text">
-            <div className="lado-ai-day-label"><span /> A LITTLE FARM WISDOM <span /></div>
+            <div className="lado-ai-day-label"><span /> {locale === "hi" ? "खेत से जुड़ी जानकारी" : locale === "ma" ? "खेत री सच्ची बात" : "A LITTLE FARM WISDOM"} <span /></div>
             {messages.map((message) => (
               <div key={message.id} className={`lado-ai-message-row ${message.sender === "user" ? "is-user" : "is-assistant"}`}>
                 {message.sender === "bot" && <span className="lado-ai-mini-avatar" aria-hidden="true">L</span>}
@@ -232,13 +240,13 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
                   )}
                   {message.orders && message.orders.length > 0 && (
                     <div className="lado-ai-cart-card">
-                      <div className="lado-ai-cart-heading"><span>YOUR RECENT ORDERS</span></div>
+                      <div className="lado-ai-cart-heading"><span>{copy.orders.toLocaleUpperCase()}</span></div>
                       {message.orders.map((order) => (
                         <div key={order.orderNumber} className="lado-ai-cart-option" style={{ display: "block", cursor: "default" }}>
                           <strong>{order.orderNumber}</strong>
-                          <div className="text-sm mt-1">Status: {order.status.replace(/_/g, " ")}</div>
-                          <div className="text-sm">Payment: {order.paymentStatus.replace(/_/g, " ")} · {order.paymentMethod.replace(/_/g, " ")}</div>
-                          {order.totalInr !== null && <div className="text-sm">Total: ₹{order.totalInr.toLocaleString("en-IN")}</div>}
+                          <div className="text-sm mt-1">{copy.orderStatus}: {order.status.replace(/_/g, " ")}</div>
+                          <div className="text-sm">{copy.payment}: {order.paymentStatus.replace(/_/g, " ")} · {order.paymentMethod.replace(/_/g, " ")}</div>
+                          {order.totalInr !== null && <div className="text-sm">{copy.total}: ₹{order.totalInr.toLocaleString("en-IN")}</div>}
                           {order.items.length > 0 && <div className="text-sm mt-1">{order.items.map((item) => `${item.title} × ${item.quantity}`).join(" · ")}</div>}
                           {order.createdAt && <div className="text-xs mt-1 opacity-70">{new Date(order.createdAt).toLocaleDateString("en-IN")}</div>}
                         </div>
@@ -248,7 +256,7 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
                   {message.cartSuggestion && (
                     <div className="lado-ai-cart-card">
                       <div className="lado-ai-cart-heading">
-                        <span>ADD TO YOUR BAG</span>
+                        <span>{copy.addToBag.toLocaleUpperCase()}</span>
                         <strong>{message.cartSuggestion.productName}</strong>
                       </div>
                       {message.cartSuggestion.variants.map((variant) => (
@@ -260,7 +268,7 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
                         >
                           <span>{variant.label}</span>
                           <strong>₹{variant.priceInr.toLocaleString("en-IN")}</strong>
-                          <span className="lado-ai-cart-add">Add +</span>
+                          <span className="lado-ai-cart-add">{copy.add}</span>
                         </button>
                       ))}
                     </div>
@@ -271,7 +279,7 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
             {loading && (
               <div className="lado-ai-message-row is-assistant">
                 <span className="lado-ai-mini-avatar" aria-hidden="true">L</span>
-                <div className="lado-ai-typing" aria-label="Lado AI is thinking"><i /><i /><i /></div>
+                <div className="lado-ai-typing" aria-label={copy.thinking}><i /><i /><i /></div>
               </div>
             )}
             {error && <p role="alert" className="lado-ai-error">{error}</p>}
@@ -279,10 +287,10 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
 
           {messages.length === 1 && (
             <div className="lado-ai-starters">
-              <p>WHAT CAN I HELP YOU WITH?</p>
+              <p>{copy.startersTitle}</p>
               <div>
-                <button type="button" onClick={() => void loadMyOrders()} disabled={loading}>Show my recent orders <span>↗</span></button>
-                {STARTERS.map((starter) => (
+                <button type="button" onClick={() => void loadMyOrders()} disabled={loading}>{copy.orders} <span>↗</span></button>
+                {starters.map((starter) => (
                   <button key={starter} type="button" onClick={() => void askQuestion(starter)} disabled={loading}>{starter} <span>↗</span></button>
                 ))}
               </div>
@@ -295,8 +303,8 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
               type="text"
               value={input}
               onChange={(event) => setInput(event.target.value)}
-              placeholder="Ask me anything about Lado..."
-              aria-label="Your question for Lado AI"
+              placeholder={copy.placeholder}
+              aria-label={copy.send}
               maxLength={1500}
               disabled={loading}
             />
@@ -305,8 +313,8 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
             </button>
           </form>
           <footer className="lado-ai-footer">
-            <span>AI can make mistakes. Never share OTPs, passwords or UPI PINs.</span>
-            <a href="/contact">Human support</a>
+            <span>{copy.footer}</span>
+            <a href="/contact">{copy.humanSupport}</a>
           </footer>
         </section>
       )}

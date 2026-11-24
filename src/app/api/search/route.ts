@@ -17,10 +17,10 @@ export async function GET(req: NextRequest) {
     
     // Searches across English names, Hindi names, and descriptions concurrently
     const res = await db.query(`
-      SELECT p.slug, p.name_en, p.name_hi, p.description_en, v.price_inr, v.label, v.sku
+      SELECT p.slug, p.name_en, p.name_hi, p.name_ma, p.description_en, v.price_inr, v.label, v.sku
       FROM products p
       JOIN product_variants v ON p.id = v.product_id
-      WHERE (p.name_en ILIKE $1 OR p.name_hi ILIKE $1 OR p.description_en ILIKE $1)
+      WHERE (p.name_en ILIKE $1 OR p.name_hi ILIKE $1 OR p.name_ma ILIKE $1 OR p.description_en ILIKE $1)
         AND p.is_active = TRUE AND v.is_default = TRUE
       LIMIT 5
     `, [searchTerm]);
