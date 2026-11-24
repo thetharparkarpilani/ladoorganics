@@ -8,7 +8,7 @@ import SiteAnnouncement from "@/components/SiteAnnouncement";
 
 export const metadata: Metadata = {
   title: "Lado Organics | Pure Tharparkar A2 Tradition",
-  description: "BITS Pilani-backed circular agriculture. Zero artificial additives, 100% indigenous A2 milk products.",
+  description: "Traditional farm products and farm experiences rooted in Pilani, Rajasthan. Explore the Lado Organics collection and story.",
   manifest: "/manifest.json",
   icons: {
     icon: "/icon.svg",
