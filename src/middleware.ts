@@ -89,7 +89,7 @@ export async function middleware(req: NextRequest) {
     return expired;
   }
 
-  if (isDashboardPage && !accessToken) {
+  if (isDashboardPage && (!accessToken || !expiry || expiry <= Math.floor(Date.now() / 1000))) {
     return NextResponse.redirect(new URL("/login?auth=required", req.url));
   }
 
