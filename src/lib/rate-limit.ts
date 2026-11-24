@@ -8,7 +8,10 @@ export async function enforceRateLimit(
   limit: number,
   windowSeconds: number
 ): Promise<NextResponse | null> {
-  const secret = process.env.ADMIN_ACCESS_TOKEN;
+  // Keep rate limiting independent from the optional owner/admin break-glass
+  // token. Prefer a dedicated secret; DATABASE_URL is a server-only fallback
+  // so deployments without RATE_LIMIT_SECRET do not disable customer login.
+  const secret = process.env.RATE_LIMIT_SECRET || process.env.DATABASE_URL;
   if (!secret || !Number.isInteger(limit) || limit < 1 || !Number.isInteger(windowSeconds) || windowSeconds < 1) {
     console.error("Rate limiting is not configured safely.");
     return NextResponse.json({ error: "This service is temporarily unavailable. Please try again shortly." }, { status: 503 });
