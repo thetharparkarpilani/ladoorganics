@@ -369,8 +369,8 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ error: "Unsupported admin action." }, { status: 400 });
-  } catch (err) {
-    const detail = err instanceof Error ? err.message : "Admin operation failed";
-    return NextResponse.json({ error: detail }, { status: 500 });
+  } catch (error) {
+    console.error("Admin record operation failed:", error);
+    return NextResponse.json({ error: "The requested admin operation could not be completed." }, { status: 500 });
   }
 }
