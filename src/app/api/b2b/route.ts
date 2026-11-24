@@ -4,7 +4,7 @@ import { sendNotification, escapeHtml } from "@/lib/email";
 
 function clean(value: unknown, max: number): string {
   return typeof value === "string"
-    ? value.replace(/[\\u0000-\\u001F\\u007F]/g, " ").trim().slice(0, max)
+    ? value.replace(/[\u0000-\u001F\u007F]/g, " ").trim().slice(0, max)
     : "";
 }
 
@@ -24,11 +24,11 @@ export async function POST(req: NextRequest) {
     const targetDate = clean(body.targetDate, 10);
     const requirements = clean(body.requirements, 2000);
 
-    if (!companyName || !contactName || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email) ||
-        !/^[+0-9()\\-\\s]{7,24}$/.test(phone) || !estimatedQuantity) {
+    if (!companyName || !contactName || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
+        !/^[+0-9()\-\s]{7,24}$/.test(phone) || !estimatedQuantity) {
       return NextResponse.json({ error: "Please provide valid company, contact, email, phone and quantity details." }, { status: 400 });
     }
-    if (targetDate && !/^\\d{4}-\\d{2}-\\d{2}$/.test(targetDate)) {
+    if (targetDate && !/^\d{4}-\d{2}-\d{2}$/.test(targetDate)) {
       return NextResponse.json({ error: "Please provide a valid target delivery date." }, { status: 400 });
     }
 
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
         <p><strong>Quantity:</strong> ${escapeHtml(estimatedQuantity)} | <strong>Target Date:</strong> ${escapeHtml(targetDate || "Flexible")}</p>
         <p><strong>Requirements:</strong> ${escapeHtml(requirements || "None specified")}</p>
       `;
-      await sendNotification(recipient, `B2B Lead: ${companyName.replace(/[\\r\\n]/g, " ")}`, adminHtml);
+      await sendNotification(recipient, `B2B Lead: ${companyName.replace(/[\r\n]/g, " ")}`, adminHtml);
     }
 
     return NextResponse.json({ ok: true, message: "Corporate enquiry submitted successfully. Our Pilani team will contact you shortly." }, { status: 201 });
