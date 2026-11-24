@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import type { ProductDTO } from "@/types/domain";
+import type { ProductDTO, LocaleCode } from "@/types/domain";
 import { TRANSLATIONS } from "@/lib/i18n";
 import { useLocale } from "@/context/LocaleContext";
 import { useCart } from "@/context/CartContext";
