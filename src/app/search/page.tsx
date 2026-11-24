@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useLocale } from "@/context/LocaleContext";
 
@@ -96,7 +96,7 @@ export default function SearchPage() {
     };
   }, [query, copy.error]);
 
-  const submit = (event: FormEvent<HTMLFormElement>) => {
+  const submit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const value = query.trim();
     if (value.length >= 2) window.history.replaceState(null, "", `/search?q=${encodeURIComponent(value)}`);
