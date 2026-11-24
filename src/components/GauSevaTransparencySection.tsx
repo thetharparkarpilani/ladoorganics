@@ -74,12 +74,12 @@ export default function GauSevaTransparencySection() {
             Sponsorship Transparency
           </h2>
           <p className="text-xs opacity-80 mb-5 leading-relaxed">
-            Displays recorded entries for Dholi Sheri, Tara, and Roshni. Allocations for fodder, shelter, and veterinary care are managed transparently without unsupported tax-deduction claims.
+            Displays sponsorship entries marked active by the Lado team for Dholi Sheri, Tara, and Roshni. Pending enquiries are not counted. These figures are not an audited expenditure statement or tax receipt.
           </p>
 
           {rows.length === 0 ? (
             <p className="text-xs opacity-70 p-4 rounded-2xl bg-[var(--bg)] border border-[var(--border)]">
-              No recorded sponsorship totals displayed yet. Submit a request in the sponsorship form to log an entry once PostgreSQL is connected.
+              No active sponsorship records are available to display yet. New sponsorship enquiries remain pending until reviewed by the Lado team.
             </p>
           ) : (
             <ul className="space-y-3 text-xs">
