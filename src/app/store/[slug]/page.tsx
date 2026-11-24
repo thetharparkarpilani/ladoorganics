@@ -1,10 +1,11 @@
 ﻿"use client";
 
-import React, { useState, use } from "react";
+import React, { useEffect, useState, use } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import ProductReviewsSection from "@/components/ProductReviewsSection";
 import { useLocale } from "@/context/LocaleContext";
+import type { ProductDTO } from "@/types/domain";
 
 interface ProductRecord {
   slug: string;
@@ -70,7 +71,31 @@ export default function ProductDetailPage(props: { params: Promise<{ slug: strin
   const { locale } = useLocale();
   const slug = decodeURIComponent(params.slug || "a2-bilona-ghee");
   const product = CATALOG_DETAIL[slug] ?? CATALOG_DETAIL["a2-bilona-ghee"];
-  const [selectedIdx, setSelectedIdx] = useState(product.variants.length - 1);
+  const [liveProduct, setLiveProduct] = useState<ProductDTO | null>(null);
+  const [catalogLoading, setCatalogLoading] = useState(true);
+  const [selectedIdx, setSelectedIdx] = useState(0);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/catalog", { cache: "no-store" })
+      .then((response) => response.ok ? response.json() : null)
+      .then((data) => {
+        if (!active) return;
+        const found = Array.isArray(data?.catalog)
+          ? (data.catalog as ProductDTO[]).find((item) => item.slug === slug) || null
+          : null;
+        setLiveProduct(found);
+        if (found) {
+          const defaultIndex = found.variants.findIndex((variant) => variant.isDefault);
+          setSelectedIdx(defaultIndex >= 0 ? defaultIndex : 0);
+        }
+      })
+      .catch((error) => console.error("Live product details unavailable:", error))
+      .finally(() => { if (active) setCatalogLoading(false); });
+    return () => { active = false; };
+  }, [slug]);
+
+  const liveVariants = liveProduct?.variants ?? [];
 
   const localized = locale === "hi" ? {
     category: { "a2-bilona-ghee": "देसी थारपारकर डेयरी", "tharparkar-dhoop": "गोबर से बनी प्राकृतिक धूप", "pure-kechua-khad": "जैविक केंचुआ खाद", "deep-work-bhunga-stay": "ग्रामीण पर्यटन और भुंगा ठहराव" }[slug] || product.category,
@@ -108,12 +133,16 @@ export default function ProductDetailPage(props: { params: Promise<{ slug: strin
     wa: "Namaste Lado Organics!", waProduct: "Product", waPrice: "Listed Price",
     waAsk: "Please share batch availability, shipping, and payment details.",
   };
-  const displayName = locale === "hi"
-    ? ({ "a2-bilona-ghee": "A2 बिलोना घी", "tharparkar-dhoop": "थारपारकर धूप", "pure-kechua-khad": "शुद्ध केंचुआ खाद", "deep-work-bhunga-stay": "डीप वर्क भुंगा स्टे" }[slug] || product.name)
-    : locale === "ma"
-      ? ({ "a2-bilona-ghee": "A2 बिलोना घी", "tharparkar-dhoop": "थारपारकर धूप", "pure-kechua-khad": "चोखी केंचुआ खाद", "deep-work-bhunga-stay": "डीप वर्क भुंगा ठहराव" }[slug] || product.name)
-      : product.name;
-  const activeVariant = product.variants[selectedIdx] ?? product.variants[0];
+  const displayName = liveProduct
+    ? locale === "hi" ? liveProduct.nameHi || liveProduct.nameEn
+      : locale === "ma" ? liveProduct.nameMa || liveProduct.nameEn
+      : liveProduct.nameEn
+    : locale === "hi"
+      ? ({ "a2-bilona-ghee": "A2 बिलोना घी", "tharparkar-dhoop": "थारपारकर धूप", "pure-kechua-khad": "शुद्ध केंचुआ खाद", "deep-work-bhunga-stay": "डीप वर्क भुंगा स्टे" }[slug] || product.name)
+      : locale === "ma"
+        ? ({ "a2-bilona-ghee": "A2 बिलोना घी", "tharparkar-dhoop": "थारपारकर धूप", "pure-kechua-khad": "चोखी केंचुआ खाद", "deep-work-bhunga-stay": "डीप वर्क भुंगा ठहराव" }[slug] || product.name)
+        : product.name;
+  const activeVariant = liveVariants[selectedIdx];
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919636100337";
 
   const visual = product.slug.includes("ghee")
@@ -128,7 +157,7 @@ export default function ProductDetailPage(props: { params: Promise<{ slug: strin
 
 
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-    `${localized.wa}\n${localized.waProduct}: ${displayName} (${activeVariant.label})\n${localized.waPrice}: ₹${activeVariant.priceInr.toLocaleString("en-IN")}\n${localized.waAsk}`
+    `${localized.wa}\n${localized.waProduct}: ${displayName} (${activeVariant?.label || (locale === "hi" ? "पैक की कीमत उपलब्ध नहीं" : locale === "ma" ? "पैक रो भाव उपलब्ध कोनी" : "price unavailable")})\n${localized.waPrice}: ${activeVariant ? "₹" + activeVariant.priceInr.toLocaleString("en-IN") : ""}\n${localized.waAsk}`
   )}`;
 
   return (
@@ -180,9 +209,9 @@ export default function ProductDetailPage(props: { params: Promise<{ slug: strin
           <p className="product-detail-kicker">{localized.choose}</p>
           <h2>{localized.bring}</h2>
         </div>
-        {product.variants.length > 1 && (
+        {liveVariants.length > 1 && (
           <div className="product-detail-variants">
-            {product.variants.map((v, idx) => (
+            {liveVariants.map((v, idx) => (
               <button
                 key={v.sku}
                 type="button"
@@ -199,11 +228,15 @@ export default function ProductDetailPage(props: { params: Promise<{ slug: strin
         <div className="product-detail-checkout">
           <div>
             <span>{localized.selected} · {activeVariant.label}</span>
-            <strong>₹{activeVariant.priceInr.toLocaleString("en-IN")}</strong>
+            {activeVariant ? <strong>₹{activeVariant.priceInr.toLocaleString("en-IN")}</strong> : <strong>{catalogLoading ? (locale === "hi" ? "कीमत देखी जा रही है…" : locale === "ma" ? "भाव देखै रिया है…" : "Checking live price…") : (locale === "hi" ? "लाइव कीमत उपलब्ध नहीं" : locale === "ma" ? "चालू भाव उपलब्ध कोनी" : "Live price unavailable")}</strong>}
           </div>
-          <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="product-detail-order">
-            {localized.order} <span aria-hidden="true">↗</span>
-          </a>
+          {activeVariant ? (
+            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="product-detail-order">
+              {localized.order} <span aria-hidden="true">↗</span>
+            </a>
+          ) : (
+            <Link href="/contact" className="product-detail-order">{locale === "hi" ? "टीम से संपर्क करें" : locale === "ma" ? "टीम नै खबर करो" : "Contact the team"}</Link>
+          )}
         </div>
         <p className="product-detail-order-note">We’ll confirm current batch availability, delivery and payment details with you before the order is finalised.</p>
       </section>
