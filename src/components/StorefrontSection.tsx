@@ -113,9 +113,16 @@ export default function StorefrontSection({
                     className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 flex flex-col justify-between shadow-sm"
                   >
                     <div>
-                      {product.imageUrl ? (
+                      {product.imageUrl || product.slug.includes("dhoop") ? (
                         <div className="relative mb-4 aspect-[4/3] overflow-hidden rounded-2xl bg-[var(--bg)]">
-                          <Image src={product.imageUrl} alt={displayName} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" unoptimized className="object-cover" />
+                          <Image
+                            src={product.imageUrl || `/images/lado-organics/${encodeURIComponent("Lado Organics Tharparkar Dhoop.png")}`}
+                            alt={displayName}
+                            fill
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                            unoptimized
+                            className="object-cover transition-transform duration-700 hover:scale-105"
+                          />
                         </div>
                       ) : (
                         <div className={`product-art product-art-${productArt.kind} mb-4 aspect-[4/3] rounded-2xl`} aria-label={`${displayName} product artwork placeholder`}>
@@ -208,6 +215,37 @@ export default function StorefrontSection({
               })}
             </div>
           )}
+        </div>
+      </section>
+
+      <section aria-labelledby="lado-photo-story-title" className="border-t border-[var(--border)] py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[.2em] text-[var(--terracotta)]">A glimpse of Pilani</p>
+              <h2 id="lado-photo-story-title" className="mt-2 text-3xl sm:text-4xl font-serif font-bold">The farm, the craft, the collection.</h2>
+            </div>
+            <p className="max-w-md text-sm leading-relaxed opacity-75">A visual introduction to the Lado Organics farm story and traditional product collection.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { file: "Lado Organics Farm-to-Table Collection.png", title: "From farm to home", alt: "Lado Organics farm-to-table product collection" },
+              { file: "Lado Organics Rustic Farm Showcase.png", title: "Rooted in the farm", alt: "Lado Organics rustic farm showcase" },
+              { file: "Lado Organics Natural Heritage Collection.png", title: "Tradition, thoughtfully made", alt: "Lado Organics natural heritage product collection" }
+            ].map((photo) => (
+              <figure key={photo.file} className="group relative aspect-[5/4] overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--surface)]">
+                <Image
+                  src={`/images/lado-organics/${encodeURIComponent(photo.file)}`}
+                  alt={photo.alt}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  unoptimized
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent px-5 pb-5 pt-12 text-white font-serif text-xl">{photo.title}</figcaption>
+              </figure>
+            ))}
+          </div>
         </div>
       </section>
 
