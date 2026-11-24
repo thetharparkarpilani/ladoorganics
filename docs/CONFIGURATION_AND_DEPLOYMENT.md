@@ -54,6 +54,7 @@ For production database access, confirm that `DATABASE_URL` and the complete `SU
 
 - The GitHub Actions quality workflow runs TypeScript checks, ESLint and `next build`.
 - Connect the repository `thetharparkarpilani/ladoorganics` to the intended Vercel project and confirm the Production branch is `main`.
+- **Important: a second publishing target is present.** The repository has a root `index.html`, a `CNAME` containing `ladoorganics.in`, and a successful GitHub Pages Jekyll build/deploy workflow. That publishes the legacy static site separately from the Next.js application on Vercel. Verify the live DNS records and the domain attached in Vercel before changing or removing either host. Do not assume the custom domain is serving the Vercel app merely because the Vercel preview URL works.
 - Set required Production environment variables before the production build/deployment.
 - Verify the deployment itself, not just the GitHub build: home page, live catalogue, product details, cart/checkout, Google sign-in, customer order history, admin role access, Lado AI and public policies.
 - Verify `/api/health` only as an application-process probe; it deliberately does not expose database or secret configuration.
