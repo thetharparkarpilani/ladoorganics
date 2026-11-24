@@ -3,6 +3,10 @@ import OpenAI from "openai";
 import { db } from "@/lib/db";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import { findLocalAnswer, getKnowledgeEntries } from "@/lib/lado-knowledge";
+import {
+  AI_COPY, detectLadoLocale, localizedActionLabels, localizedCatalogReply,
+  localizedKnowledgeAnswer, normalizeLadoText, productAliases,
+} from "@/lib/lado-language";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -19,7 +23,7 @@ function clean(value: unknown, max: number): string {
 async function liveCatalog(): Promise<string> {
   try {
     const result = await db.query(
-      `SELECT p.name_en, p.slug, p.description_en, p.sourcing_info, p.production_method, p.storage_instructions,
+      `SELECT p.name_en, p.name_hi, p.name_ma, p.slug, p.description_en, p.sourcing_info, p.production_method, p.storage_instructions,
               v.label AS variant_label, v.price_inr
        FROM products p
        LEFT JOIN product_variants v ON v.product_id = p.id AND v.stock_qty > 0
@@ -28,7 +32,7 @@ async function liveCatalog(): Promise<string> {
     );
     if (!result.rows.length) return "Live catalogue unavailable. Never guess prices, variants or stock.";
     return result.rows.map((r) => [
-      `Product: ${clean(r.name_en, 100)}`,
+      `Product: ${clean(r.name_en, 100)} | Hindi: ${clean(r.name_hi, 100)} | Marwari: ${clean(r.name_ma, 100)}`,
       `Page: /store/${clean(r.slug, 100)}`,
       `Description: ${clean(r.description_en, 500)}`,
       r.variant_label ? `Listed pack: ${clean(r.variant_label, 60)}` : "",
@@ -57,18 +61,15 @@ async function getCartSuggestion(message: string): Promise<CartSuggestion | null
       'WHERE p.is_active = TRUE AND v.stock_qty > 0 ' +
       'ORDER BY p.created_at ASC, v.is_default DESC LIMIT 80'
     );
-    const q = message.toLowerCase().replace(/[^a-z0-9]+/g, '');
-    const aliases: Record<string, string[]> = {
-      'a2-bilona-ghee': ['ghee', 'bilona', 'clarified butter'],
-      'tharparkar-dhoop': ['dhoop', 'incense'],
-      'pure-kechua-khad': ['khad', 'compost', 'vermicompost', 'kechua', 'earth manure'],
-    };
+    const q = normalizeLadoText(message).replace(/\\s/g, "");
+    const aliases = productAliases(locale);
     const products = new Map<string, { name: string; variants: CartVariantSuggestion[] }>();
     for (const row of result.rows) {
       const slug = String(row.slug || '');
       const name = String(row.name_en || '');
-      const terms = [name.toLowerCase(), slug.replace(/-/g, ' '), ...(aliases[slug] || [])];
-      if (!terms.some((term) => term && q.includes(term.toLowerCase().replace(/[^a-z0-9]+/g, '')))) continue;
+      const localizedName = locale === "hi" ? String(row.name_hi || name) : locale === "ma" ? String(row.name_ma || name) : name;
+      const terms = [name, localizedName, slug.replace(/-/g, " "), ...(aliases[slug] || [])];
+      if (!terms.some((term) => term && q.includes(normalizeLadoText(term).replace(/\\s/g, "")))) continue;
       const current = products.get(slug) || { name, variants: [] };
       current.variants.push({
         variantId: String(row.variant_id),
@@ -99,22 +100,24 @@ async function getCartSuggestion(message: string): Promise<CartSuggestion | null
   }
 }
 
-function actionsFor(message: string): Array<{ label: string; href: string }> {
-  const q = message.toLowerCase();
+function actionsFor(message: string, locale: "en" | "hi" | "ma"): Array<{ label: string; href: string }> {
+  const q = normalizeLadoText(message);
+  const has = (...terms: string[]) => terms.some((term) => q.includes(normalizeLadoText(term)));
+  const labels = localizedActionLabels(locale);
   const out: Array<{ label: string; href: string }> = [];
-  const add = (label: string, href: string) => { if (!out.some((a) => a.href === href)) out.push({ label, href }); };
-  if (/ghee|dhoop|khad|compost|milk|kesar|product|price|pack|buy|shop/.test(q)) add("Explore the collection", "/#store");
-  if (/ghee|bilona/.test(q)) add("A2 Bilona Ghee", "/store/a2-bilona-ghee");
-  if (/dhoop/.test(q)) add("Tharparkar Dhoop", "/store/tharparkar-dhoop");
-  if (/khad|compost|vermi/.test(q)) add("Vermicompost", "/store/pure-kechua-khad");
-  if (/stay|bhunga|visit|booking|book/.test(q)) add("Bhunga stay request", "/#experiences");
-  if (/workshop|custom experience|experience package|farm activity/.test(q)) add("Build a farm experience", "/#build-experience");
-  if (/gau seva|sponsor|sponsorship|calf|cow adoption/.test(q)) add("Gau Seva sponsorship form", "/#experiences");
-  if (/order status|my order|track|account|profile|reward|dashboard|login|sign in/.test(q)) add("My Lado Journey", "/dashboard");
-  if (/delivery|shipping|refund|return|cancel|payment|policy|privacy|terms/.test(q)) add("Policies & Legal", "/policies");
-  if (/complaint|problem|issue|support ticket|support case/.test(q)) add("Submit a support request", "/login?next=/dashboard/support");
-  if (/human|person|team|contact|complaint|problem|support|whatsapp/.test(q)) add("Contact our team", "/contact");
-  if (/farm|cow|tharparkar|soil|tree|organic|process/.test(q)) add("Discover our farm story", "/#farm-world");
+  const add = (label: string, href: string) => { if (!out.some((action) => action.href === href)) out.push({ label, href }); };
+  if (has("ghee", "dhoop", "khad", "compost", "milk", "kesar", "product", "price", "pack", "buy", "shop", "घी", "धूप", "खाद", "भाव", "कीमत", "सामान", "खरीद", "दाम")) add(labels.collection, "/#store");
+  if (has("ghee", "bilona", "घी", "बिलोना", "घी रो")) add(labels.ghee, "/store/a2-bilona-ghee");
+  if (has("dhoop", "धूप", "धूपबत्ती")) add(labels.dhoop, "/store/tharparkar-dhoop");
+  if (has("khad", "compost", "vermi", "खाद", "केंचुआ")) add(labels.compost, "/store/pure-kechua-khad");
+  if (has("stay", "bhunga", "visit", "booking", "book", "भुंगा", "ठहराव", "रहना", "रहण")) add(labels.stay, "/#experiences");
+  if (has("workshop", "custom experience", "experience package", "farm activity", "अनुभव", "गतिविधि")) add(labels.experience, "/#build-experience");
+  if (has("gau seva", "sponsor", "sponsorship", "calf", "cow adoption", "गौ सेवा", "गाय", "बछड़ा", "बाछड़ी")) add(labels.gau, "/#experiences");
+  if (has("order status", "my order", "track", "account", "profile", "reward", "dashboard", "login", "sign in", "ऑर्डर", "मेरा ऑर्डर", "म्हारो ऑर्डर", "खाता")) add(labels.account, "/dashboard");
+  if (has("delivery", "shipping", "refund", "return", "cancel", "payment", "policy", "privacy", "terms", "डिलीवरी", "भेजना", "भुगतान", "रिफंड", "वापसी")) add(labels.policies, "/policies");
+  if (has("complaint", "problem", "issue", "support ticket", "support case", "शिकायत", "दिक्कत", "समस्या")) add(labels.support, "/login?next=/dashboard/support");
+  if (has("human", "person", "team", "contact", "complaint", "problem", "support", "whatsapp", "इंसान", "टीम", "संपर्क", "मदद", "खबर करो")) add(labels.contact, "/contact");
+  if (has("farm", "cow", "tharparkar", "soil", "tree", "organic", "process", "खेत", "गाय", "माटी", "रूंख", "थारपारकर")) add(labels.farm, "/#farm-world");
   return out.slice(0, 4);
 }
 
@@ -194,21 +197,30 @@ export async function POST(req: NextRequest) {
 
   const payload = body && typeof body === "object" ? body as Record<string, unknown> : {};
   const message = clean(payload.message, 1500);
+  const requestedLocale = payload.locale === "hi" || payload.locale === "ma" || payload.locale === "en" ? payload.locale : undefined;
+  const locale = detectLadoLocale(message, requestedLocale);
   if (message.length < 2) return NextResponse.json({ error: "Please type a little more detail." }, { status: 400 });
 
   const knowledge = await getKnowledgeEntries();
   const direct = findLocalAnswer(message, knowledge);
-  if (direct) return NextResponse.json({ reply: direct.answer, actions: actionsFor(message), answerSource: "lado-knowledge" }, { headers: { "Cache-Control": "no-store" } });
+  if (direct) return NextResponse.json({ reply: localizedKnowledgeAnswer(direct.title, direct.answer, locale), actions: actionsFor(message, locale), answerSource: "lado-knowledge", locale }, { headers: { "Cache-Control": "no-store" } });
 
-  const cartSuggestion = await getCartSuggestion(message);
-  if (cartSuggestion) return NextResponse.json({ reply: "I found the available options for " + cartSuggestion.productName + ". Choose the pack you want and tap Add to your bag.", actions: actionsFor(message), cartSuggestion, answerSource: "store-assistant" }, { headers: { "Cache-Control": "no-store" } });
+  const cartSuggestion = await getCartSuggestion(message, locale);
+  if (cartSuggestion) {
+    const reply = locale === "hi"
+      ? cartSuggestion.productName + " के उपलब्ध विकल्प मिल गए हैं। अपना पैक चुनें और बैग में जोड़ें।"
+      : locale === "ma"
+        ? cartSuggestion.productName + " रा मिलण वाला विकल्प मिल गया। आपरो पैक चुनो अर थैली में जोड़ो।"
+        : "I found the available options for " + cartSuggestion.productName + ". Choose the pack you want and tap Add to your bag.";
+    return NextResponse.json({ reply, actions: actionsFor(message, locale), cartSuggestion, answerSource: "store-assistant", locale }, { headers: { "Cache-Control": "no-store" } });
+  }
 
-  const liveAnswer = await answerFromLiveCatalog(message);
-  if (liveAnswer) return NextResponse.json({ reply: liveAnswer, actions: actionsFor(message), answerSource: "live-catalog" }, { headers: { "Cache-Control": "no-store" } });
+  const liveAnswer = await answerFromLiveCatalog(message, locale);
+  if (liveAnswer) return NextResponse.json({ reply: liveAnswer, actions: actionsFor(message, locale), answerSource: "live-catalog", locale }, { headers: { "Cache-Control": "no-store" } });
 
   if (!openai) return NextResponse.json({
-    reply: "I can answer common questions from Lado's verified knowledge, but I don't have a verified answer to this particular question yet. Please rephrase it or contact our Pilani team on WhatsApp at +91 96361 00337.",
-    actions: [{ label: "Help & Support", href: "/contact" }],
+    reply: AI_COPY[locale].fallback + " WhatsApp: +91 96361 00337.",
+    actions: [{ label: localizedActionLabels(locale).contact, href: "/contact" }],
     answerSource: "knowledge-fallback",
   }, { headers: { "Cache-Control": "no-store" } });
 
@@ -224,9 +236,14 @@ export async function POST(req: NextRequest) {
   if (history.at(-1)?.role === "user" && history.at(-1)?.content === message) history.pop();
 
   try {
-    const [catalogContext, cartSuggestion] = await Promise.all([liveCatalog(), getCartSuggestion(message)]);
+    const [catalogContext, generatedCartSuggestion] = await Promise.all([liveCatalog(), getCartSuggestion(message, locale)]);
     const knowledgeContext = knowledge.map((item) => "Category: " + clean(item.category,40) + "\nTopic: " + clean(item.title,160) + "\nExample questions: " + clean(item.question_patterns,1200) + "\nVerified answer: " + clean(item.answer,4000)).join("\n\n");
-    const systemPrompt = SYSTEM.replace("{{CATALOG}}", catalogContext).replace("{{KNOWLEDGE}}", knowledgeContext);
+    const languageInstruction = locale === "hi"
+      ? "Answer in natural, clear Hindi (Devanagari). Keep brand and product names as officially listed. Do not switch to English unless a technical term or customer wording requires it."
+      : locale === "ma"
+        ? "Answer in natural conversational Marwari of the Shekhawati/Jhunjhunu-Pilani region, preferably Devanagari. This is Marwari, not standard Hindi. Use familiar local words such as म्हाने, थां, थारो/थारी, घणो, कोनी, सूं, रो/री/रै where natural. Keep product and brand names as officially listed. If unsure of a dialect expression, use simple respectful Marwari rather than pretending certainty."
+        : "Answer in clear, warm English.";
+    const systemPrompt = SYSTEM.replace("{{CATALOG}}", catalogContext).replace("{{KNOWLEDGE}}", knowledgeContext) + "\\n\\nLANGUAGE REQUIREMENT: " + languageInstruction;
     const completion = await openai.chat.completions.create({
       model: process.env.OPENAI_MODEL || "gpt-4o-mini",
       messages: [
@@ -239,12 +256,16 @@ export async function POST(req: NextRequest) {
     });
     const reply = clean(completion.choices[0]?.message?.content, 3500);
     if (!reply) throw new Error("Empty AI response");
-    return NextResponse.json({ reply, actions: actionsFor(message), cartSuggestion }, { headers: { "Cache-Control": "no-store" } });
+    return NextResponse.json({ reply, actions: actionsFor(message, locale), cartSuggestion: generatedCartSuggestion, locale }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     console.error("Lado AI request failed:", error);
     return NextResponse.json({
-      reply: "I'm sorry — I couldn't complete that answer just now, and I don't want to guess. Please try again or contact our Pilani team on WhatsApp at +91 96361 00337.",
-      actions: [{ label: "Contact our team", href: "/contact" }],
+      reply: locale === "hi"
+        ? "माफ़ कीजिए, अभी जवाब तैयार नहीं हो पाया और मैं अनुमान नहीं लगाना चाहता। कृपया फिर कोशिश करें या WhatsApp +91 96361 00337 पर टीम से संपर्क करें।"
+        : locale === "ma"
+          ? "माफ करो, अभी जवाब तैयार कोनी हो पायो अर म्हूं अंदाजो लगावणो कोनी चाहूं। फेर कोशिश करो या WhatsApp +91 96361 00337 पर टीम नै खबर करो।"
+          : "I'm sorry — I couldn't complete that answer just now, and I don't want to guess. Please try again or contact our Pilani team on WhatsApp at +91 96361 00337.",
+      actions: [{ label: localizedActionLabels(locale).contact, href: "/contact" }],
     }, { headers: { "Cache-Control": "no-store" } });
   }
 }
