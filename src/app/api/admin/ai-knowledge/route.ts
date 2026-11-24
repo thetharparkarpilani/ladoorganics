@@ -8,8 +8,11 @@ export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest) {
   if (!(await getAdminActor(req, "content"))) return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   try {
-    const result = await db.query("SELECT id::text,category,title,question_patterns,answer,is_published,sort_order,updated_at FROM ai_knowledge ORDER BY category,title");
-    return NextResponse.json({ items: result.rows }, { headers: { "Cache-Control": "no-store" } });
+    const [result, siteContent] = await Promise.all([
+      db.query("SELECT id::text,category,title,question_patterns,answer,is_published,sort_order,updated_at FROM ai_knowledge ORDER BY category,title"),
+      db.query("SELECT COUNT(*)::int AS published_count FROM site_content WHERE is_published=TRUE AND body <> ''"),
+    ]);
+    return NextResponse.json({ items: result.rows, publishedSiteContentCount: Number(siteContent.rows[0]?.published_count || 0) }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     console.error("AI knowledge read failed:", error);
     return NextResponse.json({ error: "Run database migration 018 before using the AI Knowledge Library." }, { status: 503 });
