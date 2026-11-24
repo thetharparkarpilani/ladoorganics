@@ -7,7 +7,7 @@ const topics = [
   ["Farm and Tharparkar cattle", ["tell me about tharparkar cows","which breed of cows","what cattle are on the farm","farm cow breed","tharparkar gai"]],
   ["A2 Bilona Ghee process", ["how do you prepare ghee","how is lado ghee prepared","how is ghee produced","ghee manufacturing process","traditional ghee making"]],
   ["Ghee storage", ["how should i keep ghee","how do i preserve ghee","ghee shelf storage","store ghee after opening","ghee storage instructions"]],
-  ["Vermicompost information", ["tell me about compost","what is earthworm manure","what is organic manure","how vermicompost is made","kechua khad su hai"]],
+  ["Vermicompost information", ["vermicompost information","what is earthworm manure","what is organic manure","how vermicompost is made","kechua khad su hai"]],
   ["How to use vermicompost", ["how much manure should i use","compost dosage for plants","how to apply organic manure","fertilizer for pots","khad kitri nakhu"]],
   ["Dhoop usage", ["how to burn incense safely","how to burn incense safely","how do i light dhoop","dhoop use instructions","dhoop kiyan jalau"]],
   ["Current product prices and stock", ["show current prices","how much are your products","which products are in stock","available pack sizes","kitro bhav hai"]],
