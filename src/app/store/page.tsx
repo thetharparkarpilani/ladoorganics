@@ -2,7 +2,6 @@ import React from "react";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { getServerLocale } from "@/lib/server-locale";
-import { TRANSLATIONS } from "@/lib/i18n";
 
 export const metadata = {
   title: "Circular Store | Lado Organics",
@@ -48,7 +47,6 @@ const DESCRIPTION: Record<"hi" | "ma", Record<string, string>> = {
 
 export default async function StoreCatalogPage() {
   const [products, locale] = await Promise.all([getProducts(), getServerLocale()]);
-  const dict = TRANSLATIONS[locale];
   const copy = locale === "hi"
     ? { kicker: "मॉड्यूल D • देसी स्टोर", title: "खेत से सीधे, सोच-समझकर चुने उत्पाद", subtitle: "पिलानी से सीधे उपलब्ध मौजूदा उत्पाद और दर्ज पैक कीमतें।", direct: "खेत से सीधे", view: "उत्पाद देखें", unavailable: "लाइव स्टोर सूची अभी उपलब्ध नहीं है। पुरानी या अनुमानित कीमत दिखाने के बजाय हम टीम से पुष्टि करने की सलाह देते हैं।", contact: "टीम से संपर्क करें" }
     : locale === "ma"
