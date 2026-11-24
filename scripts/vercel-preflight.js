@@ -5,13 +5,14 @@ console.log("");
 
 const requiredEnvs = [
   "DATABASE_URL",
-  "ADMIN_ACCESS_TOKEN",
   "NEXT_PUBLIC_SUPABASE_URL",
   "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
   "NEXT_PUBLIC_SITE_URL"
 ];
 
 const optionalEnvs = [
+  "RATE_LIMIT_SECRET",
+  "ADMIN_ACCESS_TOKEN",
   "SMTP_HOST",
   "SMTP_USER",
   "SMTP_PASS",
