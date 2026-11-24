@@ -31,6 +31,7 @@ export const DEFAULT_LADO_KNOWLEDGE: KnowledgeEntry[] = [
   {category:"account",title:"Sign in and order history",question_patterns:"where is my order | track my order | order history | how to login | sign in | mera order | order status",answer:"Use Google sign-in with the same Google account used when placing the order. Then open My Account or Order History from the customer dashboard. If you used a different email, sign in with that account. Lado AI must not reveal another customer's order information."},
   {category:"returns",title:"Returns and cancellations",question_patterns:"return policy | refund policy | cancel my order | how to return | refund | order cancellation",answer:"The Policies & Legal page currently contains draft templates marked as requiring legal review, so it should not be treated as a finalized legal guarantee. For a specific order cancellation, return or refund request, contact the Lado team with your order number."},
   {category:"support",title:"Contact Lado Organics",question_patterns:"contact customer care | talk to human | speak to team | whatsapp number | customer support | help number",answer:"You can contact the Lado Organics team on WhatsApp at +91 96361 00337, or use the Contact & Support page on the website. Please do not send passwords, OTPs or UPI PINs."},
+  {category:"sponsorship",title:"Gau Seva contribution amount",question_patterns:"how much to sponsor a calf | sponsorship amount | gau seva price | calf sponsorship cost | how much does sponsorship cost",answer:"The Gau Seva form lets supporters enter their own contribution amount and choose one-time, monthly or yearly plans. The website does not state a fixed minimum contribution. Please confirm current arrangements with the Lado team. Submitting the form is an enquiry, not proof of payment or adoption."},
   {category:"privacy",title:"AI privacy and safe information",question_patterns:"is lado ai safe | does ai store my data | can i share otp | privacy chat",answer:"Please do not share passwords, OTPs, UPI PINs, card details or other sensitive information in Lado AI chat. Messages may be processed by an external AI service when AI assistance is used. See the website's privacy information for the current disclosure."}
 ];
 
@@ -43,33 +44,8 @@ export function findLocalAnswer(question: string, entries: KnowledgeEntry[] = DE
   if (q.length < 3) return null;
   const qTokens = new Set(q.split(/\s+/).filter((t) => t.length > 2));
   let best: { entry: KnowledgeEntry; score: number } | null = null;
-  const extraPatterns: Record<string, string[]> = {
-    "About Lado Organics": ["lado organics ke hai", "lado ro parichay", "lado su hai", "tharo lado su hai", "lado ke che", "lado shu che"],
-    "Farm and Tharparkar cattle": ["tharparkar gai", "tharparkar gaay", "thari gai", "thari gaay", "gaay kaisi hai", "गायां कितरी है", "थारपारकर गाय कियां है"],
-    "A2 Bilona Ghee process": ["ghino kaiso bane", "ghee kiyan bane", "ghee kaiso banyo", "bilona ri reet", "घी कियां बणै", "घी किण रीति सूं बणै", "घी कैसे बनता है"],
-    "Ghee storage": ["ghee kithai rakhu", "ghino rakhan ro tariko", "घी कियां राखूं", "घी किधर रखें"],
-    "Vermicompost information": ["kechua khad su hai", "khad kiyan bane", "khad ro upyog", "खाद काई है", "केंचुआ खाद कियां बणै"],
-    "How to use vermicompost": ["khad kitri nakhu", "paudha mein khad kitti nakhu", "khad kiyan dalu", "खाद कितरी डालूं", "पौधां में खाद कितरी डालूं"],
-    "Dhoop usage": ["dhoop kiyan jalau", "dhoop kaiso jalave", "धूप कियां जलावां", "धूप कियां जलावै"],
-    "Current product prices and stock": ["kitro bhav hai", "kito ro hai", "tharo bhav su hai", "saman kitro ko", "भाव कितरो है", "किण रो भाव है", "सामान मिलै है"],
-    "Cow dung and circular farm practices": ["gobar su karo ho", "gobar ro upyog", "gobar kithai kaam ave", "गोबर सूं काई करो", "गोबर रो उपयोग"],
-    "Product health and medical claims": ["ghee bimari thik kare", "ghee dava hai ke", "घी बीमारी ठीक करै"],
-    "How to place an order": ["saman kiyan mangwau", "order kiyan karu", "mhaane saman mangvano hai", "म्हाने सामान मंगवाणो है", "ऑर्डर कियां करूं", "सामान मंगवाना है"],
-    "Shipping and delivery": ["saman kadi avse", "ghar kadi pahunche", "delivery kadi avse", "saman ghar kiyan ave", "सामान कद आवै", "घर कद पहुंचसी"],
-    "Payment methods": ["paisa kiyan devu", "bhugtan kiyan karu", "upi kiyan karu", "पैसा कियां देवूं", "भुगतान कियां करूं"],
-    "Manual UPI verification": ["upi kari didho", "paisa mokli didha", "payment kari didho", "यूपीआई कर दियो", "पैसा भेज दिया"],
-    "Bhunga stay price and booking": ["bhunga ro bhav", "bhunga mein kiyan rukhu", "bhunga booking kiyan karu", "भुंगा रो भाव", "भुंगा में कियां रुकूं"],
-    "Farm experience": ["khet ro anubhav", "farm ghumno hai", "khet ghumna hai", "खेत घूमणो है", "फार्म घूमना है"],
-    "Gau Seva sponsorship": ["gau seva kiyan karu", "gai ri seva kiyan karu", "bachhri god levani hai", "गौ सेवा कियां करूं", "गाय री सेवा"],
-    "Essentials Club": ["essentials club su hai", "mahinavari saman avse ke", "हर महीने सामान आवै"],
-    "Lab reports and certifications": ["lab report hai ke", "certificate hai ke", "janch report dikhao", "लैब रिपोर्ट है के", "जांच रिपोर्ट दिखाओ"],
-    "Sign in and order history": ["mharo order kithai hai", "mharo order kiyan dekhu", "order kithai dekhno", "म्हारो ऑर्डर कठै है", "मेरा ऑर्डर कहाँ है"],
-    "Returns and cancellations": ["order cancel kiyan karu", "paisa wapas kiyan male", "saman wapas kiyan karu", "ऑर्डर रद्द कियां करूं", "पैसा वापस कियां मिले"],
-    "Contact Lado Organics": ["lado team su kiyan bolu", "thari team su bat karni", "madad kithai mile", "मदद कठै मिलै", "टीम सूं बात करनी है"],
-    "AI privacy and safe information": ["otp devu ke", "upi pin batavu ke", "lado ai surakshit hai ke", "ओटीपी बताऊं के", "UPI PIN बताऊं क्या"],
-  };
   for (const entry of entries) {
-    const patterns = [...entry.question_patterns.split("|"), ...(extraPatterns[entry.title] || [])].map((p) => normalize(p)).filter(Boolean);
+    const patterns = entry.question_patterns.split("|").map((p) => normalize(p)).filter(Boolean);
     let score = 0;
     for (const pattern of patterns) {
       if (q === pattern || q.includes(pattern) || (q.length >= 9 && q.split(" ").length >= 2 && pattern.includes(q))) score = Math.max(score, 1);

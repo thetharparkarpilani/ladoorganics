@@ -117,7 +117,7 @@ export async function POST(req: NextRequest) {
       try {
         await client.query("BEGIN");
         const current = await client.query(
-          "SELECT id, order_number, status, payment_status FROM orders WHERE id = $1 FOR UPDATE",
+          "SELECT id, order_number, status, payment_status, payment_method FROM orders WHERE id = $1 FOR UPDATE",
           [id]
         );
         if (!current.rows[0]) {
@@ -137,6 +137,12 @@ export async function POST(req: NextRequest) {
         if (!(allowedTransitions[previousStatus] || []).includes(status)) {
           await client.query("ROLLBACK");
           return NextResponse.json({ error: "That order status transition is not permitted. Cancelled and completed orders cannot be reopened." }, { status: 409 });
+        }
+        if (status === "processing" &&
+            current.rows[0].payment_method === "manual_upi" &&
+            current.rows[0].payment_status !== "paid") {
+          await client.query("ROLLBACK");
+          return NextResponse.json({ error: "Manual UPI payment must be verified by a finance-authorized user before an order can enter processing." }, { status: 409 });
         }
         if (status === "cancelled" && ["shipped", "delivered", "refunded"].includes(previousStatus)) {
           await client.query("ROLLBACK");
@@ -328,6 +334,17 @@ export async function POST(req: NextRequest) {
             order.rows[0].status === "cancelled") {
           await client.query("ROLLBACK");
           return NextResponse.json({ error: "This order is already processed or cancelled." }, { status: 409 });
+        }
+        // Serialize use of a UPI reference and reject a reference already attached
+        // to another order, even if the optional unique-index migration is pending.
+        await client.query("SELECT pg_advisory_xact_lock(hashtext($1))", ["manual-upi:" + reference]);
+        const duplicateReference = await client.query(
+          "SELECT order_id FROM payments WHERE provider = 'manual_upi' AND provider_payment_id = $1 FOR UPDATE",
+          [reference]
+        );
+        if (duplicateReference.rows.some((row: { order_id: string }) => row.order_id !== id)) {
+          await client.query("ROLLBACK");
+          return NextResponse.json({ error: "This UPI transaction reference has already been used for another order." }, { status: 409 });
         }
         if (amountInr !== Number(order.rows[0].total_inr)) {
           await client.query("ROLLBACK");

@@ -23,7 +23,7 @@ const ARTICLES: JournalArticle[] = [
       "How culturing milk into curd and churning by the traditional Bilona method differs from direct cream separation.",
     body: [
       "At Lado Organics in Pilani, Rajasthan, indigenous Tharparkar milk is cultured into curd and churned using the traditional Bilona method rather than separating raw cream industrially.",
-      "Every jar can be traced to its batch ledger at /trace/LO-PILANI-SAMPLE-001, with lab report links shown only when verified and published by an administrator."
+      "Batch-specific traceability is available only when a current approved batch code is printed on the product label. Lab report links appear only when a report has been published for that batch."
     ]
   },
   {

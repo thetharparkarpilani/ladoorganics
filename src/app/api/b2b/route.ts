@@ -31,8 +31,13 @@ export async function POST(req: NextRequest) {
         !/^[+0-9()\-\s]{7,24}$/.test(phone) || !estimatedQuantity) {
       return NextResponse.json({ error: "Please provide valid company, contact, email, phone and quantity details." }, { status: 400 });
     }
-    if (targetDate && !/^\d{4}-\d{2}-\d{2}$/.test(targetDate)) {
-      return NextResponse.json({ error: "Please provide a valid target delivery date." }, { status: 400 });
+    if (targetDate) {
+      const parsedDate = /^\d{4}-\d{2}-\d{2}$/.test(targetDate)
+        ? new Date(targetDate + "T00:00:00.000Z")
+        : null;
+      if (!parsedDate || Number.isNaN(parsedDate.getTime()) || parsedDate.toISOString().slice(0, 10) !== targetDate) {
+        return NextResponse.json({ error: "Please provide a valid target delivery date." }, { status: 400 });
+      }
     }
 
     const client = await db.getClient();

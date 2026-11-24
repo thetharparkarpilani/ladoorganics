@@ -20,19 +20,13 @@ import CowAsCoconutMap from "@/components/CowAsCoconutMap";
 import FarmWorldSection from "@/components/FarmWorldSection";
 import CartCheckoutDrawer from "@/components/CartCheckoutDrawer";
 
-const INITIAL_PRODUCTS: ProductDTO[] = [
-  { id: "a2-ghee", slug: "a2-bilona-ghee", nameEn: "A2 Bilona Ghee", nameHi: "A2 बिलोना घी", nameMa: "A2 बिलोना घी", descriptionEn: "Hand-churned from indigenous Tharparkar cow curd using the traditional Bilona method in Pilani, Rajasthan.", sourcingInfo: "Pilani Gaushala, Rajasthan", productionMethod: "Curd-cultured Bilona process", storageInstructions: "Store in a cool, dry place away from direct sunlight.", variants: [{ id: "ghee-250ml", sku: "LO-GHEE-250", label: "250 ml", priceInr: 1350, stockQty: 10, isDefault: false }, { id: "ghee-500ml", sku: "LO-GHEE-500", label: "500 ml", priceInr: 2600, stockQty: 10, isDefault: false }, { id: "ghee-1l", sku: "LO-GHEE-1000", label: "1 litre", priceInr: 5000, stockQty: 10, isDefault: true }] },
-  { id: "dhoop", slug: "tharparkar-dhoop", nameEn: "Tharparkar Dhoop", nameHi: "थारपारकर धूप", nameMa: "थारपारकर धूप", descriptionEn: "Crafted from indigenous cow dung and natural botanical binders in Pilani.", sourcingInfo: "Pilani Gaushala, Rajasthan", productionMethod: "Cow dung & natural botanicals", storageInstructions: "Keep dry in an airtight container.", variants: [{ id: "dhoop-box", sku: "LO-DHOOP-BOX", label: "Box", priceInr: 1000, stockQty: 15, isDefault: true }] },
-  { id: "compost", slug: "pure-kechua-khad", nameEn: "Pure Kechua Khad", nameHi: "केंचुआ खाद", nameMa: "केंचुआ खाद", descriptionEn: "Vermicompost enriched with biogas slurry for home, terrace, and organic gardens.", sourcingInfo: "Pilani Farm Ecosystem", productionMethod: "Biogas slurry vermicomposting", storageInstructions: "Store in a shaded, breathable bag.", variants: [{ id: "khad-5kg", sku: "LO-KHAD-5KG", label: "5 kg Bag", priceInr: 2000, stockQty: 20, isDefault: true }] },
-  { id: "farm-stay", slug: "deep-work-bhunga-stay", nameEn: '"Deep Work" Bhunga Stay', nameHi: '"डीप वर्क" भुंगा स्टे', nameMa: '"डीप वर्क" भुंगा स्टे', descriptionEn: "Climate-responsive Rajasthani mud architecture in Pilani designed for focused work and farm living.", sourcingInfo: "Pilani, Jhunjhunu, Rajasthan", productionMethod: "Traditional mud-house stay", storageInstructions: "Confirm stay dates and details directly with the team.", variants: [{ id: "stay-night", sku: "LO-STAY-NIGHT", label: "Night", priceInr: 4000, stockQty: 5, isDefault: true }] }
-];
-
 export default function HomePage() {
   const { locale, setLocale } = useLocale();
   const [theme, setTheme] = useState<"light" | "dusk">("light");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [products, setProducts] = useState<ProductDTO[]>(INITIAL_PRODUCTS);
+  const [products, setProducts] = useState<ProductDTO[]>([]);
+  const [catalogStatus, setCatalogStatus] = useState<"loading" | "ready" | "error">("loading");
   const { addToCart, itemCount, setDrawerOpen } = useCart();
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919636100337";
   const dict = TRANSLATIONS[locale] ?? TRANSLATIONS.en;
@@ -60,12 +54,20 @@ export default function HomePage() {
   }, []);
   useEffect(() => {
     let active = true;
-    fetch("/api/catalog")
-      .then((res) => res.ok ? res.json() : null)
+    fetch("/api/catalog", { cache: "no-store" })
+      .then((res) => res.ok ? res.json() : Promise.reject(new Error("Catalogue unavailable")))
       .then((data) => {
-        if (active && Array.isArray(data?.catalog) && data.catalog.length) setProducts(data.catalog);
+        if (!active) return;
+        if (Array.isArray(data?.catalog)) {
+          setProducts(data.catalog);
+          setCatalogStatus("ready");
+        } else {
+          setCatalogStatus("error");
+        }
       })
-      .catch(() => { /* Use safe starter catalogue if database is not configured. */ });
+      .catch(() => {
+        if (active) setCatalogStatus("error");
+      });
     return () => { active = false; };
   }, []);
 
@@ -131,7 +133,19 @@ export default function HomePage() {
           <a className="farm-hero-scroll" href="#farm-world"><span /> {dict.scroll}</a>
         </section>
         <div data-farm-reveal><FarmWorldSection /></div>
-        <div data-farm-reveal><StorefrontSection products={products} locale={locale} searchQuery={searchQuery} whatsappNumber={whatsappNumber} onAddToBag={handleAddToBag} /></div>
+        <div data-farm-reveal>
+          {catalogStatus === "loading" ? (
+            <section id="store" className="py-20 px-4 text-center border-t border-[var(--border)]" role="status">Loading the live Lado Organics catalogue…</section>
+          ) : catalogStatus === "error" ? (
+            <section id="store" className="py-20 px-4 text-center border-t border-[var(--border)]">
+              <h2 className="text-3xl font-serif font-bold">The store is temporarily unavailable</h2>
+              <p className="mt-3 text-sm opacity-75">We could not verify current product prices and stock. Please try again shortly or contact our team.</p>
+              <button type="button" onClick={() => window.location.reload()} className="primary-btn mt-5 rounded-full px-5 py-3 text-sm font-bold">Try again</button>
+            </section>
+          ) : (
+            <StorefrontSection products={products} locale={locale} searchQuery={searchQuery} whatsappNumber={whatsappNumber} onAddToBag={handleAddToBag} />
+          )}
+        </div>
         <div data-farm-reveal><EssentialsClubSection /></div>
         <div data-farm-reveal><TrustAndProcessSection whatsappNumber={whatsappNumber} /></div>
         <div data-farm-reveal><FarmCalculatorsSuite locale={locale} /></div>

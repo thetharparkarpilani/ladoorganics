@@ -35,8 +35,8 @@ export default function BatchTracePage() {
   const { locale } = useLocale();
   const copy = locale === "hi" ? {
     back: "← Lado Organics होम पर लौटें", badge: "QR बैच ट्रेस • पिलानी, राजस्थान",
-    title: "उत्पाद बैच की पारदर्शिता", intro: "बैच कोड दर्ज करें या स्कैन करें (उदाहरण LO-PILANI-SAMPLE-001) और सत्यापित बैच विवरण तथा खेत से घर तक की यात्रा देखें। लैब रिपोर्ट का लिंक केवल अधिकृत व्यवस्थापक द्वारा प्रकाशित होने पर दिखेगा।",
-    placeholder: "बैच कोड दर्ज करें, जैसे LO-PILANI-SAMPLE-001", verify: "बैच जाँचें", verifying: "जाँच हो रही है…",
+    title: "उत्पाद बैच की पारदर्शिता", intro: "अपने उत्पाद के लेबल पर छपा बैच कोड दर्ज करें या स्कैन करें। केवल स्वीकृत उत्पादन बैच का विवरण दिखाया जाएगा।",
+    placeholder: "उत्पाद के लेबल से बैच कोड दर्ज करें", verify: "बैच जाँचें", verifying: "जाँच हो रही है…",
     loading: "बैच रिकॉर्ड लोड हो रहा है…", missing: "बैच रिकॉर्ड नहीं मिला।",
     help: "लेबल पर बैच कोड देखें या WhatsApp (+91 96361 00337) पर Lado Organics से संपर्क करें।",
     batch: "बैच आईडी", sample: "नमूना संदर्भ रिकॉर्ड", origin: "मूल स्थान", production: "निर्माण की तारीख",
@@ -48,8 +48,8 @@ export default function BatchTracePage() {
     lookupError: "अभी ट्रेस जानकारी नहीं मिल पा रही।",
   } : locale === "ma" ? {
     back: "← Lado Organics रै घर पन्ने पर लौटो", badge: "QR बैच री जांच • पिलानी, राजस्थान",
-    title: "सामान रै बैच री पूरी जानकारी", intro: "बैच कोड लिखो या स्कैन करो (मिसाल LO-PILANI-SAMPLE-001) अर पक्की बैच जानकारी अर खेत सूं घर तक री यात्रा देखो। लैब रिपोर्ट रो लिंक तद ही दिखै जद मंजूर व्यवस्थापक छापै।",
-    placeholder: "बैच कोड लिखो, ज्यूं LO-PILANI-SAMPLE-001", verify: "बैच जांचो", verifying: "जांच चालै है…",
+    title: "सामान रै बैच री पूरी जानकारी", intro: "उत्पाद रै लेबल पर छाप्यो बैच कोड लिखो या स्कैन करो। खाली मंजूर उत्पादन बैच री जानकारी देखाई जावैला।",
+    placeholder: "उत्पाद रै लेबल सूं बैच कोड लिखो", verify: "बैच जांचो", verifying: "जांच चालै है…",
     loading: "बैच रो हिसाब खुलै है…", missing: "बैच रो रिकॉर्ड कोनी मिल्यो।",
     help: "लेबल पर बैच कोड देखो या WhatsApp (+91 96361 00337) पर Lado Organics नै खबर करो।",
     batch: "बैच आईडी", sample: "नमूना संदर्भ रिकॉर्ड", origin: "मूल ठिकाणो", production: "बणावण री तारीख",
@@ -61,8 +61,8 @@ export default function BatchTracePage() {
     lookupError: "अभी बैच री जानकारी मिलै कोनी।",
   } : {
     back: "← Back to Lado Organics Home", badge: "QR Batch Traceability • Pilani, Rajasthan",
-    title: "Product Batch Transparency", intro: "Enter or scan a product batch identifier (try LO-PILANI-SAMPLE-001) to inspect verified batch details and the 6-step farm-to-home journey. Lab links appear only when published by an authorized administrator.",
-    placeholder: "Enter batch code e.g. LO-PILANI-SAMPLE-001", verify: "Verify Batch", verifying: "Verifying...",
+    title: "Product Batch Transparency", intro: "Enter or scan the batch identifier printed on your product label. Only approved production batch records are displayed.",
+    placeholder: "Enter the batch code from your product label", verify: "Verify Batch", verifying: "Verifying...",
     loading: "Loading batch ledger...", missing: "Batch record not found.",
     help: "Check the batch code on your label or contact Lado Organics on WhatsApp (+91 96361 00337).",
     batch: "Batch ID", sample: "Sample Reference Record", origin: "Origin Location", production: "Production Date",
@@ -73,7 +73,7 @@ export default function BatchTracePage() {
     journey: "Farm-to-Home Journey (6 Stages)", step: "STEP",
     lookupError: "Unable to reach traceability lookup right now.",
   };
-  const initialCode = decodeURIComponent(params?.batchCode || "LO-PILANI-SAMPLE-001").toUpperCase();
+  const initialCode = String(params?.batchCode || "").toUpperCase();
 
   const [codeInput, setCodeInput] = useState(initialCode);
   const [batch, setBatch] = useState<BatchRecord | null>(null);
@@ -83,7 +83,13 @@ export default function BatchTracePage() {
 
   const loadBatch = async (code: string) => {
     const clean = code.trim().toUpperCase();
-    if (!clean) return;
+    if (!clean) {
+      setBatch(null);
+      setJourney([]);
+      setError("Enter the batch code printed on your product label.");
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -113,8 +119,11 @@ export default function BatchTracePage() {
     e.preventDefault();
     const clean = codeInput.trim().toUpperCase();
     if (!clean) return;
-    router.push(`/trace/${encodeURIComponent(clean)}`);
-    void loadBatch(clean);
+    if (clean === initialCode) {
+      void loadBatch(clean);
+    } else {
+      router.push(`/trace/${encodeURIComponent(clean)}`);
+    }
   };
 
   return (

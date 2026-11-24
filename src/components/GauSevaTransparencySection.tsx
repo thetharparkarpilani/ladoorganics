@@ -11,15 +11,15 @@ interface TransparencyRow {
 const FAQS = [
   {
     q: "How is Lado Organics A2 Bilona Ghee made in Pilani?",
-    a: "It is crafted using traditional curd culturing and Bilona churning from indigenous Tharparkar cow milk in Pilani, Rajasthan, with batch records traceable at /trace/LO-PILANI-SAMPLE-001."
+    a: "The Lado website describes traditional curd culturing and Bilona churning from indigenous Tharparkar cow milk in Pilani, Rajasthan. Batch-specific details can be checked only when a current approved batch code is printed on the product label. If you need the code, please contact the farm team."
   },
   {
     q: "How do 'Deep Work' Bhunga Stay bookings prevent double booking?",
-    a: "Stay requests check existing active date ranges on the server in PostgreSQL before recording a reservation at the ₹4,000/night listed baseline rate."
+    a: "Stay requests check existing date ranges on the server before recording a pending request. The farm team must confirm availability and final details; submitting a request does not confirm a reservation."
   },
   {
     q: "Are shipping, taxes, or automatic recurring charges already finalized?",
-    a: "Listed prices (₹5,000/1L Ghee, ₹1,000/Box Dhoop, ₹2,000/5kg Kechua Khad, ₹4,000/Night Bhunga Stay) are baseline rates. Final shipping/taxes are confirmed prior to settlement, and recurring deliveries do not auto-debit until payment mandates are configured."
+    a: "Current product prices and available pack sizes are shown in the live store catalogue. Shipping charges and delivery timing are confirmed before dispatch. Repeat-delivery forms record interest only; no automatic payment or scheduled delivery is started."
   },
   {
     q: "Which calves are featured in our Pilani Gaushala sponsorship section?",
@@ -74,12 +74,12 @@ export default function GauSevaTransparencySection() {
             Sponsorship Transparency
           </h2>
           <p className="text-xs opacity-80 mb-5 leading-relaxed">
-            Displays recorded entries for Dholi Sheri, Tara, and Roshni. Allocations for fodder, shelter, and veterinary care are managed transparently without unsupported tax-deduction claims.
+            Displays sponsorship entries marked active by the Lado team for Dholi Sheri, Tara, and Roshni. Pending enquiries are not counted. These figures are not an audited expenditure statement or tax receipt.
           </p>
 
           {rows.length === 0 ? (
             <p className="text-xs opacity-70 p-4 rounded-2xl bg-[var(--bg)] border border-[var(--border)]">
-              No recorded sponsorship totals displayed yet. Submit a request in the sponsorship form to log an entry once PostgreSQL is connected.
+              No active sponsorship records are available to display yet. New sponsorship enquiries remain pending until reviewed by the Lado team.
             </p>
           ) : (
             <ul className="space-y-3 text-xs">

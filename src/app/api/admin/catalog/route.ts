@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
       const price = Number(body?.priceInr);
       const stock = Number(body?.stockQty);
       if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(variantId) ||
-          !Number.isFinite(price) || price < 0 || price > 100000000 ||
+          !Number.isSafeInteger(price) || price < 0 || price > 100000000 ||
           !Number.isInteger(stock) || stock < 0 || stock > 1000000) {
         return NextResponse.json({ error: "Enter a valid variant, price and whole-number stock quantity." }, { status: 400 });
       }

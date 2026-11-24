@@ -1,183 +1,118 @@
-﻿"use client";
+"use client";
 
-import React, { useEffect, useState, use } from "react";
+import React, { use, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import ProductReviewsSection from "@/components/ProductReviewsSection";
-import { useLocale } from "@/context/LocaleContext";
-import type { ProductDTO } from "@/types/domain";
+import { useCart } from "@/context/CartContext";
+import type { ProductDTO, ProductVariantDTO } from "@/types/domain";
 
-interface ProductRecord {
-  slug: string;
-  name: string;
-  category: string;
-  description: string;
-  sourcing: string;
-  productionMethod: string;
-  storage: string;
-  variants: Array<{ sku: string; label: string; priceInr: number }>;
+type PageProps = { params: Promise<{ slug: string }> };
+type LoadState = "loading" | "ready" | "not-found" | "error";
+
+function productPresentation(slug: string) {
+  if (slug.includes("ghee")) return { kind: "ghee", symbol: "◉", label: "BILONA GHEE", note: "TRADITIONAL DAIRY", category: "Indigenous Tharparkar Dairy" };
+  if (slug.includes("dhoop")) return { kind: "dhoop", symbol: "✺", label: "TRADITIONAL DHOOP", note: "NATURAL AROMATICS", category: "Traditional Farm Aromatics" };
+  if (slug.includes("khad") || slug.includes("compost")) return { kind: "soil", symbol: "❧", label: "VERMICOMPOST", note: "LIVING SOIL", category: "Farm Soil & Compost" };
+  if (slug.includes("stay")) return { kind: "stay", symbol: "⌂", label: "BHUNGA STAY", note: "FARM RETREAT", category: "Farm Stay Experience" };
+  if (slug.includes("milk")) return { kind: "milk", symbol: "◒", label: "FARM FRESH", note: "DAIRY COLLECTION", category: "Farm Dairy" };
+  if (slug.includes("kesar")) return { kind: "kesar", symbol: "✿", label: "KESAR", note: "FARM COLLECTION", category: "Farm Collection" };
+  return { kind: "earth", symbol: "✳", label: "FARM COLLECTION", note: "LADO ORGANICS", category: "Lado Organics Collection" };
 }
 
-const CATALOG_DETAIL: Record<string, ProductRecord> = {
-  "a2-bilona-ghee": {
-    slug: "a2-bilona-ghee",
-    name: "A2 Bilona Ghee",
-    category: "Indigenous Tharparkar Dairy",
-    description: "Hand-churned from indigenous Tharparkar cow curd using the traditional Bilona process in Pilani, Rajasthan.",
-    sourcing: "Pilani Gaushala, Jhunjhunu, Rajasthan (MSME: UDYAM-RJ-21-0104324)",
-    productionMethod: "Whole A2 milk cultured into curd and hand-churned via traditional wooden Bilona",
-    storage: "Store in a cool, dry place away from direct sunlight. Always use a clean, dry spoon.",
-    variants: [
-      { sku: "LO-GHEE-250", label: "250 ml", priceInr: 1350 },
-      { sku: "LO-GHEE-500", label: "500 ml", priceInr: 2600 },
-      { sku: "LO-GHEE-1000", label: "1 litre", priceInr: 5000 }
-    ]
-  },
-  "tharparkar-dhoop": {
-    slug: "tharparkar-dhoop",
-    name: "Tharparkar Dhoop",
-    category: "Sacred Cow-Dung Aromatics",
-    description: "Crafted from indigenous Tharparkar cow dung and natural botanical binders in Pilani.",
-    sourcing: "Pilani Gaushala, Rajasthan",
-    productionMethod: "Sun-dried indigenous cow dung blended with natural botanicals",
-    storage: "Keep dry in an airtight container away from moisture.",
-    variants: [{ sku: "LO-DHOOP-BOX", label: "Box", priceInr: 1000 }]
-  },
-  "pure-kechua-khad": {
-    slug: "pure-kechua-khad",
-    name: "Pure Kechua Khad",
-    category: "Biogas-Slurry Vermicompost",
-    description: "Organic vermicompost enriched with biogas slurry from the Pilani circular ecosystem.",
-    sourcing: "Pilani Farm Ecosystem, Rajasthan",
-    productionMethod: "Anaerobic biogas slurry converted via vermicomposting beds",
-    storage: "Store in a shaded, ventilated place.",
-    variants: [{ sku: "LO-KHAD-5KG", label: "5 kg Bag", priceInr: 2000 }]
-  },
-  "deep-work-bhunga-stay": {
-    slug: "deep-work-bhunga-stay",
-    name: '"Deep Work" Bhunga Stay',
-    category: "Agro-Tourism & Rural Retreat",
-    description: "Climate-responsive Rajasthani mud architecture in Pilani designed for focused work and farm immersion.",
-    sourcing: "Pilani, Jhunjhunu, Rajasthan",
-    productionMethod: "Traditional mud-house accommodation with farm access",
-    storage: "Dates and meal preferences confirmed directly prior to arrival.",
-    variants: [{ sku: "LO-STAY-NIGHT", label: "Night", priceInr: 4000 }]
-  }
-};
-
-// NEXT.JS 15 FIX: Type params as a Promise and unwrap with React.use()
-export default function ProductDetailPage(props: { params: Promise<{ slug: string }> }) {
+export default function ProductDetailPage(props: PageProps) {
   const params = use(props.params);
-  const { locale } = useLocale();
-  const slug = decodeURIComponent(params.slug || "a2-bilona-ghee");
-  const product = CATALOG_DETAIL[slug] ?? CATALOG_DETAIL["a2-bilona-ghee"];
-  const [liveProduct, setLiveProduct] = useState<ProductDTO | null>(null);
-  const [catalogLoading, setCatalogLoading] = useState(true);
-  const [selectedIdx, setSelectedIdx] = useState(0);
+  const slug = params.slug || "";
+  const { addToCart } = useCart();
+  const [product, setProduct] = useState<ProductDTO | null>(null);
+  const [selectedVariantId, setSelectedVariantId] = useState("");
+  const [loadState, setLoadState] = useState<LoadState>("loading");
+  const [loadError, setLoadError] = useState("");
 
   useEffect(() => {
-    let active = true;
-    fetch("/api/catalog", { cache: "no-store" })
-      .then((response) => response.ok ? response.json() : null)
-      .then((data) => {
-        if (!active) return;
-        const found = Array.isArray(data?.catalog)
-          ? (data.catalog as ProductDTO[]).find((item) => item.slug === slug) || null
-          : null;
-        setLiveProduct(found);
-        if (found) {
-          const defaultIndex = found.variants.findIndex((variant) => variant.isDefault);
-          setSelectedIdx(defaultIndex >= 0 ? defaultIndex : 0);
-        }
+    const controller = new AbortController();
+    setLoadState("loading");
+    setLoadError("");
+    fetch("/api/catalog", { cache: "no-store", signal: controller.signal })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("The live product catalogue is temporarily unavailable.");
+        return response.json();
       })
-      .catch((error) => console.error("Live product details unavailable:", error))
-      .finally(() => { if (active) setCatalogLoading(false); });
-    return () => { active = false; };
+      .then((data: { catalog?: ProductDTO[] }) => {
+        if (controller.signal.aborted) return;
+        const found = Array.isArray(data.catalog) ? data.catalog.find((item) => item.slug === slug) : undefined;
+        if (!found) {
+          setProduct(null);
+          setLoadState("not-found");
+          return;
+        }
+        setProduct(found);
+        setSelectedVariantId(found.variants.find((variant) => variant.isDefault)?.id || found.variants[0]?.id || "");
+        setLoadState("ready");
+      })
+      .catch((error: unknown) => {
+        if (controller.signal.aborted) return;
+        setLoadError(error instanceof Error ? error.message : "Unable to load this product.");
+        setLoadState("error");
+      });
+    return () => controller.abort();
   }, [slug]);
 
-  const liveVariants = liveProduct?.variants ?? [];
+  const activeVariant: ProductVariantDTO | undefined = useMemo(
+    () => product?.variants.find((variant) => variant.id === selectedVariantId) || product?.variants.find((variant) => variant.isDefault) || product?.variants[0],
+    [product, selectedVariantId]
+  );
 
-  const localized = locale === "hi" ? {
-    category: { "a2-bilona-ghee": "देसी थारपारकर डेयरी", "tharparkar-dhoop": "गोबर से बनी प्राकृतिक धूप", "pure-kechua-khad": "जैविक केंचुआ खाद", "deep-work-bhunga-stay": "ग्रामीण पर्यटन और भुंगा ठहराव" }[slug] || product.category,
-    description: { "a2-bilona-ghee": "पिलानी में देसी थारपारकर गाय के दही से पारंपरिक बिलोना विधि द्वारा मथा गया घी।", "tharparkar-dhoop": "पिलानी में देसी गाय के गोबर और प्राकृतिक वनस्पति सामग्री से तैयार धूप।", "pure-kechua-khad": "केंचुओं की मदद से तैयार वर्मी कम्पोस्ट। सही मात्रा और उपयोग के लिए उत्पाद का लेबल देखें।", "deep-work-bhunga-stay": "पिलानी में पारंपरिक राजस्थानी मिट्टी की वास्तुकला वाला भुंगा ठहराव। तारीख और उपलब्धता टीम से पक्की करें।" }[slug] || product.description,
-    sourcing: product.sourcing, productionMethod: product.productionMethod,
-    storage: { "a2-bilona-ghee": "सीधी धूप से दूर ठंडी और सूखी जगह रखें। हमेशा साफ़ और सूखा चम्मच इस्तेमाल करें।", "tharparkar-dhoop": "नमी से दूर, सूखे और बंद डिब्बे में रखें।", "pure-kechua-khad": "छायादार और हवादार जगह पर रखें।", "deep-work-bhunga-stay": "आगमन की तारीख और भोजन की पसंद टीम से पहले पक्की करें।" }[slug] || product.storage,
-    back: "← उत्पाद संग्रह पर लौटें", trace: "बैच की जानकारी देखें ↗", tags: ["राजस्थान में सावधानी से तैयार", "खेत से जुड़ी सोच-समझ वाली प्रक्रिया"],
-    note: "Lado Organics की खेत-कहानी का हिस्सा", choose: "अपना पैक चुनें", bring: "खेत की अच्छाई अपने घर लाएँ।",
-    selected: "चुना गया पैक", order: "व्हाट्सऐप पर पूछें और ऑर्डर करें", orderNote: "ऑर्डर पक्का होने से पहले टीम मौजूदा बैच, डिलीवरी और भुगतान की पुष्टि करेगी।",
-    know: "आप क्या घर ला रहे हैं, जानें", origin: "हमारे खेत की कहानी से रोज़मर्रा तक।",
-    sourcingTitle: "हमारी सोर्सिंग", madeTitle: "इसे कैसे बनाया जाता है", careTitle: "देखभाल और भंडारण",
-    wa: "नमस्ते Lado Organics!", waProduct: "उत्पाद", waPrice: "दर्ज कीमत", waAsk: "कृपया मौजूदा बैच, डिलीवरी और भुगतान की जानकारी दें।",
-  } : locale === "ma" ? {
-    category: { "a2-bilona-ghee": "देसी थारपारकर दूध री चीज", "tharparkar-dhoop": "गोबर सूं बणाई कुदरती धूप", "pure-kechua-khad": "जैविक केंचुआ खाद", "deep-work-bhunga-stay": "गांव रो ठहराव अर भुंगा" }[slug] || product.category,
-    description: { "a2-bilona-ghee": "पिलानी में देसी थारपारकर गाय रै दही नै पुराणी बिलोना सूं मथकै बणायो घी।", "tharparkar-dhoop": "पिलानी में देसी गाय रै गोबर अर कुदरती वनस्पति सूं बणाई धूप।", "pure-kechua-khad": "केंचुआ री मदद सूं बणाई खाद। सही मात्रा खातर पैकेट रो लेबल देखो।", "deep-work-bhunga-stay": "पिलानी में राजस्थानी माटी री पुराणी बनावट वालो भुंगा ठहराव। तारीख अर जगह टीम सूं पक्की करो।" }[slug] || product.description,
-    sourcing: product.sourcing, productionMethod: product.productionMethod,
-    storage: { "a2-bilona-ghee": "सीधी धूप सूं दूर ठंडी अर सूखी जगह राखो। साफ-सूखो चमचो लो।", "tharparkar-dhoop": "नमी सूं दूर सूखै अर बंद डिब्बे में राखो।", "pure-kechua-khad": "छांव अर हवा आवै ईंठै राखो।", "deep-work-bhunga-stay": "आवण री तारीख अर भोजन री बात टीम सूं पैली पक्की करो।" }[slug] || product.storage,
-    back: "← सामान री सूची पर लौटो", trace: "बैच री बात देखो ↗", tags: ["राजस्थान में ध्यान सूं बणायो", "खेत री सोच सूं जुड़्यो"],
-    note: "Lado Organics री खेत री कहानी रो भाग", choose: "आपरो पैक चुनो", bring: "खेत री अच्छाई घर लावो।",
-    selected: "चुन्यो पैक", order: "व्हाट्सऐप पर पूछो अर ऑर्डर करो", orderNote: "ऑर्डर पक्को होण सूं पैली टीम चालू बैच, भेजण अर भुगतान पक्को करैला।",
-    know: "जाणो थां घर काई लावो हो", origin: "म्हारी खेत री बात सूं रोज रै काम तक।",
-    sourcingTitle: "म्हारी सोर्सिंग", madeTitle: "ई कियां बणै", careTitle: "रखरखाव अर भंडारण",
-    wa: "खम्मा घणी Lado Organics!", waProduct: "सामान", waPrice: "लिख्यो भाव", waAsk: "कृपा कर चालू बैच, भेजण अर भुगतान री जानकारी देवो।",
-  } : {
-    category: product.category, description: product.description, sourcing: product.sourcing,
-    productionMethod: product.productionMethod, storage: product.storage,
-    back: "← Back to the collection", trace: "Explore batch traceability ↗",
-    tags: ["Made with care in Rajasthan", "Thoughtful farm practices"],
-    note: "A part of the Lado Organics farm story", choose: "CHOOSE YOUR PACK",
-    bring: "Bring a little farm goodness home.", selected: "Selected pack",
-    order: "Enquire & order on WhatsApp",
-    orderNote: "{localized.orderNote}",
-    know: "KNOW WHAT YOU BRING HOME", origin: "From our farm story to your everyday rituals.",
-    sourcingTitle: "Our sourcing", madeTitle: "How it is made", careTitle: "Care & storage",
-    wa: "Namaste Lado Organics!", waProduct: "Product", waPrice: "Listed Price",
-    waAsk: "Please share batch availability, shipping, and payment details.",
-  };
-  const displayName = liveProduct
-    ? locale === "hi" ? liveProduct.nameHi || liveProduct.nameEn
-      : locale === "ma" ? liveProduct.nameMa || liveProduct.nameEn
-      : liveProduct.nameEn
-    : locale === "hi"
-      ? ({ "a2-bilona-ghee": "A2 बिलोना घी", "tharparkar-dhoop": "थारपारकर धूप", "pure-kechua-khad": "शुद्ध केंचुआ खाद", "deep-work-bhunga-stay": "डीप वर्क भुंगा स्टे" }[slug] || product.name)
-      : locale === "ma"
-        ? ({ "a2-bilona-ghee": "A2 बिलोना घी", "tharparkar-dhoop": "थारपारकर धूप", "pure-kechua-khad": "चोखी केंचुआ खाद", "deep-work-bhunga-stay": "डीप वर्क भुंगा ठहराव" }[slug] || product.name)
-        : product.name;
-  const activeVariant = liveVariants[selectedIdx];
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919636100337";
+  const visual = productPresentation(slug);
+  const whatsappNumber = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919636100337").replace(/\D/g, "");
+  const whatsappUrl = product && activeVariant
+    ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+        `Namaste Lado Organics!\nProduct: ${product.nameEn} (${activeVariant.label})\nCurrent listed price: ₹${activeVariant.priceInr.toLocaleString("en-IN")}\nPlease confirm batch availability, delivery and payment details.`
+      )}`
+    : `https://wa.me/${whatsappNumber}?text=${encodeURIComponent("Namaste Lado Organics, please help me with your product collection.")}`;
 
-  const visual = product.slug.includes("ghee")
-    ? { kind: "ghee", symbol: "◉", label: "BILONA GHEE", note: "TRADITIONAL DAIRY" }
-    : product.slug.includes("dhoop")
-    ? { kind: "dhoop", symbol: "✺", label: "COW-DUNG DHOOP", note: "NATURAL AROMATICS" }
-    : product.slug.includes("khad") || product.slug.includes("compost")
-    ? { kind: "soil", symbol: "❧", label: "VERMICOMPOST", note: "LIVING SOIL" }
-    : product.slug.includes("stay")
-    ? { kind: "stay", symbol: "⌂", label: "BHUNGA STAY", note: "FARM RETREAT" }
-    : { kind: "earth", symbol: "✳", label: "FARM COLLECTION", note: "LADO ORGANICS" };
+  if (loadState === "loading") {
+    return <div className="min-h-[60vh] grid place-items-center px-4 text-sm text-[var(--text-muted)]" role="status">Loading the live product details…</div>;
+  }
 
+  if (loadState === "error") {
+    return (
+      <main className="min-h-[60vh] max-w-3xl mx-auto px-4 py-20 text-center">
+        <h1 className="font-serif text-3xl font-bold">Product details are temporarily unavailable</h1>
+        <p className="mt-3 text-sm opacity-75">{loadError}</p>
+        <div className="mt-6 flex justify-center gap-3">
+          <button type="button" onClick={() => window.location.reload()} className="primary-btn rounded-full px-5 py-3 text-sm font-bold">Try again</button>
+          <Link href="/#store" className="rounded-full border border-[var(--border)] px-5 py-3 text-sm font-bold">Back to collection</Link>
+        </div>
+      </main>
+    );
+  }
 
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-    `${localized.wa}\n${localized.waProduct}: ${displayName} (${activeVariant?.label || (locale === "hi" ? "पैक की कीमत उपलब्ध नहीं" : locale === "ma" ? "पैक रो भाव उपलब्ध कोनी" : "price unavailable")})\n${localized.waPrice}: ${activeVariant ? "₹" + activeVariant.priceInr.toLocaleString("en-IN") : ""}\n${localized.waAsk}`
-  )}`;
+  if (loadState === "not-found" || !product) {
+    return (
+      <main className="min-h-[60vh] max-w-3xl mx-auto px-4 py-20 text-center">
+        <h1 className="font-serif text-3xl font-bold">Product not found</h1>
+        <p className="mt-3 text-sm opacity-75">This product is not currently listed in the live Lado Organics catalogue.</p>
+        <Link href="/#store" className="primary-btn mt-6 inline-flex rounded-full px-6 py-3 text-sm font-bold">Explore the collection</Link>
+      </main>
+    );
+  }
+
+  const hasVariants = product.variants.length > 0;
 
   return (
-    <div className="product-detail-page min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+    <main className="product-detail-page min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-7">
         <Link href="/#store" className="product-detail-back">← Back to the collection</Link>
-        <Link href="/trace/LO-PILANI-SAMPLE-001" className="product-detail-trace">Explore batch traceability ↗</Link>
+        <Link href="/contact" className="product-detail-trace">Ask about batch records ↗</Link>
       </div>
 
       <section className={`product-detail-hero product-detail-${visual.kind}`}>
-        <div className="product-detail-art relative" aria-label={product.slug.includes("dhoop") ? "Lado Organics Tharparkar Dhoop product photograph" : `${displayName} illustrated product artwork`}>
-          {product.slug.includes("dhoop") ? (
-            <Image
-              src={`/images/lado-organics/${encodeURIComponent("Lado Organics Tharparkar Dhoop.png")}`}
-              alt="Lado Organics Tharparkar Dhoop"
-              fill
-              priority
-              sizes="(max-width: 760px) 100vw, 45vw"
-              className="object-cover"
-            />
+        <div className="product-detail-art relative" aria-label={`${product.nameEn} product artwork`}>
+          {product.imageUrl ? (
+            <Image src={product.imageUrl} alt={product.nameEn} fill priority sizes="(max-width: 760px) 100vw, 45vw" className="object-cover" />
+          ) : slug.includes("dhoop") ? (
+            <Image src={`/images/lado-organics/${encodeURIComponent("Lado Organics Tharparkar Dhoop.png")}`} alt="Lado Organics Tharparkar Dhoop" fill priority sizes="(max-width: 760px) 100vw, 45vw" className="object-cover" />
           ) : (
             <>
               <span className="product-detail-art-top">LADO ORGANICS <i>·</i> PILANI</span>
@@ -190,55 +125,59 @@ export default function ProductDetailPage(props: { params: Promise<{ slug: strin
           )}
         </div>
         <div className="product-detail-copy">
-          <p className="product-detail-kicker"><span /> {localized.category}</p>
-          <h1>{product.name}</h1>
-          <p className="product-detail-description">{localized.description}</p>
+          <p className="product-detail-kicker"><span /> {visual.category}</p>
+          <h1>{product.nameEn}</h1>
+          <p className="product-detail-description">{product.descriptionEn}</p>
           <div className="product-detail-tags">
-            <span>{localized.tags[0]}</span>
-            <span>{localized.tags[1]}</span>
+            <span>Rooted in Pilani, Rajasthan</span>
+            <span>Product details from the live catalogue</span>
           </div>
           <div className="product-detail-note">
             <span className="product-detail-note-mark">L</span>
-            <span><strong>{visual.note}</strong><small>{localized.note}</small></span>
+            <span><strong>{visual.note}</strong><small>A part of the Lado Organics farm story</small></span>
           </div>
         </div>
       </section>
 
       <section className="product-detail-buy">
         <div className="product-detail-buy-heading">
-          <p className="product-detail-kicker">{localized.choose}</p>
-          <h2>{localized.bring}</h2>
+          <p className="product-detail-kicker">CHOOSE YOUR PACK</p>
+          <h2>Bring a little farm goodness home.</h2>
         </div>
-        {liveVariants.length > 1 && (
-          <div className="product-detail-variants">
-            {liveVariants.map((v, idx) => (
-              <button
-                key={v.sku}
-                type="button"
-                aria-pressed={idx === selectedIdx}
-                onClick={() => setSelectedIdx(idx)}
-                className={idx === selectedIdx ? "is-selected" : ""}
-              >
-                <span>{v.label}</span>
-                <strong>₹{v.priceInr.toLocaleString("en-IN")}</strong>
-              </button>
-            ))}
-          </div>
+        {hasVariants ? (
+          <>
+            {product.variants.length > 1 && (
+              <div className="product-detail-variants">
+                {product.variants.map((variant) => (
+                  <button key={variant.id} type="button" aria-pressed={variant.id === activeVariant?.id} onClick={() => setSelectedVariantId(variant.id)} className={variant.id === activeVariant?.id ? "is-selected" : ""}>
+                    <span>{variant.label}</span>
+                    <strong>₹{variant.priceInr.toLocaleString("en-IN")}</strong>
+                  </button>
+                ))}
+              </div>
+            )}
+            {activeVariant && (
+              <div className="product-detail-checkout">
+                <div>
+                  <span>Selected pack · {activeVariant.label}</span>
+                  <strong>₹{activeVariant.priceInr.toLocaleString("en-IN")}</strong>
+                  <small className="block mt-1 opacity-70">{activeVariant.stockQty} currently listed in stock</small>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button type="button" onClick={() => addToCart({ variantId: activeVariant.id, sku: activeVariant.sku, title: `${product.nameEn} (${activeVariant.label})`, priceInr: activeVariant.priceInr, quantity: 1, maxStock: activeVariant.stockQty })} className="product-detail-order">
+                    Add to bag <span aria-hidden="true">+</span>
+                  </button>
+                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="product-detail-order">
+                    Enquire on WhatsApp <span aria-hidden="true">↗</span>
+                  </a>
+                </div>
+              </div>
+            )}
+          </>
+        ) : (
+          <p className="rounded-2xl border border-[var(--border)] p-5 text-sm">This product is currently out of stock. Please contact the Lado team for availability.</p>
         )}
-        <div className="product-detail-checkout">
-          <div>
-            <span>{localized.selected} · {activeVariant?.label || (catalogLoading ? (locale === "hi" ? "पैक देखे जा रहे हैं…" : locale === "ma" ? "पैक देखै रिया है…" : "Loading packs…") : (locale === "hi" ? "पैक उपलब्ध नहीं" : locale === "ma" ? "पैक उपलब्ध कोनी" : "No pack available"))}</span>
-            {activeVariant ? <strong>₹{activeVariant.priceInr.toLocaleString("en-IN")}</strong> : <strong>{catalogLoading ? (locale === "hi" ? "कीमत देखी जा रही है…" : locale === "ma" ? "भाव देखै रिया है…" : "Checking live price…") : (locale === "hi" ? "लाइव कीमत उपलब्ध नहीं" : locale === "ma" ? "चालू भाव उपलब्ध कोनी" : "Live price unavailable")}</strong>}
-          </div>
-          {activeVariant ? (
-            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="product-detail-order">
-              {localized.order} <span aria-hidden="true">↗</span>
-            </a>
-          ) : (
-            <Link href="/contact" className="product-detail-order">{locale === "hi" ? "टीम से संपर्क करें" : locale === "ma" ? "टीम नै खबर करो" : "Contact the team"}</Link>
-          )}
-        </div>
-        <p className="product-detail-order-note">We’ll confirm current batch availability, delivery and payment details with you before the order is finalised.</p>
+        <p className="product-detail-order-note">Prices and stock are loaded from the current store catalogue. Final availability, delivery and payment details are confirmed at checkout by the Lado team.</p>
       </section>
 
       <section className="product-detail-origin">
@@ -247,15 +186,15 @@ export default function ProductDetailPage(props: { params: Promise<{ slug: strin
           <h2>From our farm story to your everyday rituals.</h2>
         </div>
         <div className="product-detail-origin-grid">
-          <article><span>01</span><h3>Our sourcing</h3><p>{localized.sourcing}</p></article>
-          <article><span>02</span><h3>How it is made</h3><p>{localized.productionMethod}</p></article>
-          <article><span>03</span><h3>Care & storage</h3><p>{localized.storage}</p></article>
+          <article><span>01</span><h3>Our sourcing</h3><p>{product.sourcingInfo || "Please contact the Lado team for current sourcing details."}</p></article>
+          <article><span>02</span><h3>How it is made</h3><p>{product.productionMethod || "Please contact the Lado team for verified production details."}</p></article>
+          <article><span>03</span><h3>Care & storage</h3><p>{product.storageInstructions || "Follow the instructions on the current product label."}</p></article>
         </div>
       </section>
 
       <div className="product-detail-reviews">
         <ProductReviewsSection productSlug={product.slug} />
       </div>
-    </div>
+    </main>
   );
 }
