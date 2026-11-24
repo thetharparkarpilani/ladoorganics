@@ -1,9 +1,6 @@
-﻿const fs = require('fs');
-const path = require('path');
 require('dotenv').config({ path: '.env.local' });
 
-console.log("🚀 Initiating Lado Organics Vercel Pre-Flight Checks...
-");
+console.log("Lado Organics Vercel pre-flight checks...\\n");
 
 const requiredEnvs = [
   "DATABASE_URL",
@@ -21,6 +18,7 @@ const optionalEnvs = [
   "OPENAI_API_KEY",
   "NEXT_PUBLIC_UPI_ID",
   "NEXT_PUBLIC_WHATSAPP_NUMBER",
+  "BHUNGA_NIGHTLY_RATE_INR",
   "RAZORPAY_KEY_ID",
   "RAZORPAY_KEY_SECRET",
   "RAZORPAY_WEBHOOK_SECRET"
@@ -28,25 +26,22 @@ const optionalEnvs = [
 
 let errors = 0;
 
-requiredEnvs.forEach(env => {
+for (const env of requiredEnvs) {
   if (!process.env[env]) {
-    console.error(`❌ MISSING SECRET: ${env}`);
+    console.error("MISSING REQUIRED CONFIGURATION: " + env);
     errors++;
   } else {
-    console.log(`✅ FOUND: ${env}`);
+    console.log("CONFIGURED: " + env);
   }
-});
+}
 
-optionalEnvs.forEach(env => {
-  console.log(process.env[env] ? `ℹ️ CONFIGURED: ${env}` : `ℹ️ OPTIONAL: ${env} not set`);
-});
+for (const env of optionalEnvs) {
+  console.log((process.env[env] ? "OPTIONAL CONFIGURED: " : "OPTIONAL NOT SET: ") + env);
+}
 
 if (errors > 0) {
-  console.error(`
-🚨 Pre-flight failed. You must add ${errors} missing secrets to Vercel before deploying.`);
+  console.error("\\nPre-flight failed: " + errors + " required environment variables are missing.");
   process.exit(1);
-} else {
-  console.log("
-✅ All critical secrets verified. Ready for Vercel production deployment.");
-  process.exit(0);
 }
+
+console.log("\\nAll required environment variables are present.");
