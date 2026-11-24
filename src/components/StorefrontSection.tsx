@@ -95,10 +95,10 @@ export default function StorefrontSection({
       return (
         title.toLowerCase().includes(q) ||
         p.nameEn.toLowerCase().includes(q) ||
-        p.descriptionEn.toLowerCase().includes(q)
+        (copy.descriptions[p.slug] || p.descriptionEn).toLowerCase().includes(q)
       );
     });
-  }, [products, searchQuery, locale]);
+  }, [products, searchQuery, locale, copy.descriptions]);
 
   const estimatedTotal = useMemo(() => {
     return gheeLitres * 5000 + dhoopBoxes * 1000 + khadBags * 2000 + stayNights * 4000;
