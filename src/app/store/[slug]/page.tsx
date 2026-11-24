@@ -127,7 +127,7 @@ export default function ProductDetailPage(props: { params: Promise<{ slug: strin
     note: "A part of the Lado Organics farm story", choose: "CHOOSE YOUR PACK",
     bring: "Bring a little farm goodness home.", selected: "Selected pack",
     order: "Enquire & order on WhatsApp",
-    orderNote: "We’ll confirm current batch availability, delivery and payment details with you before the order is finalised.",
+    orderNote: "{localized.orderNote}",
     know: "KNOW WHAT YOU BRING HOME", origin: "From our farm story to your everyday rituals.",
     sourcingTitle: "Our sourcing", madeTitle: "How it is made", careTitle: "Care & storage",
     wa: "Namaste Lado Organics!", waProduct: "Product", waPrice: "Listed Price",
@@ -227,7 +227,7 @@ export default function ProductDetailPage(props: { params: Promise<{ slug: strin
         )}
         <div className="product-detail-checkout">
           <div>
-            <span>{localized.selected} · {activeVariant.label}</span>
+            <span>{localized.selected} · {activeVariant?.label || (catalogLoading ? (locale === "hi" ? "पैक देखे जा रहे हैं…" : locale === "ma" ? "पैक देखै रिया है…" : "Loading packs…") : (locale === "hi" ? "पैक उपलब्ध नहीं" : locale === "ma" ? "पैक उपलब्ध कोनी" : "No pack available"))}</span>
             {activeVariant ? <strong>₹{activeVariant.priceInr.toLocaleString("en-IN")}</strong> : <strong>{catalogLoading ? (locale === "hi" ? "कीमत देखी जा रही है…" : locale === "ma" ? "भाव देखै रिया है…" : "Checking live price…") : (locale === "hi" ? "लाइव कीमत उपलब्ध नहीं" : locale === "ma" ? "चालू भाव उपलब्ध कोनी" : "Live price unavailable")}</strong>}
           </div>
           {activeVariant ? (
