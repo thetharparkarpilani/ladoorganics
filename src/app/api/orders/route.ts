@@ -191,6 +191,11 @@ export async function POST(req: NextRequest) {
         "UPDATE product_variants SET stock_qty = stock_qty - $1 WHERE sku = $2",
         [item.quantity, item.sku]
       );
+      await client.query(
+        "INSERT INTO inventory_movements(product_variant_id,movement_type,quantity_delta,reference_type,reference_id,note,created_by) " +
+        "SELECT id,'sale',$1 * -1,'order',$2,'Stock deducted for customer order checkout','checkout' FROM product_variants WHERE sku=$3",
+        [item.quantity,orderId,item.sku]
+      );
     }
 
     await client.query(
