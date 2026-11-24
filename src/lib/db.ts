@@ -3,7 +3,7 @@ import { Pool } from "pg";
 
 const databaseUrl = process.env.DATABASE_URL;
 const isProduction = process.env.NODE_ENV === "production";
-const supabaseCaCert = process.env.SUPABASE_CA_CERT;
+const supabaseCaCert = process.env.SUPABASE_CA_CERT?.replace(/\\n/g, "\n").trim();
 
 function getConnectionString() {
   if (!databaseUrl) return undefined;
