@@ -30,6 +30,8 @@ export default function AdminOperationsPanel({
   );
 
   const [recordId, setRecordId] = useState("");
+  const [upiReference, setUpiReference] = useState("");
+  const [upiAmount, setUpiAmount] = useState("");
   const [orderStatus, setOrderStatus] = useState("processing");
   const [bookingStatus, setBookingStatus] = useState("confirmed");
   const [sponsorshipStatus, setSponsorshipStatus] = useState("active");
@@ -239,18 +241,26 @@ export default function AdminOperationsPanel({
           />
         </div>
 
-        <div className="p-3.5 rounded-2xl border border-amber-200 bg-amber-50 flex flex-wrap items-center justify-between gap-2">
+        <div className="space-y-3 rounded-2xl border border-amber-200 bg-amber-50 p-3.5">
           <div>
             <span className="block font-bold text-amber-950">Manual UPI Payment</span>
-            <span className="text-[10px] text-amber-900">Use only after checking that the money reached your bank account.</span>
+            <span className="text-[10px] text-amber-900">Verify the credit in your bank/UPI account first. The entered reference and amount are recorded for audit.</span>
+          </div>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <label className="text-[10px] font-bold text-amber-950">UPI transaction reference / UTR
+              <input value={upiReference} onChange={e => setUpiReference(e.target.value.toUpperCase())} maxLength={80} className="mt-1 w-full rounded-lg border border-amber-300 bg-white p-2 font-mono text-xs" placeholder="Bank transaction reference" />
+            </label>
+            <label className="text-[10px] font-bold text-amber-950">Amount received (₹)
+              <input type="number" min="1" step="1" value={upiAmount} onChange={e => setUpiAmount(e.target.value)} className="mt-1 w-full rounded-lg border border-amber-300 bg-white p-2 text-xs" placeholder="Exact order amount" />
+            </label>
           </div>
           <button
             type="button"
-            disabled={busy || !recordId.trim()}
-            onClick={() => void callAdminApi({ action: "confirm_manual_upi_payment", id: recordId.trim() })}
+            disabled={busy || !recordId.trim() || !upiReference.trim() || !upiAmount.trim()}
+            onClick={() => void callAdminApi({ action: "confirm_manual_upi_payment", id: recordId.trim(), reference: upiReference.trim(), amountInr: Number(upiAmount) })}
             className="rounded-lg bg-amber-800 px-3.5 py-2 font-bold text-white disabled:opacity-50"
           >
-            Confirm UPI Received
+            Confirm verified UPI receipt
           </button>
         </div>
 
