@@ -1,24 +1,10 @@
-﻿import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { NextResponse } from "next/server";
 
 export async function GET() {
-  try {
-    await db.query("SELECT 1");
-    return NextResponse.json({
-      status: "ok",
-      service: "lado-organics-2.0",
-      database: "connected"
-    });
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Database check failed";
-    return NextResponse.json(
-      {
-        status: "degraded",
-        service: "lado-organics-2.0",
-        database: "unavailable",
-        detail: message
-      },
-      { status: 503 }
-    );
-  }
+  // Keep infrastructure and database diagnostics private. Public probes only
+  // confirm that the application process can answer requests.
+  return NextResponse.json(
+    { status: "ok" },
+    { headers: { "Cache-Control": "no-store" } }
+  );
 }
