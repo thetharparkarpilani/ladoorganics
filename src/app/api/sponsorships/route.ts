@@ -11,7 +11,10 @@ export async function POST(req: NextRequest) {
   const rateLimited = await enforceRateLimit(req, "sponsorships", 5, 3600);
   if (rateLimited) return rateLimited;
   try {
-    const body = await req.json();
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      return NextResponse.json({ error: "Invalid sponsorship request details." }, { status: 400 });
+    }
     const calfName = typeof body.calfName === "string" ? body.calfName.trim() : "";
     const planType = typeof body.planType === "string" ? body.planType : "";
     const sponsorName = typeof body.sponsorName === "string" ? body.sponsorName.trim() : "";
