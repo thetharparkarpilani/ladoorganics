@@ -11,6 +11,7 @@ const pool = new Pool({
   statement_timeout: 15000,
   query_timeout: 20000,
   application_name: "lado-organics-web",
+  ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: true } : undefined,
 });
 
 pool.on("error", (error) => {
