@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
           production_date, packaging_date, origin_location,
           production_process, quality_checks, lab_report_url,
           storage_instructions, best_before_date, is_approved
-        ) VALUES ($1, $2, $3, $4, $5::date, $6, 'Pilani, Jhunjhunu, Rajasthan', $7, $8, $9, $10, $11, TRUE)
+        ) VALUES ($1, $2, $3, $4, $5::date, $6, 'Pilani, Jhunjhunu, Rajasthan', $7, $8, $9, $10, $11, $12)
         ON CONFLICT (batch_code) DO UPDATE SET
           product_name = EXCLUDED.product_name,
           variant_label = EXCLUDED.variant_label,
@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
           lab_report_url = EXCLUDED.lab_report_url,
           storage_instructions = EXCLUDED.storage_instructions,
           best_before_date = EXCLUDED.best_before_date,
-          is_approved = TRUE
+          is_approved = EXCLUDED.is_approved
         RETURNING id, batch_code, product_name, variant_label`,
         [
           batchCode,
@@ -93,14 +93,15 @@ export async function POST(req: NextRequest) {
           qualityChecks,
           labReportUrl,
           storageInstructions,
-          bestBeforeDate || null
+          bestBeforeDate || null,
+          body?.approveBatch === true
         ]
       );
 
       await db.query(
         `INSERT INTO audit_logs (action, entity_type, entity_id, metadata)
-         VALUES ('BATCH_PUBLISHED', 'product_batch', $1, $2::jsonb)`,
-        [res.rows[0].id, JSON.stringify({ batchCode, productName, variantLabel })]
+         VALUES ($3, 'product_batch', $1, $2::jsonb)`,
+        [res.rows[0].id, JSON.stringify({ batchCode, productName, variantLabel, approved: body?.approveBatch === true }), body?.approveBatch === true ? 'BATCH_PUBLISHED' : 'BATCH_DRAFT_CREATED']
       );
 
       return NextResponse.json({ ok: true, batch: res.rows[0] }, { status: 201 });
