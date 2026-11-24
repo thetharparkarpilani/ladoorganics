@@ -87,11 +87,6 @@ export default function AppSidebar() {
             </section>
           ))}
         </nav>
-        <div className="lado-sidebar-ai">
-          <span className="lado-ai-mark">✦</span>
-          <div><strong>Lado AI</strong><small>{copy.ai}</small></div>
-          <button type="button" onClick={() => { window.dispatchEvent(new Event("lado:open-ai")); closeMobile(); }} aria-label={copy.ai}>↗</button>
-        </div>
         <div className="lado-sidebar-language">
           <label htmlFor="lado-sidebar-language">{copy.language}</label>
           <select id="lado-sidebar-language" value={locale} onChange={(event) => setLocale(event.target.value as "en" | "hi" | "ma")}>
