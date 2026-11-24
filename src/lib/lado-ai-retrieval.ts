@@ -52,7 +52,7 @@ function meaningfulTokens(value: string): string[] {
 
 const EXPANDED_QUESTION_PATTERNS: Record<string, string[]> = {
   "About Lado Organics": [
-    "what does lado do", "lado brand story", "lado company information", "lado organics introduction",
+    "what does lado do", "lado brand story", "lado company information", "lado organics introduction", "tell me about lado organics", "lado kya hai organics",
     "lado kya hai", "lado ke hai", "lado ka parichay", "lado ke baare mein batao", "lado ke bare me bataiye",
     "lado su hai", "lado ro parichay", "tharo lado su hai", "lado ke che", "lado shu che",
     "लाडो ऑर्गेनिक्स क्या है", "लाडो के बारे में बताइए", "लाडो की कहानी",
@@ -146,7 +146,7 @@ const EXPANDED_QUESTION_PATTERNS: Record<string, string[]> = {
   ],
   "Gau Seva contribution amount": [
     "minimum donation amount", "how much should i contribute", "is there a fixed sponsorship amount",
-    "sponsorship amount", "gau seva price", "how much to sponsor a calf", "गौ सेवा में कितनी राशि देनी होगी",
+    "sponsorship amount", "gau seva price", "what is the calf sponsorship amount", "गौ सेवा में कितनी राशि देनी होगी",
   ],
   "AI privacy and safe information": [
     "is my chat private", "does lado ai save my information", "can i share my otp", "is it safe to tell upi pin",
@@ -192,6 +192,6 @@ export function findLocalAnswer(question: string, entries: RetrievalEntry[]): Re
   const best = ranked[0];
   const runnerUp = ranked[1];
   if (!best || best.score < 0.70) return null;
-  if (runnerUp && best.score - runnerUp.score < 0.08) return null;
+  if (runnerUp && best.score - runnerUp.score < 0.06) return null;
   return best.entry;
 }
