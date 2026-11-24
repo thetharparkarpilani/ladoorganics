@@ -120,7 +120,6 @@ export default function StorefrontSection({
                             alt={displayName}
                             fill
                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                            unoptimized
                             className="object-cover transition-transform duration-700 hover:scale-105"
                           />
                         </div>
@@ -239,7 +238,6 @@ export default function StorefrontSection({
                   alt={photo.alt}
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  unoptimized
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent px-5 pb-5 pt-12 text-white font-serif text-xl">{photo.title}</figcaption>
