@@ -169,7 +169,8 @@ function localFollowUps(message: string, locale: "en" | "hi" | "ma"): string[] {
 }
 
 async function suggestedQuestions(message: string, reply: string, locale: "en" | "hi" | "ma"): Promise<string[]> {
-  if (!openai || !hasAdditionalWritingSystem(message)) return localFollowUps(message, locale);
+  if (!hasAdditionalWritingSystem(message)) return localFollowUps(message, locale);
+  if (!openai) return [];
   try {
     const completion = await openai.chat.completions.create({
       model: process.env.OPENAI_MODEL || "gpt-4o-mini",
@@ -194,7 +195,7 @@ async function suggestedQuestions(message: string, reply: string, locale: "en" |
 
 const SYSTEM = `You are Lado AI, the warm, capable customer guide for Lado Organics, a farm-rooted brand in Pilani, Jhunjhunu, Rajasthan, India.
 
-Help customers with the website and their decisions: products, listed prices and pack sizes, product care, farm story, indigenous Tharparkar cattle, cow-dung products, vermicompost, Bhunga stays, Gau Seva, account access, order steps, payments, delivery, returns, policies and contacting the team. Explain steps simply. Reply in the language the customer uses (English, Hindi or Marwari where possible). Be warm, clear and concise. Ask one focused follow-up question when essential.
+Help customers with the website and their decisions: products, listed prices and pack sizes, product care, farm story, indigenous Tharparkar cattle, cow-dung products, vermicompost, Bhunga stays, Gau Seva, account access, order steps, payments, delivery, returns, policies and contacting the team. Explain steps simply. Reply in the exact language and script used by the customer. Support multilingual conversations across Indian and international languages, including transliteration and mixed-language messages. Be warm, clear and concise. Ask one focused follow-up question when essential.
 
 TRUTH & SAFETY:
 - Use only the LIVE CATALOG DATA below for current product names, packs and listed prices. If unavailable or missing, say you cannot verify it.
