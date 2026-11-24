@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 type Props = {
   items: { sku: string; quantity: number }[];
@@ -13,6 +13,7 @@ const inputClass = "mt-1 w-full rounded-xl border border-[var(--border)] bg-[var
 
 export default function ManualCheckout({ items, onSuccess }: Props) {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cash_on_delivery");
+  const idempotencyKey = useRef<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [placed, setPlaced] = useState<{ orderNumber: string; totalInr: number; paymentMethod: PaymentMethod; message: string } | null>(null);
@@ -52,9 +53,10 @@ export default function ManualCheckout({ items, onSuccess }: Props) {
     setLoading(true);
     setError("");
     try {
+      idempotencyKey.current ||= crypto.randomUUID();
       const response = await fetch("/api/orders", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Idempotency-Key": idempotencyKey.current },
         body: JSON.stringify({ ...details, items, paymentMethod })
       });
       const result = await response.json();
