@@ -17,13 +17,9 @@ async function getProducts() {
       WHERE p.is_active = TRUE AND v.is_default = TRUE
     `);
     return res.rows;
-  } catch {
-    console.error("Database connection failed, falling back to static verified catalog");
-    return [
-      { slug: "a2-bilona-ghee", name_en: "A2 Bilona Ghee", description_en: "Hand-churned from indigenous Tharparkar cow curd using the Vedic Bilona method.", sku: "LO-GHEE-1000", price_inr: 5000, label: "1 Litre" },
-      { slug: "tharparkar-dhoop", name_en: "Tharparkar Dhoop", description_en: "Zero-charcoal aromatic dhoop hand-rolled from pure indigenous cow dung.", sku: "LO-DHOOP-BOX", price_inr: 1000, label: "Box" },
-      { slug: "pure-kechua-khad", name_en: "Pure Kechua Khad", description_en: "Nutrient-dense organic vermicompost enriched by biogas plant slurry.", sku: "LO-KHAD-5KG", price_inr: 2000, label: "5kg Bag" }
-    ];
+  } catch (error) {
+    console.error("Store catalogue database request failed:", error);
+    return [];
   }
 }
 
@@ -38,6 +34,13 @@ export default async function StoreCatalogPage() {
         <p className="text-[var(--muted)]/80 mt-4 max-w-2xl mx-auto text-sm sm:text-base">Direct-from-Pilani farm batches. Zero middlemen.</p>
       </header>
 
+      {products.length === 0 ? (
+        <div className="rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-10 text-center">
+          <h2 className="font-serif text-2xl font-bold">The live catalogue is temporarily unavailable</h2>
+          <p className="mt-3 text-sm opacity-75">We cannot verify current prices or stock right now. Please return shortly or contact the Lado team.</p>
+          <Link href="/contact" className="primary-btn mt-5 inline-flex rounded-full px-5 py-3 text-sm font-bold">Contact the team</Link>
+        </div>
+      ) : (
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {products.map((product) => (
           <Link href={`/store/${product.slug}`} key={product.sku} className="group bg-[var(--surface)] border border-[var(--border)] rounded-3xl overflow-hidden hover:border-[var(--terracotta)] transition shadow-sm flex flex-col">
@@ -56,6 +59,7 @@ export default async function StoreCatalogPage() {
           </Link>
         ))}
       </div>
+      )}
     </div>
   );
 }
