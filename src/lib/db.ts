@@ -2,16 +2,36 @@ import "server-only";
 import { Pool } from "pg";
 
 const databaseUrl = process.env.DATABASE_URL;
+const isProduction = process.env.NODE_ENV === "production";
+const supabaseCaCert = process.env.SUPABASE_CA_CERT;
+
+function getConnectionString() {
+  if (!databaseUrl) return undefined;
+
+  // node-postgres lets SSL query parameters in the URL override the ssl
+  // object. Remove them so the explicitly trusted CA below is always used.
+  const url = new URL(databaseUrl);
+  ["sslmode", "sslcert", "sslkey", "sslrootcert"].forEach((key) => {
+    url.searchParams.delete(key);
+  });
+  return url.toString();
+}
+
+if (isProduction && !supabaseCaCert) {
+  throw new Error("SUPABASE_CA_CERT is not configured for this production deployment.");
+}
 
 const pool = new Pool({
-  ...(databaseUrl ? { connectionString: databaseUrl } : {}),
+  ...(databaseUrl ? { connectionString: getConnectionString() } : {}),
   max: 3,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 5000,
   statement_timeout: 15000,
   query_timeout: 20000,
   application_name: "lado-organics-web",
-  ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: true } : undefined,
+  ssl: isProduction
+    ? { ca: supabaseCaCert, rejectUnauthorized: true }
+    : undefined,
 });
 
 pool.on("error", (error) => {
