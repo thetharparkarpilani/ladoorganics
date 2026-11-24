@@ -1,6 +1,7 @@
 require('dotenv').config({ path: '.env.local' });
 
-console.log("Lado Organics Vercel pre-flight checks...\\n");
+console.log("Lado Organics Vercel pre-flight checks...");
+console.log("");
 
 const requiredEnvs = [
   "DATABASE_URL",
@@ -40,8 +41,8 @@ for (const env of optionalEnvs) {
 }
 
 if (errors > 0) {
-  console.error("\\nPre-flight failed: " + errors + " required environment variables are missing.");
+  console.error("Pre-flight failed: " + errors + " required environment variables are missing.");
   process.exit(1);
 }
 
-console.log("\\nAll required environment variables are present.");
+console.log("All required environment variables are present.");
