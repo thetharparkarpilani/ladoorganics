@@ -335,6 +335,17 @@ export async function POST(req: NextRequest) {
           await client.query("ROLLBACK");
           return NextResponse.json({ error: "This order is already processed or cancelled." }, { status: 409 });
         }
+        // Serialize use of a UPI reference and reject a reference already attached
+        // to another order, even if the optional unique-index migration is pending.
+        await client.query("SELECT pg_advisory_xact_lock(hashtext($1))", ["manual-upi:" + reference]);
+        const duplicateReference = await client.query(
+          "SELECT order_id FROM payments WHERE provider = 'manual_upi' AND provider_payment_id = $1 FOR UPDATE",
+          [reference]
+        );
+        if (duplicateReference.rows.some((row: { order_id: string }) => row.order_id !== id)) {
+          await client.query("ROLLBACK");
+          return NextResponse.json({ error: "This UPI transaction reference has already been used for another order." }, { status: 409 });
+        }
         if (amountInr !== Number(order.rows[0].total_inr)) {
           await client.query("ROLLBACK");
           return NextResponse.json({ error: "The received amount must exactly match the order total." }, { status: 409 });
