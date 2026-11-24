@@ -8,7 +8,7 @@ export type RetrievalEntry = {
 const STOP_WORDS = new Set([
   "a","an","the","is","are","am","was","were","be","been","being","do","does","did","can","could","would","should",
   "i","me","my","we","our","you","your","yours","they","them","their","it","its","this","that","these","those",
-  "what","which","who","when","where","why","how","tell","show","please","kindly","about","for","of","to","from",
+  "what","which","who","when","where","why","how","tell","show","please","kindly","for","of","to","from",
   "in","on","at","with","and","or","as","by","please","mujhe","mujhko","mai","main","mein","aap","aapko","aapki",
   "kya","kaise","kaisa","kaisi","kitna","kitne","kitni","kahan","kab","hai","hain","ho","hoga","hogi","honge",
   "ka","ki","ke","ko","se","par","me","mera","meri","mere","hamara","hamari","hamare","batao","bataye","bataiye",
@@ -63,7 +63,7 @@ const EXPANDED_QUESTION_PATTERNS: Record<string, string[]> = {
     "थारपारकर गाय", "आपके खेत में कौन सी गाय है", "गायों के बारे में बताओ",
   ],
   "A2 Bilona Ghee process": [
-    "how do you prepare ghee", "how is lado ghee prepared", "how is ghee produced", "ghee manufacturing process",
+    "how do you prepare ghee", "how is lado ghee prepared", "how is ghee produced", "ghee manufacturing process", "tell me about ghee",
     "bilona method", "traditional ghee making", "ghee kaise banta hai", "ghee kaise banate hain",
     "ghino kaiso bane", "ghee kiyan bane", "ghee kaiso banyo", "bilona ri reet",
     "घी बनाने की विधि", "बिलोना विधि क्या है", "आपका घी कैसे बनता है",
