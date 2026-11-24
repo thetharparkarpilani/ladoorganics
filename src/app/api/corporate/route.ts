@@ -1,12 +1,25 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { enforceRateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
+  const rateLimited = await enforceRateLimit(req, "corporate-enquiries", 5, 3600);
+  if (rateLimited) return rateLimited;
   try {
-    const body = await req.json();
-    const { companyName, gstNumber, contactName, phone, email, partnershipType, message } = body;
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body !== "object") {
+      return NextResponse.json({ error: "Please provide valid enquiry details." }, { status: 400 });
+    }
+    const companyName = typeof body.companyName === "string" ? body.companyName.trim().slice(0, 160) : "";
+    const gstNumber = typeof body.gstNumber === "string" ? body.gstNumber.trim().slice(0, 20) : "";
+    const contactName = typeof body.contactName === "string" ? body.contactName.trim().slice(0, 120) : "";
+    const phone = typeof body.phone === "string" ? body.phone.trim().slice(0, 24) : "";
+    const email = typeof body.email === "string" ? body.email.trim().toLowerCase().slice(0, 254) : "";
+    const partnershipType = typeof body.partnershipType === "string" ? body.partnershipType.trim().slice(0, 80) : "";
+    const message = typeof body.message === "string" ? body.message.trim().slice(0, 2000) : "";
 
-    if (!companyName || !contactName || !phone || !email || !partnershipType) {
+    if (!companyName || !contactName || !phone || !/^[+0-9()\\-\\s]{7,24}$/.test(phone) ||
+        !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email) || !partnershipType) {
       return NextResponse.json({ error: "Required fields are missing." }, { status: 400 });
     }
 
