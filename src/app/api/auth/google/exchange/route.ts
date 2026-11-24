@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { enforceRateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
+  const rateLimited = await enforceRateLimit(req, "google-auth-exchange", 10, 900);
+  if (rateLimited) return rateLimited;
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
