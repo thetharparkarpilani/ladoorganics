@@ -40,11 +40,11 @@ export default function FarmWorldSection() {
       ["उपज", "खेत सूं रोज रै जीवन तक।", "Lado Organics रो सामान अर खेत रा अनुभव देखो—बिलोना घी अर दूध सूं धूप, केंचुआ खाद अर केसर री पूछताछ तक।", "खेत रो सामान अर अनुभव"],
     ],
   } : {
-    eyebrow: "{copy.eyebrow}", title: "One farm. Many connections.",
-    intro: "{copy.intro}",
-    explore: "Explore the cycle", choose: "{copy.choose}", where: "Where the story begins.",
-    photo: "Photograph of a Tharparkar cow", photoTop: "{copy.photoTop}", photoCountry: "{copy.photoCountry}",
-    credits: "{copy.credits}", products: ["Tharparkar Dhoop", "Vermicompost", "A2 Milk", "Bilona Ghee", "Kesar"],
+    eyebrow: "A living, circular farm • Pilani, Rajasthan", title: "One farm. Many connections.",
+    intro: "Explore how animal care, traditional products, compost, soil and growing things connect in the Lado Organics story.",
+    explore: "Explore the cycle", choose: "Choose a chapter", where: "Where the story begins.",
+    photo: "Photograph of a Tharparkar cow", photoTop: "01 — THE HERD", photoCountry: "THARPARKAR · INDIA",
+    credits: "Breed reference photograph", products: ["Tharparkar Dhoop", "Vermicompost", "A2 Milk", "Bilona Ghee", "Kesar"],
     chapters: [
       ["The herd", "It begins with care.", "Meet the indigenous Tharparkar cows at the heart of the Lado story. Their care, comfort and place in the farm ecosystem come first.", "THARPARKAR GAUSHALA"],
       ["The dung", "Nothing goes to waste.", "Cow dung is a useful farm resource. It can be dried for traditional dhoop making or processed through a managed biogas and composting cycle.", "TRADITIONAL DHOOP • BIOGAS"],
@@ -63,18 +63,18 @@ export default function FarmWorldSection() {
       <div className="farm-world-grain" aria-hidden="true" />
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="max-w-3xl mb-12 sm:mb-16">
-          <p className="farm-eyebrow">A living, circular farm • Pilani, Rajasthan</p>
+          <p className="farm-eyebrow">{copy.eyebrow}</p>
           <h2 className="farm-display mt-4">{copy.title}</h2>
-          <p className="mt-5 text-base sm:text-lg leading-relaxed text-[var(--text-muted)] max-w-2xl">Explore how animal care, traditional products, compost, soil and growing things connect in the Lado Organics story.</p>
+          <p className="mt-5 text-base sm:text-lg leading-relaxed text-[var(--text-muted)] max-w-2xl">{copy.intro}</p>
         </div>
 
         <div className="grid lg:grid-cols-[1.15fr_.85fr] gap-6 lg:gap-10 items-stretch">
           <div className="farm-world-art farm-world-photo relative min-h-[360px] sm:min-h-[500px] rounded-[2rem] overflow-hidden" aria-label={copy.photo}>
             <div className="farm-world-photo-overlay" />
-            <div className="farm-photo-topline"><span>01 — THE HERD</span><span>THARPARKAR · INDIA</span></div>
+            <div className="farm-photo-topline"><span>{copy.photoTop}</span><span>{copy.photoCountry}</span></div>
             <div className="farm-photo-bottomline">
               <p>{copy.where}</p>
-              <span>Breed reference photograph<br />Pavanaja / Wikimedia Commons<br />CC BY-SA 3.0</span>
+              <span>{copy.credits}<br />Pavanaja / Wikimedia Commons<br />CC BY-SA 3.0</span>
             </div>
           </div>
           <div className="farm-world-panel flex flex-col justify-between rounded-[2rem] p-6 sm:p-9">
@@ -86,7 +86,7 @@ export default function FarmWorldSection() {
               <p className="mt-6 text-[10px] font-bold tracking-[.2em] text-[var(--accent-forest)]">{chapterCopy[3]}</p>
             </div>
             <div className="mt-10">
-              <p className="text-[10px] uppercase tracking-[.2em] font-bold text-[var(--text-muted)] mb-3">Choose a chapter</p>
+              <p className="text-[10px] uppercase tracking-[.2em] font-bold text-[var(--text-muted)] mb-3">{copy.choose}</p>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-2">
                 {chapters.map((item) => (
                   <button key={item.id} type="button" onClick={() => setActive(item.id)} aria-pressed={active === item.id} className={`farm-chapter-button ${active === item.id ? "is-active" : ""}`}>
