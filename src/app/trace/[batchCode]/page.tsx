@@ -31,7 +31,7 @@ interface JourneyStep {
 export default function BatchTracePage() {
   const params = useParams<{ batchCode: string }>();
   const router = useRouter();
-  const initialCode = decodeURIComponent(params?.batchCode || "LO-PILANI-SAMPLE-001").toUpperCase();
+  const initialCode = String(params?.batchCode || "").toUpperCase();
 
   const [codeInput, setCodeInput] = useState(initialCode);
   const [batch, setBatch] = useState<BatchRecord | null>(null);
@@ -41,7 +41,13 @@ export default function BatchTracePage() {
 
   const loadBatch = async (code: string) => {
     const clean = code.trim().toUpperCase();
-    if (!clean) return;
+    if (!clean) {
+      setBatch(null);
+      setJourney([]);
+      setError("Enter the batch code printed on your product label.");
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -71,8 +77,11 @@ export default function BatchTracePage() {
     e.preventDefault();
     const clean = codeInput.trim().toUpperCase();
     if (!clean) return;
-    router.push(`/trace/${encodeURIComponent(clean)}`);
-    void loadBatch(clean);
+    if (clean === initialCode) {
+      void loadBatch(clean);
+    } else {
+      router.push(`/trace/${encodeURIComponent(clean)}`);
+    }
   };
 
   return (
@@ -91,7 +100,7 @@ export default function BatchTracePage() {
           Product Batch Transparency
         </h1>
         <p className="text-sm sm:text-base opacity-80 mb-6 max-w-2xl">
-          Enter or scan a product batch identifier (try <code className="font-mono font-bold">LO-PILANI-SAMPLE-001</code>) to inspect verified batch details and the 6-step farm-to-home journey. Lab links appear only when published by an authorized administrator.
+          Enter or scan the batch identifier printed on your product label. Only approved production batch records are displayed. Lab links appear only when a report has been published for that batch.
         </p>
 
         <form onSubmit={handleLookup} className="flex flex-col sm:flex-row gap-3">
@@ -99,7 +108,7 @@ export default function BatchTracePage() {
             type="text"
             value={codeInput}
             onChange={(e) => setCodeInput(e.target.value)}
-            placeholder="Enter batch code e.g. LO-PILANI-SAMPLE-001"
+            placeholder="Enter the batch code from your product label"
             className="flex-1 px-4 py-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-sm font-mono uppercase focus:outline-none focus:border-[var(--terracotta)]"
           />
           <button
@@ -139,11 +148,7 @@ export default function BatchTracePage() {
                   {batch.productName} ({batch.variantLabel})
                 </h2>
               </div>
-              {batch.source === "sample_reference" && (
-                <span className="text-xs px-3 py-1 rounded-full bg-amber-100 text-amber-900 font-semibold">
-                  Sample Reference Record
-                </span>
-              )}
+
             </div>
 
             <dl className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 text-sm">
