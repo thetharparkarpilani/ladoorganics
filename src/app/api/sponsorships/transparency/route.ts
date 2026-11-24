@@ -8,7 +8,7 @@ export async function GET() {
               COUNT(*)::int AS entries_count,
               COALESCE(SUM(amount_inr), 0)::bigint AS recorded_amount_inr
        FROM sponsorships
-       WHERE status IN ('active', 'pending')
+       WHERE status = 'active'
        GROUP BY calf_name
        ORDER BY calf_name ASC`
     );
@@ -17,7 +17,7 @@ export async function GET() {
       source: "database",
       calves: ["Dholi Sheri", "Tara", "Roshni"],
       summary: res.rows,
-      note: "Amounts reflect recorded sponsorship entries in PostgreSQL. Tax exemption claims are not asserted unless legally verified."
+      note: "Only entries marked active by the Lado team are included. These records are not an audited expenditure statement or tax receipt."
     });
   } catch {
     return NextResponse.json({
