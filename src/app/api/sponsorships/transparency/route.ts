@@ -24,7 +24,7 @@ export async function GET() {
       source: "fallback",
       calves: ["Dholi Sheri", "Tara", "Roshni"],
       summary: [],
-      note: "Connect DATABASE_URL to load live PostgreSQL sponsorship totals."
+      note: "Live sponsorship records are temporarily unavailable. Please contact the Lado team for current information."
     });
   }
 }
