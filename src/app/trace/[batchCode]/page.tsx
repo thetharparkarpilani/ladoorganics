@@ -199,7 +199,7 @@ export default function BatchTracePage() {
               </div>
               <div>
                 <dt className="text-xs uppercase opacity-60 font-bold">{copy.packaging}</dt>
-                <dd className="font-semibold mt-1">{batch.packagingDate ? String(batch.packagingDate) : "Pending confirmation"}</dd>
+                <dd className="font-semibold mt-1">{batch.packagingDate ? String(batch.packagingDate) : copy.pending}</dd>
               </div>
               <div>
                 <dt className="text-xs uppercase opacity-60 font-bold">{copy.bestBefore}</dt>
