@@ -49,6 +49,12 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
   }, [isOpen]);
 
   useEffect(() => {
+    const openFromSidebar = () => setIsOpen(true);
+    window.addEventListener("lado:open-ai", openFromSidebar);
+    return () => window.removeEventListener("lado:open-ai", openFromSidebar);
+  }, []);
+
+  useEffect(() => {
     setMessages((previous) => previous.length === 1 && previous[0].id === "welcome"
       ? [{ ...WELCOME, text: copy.welcome }]
       : previous);
