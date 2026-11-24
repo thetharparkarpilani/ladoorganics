@@ -29,7 +29,7 @@ const TOKEN_CANONICAL: Record<string, string> = {
   stay: "stay", bhunga: "stay", booking: "stay", book: "stay", ठहराव: "stay", भुंगा: "stay", रुकना: "stay",
   cow: "cow", cows: "cow", cattle: "cow", gai: "cow", gaay: "cow", गाय: "cow", गायें: "cow", गायां: "cow",
   contact: "contact", support: "contact", help: "contact", whatsapp: "contact", सहायता: "contact", मदद: "contact",
-  payment: "payment", payments: "payment", pay: "payment", upi: "payment", भुगतान: "payment", पैसा: "payment",
+  payment: "payment", payments: "payment", pay: "payment", भुगतान: "payment", पैसा: "payment",
   farm: "farm", farming: "farm", खेत: "farm", खेतरी: "farm",
   sponsor: "sponsorship", sponsorship: "sponsorship", adopt: "sponsorship", seva: "sponsorship", सेवा: "sponsorship",
   privacy: "privacy", सुरक्षित: "privacy", सुरक्षा: "privacy",
@@ -146,7 +146,7 @@ const EXPANDED_QUESTION_PATTERNS: Record<string, string[]> = {
   ],
   "Gau Seva contribution amount": [
     "minimum donation amount", "how much should i contribute", "is there a fixed sponsorship amount",
-    "sponsorship amount", "gau seva price", "what is the calf sponsorship amount", "गौ सेवा में कितनी राशि देनी होगी",
+    "sponsorship amount", "gau seva price", "how much to sponsor a calf", "what is the calf sponsorship amount", "गौ सेवा में कितनी राशि देनी होगी",
   ],
   "AI privacy and safe information": [
     "is my chat private", "does lado ai save my information", "can i share my otp", "is it safe to tell upi pin",
@@ -173,7 +173,7 @@ export function findLocalAnswer(question: string, entries: RetrievalEntry[]): Re
         break;
       }
       if (query.length >= 8 && (query.includes(pattern) || pattern.includes(query))) {
-        score = Math.max(score, 0.96);
+        score = Math.max(score, 0.92);
         continue;
       }
       const patternTokens = meaningfulTokens(pattern);
@@ -192,6 +192,6 @@ export function findLocalAnswer(question: string, entries: RetrievalEntry[]): Re
   const best = ranked[0];
   const runnerUp = ranked[1];
   if (!best || best.score < 0.70) return null;
-  if (runnerUp && best.score - runnerUp.score < 0.06) return null;
+  if (runnerUp && best.score - runnerUp.score < 0.05) return null;
   return best.entry;
 }
