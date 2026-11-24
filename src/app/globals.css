@@ -665,3 +665,78 @@ footer {
 .lado-ai-cart-option:last-child { border-bottom:0; }.lado-ai-cart-option:hover { background:#e5eadb; }
 .lado-ai-cart-option > span:first-child { font-size:10px; font-weight:750; }.lado-ai-cart-option > strong { font-family:Georgia,serif; font-size:14px; }
 .lado-ai-cart-add { padding:6px 9px; border-radius:999px; background:#405b43; color:#fff9e9; font-size:9px; font-weight:850; }
+
+
+/* Persistent Lado Organics app navigation — remains mounted across routes */
+.lado-app-shell { min-height: 100vh; width: 100%; }
+.lado-sidebar {
+  position: fixed; inset: 0 auto 0 0; z-index: 70;
+  display: flex; flex-direction: column; width: 276px; height: 100dvh;
+  padding: 22px 18px 16px; overflow: hidden;
+  background: #fbfaf6; border-right: 1px solid rgba(67, 77, 48, .12);
+  box-shadow: 8px 0 30px rgba(47, 48, 37, .035);
+}
+.lado-sidebar-brand { flex: 0 0 auto; padding: 0 10px 14px; text-align: center; }
+.lado-sidebar-brand a { display: inline-flex; align-items: center; justify-content: center; }
+.lado-sidebar-brand img { display: block; width: 154px; height: 82px; object-fit: contain; }
+.lado-sidebar-brand p { margin-top: -5px; color: #8a9364; font-size: 9px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+.lado-sidebar-account { display: flex; align-items: center; gap: 11px; padding: 12px 10px 16px; border-top: 1px solid rgba(67,77,48,.10); border-bottom: 1px solid rgba(67,77,48,.10); }
+.lado-sidebar-avatar { display: grid; place-items: center; width: 38px; height: 38px; flex: 0 0 auto; border-radius: 50%; background: #e8edd8; color: #35563b; font-family: Georgia,serif; font-size: 21px; font-weight: 700; }
+.lado-sidebar-account strong,.lado-sidebar-account small { display: block; }
+.lado-sidebar-account strong { color: #354331; font-size: 12px; line-height: 1.4; }
+.lado-sidebar-account small { margin-top: 3px; color: #929184; font-size: 10px; }
+.lado-sidebar-nav { min-height: 0; flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain; padding: 8px 0 12px; scrollbar-width: thin; scrollbar-color: #d8ddc7 transparent; }
+.lado-sidebar-group { margin: 9px 0 14px; }
+.lado-sidebar-group h2 { margin: 0 10px 6px; color: #a1a18d; font-size: 9px; font-weight: 800; letter-spacing: .14em; }
+.lado-sidebar-link { display: flex; align-items: center; gap: 12px; min-height: 39px; margin: 2px 0; padding: 8px 11px; border-radius: 10px; color: #494b3f; font-size: 12px; font-weight: 600; line-height: 1.35; text-decoration: none; transition: background .18s ease,color .18s ease,transform .18s ease; }
+.lado-sidebar-link:hover { background: #eff1e6; color: #294c35; transform: translateX(2px); }
+.lado-sidebar-link.is-active { background: #e9eddd; color: #294c35; box-shadow: inset 3px 0 #82945d; }
+.lado-sidebar-icon { display: inline-grid; place-items: center; width: 20px; flex: 0 0 20px; color: #83935f; font-size: 18px; line-height: 1; }
+.lado-sidebar-ai { display: flex; align-items: center; gap: 10px; flex: 0 0 auto; margin-top: auto; padding: 12px 10px; border: 1px solid #e7dfcb; border-radius: 14px; background: linear-gradient(125deg,#f3efdE,#f8f4e9); }
+.lado-ai-mark { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 10px; background: #355b3c; color: #fff9e8; font-size: 19px; }
+.lado-sidebar-ai div { min-width: 0; flex: 1; }
+.lado-sidebar-ai strong,.lado-sidebar-ai small { display: block; }
+.lado-sidebar-ai strong { color: #304b34; font-size: 12px; }
+.lado-sidebar-ai small { margin-top: 2px; color: #777663; font-size: 10px; }
+.lado-sidebar-ai button { width: 28px; height: 28px; border-radius: 50%; background: #fff; color: #355b3c; font-size: 16px; }
+.lado-sidebar-language { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex: 0 0 auto; padding: 13px 4px 0; }
+.lado-sidebar-language label { color: #858574; font-size: 10px; font-weight: 700; }
+.lado-sidebar-language select { max-width: 132px; border: 1px solid #e3e2d6; border-radius: 9px; background: #fff; padding: 7px 8px; color: #45483a; font-size: 11px; }
+.lado-app-main { min-height: 100vh; min-width: 0; margin-left: 276px; width: calc(100% - 276px); }
+.lado-app-main > main { min-width: 0; }
+.lado-mobile-menu-trigger,.lado-sidebar-backdrop { display: none; }
+.lado-app-main .glass-nav nav[aria-label="Primary"] { display: none !important; }
+.lado-app-main .lado-mobile-navigation { display: none !important; }
+.lado-app-main .glass-nav { top: 0; }
+@media (max-height: 760px) and (min-width: 761px) {
+  .lado-sidebar { padding-top: 12px; padding-bottom: 10px; }
+  .lado-sidebar-brand { padding-bottom: 8px; }
+  .lado-sidebar-brand img { height: 65px; }
+  .lado-sidebar-account { padding-top: 8px; padding-bottom: 10px; }
+  .lado-sidebar-group { margin: 6px 0 9px; }
+  .lado-sidebar-link { min-height: 34px; padding-top: 6px; padding-bottom: 6px; }
+  .lado-sidebar-ai { padding: 8px; }
+  .lado-sidebar-language { padding-top: 8px; }
+}
+@media (max-width: 760px) {
+  .lado-sidebar { width: min(310px, 86vw); transform: translateX(-105%); transition: transform .25s ease; box-shadow: 16px 0 40px rgba(25,35,24,.16); }
+  .lado-sidebar.is-open { transform: translateX(0); }
+  .lado-sidebar-backdrop { display: block; position: fixed; inset: 0; z-index: 69; border: 0; background: rgba(25,32,24,.42); }
+  .lado-mobile-menu-trigger { display: inline-flex; position: fixed; z-index: 68; top: 12px; left: 12px; align-items: center; gap: 7px; padding: 9px 12px; border: 1px solid rgba(55,75,49,.18); border-radius: 999px; background: rgba(251,250,246,.96); color: #304b34; box-shadow: 0 4px 18px rgba(30,40,25,.10); font-size: 11px; font-weight: 800; }
+  .lado-mobile-menu-trigger span:first-child { font-size: 16px; }
+  .lado-app-main { width: 100%; margin-left: 0; }
+  .lado-app-main .glass-nav > div { padding-left: 94px; }
+  .lado-app-main .glass-nav > div > a { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lado-sidebar,.lado-sidebar-link { transition: none; }
+}
+
+@media (min-width: 761px) {
+  .lado-app-main .glass-nav > div > a:first-child { display: none; }
+  .lado-app-main .glass-nav select[aria-label="Language selector"] { display: none; }
+}
+@media (max-width: 760px) {
+  .lado-app-main .glass-nav button[aria-controls="lado-mobile-navigation"] { display: none; }
+  .lado-app-main .glass-nav select[aria-label="Language selector"] { display: none; }
+}

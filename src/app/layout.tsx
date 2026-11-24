@@ -6,7 +6,7 @@ import PWARegistration from "@/components/PWARegistration";
 import ConciergeWidget from "@/components/ConciergeWidget";
 import SiteAnnouncement from "@/components/SiteAnnouncement";
 import { LocaleProvider } from "@/context/LocaleContext";
-import GlobalLanguageSwitcher from "@/components/GlobalLanguageSwitcher";
+import AppSidebar from "@/components/AppSidebar";
 
 export const metadata: Metadata = {
   title: "Lado Organics | Pure Tharparkar A2 Tradition",
@@ -43,10 +43,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AnalyticsProvider>
           <CartProvider>
             <SiteAnnouncement />
-            <GlobalLanguageSwitcher />
-            <main className="flex-1">
-              {children}
-            </main>
+            <div className="lado-app-shell">
+              <AppSidebar />
+              <div className="lado-app-main">
+                <main className="min-h-screen">
+                  {children}
+                </main>
+              </div>
+            </div>
             <ConciergeWidget whatsappNumber={process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919636100337"} />
           </CartProvider>
         </AnalyticsProvider>
