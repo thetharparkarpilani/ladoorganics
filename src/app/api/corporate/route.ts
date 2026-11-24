@@ -18,8 +18,8 @@ export async function POST(req: NextRequest) {
     const partnershipType = typeof body.partnershipType === "string" ? body.partnershipType.trim().slice(0, 80) : "";
     const message = typeof body.message === "string" ? body.message.trim().slice(0, 2000) : "";
 
-    if (!companyName || !contactName || !phone || !/^[+0-9()\\-\\s]{7,24}$/.test(phone) ||
-        !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email) || !partnershipType) {
+    if (!companyName || !contactName || !phone || !/^[+0-9()\-\s]{7,24}$/.test(phone) ||
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !partnershipType) {
       return NextResponse.json({ error: "Required fields are missing." }, { status: 400 });
     }
 
