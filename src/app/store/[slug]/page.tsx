@@ -4,6 +4,7 @@ import React, { useState, use } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import ProductReviewsSection from "@/components/ProductReviewsSection";
+import { useLocale } from "@/context/LocaleContext";
 
 interface ProductRecord {
   slug: string;
@@ -66,10 +67,52 @@ const CATALOG_DETAIL: Record<string, ProductRecord> = {
 // NEXT.JS 15 FIX: Type params as a Promise and unwrap with React.use()
 export default function ProductDetailPage(props: { params: Promise<{ slug: string }> }) {
   const params = use(props.params);
+  const { locale } = useLocale();
   const slug = decodeURIComponent(params.slug || "a2-bilona-ghee");
   const product = CATALOG_DETAIL[slug] ?? CATALOG_DETAIL["a2-bilona-ghee"];
   const [selectedIdx, setSelectedIdx] = useState(product.variants.length - 1);
 
+  const localized = locale === "hi" ? {
+    category: { "a2-bilona-ghee": "देसी थारपारकर डेयरी", "tharparkar-dhoop": "गोबर से बनी प्राकृतिक धूप", "pure-kechua-khad": "जैविक केंचुआ खाद", "deep-work-bhunga-stay": "ग्रामीण पर्यटन और भुंगा ठहराव" }[slug] || product.category,
+    description: { "a2-bilona-ghee": "पिलानी में देसी थारपारकर गाय के दही से पारंपरिक बिलोना विधि द्वारा मथा गया घी।", "tharparkar-dhoop": "पिलानी में देसी गाय के गोबर और प्राकृतिक वनस्पति सामग्री से तैयार धूप।", "pure-kechua-khad": "केंचुओं की मदद से तैयार वर्मी कम्पोस्ट। सही मात्रा और उपयोग के लिए उत्पाद का लेबल देखें।", "deep-work-bhunga-stay": "पिलानी में पारंपरिक राजस्थानी मिट्टी की वास्तुकला वाला भुंगा ठहराव। तारीख और उपलब्धता टीम से पक्की करें।" }[slug] || product.description,
+    sourcing: product.sourcing, productionMethod: product.productionMethod,
+    storage: { "a2-bilona-ghee": "सीधी धूप से दूर ठंडी और सूखी जगह रखें। हमेशा साफ़ और सूखा चम्मच इस्तेमाल करें।", "tharparkar-dhoop": "नमी से दूर, सूखे और बंद डिब्बे में रखें।", "pure-kechua-khad": "छायादार और हवादार जगह पर रखें।", "deep-work-bhunga-stay": "आगमन की तारीख और भोजन की पसंद टीम से पहले पक्की करें।" }[slug] || product.storage,
+    back: "← उत्पाद संग्रह पर लौटें", trace: "बैच की जानकारी देखें ↗", tags: ["राजस्थान में सावधानी से तैयार", "खेत से जुड़ी सोच-समझ वाली प्रक्रिया"],
+    note: "Lado Organics की खेत-कहानी का हिस्सा", choose: "अपना पैक चुनें", bring: "खेत की अच्छाई अपने घर लाएँ।",
+    selected: "चुना गया पैक", order: "व्हाट्सऐप पर पूछें और ऑर्डर करें", orderNote: "ऑर्डर पक्का होने से पहले टीम मौजूदा बैच, डिलीवरी और भुगतान की पुष्टि करेगी।",
+    know: "आप क्या घर ला रहे हैं, जानें", origin: "हमारे खेत की कहानी से रोज़मर्रा तक।",
+    sourcingTitle: "हमारी सोर्सिंग", madeTitle: "इसे कैसे बनाया जाता है", careTitle: "देखभाल और भंडारण",
+    wa: "नमस्ते Lado Organics!", waProduct: "उत्पाद", waPrice: "दर्ज कीमत", waAsk: "कृपया मौजूदा बैच, डिलीवरी और भुगतान की जानकारी दें।",
+  } : locale === "ma" ? {
+    category: { "a2-bilona-ghee": "देसी थारपारकर दूध री चीज", "tharparkar-dhoop": "गोबर सूं बणाई कुदरती धूप", "pure-kechua-khad": "जैविक केंचुआ खाद", "deep-work-bhunga-stay": "गांव रो ठहराव अर भुंगा" }[slug] || product.category,
+    description: { "a2-bilona-ghee": "पिलानी में देसी थारपारकर गाय रै दही नै पुराणी बिलोना सूं मथकै बणायो घी।", "tharparkar-dhoop": "पिलानी में देसी गाय रै गोबर अर कुदरती वनस्पति सूं बणाई धूप।", "pure-kechua-khad": "केंचुआ री मदद सूं बणाई खाद। सही मात्रा खातर पैकेट रो लेबल देखो।", "deep-work-bhunga-stay": "पिलानी में राजस्थानी माटी री पुराणी बनावट वालो भुंगा ठहराव। तारीख अर जगह टीम सूं पक्की करो।" }[slug] || product.description,
+    sourcing: product.sourcing, productionMethod: product.productionMethod,
+    storage: { "a2-bilona-ghee": "सीधी धूप सूं दूर ठंडी अर सूखी जगह राखो। साफ-सूखो चमचो लो।", "tharparkar-dhoop": "नमी सूं दूर सूखै अर बंद डिब्बे में राखो।", "pure-kechua-khad": "छांव अर हवा आवै ईंठै राखो।", "deep-work-bhunga-stay": "आवण री तारीख अर भोजन री बात टीम सूं पैली पक्की करो।" }[slug] || product.storage,
+    back: "← सामान री सूची पर लौटो", trace: "बैच री बात देखो ↗", tags: ["राजस्थान में ध्यान सूं बणायो", "खेत री सोच सूं जुड़्यो"],
+    note: "Lado Organics री खेत री कहानी रो भाग", choose: "आपरो पैक चुनो", bring: "खेत री अच्छाई घर लावो।",
+    selected: "चुन्यो पैक", order: "व्हाट्सऐप पर पूछो अर ऑर्डर करो", orderNote: "ऑर्डर पक्को होण सूं पैली टीम चालू बैच, भेजण अर भुगतान पक्को करैला।",
+    know: "जाणो थां घर काई लावो हो", origin: "म्हारी खेत री बात सूं रोज रै काम तक।",
+    sourcingTitle: "म्हारी सोर्सिंग", madeTitle: "ई कियां बणै", careTitle: "रखरखाव अर भंडारण",
+    wa: "खम्मा घणी Lado Organics!", waProduct: "सामान", waPrice: "लिख्यो भाव", waAsk: "कृपा कर चालू बैच, भेजण अर भुगतान री जानकारी देवो।",
+  } : {
+    category: product.category, description: product.description, sourcing: product.sourcing,
+    productionMethod: product.productionMethod, storage: product.storage,
+    back: "{localized.back}", trace: "{localized.trace}",
+    tags: ["Made with care in Rajasthan", "Thoughtful farm practices"],
+    note: "A part of the Lado Organics farm story", choose: "CHOOSE YOUR PACK",
+    bring: "Bring a little farm goodness home.", selected: "Selected pack",
+    order: "Enquire & order on WhatsApp",
+    orderNote: "{localized.orderNote}",
+    know: "{localized.know}", origin: "{localized.origin}",
+    sourcingTitle: "{localized.sourcingTitle}", madeTitle: "{localized.madeTitle}", careTitle: "{localized.careTitle}",
+    wa: "Namaste Lado Organics!", waProduct: "Product", waPrice: "Listed Price",
+    waAsk: "Please share batch availability, shipping, and payment details.",
+  };
+  const displayName = locale === "hi"
+    ? ({ "a2-bilona-ghee": "A2 बिलोना घी", "tharparkar-dhoop": "थारपारकर धूप", "pure-kechua-khad": "शुद्ध केंचुआ खाद", "deep-work-bhunga-stay": "डीप वर्क भुंगा स्टे" }[slug] || product.name)
+    : locale === "ma"
+      ? ({ "a2-bilona-ghee": "A2 बिलोना घी", "tharparkar-dhoop": "थारपारकर धूप", "pure-kechua-khad": "चोखी केंचुआ खाद", "deep-work-bhunga-stay": "डीप वर्क भुंगा ठहराव" }[slug] || product.name)
+      : product.name;
   const activeVariant = product.variants[selectedIdx] ?? product.variants[0];
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919636100337";
 
@@ -85,7 +128,7 @@ export default function ProductDetailPage(props: { params: Promise<{ slug: strin
 
 
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-    `Namaste Lado Organics!\nProduct: ${product.name} (${activeVariant.label})\nListed Price: ₹${activeVariant.priceInr.toLocaleString("en-IN")}\nPlease share batch availability, shipping, and payment details.`
+    `${localized.wa}\n${localized.waProduct}: ${displayName} (${activeVariant.label})\n${localized.waPrice}: ₹${activeVariant.priceInr.toLocaleString("en-IN")}\n${localized.waAsk}`
   )}`;
 
   return (
@@ -96,7 +139,7 @@ export default function ProductDetailPage(props: { params: Promise<{ slug: strin
       </div>
 
       <section className={`product-detail-hero product-detail-${visual.kind}`}>
-        <div className="product-detail-art relative" aria-label={product.slug.includes("dhoop") ? "Lado Organics Tharparkar Dhoop product photograph" : `${product.name} illustrated product artwork`}>
+        <div className="product-detail-art relative" aria-label={product.slug.includes("dhoop") ? "Lado Organics Tharparkar Dhoop product photograph" : `${displayName} illustrated product artwork`}>
           {product.slug.includes("dhoop") ? (
             <Image
               src={`/images/lado-organics/${encodeURIComponent("Lado Organics Tharparkar Dhoop.png")}`}
@@ -118,24 +161,24 @@ export default function ProductDetailPage(props: { params: Promise<{ slug: strin
           )}
         </div>
         <div className="product-detail-copy">
-          <p className="product-detail-kicker"><span /> {product.category}</p>
+          <p className="product-detail-kicker"><span /> {localized.category}</p>
           <h1>{product.name}</h1>
-          <p className="product-detail-description">{product.description}</p>
+          <p className="product-detail-description">{localized.description}</p>
           <div className="product-detail-tags">
-            <span>Made with care in Rajasthan</span>
-            <span>Thoughtful farm practices</span>
+            <span>{localized.tags[0]}</span>
+            <span>{localized.tags[1]}</span>
           </div>
           <div className="product-detail-note">
             <span className="product-detail-note-mark">L</span>
-            <span><strong>{visual.note}</strong><small>A part of the Lado Organics farm story</small></span>
+            <span><strong>{visual.note}</strong><small>{localized.note}</small></span>
           </div>
         </div>
       </section>
 
       <section className="product-detail-buy">
         <div className="product-detail-buy-heading">
-          <p className="product-detail-kicker">CHOOSE YOUR PACK</p>
-          <h2>Bring a little farm goodness home.</h2>
+          <p className="product-detail-kicker">{localized.choose}</p>
+          <h2>{localized.bring}</h2>
         </div>
         {product.variants.length > 1 && (
           <div className="product-detail-variants">
@@ -155,11 +198,11 @@ export default function ProductDetailPage(props: { params: Promise<{ slug: strin
         )}
         <div className="product-detail-checkout">
           <div>
-            <span>Selected pack · {activeVariant.label}</span>
+            <span>{localized.selected} · {activeVariant.label}</span>
             <strong>₹{activeVariant.priceInr.toLocaleString("en-IN")}</strong>
           </div>
           <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="product-detail-order">
-            Enquire & order on WhatsApp <span aria-hidden="true">↗</span>
+            {localized.order} <span aria-hidden="true">↗</span>
           </a>
         </div>
         <p className="product-detail-order-note">We’ll confirm current batch availability, delivery and payment details with you before the order is finalised.</p>
@@ -171,9 +214,9 @@ export default function ProductDetailPage(props: { params: Promise<{ slug: strin
           <h2>From our farm story to your everyday rituals.</h2>
         </div>
         <div className="product-detail-origin-grid">
-          <article><span>01</span><h3>Our sourcing</h3><p>{product.sourcing}</p></article>
-          <article><span>02</span><h3>How it is made</h3><p>{product.productionMethod}</p></article>
-          <article><span>03</span><h3>Care & storage</h3><p>{product.storage}</p></article>
+          <article><span>01</span><h3>Our sourcing</h3><p>{localized.sourcing}</p></article>
+          <article><span>02</span><h3>How it is made</h3><p>{localized.productionMethod}</p></article>
+          <article><span>03</span><h3>Care & storage</h3><p>{localized.storage}</p></article>
         </div>
       </section>
 
