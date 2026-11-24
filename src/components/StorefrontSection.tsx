@@ -41,9 +41,32 @@ export default function StorefrontSection({
     });
   }, [products, searchQuery, locale]);
 
-  const estimatedTotal = useMemo(() => {
-    return gheeLitres * 5000 + dhoopBoxes * 1000 + khadBags * 2000 + stayNights * 4000;
-  }, [gheeLitres, dhoopBoxes, khadBags, stayNights]);
+  const estimatedRates = useMemo(() => {
+    const rateFor = (slug: string) => {
+      const product = products.find((item) => item.slug === slug);
+      const variant = product?.variants.find((item) => item.isDefault) ?? product?.variants[0];
+      return variant ? { price: Number(variant.priceInr), label: variant.label } : null;
+    };
+    return {
+      ghee: rateFor("a2-bilona-ghee"),
+      dhoop: rateFor("tharparkar-dhoop"),
+      khad: rateFor("pure-kechua-khad"),
+      stay: rateFor("deep-work-bhunga-stay"),
+    };
+  }, [products]);
+
+  const hasUnpricedSelection =
+    (gheeLitres > 0 && !estimatedRates.ghee) ||
+    (dhoopBoxes > 0 && !estimatedRates.dhoop) ||
+    (khadBags > 0 && !estimatedRates.khad) ||
+    (stayNights > 0 && !estimatedRates.stay);
+
+  const estimatedTotal = useMemo(() => (
+    gheeLitres * (estimatedRates.ghee?.price ?? 0) +
+    dhoopBoxes * (estimatedRates.dhoop?.price ?? 0) +
+    khadBags * (estimatedRates.khad?.price ?? 0) +
+    stayNights * (estimatedRates.stay?.price ?? 0)
+  ), [gheeLitres, dhoopBoxes, khadBags, stayNights, estimatedRates]);
 
   const sendWhatsAppOrder = (productName: string, unitLabel: string, priceInr: number) => {
     const message = [
@@ -58,16 +81,26 @@ export default function StorefrontSection({
 
   const sendCalculatorOrder = () => {
     const parts: string[] = [];
-    if (gheeLitres > 0) parts.push(`${gheeLitres} x A2 Bilona Ghee (1 litre @ ₹5,000)`);
-    if (dhoopBoxes > 0) parts.push(`${dhoopBoxes} x Tharparkar Dhoop (Box @ ₹1,000)`);
-    if (khadBags > 0) parts.push(`${khadBags} x Pure Kechua Khad (5 kg Bag @ ₹2,000)`);
-    if (stayNights > 0) parts.push(`${stayNights} x "Deep Work" Bhunga Stay (Night @ ₹4,000)`);
+    const addLine = (quantity: number, name: string, rate: { price: number; label: string } | null) => {
+      if (quantity > 0) {
+        parts.push(rate
+          ? quantity + " x " + name + " (" + rate.label + " @ ₹" + rate.price.toLocaleString("en-IN") + " each)"
+          : quantity + " x " + name + " (current price to be confirmed)");
+      }
+    };
+    addLine(gheeLitres, "A2 Bilona Ghee", estimatedRates.ghee);
+    addLine(dhoopBoxes, "Tharparkar Dhoop", estimatedRates.dhoop);
+    addLine(khadBags, "Pure Kechua Khad", estimatedRates.khad);
+    addLine(stayNights, '"Deep Work" Bhunga Stay', estimatedRates.stay);
 
     const summary = parts.length > 0 ? parts.join(", ") : "Custom enquiry";
+    const subtotal = hasUnpricedSelection
+      ? "Rates to be confirmed by the Lado team"
+      : "₹" + estimatedTotal.toLocaleString("en-IN");
     const message = [
       "Namaste Lado Organics!",
-      `Selected items: ${summary}`,
-      `Estimated subtotal (before shipping/applicable taxes): ₹${estimatedTotal.toLocaleString("en-IN")}`,
+      "Selected items: " + summary,
+      "Estimated subtotal (before shipping/applicable taxes): " + subtotal,
       "Please confirm availability and final details."
     ].join("\n");
     const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
@@ -253,7 +286,13 @@ export default function StorefrontSection({
             Order & Bhunga Stay Estimator
           </h3>
           <p className="text-sm opacity-80 mb-6">
-            Estimate quantities using listed baseline rates (₹5,000/1L Ghee, ₹1,000/Box Dhoop, ₹2,000/5kg Kechua Khad, ₹4,000/Night Bhunga Stay). Final shipping and applicable taxes are confirmed prior to order completion.
+            Estimates use current default pack prices from the live catalogue. Shipping and applicable taxes are confirmed before order completion.
+          </p>
+          <p className="text-xs opacity-70 mb-6">
+            Current listed rates: Ghee {estimatedRates.ghee ? "₹" + estimatedRates.ghee.price.toLocaleString("en-IN") + " / " + estimatedRates.ghee.label : "to be confirmed"} ·
+            Dhoop {estimatedRates.dhoop ? "₹" + estimatedRates.dhoop.price.toLocaleString("en-IN") + " / " + estimatedRates.dhoop.label : "to be confirmed"} ·
+            Khad {estimatedRates.khad ? "₹" + estimatedRates.khad.price.toLocaleString("en-IN") + " / " + estimatedRates.khad.label : "to be confirmed"} ·
+            Bhunga {estimatedRates.stay ? "₹" + estimatedRates.stay.price.toLocaleString("en-IN") + " / " + estimatedRates.stay.label : "to be confirmed"}
           </p>
 
           <div className="grid sm:grid-cols-2 gap-6 mb-8">
@@ -320,7 +359,7 @@ export default function StorefrontSection({
                 Estimated Subtotal
               </span>
               <span className="text-3xl font-serif font-bold text-[var(--terracotta)]">
-                ₹{estimatedTotal.toLocaleString("en-IN")}
+                {hasUnpricedSelection ? "To be confirmed" : "₹" + estimatedTotal.toLocaleString("en-IN")}
               </span>
             </div>
 
