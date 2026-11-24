@@ -47,7 +47,7 @@ function normalize(value: string): string {
 }
 
 function meaningfulTokens(value: string): string[] {
-  return normalize(value).split(/\s+/).filter((token) => token.length > 1 && !STOP_WORDS.has(token));
+  return Array.from(new Set(normalize(value).split(/\s+/).filter((token) => token.length > 1 && !STOP_WORDS.has(token))));
 }
 
 const EXPANDED_QUESTION_PATTERNS: Record<string, string[]> = {
