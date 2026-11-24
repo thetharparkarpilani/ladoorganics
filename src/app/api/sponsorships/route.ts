@@ -2,18 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { sendTemplatedNotification } from "@/lib/customer-notifications";
 import { sendAdminRequestAlert } from "@/lib/admin-notifications";
+import { enforceRateLimit } from "@/lib/rate-limit";
 
 const ALLOWED_CALVES = new Set(["Dholi Sheri", "Tara", "Roshni"]);
 const ALLOWED_PLANS = new Set(["one_time", "monthly", "yearly"]);
 
 export async function POST(req: NextRequest) {
+  const rateLimited = await enforceRateLimit(req, "sponsorships", 5, 3600);
+  if (rateLimited) return rateLimited;
   try {
     const body = await req.json();
     const calfName = typeof body.calfName === "string" ? body.calfName.trim() : "";
     const planType = typeof body.planType === "string" ? body.planType : "";
     const sponsorName = typeof body.sponsorName === "string" ? body.sponsorName.trim() : "";
     const sponsorEmail = typeof body.sponsorEmail === "string" ? body.sponsorEmail.trim().toLowerCase() : "";
-    const sponsorPhone = typeof body.sponsorPhone === "string" ? body.sponsorPhone.trim() : null;
+    const sponsorPhone = typeof body.sponsorPhone === "string" ? body.sponsorPhone.trim().slice(0, 24) : null;
     const amountInr = Number(body.amountInr);
 
     if (!ALLOWED_CALVES.has(calfName) || !ALLOWED_PLANS.has(planType)) {
