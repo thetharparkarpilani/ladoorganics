@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
         "SELECT e.id,e.expense_date,e.category,e.amount_inr,e.payment_method,e.reference,e.description,e.created_by,e.created_at,s.name AS supplier_name " +
         "FROM business_expenses e LEFT JOIN suppliers s ON s.id=e.supplier_id ORDER BY e.expense_date DESC,e.created_at DESC LIMIT 150"
       ) : Promise.resolve({ rows: [] }),
-      db.query("SELECT id,action,entity_type,entity_id,metadata,created_at FROM audit_logs ORDER BY created_at DESC LIMIT 50")
+      db.query("SELECT id,action,entity_type,entity_id,created_at FROM audit_logs WHERE action IN ('PRODUCT_CREATED','PRODUCT_VARIANT_CREATED','PRODUCT_INVENTORY_UPDATED','PRODUCT_AVAILABILITY_UPDATED','PRODUCT_IMAGE_UPDATED','STOCK_MOVEMENT_RECORDED','SUPPLIER_CREATED','SUPPLIER_STATUS_UPDATED','BATCH_CREATED','BATCH_PUBLISHED','BATCH_DRAFT_CREATED') ORDER BY created_at DESC LIMIT 50")
     ]);
     const stockUnits = inventory.rows.reduce((sum, row) => sum + Number(row.stock_qty || 0), 0);
     const lowStock = inventory.rows.filter(row => Number(row.stock_qty || 0) <= 5).length;
