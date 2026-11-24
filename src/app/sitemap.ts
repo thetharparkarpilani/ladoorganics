@@ -19,7 +19,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ["/corporate", "monthly", 0.7],
     ["/essentials-club", "monthly", 0.65],
     ["/library", "weekly", 0.7],
-    ["/trace", "monthly", 0.55],
     ["/policies", "monthly", 0.45],
     ["/policies/privacy", "yearly", 0.3],
     ["/policies/shipping", "monthly", 0.35],
