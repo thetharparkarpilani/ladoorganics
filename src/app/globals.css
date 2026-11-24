@@ -731,3 +731,12 @@ footer {
 @media (prefers-reduced-motion: reduce) {
   .lado-sidebar,.lado-sidebar-link { transition: none; }
 }
+
+@media (min-width: 761px) {
+  .lado-app-main .glass-nav > div > a:first-child { display: none; }
+  .lado-app-main .glass-nav select[aria-label="Language selector"] { display: none; }
+}
+@media (max-width: 760px) {
+  .lado-app-main .glass-nav button[aria-controls="lado-mobile-navigation"] { display: none; }
+  .lado-app-main .glass-nav select[aria-label="Language selector"] { display: none; }
+}
