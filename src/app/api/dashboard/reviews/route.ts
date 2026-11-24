@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getCustomerIdentity } from "@/lib/customer-auth";
+import { enforceRateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
