@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
     .replace(/\s+/g, " ");
 
   if (query.length < 2) {
-    return NextResponse.json({ products: [], pages: [] }, {
+    return NextResponse.json({ results: [], products: [], pages: [] }, {
       headers: { "Cache-Control": "no-store" },
     });
   }
@@ -82,7 +82,7 @@ export async function GET(req: NextRequest) {
       key: String(row.content_key || row.title || "guide"),
     }));
 
-    return NextResponse.json({ products, pages }, {
+    return NextResponse.json({ results: productsResult.rows, products, pages }, {
       headers: { "Cache-Control": "no-store" },
     });
   } catch (error) {
