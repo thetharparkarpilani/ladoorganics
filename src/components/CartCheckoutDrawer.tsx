@@ -26,7 +26,7 @@ export default function CartCheckoutDrawer() {
   };
 
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919636100337";
-  const upiId = "aksainibits@okhdfcbank";
+  const upiId = process.env.NEXT_PUBLIC_UPI_ID || "";
   const upiLink = upiId
     ? `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent("Lado Organics")}&am=${completedTotal}&cu=INR&tn=${encodeURIComponent(completedOrder)}`
     : "";
