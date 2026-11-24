@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { sendNotification, escapeHtml } from "@/lib/email";
+import { enforceRateLimit } from "@/lib/rate-limit";
 
 function clean(value: unknown, max: number): string {
   return typeof value === "string"
