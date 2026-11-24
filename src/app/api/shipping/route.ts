@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     const pincode = typeof body?.pincode === "string" ? body.pincode.trim() : "";
     const items = Array.isArray(body?.items) ? body.items as QuoteItem[] : [];
 
-    if (!/^\\d{6}$/.test(pincode)) {
+    if (!/^\d{6}$/.test(pincode)) {
       return NextResponse.json({ error: "Valid 6-digit Indian PIN code required." }, { status: 400 });
     }
     if (!items.length || items.length > 30) {
