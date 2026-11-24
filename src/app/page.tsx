@@ -3,8 +3,9 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import type { LocaleCode, ProductDTO } from "@/types/domain";
+import type { ProductDTO, LocaleCode } from "@/types/domain";
 import { TRANSLATIONS } from "@/lib/i18n";
+import { useLocale } from "@/context/LocaleContext";
 import { useCart } from "@/context/CartContext";
 import StorefrontSection from "@/components/StorefrontSection";
 import EssentialsClubSection from "@/components/EssentialsClubSection";
@@ -89,7 +90,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-3">
           <Link href="/" aria-label="Lado Organics home" className="inline-flex items-center shrink-0"><Image src="/lado-organics-logo.svg" alt="Lado Organics — Lado Love Pure" width={180} height={120} priority className="h-14 sm:h-16 w-auto object-contain" /></Link>
           <nav aria-label="Primary" className="hidden xl:flex items-center gap-4 text-xs font-bold uppercase tracking-widest">
-            <a href="#store">{dict.section_store}</a><a href="#essentials-club">{dict.nav_essentials}</a><a href="#build-experience">{dict.nav_experience}</a><a href="#adopt">{dict.nav_gau}</a><a href="#journal">{dict.nav_journal}</a><a href="#corporate">{dict.nav_corporate}</a><Link href="/contact">{dict.nav_help}</Link><Link href="/contact">Ask about batch traceability</Link><a href="/dashboard">{dict.nav_journey}</a>
+            <a href="#store">{dict.section_store}</a><a href="#essentials-club">{dict.nav_essentials}</a><a href="#build-experience">{dict.nav_experience}</a><a href="#adopt">{dict.nav_gau}</a><a href="#journal">{dict.nav_journal}</a><a href="#corporate">{dict.nav_corporate}</a><Link href="/contact">{dict.nav_help}</Link><Link href="/trace/LO-PILANI-SAMPLE-001">{dict.nav_trace}</Link><a href="/dashboard">{dict.nav_journey}</a>
           </nav>
           <div className="flex items-center gap-2">
             <button type="button" className="xl:hidden text-xs font-bold px-3 py-2 rounded-full border border-[var(--border)]" aria-expanded={mobileMenuOpen} aria-controls="lado-mobile-navigation" onClick={() => setMobileMenuOpen(open => !open)}>{mobileMenuOpen ? dict.nav_close : dict.nav_menu}</button>
@@ -109,13 +110,14 @@ export default function HomePage() {
             <a href="#adopt" onClick={() => setMobileMenuOpen(false)}>Gau Seva</a>
             <a href="#journal" onClick={() => setMobileMenuOpen(false)}>Journal</a>
             <Link href="/contact" onClick={() => setMobileMenuOpen(false)}>Help & Support</Link>
-            <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>My Journey</Link>
+            <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>My Lado Journey</Link>
           </nav>
         )}
       </header>
       <main className="flex-1">
-        <section className="farm-hero">
-          <div className="farm-hero-inner">
+        <section className="farm-hero farm-hero-editorial relative isolate overflow-hidden px-4 sm:px-6 lg:px-8">
+          <div className="farm-hero-shade" aria-hidden="true" />
+          <div className="farm-hero-content relative z-10 max-w-7xl mx-auto">
             <div className="farm-hero-copy">
               <p className="farm-hero-kicker"><span /> {dict.hero_kicker}</p>
               <h1>{dict.hero_title}</h1>
@@ -148,14 +150,18 @@ export default function HomePage() {
         <div data-farm-reveal><TrustAndProcessSection whatsappNumber={whatsappNumber} /></div>
         <div data-farm-reveal><FarmCalculatorsSuite locale={locale} /></div>
         <section id="adopt" className="py-20 px-4 sm:px-6 lg:px-8 border-t border-[var(--border)]">
-          <div className="max-w-6xl mx-auto"><div className="text-center mb-12"><h2 className="text-3xl sm:text-5xl font-serif font-bold">{dict.section_adopt}</h2><p className="mt-3 max-w-2xl mx-auto opacity-80">{dict.adopt_intro}</p></div><GauSevaTransparencySection /></div>
+          <div className="max-w-6xl mx-auto"><div className="text-center mb-12"><h2 className="text-3xl sm:text-5xl font-serif font-bold">{dict.section_adopt}</h2><p className="mt-3 max-w-2xl mx-auto opacity-80">{dict.adopt_description}</p></div>
+            <div className="grid sm:grid-cols-3 gap-6">{["Dholi Sheri","Tara","Roshni"].map(name => <div key={name} className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 text-center"><h3 className="text-2xl font-serif font-bold text-[var(--terracotta)]">{name}</h3><p className="text-sm opacity-80 my-3">{dict.calf_tag}</p><a href="#experiences" className="primary-btn inline-block px-5 py-2.5 rounded-full text-xs font-bold">{dict.sponsor} {name}</a></div>)}</div>
+          </div>
         </section>
-        <div data-farm-reveal><FarmExperienceSection /></div>
-        <div data-farm-reveal><BuildYourOwnExperience /></div>
-        <div data-farm-reveal><JournalLibrarySection /></div>
-        <div data-farm-reveal><CorporateGiftingSection /></div>
+        <div data-farm-reveal><FarmExperienceSection whatsappNumber={whatsappNumber} /></div>
+        <div data-farm-reveal><BuildYourOwnExperience whatsappNumber={whatsappNumber} /></div>
+        <div data-farm-reveal><GauSevaTransparencySection /></div>
+        <div data-farm-reveal><JournalLibrarySection locale={locale} /></div>
+        <div data-farm-reveal><CorporateGiftingSection whatsappNumber={whatsappNumber} /></div>
         <div data-farm-reveal><CowAsCoconutMap /></div>
       </main>
+      <footer className="py-8 px-4 border-t border-[var(--border)] text-center text-xs opacity-75">© 2026 Lado Organics • Pilani, Rajasthan • ladoorganics.in • <a href="/contact" className="underline">{dict.footer_help}</a> • <a href="/policies" className="underline">{dict.footer_policies}</a></footer>
       <CartCheckoutDrawer />
     </div>
   );
