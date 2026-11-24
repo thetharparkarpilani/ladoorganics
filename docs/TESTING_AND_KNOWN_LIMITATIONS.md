@@ -13,7 +13,9 @@ The GitHub Actions quality workflow completed successfully for main commit `7bfe
 
 Run: https://github.com/thetharparkarpilani/ladoorganics/actions/runs/45409839336
 
-This verifies the code at that exact main commit. It does not automatically verify later changes on the `audit/complete-site-readiness` branch, production environment variables, database connectivity or browser workflows.
+The audit candidate in PR #15, commit `9da971e010548b33e3c1d1861f68add1f9356f08`, also passed TypeScript, ESLint and the Next.js production build in GitHub Actions: https://github.com/thetharparkarpilani/ladoorganics/actions/runs/45413281899
+
+These checks verify compilation and static checks for those exact commits. They do not verify production environment variables, database connectivity, live AI responses or browser workflows.
 
 ### Deployment status
 
