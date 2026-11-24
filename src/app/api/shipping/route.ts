@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     const pincode = typeof body?.pincode === "string" ? body.pincode.trim() : "";
     const items = Array.isArray(body?.items) ? body.items as QuoteItem[] : [];
 
-    if (!/^\d{6}$/.test(pincode)) {
+    if (!/^\\d{6}$/.test(pincode)) {
       return NextResponse.json({ error: "Valid 6-digit Indian PIN code required." }, { status: 400 });
     }
     if (!items.length || items.length > 30) {
@@ -35,12 +35,16 @@ export async function POST(req: NextRequest) {
 
     // Never accept unit prices or subtotal from the browser. Recalculate from
     // the active catalogue so a modified request cannot obtain free shipping.
+    // Encode the SKU list as JSON because the shared DB helper accepts scalar
+    // query parameters only; PostgreSQL expands the JSON array safely.
     const catalog = await db.query(
       `SELECT pv.sku, pv.price_inr
          FROM product_variants pv
          JOIN products p ON p.id = pv.product_id
-        WHERE pv.sku = ANY($1::text[]) AND p.is_active = TRUE`,
-      [[...quantities.keys()]]
+        WHERE pv.sku IN (
+          SELECT jsonb_array_elements_text($1::jsonb)
+        ) AND p.is_active = TRUE`,
+      [JSON.stringify([...quantities.keys()])]
     );
     if (catalog.rows.length !== quantities.size) {
       return NextResponse.json({ error: "A product in your cart is unavailable. Refresh your cart and try again." }, { status: 409 });
