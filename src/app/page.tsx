@@ -89,7 +89,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-3">
           <Link href="/" aria-label="Lado Organics home" className="inline-flex items-center shrink-0"><Image src="/lado-organics-logo.svg" alt="Lado Organics — Lado Love Pure" width={180} height={120} priority className="h-14 sm:h-16 w-auto object-contain" /></Link>
           <nav aria-label="Primary" className="hidden xl:flex items-center gap-4 text-xs font-bold uppercase tracking-widest">
-            <a href="#store">{dict.section_store}</a><a href="#essentials-club">Essentials Club</a><a href="#build-experience">Build Experience</a><a href="#adopt">Gau Seva</a><a href="#journal">Journal</a><a href="#corporate">Corporate</a><Link href="/contact">Help & Support</Link><Link href="/trace/LO-PILANI-SAMPLE-001">Trace Batch</Link><a href="/dashboard">My Journey</a>
+            <a href="#store">{dict.section_store}</a><a href="#essentials-club">Essentials Club</a><a href="#build-experience">Build Experience</a><a href="#adopt">Gau Seva</a><a href="#journal">Journal</a><a href="#corporate">Corporate</a><Link href="/contact">Help & Support</Link><Link href="/contact">Ask about batch traceability</Link><a href="/dashboard">My Journey</a>
           </nav>
           <div className="flex items-center gap-2">
             <button type="button" className="xl:hidden text-xs font-bold px-3 py-2 rounded-full border border-[var(--border)]" aria-expanded={mobileMenuOpen} aria-controls="lado-mobile-navigation" onClick={() => setMobileMenuOpen(open => !open)}>{mobileMenuOpen ? "Close" : "Menu"}</button>
