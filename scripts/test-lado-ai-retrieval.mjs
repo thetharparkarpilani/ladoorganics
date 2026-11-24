@@ -60,3 +60,38 @@ assert.equal(detectLadoLocale("म्हाने घी रो भाव बत
 assert.equal(detectLadoLocale("mhane ghee ro bhav batawo", "en"), "ma");
 assert.equal(detectLadoLocale("hello there", "hi"), "hi");
 console.log("Language detection checks passed.");
+
+const devanagariQuestions = [
+  ["About Lado Organics", "लाडो ऑर्गेनिक्स क्या है"],
+  ["Farm and Tharparkar cattle", "थारपारकर गाय"],
+  ["A2 Bilona Ghee process", "घी बनाने की विधि"],
+  ["Ghee storage", "घी को कैसे रखें"],
+  ["Vermicompost information", "केंचुआ खाद क्या है"],
+  ["How to use vermicompost", "खाद कितनी डालें"],
+  ["Dhoop usage", "धूप कैसे जलाएं"],
+  ["Current product prices and stock", "किस सामान का कितना दाम है"],
+  ["Cow dung and circular farm practices", "गोबर का क्या उपयोग करते हैं"],
+  ["Product health and medical claims", "घी बीमारी ठीक करता है क्या"],
+  ["How to place an order", "ऑनलाइन सामान कैसे मंगाएं"],
+  ["Shipping and delivery", "सामान कब पहुंचेगा"],
+  ["Payment methods", "भुगतान कैसे करें"],
+  ["Manual UPI verification", "यूपीआई से पैसे भेज दिए"],
+  ["Bhunga stay price and booking", "भुंगा स्टे का किराया"],
+  ["Farm experience", "खेत घूमने का अनुभव"],
+  ["Gau Seva sponsorship", "गौ सेवा कैसे करें"],
+  ["Essentials Club", "क्या यह पेड सब्सक्रिप्शन है"],
+  ["Lab reports and certifications", "क्या लैब रिपोर्ट उपलब्ध है"],
+  ["Sign in and order history", "मेरा ऑर्डर कहाँ है"],
+  ["Returns and cancellations", "रिफंड कैसे मिलेगा"],
+  ["Contact Lado Organics", "टीम से कैसे बात करें"],
+  ["Gau Seva contribution amount", "गौ सेवा में कितनी राशि देनी होगी"],
+  ["AI privacy and safe information", "क्या ओटीपी बताना सुरक्षित है"],
+  ["A2 Bilona Ghee process", "tell me about ghee"],
+  ["Vermicompost information", "tell me about compost"],
+];
+for (const [expected, question] of devanagariQuestions) {
+  const actual = findLocalAnswer(question, entries)?.title ?? null;
+  assert.equal(actual, expected, `Expected ${expected} for: ${question}; got ${actual}`);
+}
+console.log(`Additional Hindi/Devanagari and natural phrasing checks passed: ${devanagariQuestions.length}/${devanagariQuestions.length}.`);
+
