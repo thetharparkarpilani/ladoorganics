@@ -21,14 +21,24 @@ export async function getCustomerIdentity(req: NextRequest): Promise<CustomerIde
   const metadata = user.user_metadata || {};
   const fullName = String(metadata.full_name || metadata.name || email.split("@")[0] || "Customer").trim().slice(0, 100) || "Customer";
 
-  const result = await db.query(
-    `INSERT INTO users (email, full_name, role)
-     VALUES ($1, $2, 'customer')
-     ON CONFLICT (email) DO UPDATE
-       SET full_name = COALESCE(NULLIF(EXCLUDED.full_name, ''), users.full_name)
-     RETURNING id`,
-    [email, fullName]
-  );
+  // Preserve the customer's chosen profile name. Google metadata is used only
+  // when a database identity must be created for the first time.
+  let result = await db.query("SELECT id, full_name FROM users WHERE lower(email) = lower($1) LIMIT 1", [email]);
+  if (!result.rows[0]?.id) {
+    await db.query(
+      `INSERT INTO users (email, full_name, role)
+       VALUES ($1, $2, 'customer')
+       ON CONFLICT (email) DO NOTHING`,
+      [email, fullName]
+    );
+    result = await db.query("SELECT id, full_name FROM users WHERE lower(email) = lower($1) LIMIT 1", [email]);
+  }
+
   if (!result.rows[0]?.id) throw new Error("Unable to map the signed-in customer account.");
-  return { authUserId: String(user.id), email, fullName, databaseUserId: String(result.rows[0].id) };
+  return {
+    authUserId: String(user.id),
+    email,
+    fullName: String(result.rows[0].full_name || fullName),
+    databaseUserId: String(result.rows[0].id),
+  };
 }
