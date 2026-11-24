@@ -14,6 +14,7 @@ interface ChatMessage {
   sender: "user" | "bot";
   text: string;
   actions?: SuggestedAction[];
+  suggestedQuestions?: string[];
   cartSuggestion?: CartSuggestion;
   orders?: CustomerOrder[];
 }
@@ -81,7 +82,7 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
       const response = await fetch("/api/concierge", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text, history: priorHistory, locale }),
+        body: JSON.stringify({ message: text, history: priorHistory, locale, pagePath: window.location.pathname }),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(typeof data.error === "string" ? data.error : "Please try again in a moment.");
@@ -93,6 +94,9 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
             (item as SuggestedAction).href.startsWith("/") &&
             !(item as SuggestedAction).href.startsWith("//")
           ).slice(0, 4)
+        : [];
+      const suggestedQuestions = Array.isArray(data.suggestedQuestions)
+        ? data.suggestedQuestions.filter((item: unknown): item is string => typeof item === "string" && item.trim().length >= 4 && item.length <= 120).slice(0, 3)
         : [];
       const rawCart = data.cartSuggestion && typeof data.cartSuggestion === "object" ? data.cartSuggestion : null;
       const cartVariants = Array.isArray(rawCart?.variants)
@@ -116,6 +120,7 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
         sender: "bot",
         text: typeof data.reply === "string" ? data.reply : "I couldn't prepare an answer. Please contact our team.",
         actions,
+        suggestedQuestions,
         cartSuggestion,
       }]);
     } catch (err) {
@@ -241,6 +246,21 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
                     <div className="lado-ai-actions">
                       {message.actions.map((action) => (
                         <a key={action.href} href={action.href}>{action.label} <span aria-hidden="true">↗</span></a>
+                      ))}
+                    </div>
+                  )}
+                  {message.suggestedQuestions && message.suggestedQuestions.length > 0 && (
+                    <div className="mt-3 flex flex-wrap gap-2" aria-label="Suggested next questions">
+                      {message.suggestedQuestions.map((question) => (
+                        <button
+                          key={question}
+                          type="button"
+                          onClick={() => void askQuestion(question)}
+                          disabled={loading}
+                          className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-left text-xs transition hover:border-[var(--terracotta)] disabled:opacity-50"
+                        >
+                          {question} <span aria-hidden="true">↗</span>
+                        </button>
                       ))}
                     </div>
                   )}
