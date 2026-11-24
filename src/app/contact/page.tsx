@@ -65,7 +65,7 @@ export default function ContactPage() {
   };
 
   const makeWhatsAppLink = (message: string) =>
-    `https://wa.me/${WHATSAPP_NUMBER.replace(/\\D/g, "")}?text=${encodeURIComponent(message)}`;
+    `https://wa.me/${WHATSAPP_NUMBER.replace(/\D/g, "")}?text=${encodeURIComponent(message)}`;
   const greeting = locale === "hi" ? "नमस्ते Lado Organics, मुझे मदद चाहिए।"
     : locale === "ma" ? "खम्मा घणी Lado Organics, म्हाने मदद चाहिजै।"
     : "Hello Lado Organics, I need help.";
