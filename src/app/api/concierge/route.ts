@@ -47,6 +47,22 @@ async function liveCatalog(): Promise<string> {
   }
 }
 
+async function publishedSiteContent(): Promise<string> {
+  try {
+    const result = await db.query(
+      "SELECT content_key, title, body FROM site_content WHERE is_published=TRUE AND body <> '' ORDER BY content_key ASC LIMIT 80"
+    );
+    return result.rows.map((row) => [
+      "Page/section: " + clean(row.title || row.content_key, 180),
+      "Key: " + clean(row.content_key, 100),
+      "Published content: " + clean(row.body, 1600),
+    ].join("\n")).join("\n\n").slice(0, 18000);
+  } catch (error) {
+    console.warn("Lado AI published site content unavailable:", error);
+    return "No additional published site-content records were available for this request.";
+  }
+}
+
 type CartVariantSuggestion = { variantId: string; sku: string; label: string; priceInr: number; maxStock: number };
 type CartSuggestion = { productName: string; variants: CartVariantSuggestion[] };
 
@@ -112,6 +128,68 @@ function actionsFor(message: string, locale: "en" | "hi" | "ma"): Array<{ label:
   if (has("human", "person", "team", "contact", "complaint", "problem", "support", "whatsapp", "इंसान", "टीम", "संपर्क", "मदद", "खबर करो")) add(labels.contact, "/contact");
   if (has("farm", "cow", "tharparkar", "soil", "tree", "organic", "process", "खेत", "गाय", "माटी", "रूंख", "थारपारकर")) add(labels.farm, "/#farm-world");
   return out.slice(0, 4);
+}
+
+function hasAdditionalWritingSystem(message: string): boolean {
+  return /[\u0600-\u06FF\u0980-\u09FF\u0A00-\u0A7F\u0A80-\u0AFF\u0B00-\u0B7F\u0B80-\u0BFF\u0C00-\u0C7F\u0C80-\u0CFF\u0D00-\u0D7F]/u.test(message);
+}
+
+function languageInstructionFor(message: string, locale: "en" | "hi" | "ma"): string {
+  if (hasAdditionalWritingSystem(message)) {
+    return "Identify the exact language and script used in the customer's latest message (including Gujarati, Punjabi, Bengali, Urdu, Marathi, Tamil, Telugu, Kannada, Malayalam, Odia, Assamese or another language). Reply in that same language and script. Do not translate the answer into Hindi or English unless the customer asks. Keep Lado and product names unchanged.";
+  }
+  if (locale === "hi") return "Answer in natural, clear Hindi (Devanagari). Keep brand and product names as officially listed. Do not switch to English unless a technical term or customer wording requires it.";
+  if (locale === "ma") return "Answer in natural conversational Marwari of the Shekhawati/Jhunjhunu-Pilani region, preferably Devanagari. This is Marwari, not standard Hindi. Use familiar local words such as म्हाने, थां, थारो/थारी, घणो, कोनी, सूं, रो/री/रै where natural. Keep product and brand names as officially listed. If unsure of a dialect expression, use simple respectful Marwari rather than pretending certainty.";
+  return "Answer in clear, warm English. If the customer uses a different language in Latin transliteration, identify it and reply in that language rather than defaulting to English.";
+}
+
+function localFollowUps(message: string, locale: "en" | "hi" | "ma"): string[] {
+  const q = normalizeLadoText(message);
+  const has = (...terms: string[]) => terms.some((term) => q.includes(normalizeLadoText(term)));
+  if (locale === "hi") {
+    if (has("ghee", "घी", "बिलोना")) return ["A2 बिलोना घी कैसे बनाया जाता है?", "घी के उपलब्ध पैक और कीमत क्या हैं?", "घी को कैसे स्टोर करें?"];
+    if (has("dhoop", "धूप")) return ["धूप का उपयोग कैसे करें?", "धूप के पैक और कीमत क्या हैं?", "थारपारकर धूप के बारे में और बताएं"];
+    if (has("khad", "compost", "खाद")) return ["केंचुआ खाद का उपयोग कैसे करें?", "उपलब्ध पैक और कीमत क्या हैं?", "खेत में वर्मी कम्पोस्ट कैसे बनता है?"];
+    if (has("bhunga", "stay", "भुंगा")) return ["भुंगा स्टे के लिए अनुरोध कैसे भेजें?", "कौन-सी तारीखें उपलब्ध हैं?", "फार्म अनुभव में कौन-सी गतिविधियाँ हैं?"];
+    return ["Lado Organics की फार्म कहानी बताएं", "उपलब्ध उत्पाद और कीमतें दिखाएं", "Lado टीम से कैसे संपर्क करें?"];
+  }
+  if (locale === "ma") {
+    if (has("ghee", "घी", "बिलोना")) return ["A2 बिलोना घी किण रीति सूं बणै है?", "घी रा पैक अर भाव काई है?", "घी नै कियां राखूं?"];
+    if (has("dhoop", "धूप")) return ["धूप कियां जलावां?", "धूप रा पैक अर भाव काई है?", "थारपारकर धूप री और जानकारी देवो"];
+    if (has("khad", "compost", "खाद")) return ["केंचुआ खाद कियां काम आवै?", "पैक अर भाव काई है?", "वर्मी कम्पोस्ट कियां बणै है?"];
+    if (has("bhunga", "stay", "भुंगा")) return ["भुंगा ठहराव खातर अरज कियां करूं?", "किण तारीख री जगह मिल सके है?", "खेत रै अनुभव में काई-काई कर सको हो?"];
+    return ["Lado Organics री खेत री कहानी बतावो", "मिलण वाला सामान अर भाव बतावो", "Lado टीम सूं कियां बात करूं?"];
+  }
+  if (has("ghee", "bilona")) return ["How is A2 Bilona Ghee made?", "Which pack sizes and listed prices are available?", "How should I store the ghee?"];
+  if (has("dhoop")) return ["How should I use the dhoop safely?", "Which dhoop packs are listed?", "Tell me more about Tharparkar Dhoop"];
+  if (has("khad", "compost", "vermi")) return ["How should I use vermicompost?", "Which pack sizes and prices are listed?", "How is vermicompost part of the farm cycle?"];
+  if (has("bhunga", "stay", "booking")) return ["How do I send a Bhunga stay request?", "How can I check date availability?", "What can I include in a farm experience?"];
+  if (has("order", "payment", "delivery")) return ["How can I view my order history?", "What payment options are shown at checkout?", "How can I contact the support team?"];
+  return ["What products are currently listed?", "Tell me more about the Lado farm story", "How can I contact the Lado team?"];
+}
+
+async function suggestedQuestions(message: string, reply: string, locale: "en" | "hi" | "ma"): Promise<string[]> {
+  if (!openai || !hasAdditionalWritingSystem(message)) return localFollowUps(message, locale);
+  try {
+    const completion = await openai.chat.completions.create({
+      model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+      messages: [
+        { role: "system", content: "Suggest exactly 3 short, useful next questions the customer could ask Lado Organics. Detect and use the same language and script as the customer's message, including non-English languages and transliteration. Do not invent business facts. Return only a JSON object with a string array property named questions." },
+        { role: "user", content: "Customer message: " + message.slice(0, 700) + "\nLado AI answer: " + reply.slice(0, 1200) },
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.3,
+      max_tokens: 140,
+    });
+    const raw = completion.choices[0]?.message?.content || "{}";
+    const parsed = JSON.parse(raw) as { questions?: unknown };
+    return Array.isArray(parsed.questions)
+      ? parsed.questions.filter((item): item is string => typeof item === "string" && item.trim().length >= 4 && item.length <= 120).slice(0, 3)
+      : [];
+  } catch (error) {
+    console.warn("Lado AI follow-up suggestions unavailable:", error);
+    return [];
+  }
 }
 
 const SYSTEM = `You are Lado AI, the warm, capable customer guide for Lado Organics, a farm-rooted brand in Pilani, Jhunjhunu, Rajasthan, India.
