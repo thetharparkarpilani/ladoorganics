@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { getAdminClientToken } from "@/lib/admin-client";
 
 type Variant = { product_id:string; slug:string; name_en:string; variant_id:string; sku:string; label:string; price_inr:number|string; stock_qty:number|string; is_default:boolean };
@@ -73,7 +73,7 @@ export default function AdminBusinessOperations() {
     finally { setBusy(false); }
   };
 
-  const submit = (action:string,after?:()=>void) => async (event:FormEvent<HTMLFormElement>) => {
+  const submit = (action:string,after?:()=>void) => async (event:React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form=event.currentTarget;
     const values=Object.fromEntries(new FormData(form).entries());
