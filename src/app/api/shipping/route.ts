@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { enforceRateLimit } from "@/lib/rate-limit";
 
 interface ShippingItem {
   quantity: number;
@@ -6,6 +7,8 @@ interface ShippingItem {
 }
 
 export async function POST(req: NextRequest) {
+  const rateLimited = await enforceRateLimit(req, "shipping-quotes", 60, 60);
+  if (rateLimited) return rateLimited;
   try {
     const { pincode, items } = (await req.json()) as { pincode: string; items: ShippingItem[] };
 
