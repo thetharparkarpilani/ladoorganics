@@ -226,7 +226,7 @@ export async function POST(req: NextRequest) {
       const storage = clean(body?.storageInstructions,1000);
       const labUrl = clean(body?.labReportUrl,2048);
       const quantity = Number(body?.quantityProduced || 0);
-      const approve = body?.approveBatch === true;
+      const approve = body?.approveBatch === true || body?.approveBatch === "true";
       if (!/^[A-Z0-9-]{4,40}$/.test(batchCode) || !UUID.test(variantId) ||
           !/^\d{4}-\d{2}-\d{2}$/.test(productionDate) || (packagingDate && !/^\d{4}-\d{2}-\d{2}$/.test(packagingDate)) ||
           (bestBefore && !/^\d{4}-\d{2}-\d{2}$/.test(bestBefore)) ||
