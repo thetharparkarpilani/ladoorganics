@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import React, { useMemo, useState } from "react";
+import { useLocale } from "@/context/LocaleContext";
 
 interface FarmExperienceSectionProps {
   whatsappNumber: string;
@@ -14,6 +15,44 @@ const PLAN_OPTIONS = [
 ] as const;
 
 export default function FarmExperienceSection({ whatsappNumber }: FarmExperienceSectionProps) {
+  const { locale } = useLocale();
+  const copy = locale === "hi" ? {
+    gau: "गौ सेवा • पिलानी गौशाला", sponsor: "थारपारकर बछड़े के सहयोगी बनें",
+    sponsorIntro: "ढोली शेरी, तारा या रोशनी के लिए सहयोग की रुचि दर्ज करें। भुगतान और रसीद का विवरण टीम से स्पष्ट रूप से पुष्टि किया जाएगा।",
+    calf: "बछड़े का प्रोफ़ाइल", plan: "सहयोग की अवधि", amount: "आपकी चुनी हुई सहयोग राशि (₹)", amountPlaceholder: "अपनी राशि दर्ज करें",
+    name: "आपका नाम", email: "ईमेल", phone: "फ़ोन / WhatsApp (वैकल्पिक)", fullName: "पूरा नाम",
+    submit: "सहयोग अनुरोध भेजें", submitting: "भेजा जा रहा है…", whatsapp: "या WhatsApp पर बात करें ↗",
+    stayLabel: "कृषि पर्यटन • पिलानी, राजस्थान", stay: "डीप वर्क भुंगा स्टे का अनुरोध",
+    stayIntro: "दर्ज आधार किराया: ₹4,000 प्रति रात। दोहरी बुकिंग रोकने के लिए सर्वर तारीखों की उपलब्धता जाँचता है।",
+    checkIn: "आगमन", checkOut: "प्रस्थान", guests: "मेहमान (1–4)", estimate: "अनुमानित ठहराव राशि",
+    guestName: "मेहमान का नाम", checking: "उपलब्धता जाँची जा रही है…", request: "भुंगा स्टे का अनुरोध भेजें",
+    sponsorshipOk: "आपका सहयोग अनुरोध दर्ज हो गया है। भुगतान और बाकी विवरण WhatsApp पर टीम से पक्के करें।",
+    bookingOk: "आपका ठहराव अनुरोध दर्ज हो गया है। टीम तारीख और उपलब्धता की पुष्टि करेगी।",
+  } : locale === "ma" ? {
+    gau: "गौ सेवा • पिलानी गौशाला", sponsor: "थारपारकर बाछड़ै री सेवा में जुड़ो",
+    sponsorIntro: "ढोली शेरी, तारा या रोशनी खातर सहयोग री रुचि लिखावो। भुगतान अर रसीद री बात टीम साफ-साफ पक्की करैला।",
+    calf: "बाछड़ै री जानकारी", plan: "सहयोग रो समय", amount: "थारी चुनी री सहयोग रकम (₹)", amountPlaceholder: "आपरी रकम लिखो",
+    name: "थारो नाम", email: "ईमेल", phone: "फोन / WhatsApp (जरूरी कोनी)", fullName: "पूरो नाम",
+    submit: "सहयोग री अरज भेजो", submitting: "भेजी जावै है…", whatsapp: "या WhatsApp पर बात करो ↗",
+    stayLabel: "खेत पर्यटन • पिलानी, राजस्थान", stay: "डीप वर्क भुंगा ठहराव री अरज",
+    stayIntro: "लिख्यो शुरुआती भाव: ₹4,000 एक रात रो। दोहरी बुकिंग रोकण खातर सर्वर तारीख जांचै है।",
+    checkIn: "आवण री तारीख", checkOut: "जावण री तारीख", guests: "मेहमान (1–4)", estimate: "ठहराव रो अंदाजी खर्चो",
+    guestName: "मेहमान रो नाम", checking: "जगह जांची जावै है…", request: "भुंगा ठहराव री अरज भेजो",
+    sponsorshipOk: "थारी सहयोग री अरज लिख ली है। भुगतान अर बाकी बात WhatsApp पर टीम सूं पक्की करो।",
+    bookingOk: "थारी ठहराव री अरज लिख ली है। टीम तारीख अर जगह पक्की करैला।",
+  } : {
+    gau: "{copy.gau}", sponsor: "{copy.sponsor}",
+    sponsorIntro: "Register a sponsorship interest for Dholi Sheri, Tara, or Roshni. Payment and receipt details are confirmed transparently with the team.",
+    calf: "Calf Profile", plan: "Plan Type", amount: "Your chosen contribution amount (₹ INR)", amountPlaceholder: "Enter an amount you choose",
+    name: "Your Name", email: "Email", phone: "Phone / WhatsApp (Optional)", fullName: "Full name",
+    submit: "Submit Sponsorship Request", submitting: "Submitting...", whatsapp: "{copy.whatsapp}",
+    stayLabel: "{copy.stayLabel}", stay: "{copy.stay}",
+    stayIntro: "Listed base rate: ₹4,000 per night. The server checks overlapping dates automatically to prevent double bookings.",
+    checkIn: "Check-In", checkOut: "Check-Out", guests: "Guests (1–4)", estimate: "Estimated Stay Base",
+    guestName: "Guest Name", checking: "Checking Availability...", request: "Request Bhunga Stay",
+    sponsorshipOk: "Your sponsorship request has been recorded. Confirm payment and details with the team on WhatsApp.",
+    bookingOk: "Your stay request has been recorded. The team will confirm dates and availability.",
+  };
   // Calf Sponsorship state
   const [calfName, setCalfName] = useState<string>("Dholi Sheri");
   const [planType, setPlanType] = useState<string>("monthly");
@@ -66,7 +105,7 @@ export default function FarmExperienceSection({ whatsappNumber }: FarmExperience
       } else {
         setSponMessage({
           type: "ok",
-          text: `Sponsorship request recorded (#${String(data.sponsorship?.id || "").slice(0, 8)}) for ${calfName} (${planType}, ₹${Number(amountInr).toLocaleString("en-IN")}). Confirm payment & details on WhatsApp.`
+          text: copy.sponsorshipOk
         });
         setSponsorName("");
         setSponsorEmail("");
@@ -102,7 +141,7 @@ export default function FarmExperienceSection({ whatsappNumber }: FarmExperience
       } else {
         setBookMessage({
           type: "ok",
-          text: `Stay request created for ${data.booking?.nights_count} night(s) — Estimated total ₹${Number(data.booking?.total_amount_inr || 0).toLocaleString("en-IN")} (Status: ${data.booking?.status}).`
+          text: copy.bookingOk
         });
         setGuestName("");
         setGuestEmail("");
@@ -129,13 +168,13 @@ export default function FarmExperienceSection({ whatsappNumber }: FarmExperience
             Sponsor a Tharparkar Calf
           </h3>
           <p className="text-xs sm:text-sm opacity-80 mb-6">
-            Register a sponsorship interest for Dholi Sheri, Tara, or Roshni. Payment and tax/receipt details are handled transparently with no unverified tax-deduction claims.
+            {copy.sponsorIntro}
           </p>
 
           <form onSubmit={handleSponsorshipSubmit} className="space-y-4 text-sm">
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold uppercase mb-1">Calf Profile</label>
+                <label className="block text-xs font-bold uppercase mb-1">{copy.calf}</label>
                 <select
                   value={calfName}
                   onChange={(e) => setCalfName(e.target.value)}
@@ -147,7 +186,7 @@ export default function FarmExperienceSection({ whatsappNumber }: FarmExperience
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase mb-1">Plan Type</label>
+                <label className="block text-xs font-bold uppercase mb-1">{copy.plan}</label>
                 <select
                   value={planType}
                   onChange={(e) => setPlanType(e.target.value)}
@@ -161,12 +200,12 @@ export default function FarmExperienceSection({ whatsappNumber }: FarmExperience
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase mb-1">Your chosen contribution amount (₹ INR)</label>
+              <label className="block text-xs font-bold uppercase mb-1">{copy.amount}</label>
               <input
                 type="number"
                 min={1}
                 max={1000000}
-                placeholder="Enter an amount you choose"
+                placeholder={copy.amountPlaceholder}
                 step={1}
                 required
                 value={amountInr}
@@ -177,18 +216,18 @@ export default function FarmExperienceSection({ whatsappNumber }: FarmExperience
 
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold uppercase mb-1">Your Name</label>
+                <label className="block text-xs font-bold uppercase mb-1">{copy.name}</label>
                 <input
                   type="text"
                   required
                   value={sponsorName}
                   onChange={(e) => setSponsorName(e.target.value)}
-                  placeholder="Full name"
+                  placeholder={copy.fullName}
                   className="w-full p-3 rounded-xl border border-[var(--border)] bg-[var(--bg)]"
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase mb-1">Email</label>
+                <label className="block text-xs font-bold uppercase mb-1">{copy.email}</label>
                 <input
                   type="email"
                   required
@@ -201,7 +240,7 @@ export default function FarmExperienceSection({ whatsappNumber }: FarmExperience
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase mb-1">Phone / WhatsApp (Optional)</label>
+              <label className="block text-xs font-bold uppercase mb-1">{copy.phone}</label>
               <input
                 type="tel"
                 value={sponsorPhone}
@@ -229,7 +268,7 @@ export default function FarmExperienceSection({ whatsappNumber }: FarmExperience
                 disabled={sponLoading}
                 className="primary-btn px-6 py-3 rounded-xl text-xs font-bold cursor-pointer disabled:opacity-50"
               >
-                {sponLoading ? "Submitting..." : "Submit Sponsorship Request"}
+                {sponLoading ? copy.submitting : copy.submit}
               </button>
               <a
                 href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(amountInr ? `Namaste Lado Organics! I would like to enquire about sponsoring ${calfName} (${planType}) with a proposed contribution of ₹${amountInr}. Please confirm the details.` : `Namaste Lado Organics! I would like to enquire about sponsoring ${calfName} (${planType}). Please share the available contribution options and details.`)}`}
@@ -252,13 +291,13 @@ export default function FarmExperienceSection({ whatsappNumber }: FarmExperience
             Reserve “Deep Work” Bhunga Stay
           </h3>
           <p className="text-xs sm:text-sm opacity-80 mb-6">
-            Listed rate: ₹4,000 per night. Server checks overlapping dates automatically to prevent double bookings.
+            {copy.stayIntro}
           </p>
 
           <form onSubmit={handleBookingSubmit} className="space-y-4 text-sm">
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold uppercase mb-1">Check-In</label>
+                <label className="block text-xs font-bold uppercase mb-1">{copy.checkIn}</label>
                 <input
                   type="date"
                   required
@@ -268,7 +307,7 @@ export default function FarmExperienceSection({ whatsappNumber }: FarmExperience
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase mb-1">Check-Out</label>
+                <label className="block text-xs font-bold uppercase mb-1">{copy.checkOut}</label>
                 <input
                   type="date"
                   required
@@ -281,7 +320,7 @@ export default function FarmExperienceSection({ whatsappNumber }: FarmExperience
 
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold uppercase mb-1">Guests (1–4)</label>
+                <label className="block text-xs font-bold uppercase mb-1">{copy.guests}</label>
                 <input
                   type="number"
                   min={1}
@@ -293,7 +332,7 @@ export default function FarmExperienceSection({ whatsappNumber }: FarmExperience
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase mb-1">Estimated Stay Base</label>
+                <label className="block text-xs font-bold uppercase mb-1">{copy.estimate}</label>
                 <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] font-serif font-bold text-[var(--terracotta)]">
                   ₹{estimatedStayInr.toLocaleString("en-IN")}
                 </div>
@@ -302,7 +341,7 @@ export default function FarmExperienceSection({ whatsappNumber }: FarmExperience
 
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold uppercase mb-1">Guest Name</label>
+                <label className="block text-xs font-bold uppercase mb-1">{copy.guestName}</label>
                 <input
                   type="text"
                   required
@@ -354,7 +393,7 @@ export default function FarmExperienceSection({ whatsappNumber }: FarmExperience
               disabled={bookLoading}
               className="primary-btn px-6 py-3 rounded-xl text-xs font-bold cursor-pointer disabled:opacity-50"
             >
-              {bookLoading ? "Checking Availability..." : "Request Bhunga Stay"}
+              {bookLoading ? copy.checking : copy.request}
             </button>
           </form>
         </div>
