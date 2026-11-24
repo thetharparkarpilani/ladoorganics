@@ -9,7 +9,7 @@ const topics = [
   ["Ghee storage", ["how should i keep ghee","how do i preserve ghee","ghee shelf storage","store ghee after opening","ghee storage instructions"]],
   ["Vermicompost information", ["vermicompost information","what is earthworm manure","what is organic manure","how vermicompost is made","kechua khad su hai"]],
   ["How to use vermicompost", ["how much manure should i use","compost dosage for plants","how to apply organic manure","fertilizer for pots","khad kitri nakhu"]],
-  ["Dhoop usage", ["how to burn incense safely","how to burn incense safely","how do i light dhoop","dhoop use instructions","dhoop kiyan jalau"]],
+  ["Dhoop usage", ["how to burn incense safely","how do i light dhoop","dhoop safety","dhoop use instructions","dhoop kiyan jalau"]],
   ["Current product prices and stock", ["show current prices","how much are your products","which products are in stock","available pack sizes","kitro bhav hai"]],
   ["Cow dung and circular farm practices", ["how is cow dung reused","what happens to farm waste","biogas and compost process","cow dung management","gobar ro upyog"]],
   ["Product health and medical claims", ["is ghee a medicine","can ghee cure illness","does this product treat disease","health cure claims","ghee bimari thik kare"]],
