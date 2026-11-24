@@ -60,19 +60,19 @@ export default function BatchTracePage() {
     journey: "खेत सूं घर तक री यात्रा (6 पड़ाव)", step: "पड़ाव",
     lookupError: "अभी बैच री जानकारी मिलै कोनी।",
   } : {
-    back: "{copy.back}", badge: "{copy.badge}",
-    title: "{copy.title}", intro: "Enter or scan a product batch identifier (try LO-PILANI-SAMPLE-001) to inspect verified batch details and the 6-step farm-to-home journey. Lab links appear only when published by an authorized administrator.",
+    back: "← Back to Lado Organics Home", badge: "QR Batch Traceability • Pilani, Rajasthan",
+    title: "Product Batch Transparency", intro: "Enter or scan a product batch identifier (try LO-PILANI-SAMPLE-001) to inspect verified batch details and the 6-step farm-to-home journey. Lab links appear only when published by an authorized administrator.",
     placeholder: "Enter batch code e.g. LO-PILANI-SAMPLE-001", verify: "Verify Batch", verifying: "Verifying...",
-    loading: "{copy.loading}", missing: "Batch record not found.",
-    help: "{copy.help}",
-    batch: "Batch ID", sample: "{copy.sample}", origin: "Origin Location", production: "Production Date",
-    packaging: "Packaging Date", pending: copy.pending, bestBefore: "Best Before",
-    perLabel: copy.perLabel, process: "Production Process", quality: "Quality Checks",
-    storage: "Storage Instructions", report: "Verified Lab Report", viewReport: "{copy.viewReport}",
-    noReport: "{copy.noReport}",
-    journey: "{copy.journey}", step: "STEP",
+    loading: "Loading batch ledger...", missing: "Batch record not found.",
+    help: "Check the batch code on your label or contact Lado Organics on WhatsApp (+91 96361 00337).",
+    batch: "Batch ID", sample: "Sample Reference Record", origin: "Origin Location", production: "Production Date",
+    packaging: "Packaging Date", pending: "Pending confirmation", bestBefore: "Best Before",
+    perLabel: "Per batch label", process: "Production Process", quality: "Quality Checks",
+    storage: "Storage Instructions", report: "Verified Lab Report", viewReport: "View Published Lab Report ↗",
+    noReport: "No third-party lab report file is published yet for this batch record.",
+    journey: "Farm-to-Home Journey (6 Stages)", step: "STEP",
     lookupError: "Unable to reach traceability lookup right now.",
-  };
+  }
   const initialCode = decodeURIComponent(params?.batchCode || "LO-PILANI-SAMPLE-001").toUpperCase();
 
   const [codeInput, setCodeInput] = useState(initialCode);
