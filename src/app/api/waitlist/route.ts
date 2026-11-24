@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     const email = typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
     const interest = typeof body?.interest === "string" ? body.interest.trim() : "general";
 
-    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email) || email.length > 254) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) {
       return NextResponse.json({ error: "A valid email address is required." }, { status: 400 });
     }
 
