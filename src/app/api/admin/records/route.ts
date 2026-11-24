@@ -33,13 +33,13 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Finance permission is required for payment confirmation and refunds." }, { status: 403 });
       }
     }
-    if (action === "create_batch" && actor.role !== "owner" && actor.role !== "manager") return NextResponse.json({ error: "Manager permission is required for batch publishing." }, { status: 403 });
+    if (action === "create_batch" && body?.approveBatch === true && actor.role !== "owner" && actor.role !== "manager") return NextResponse.json({ error: "Only the owner or manager can publish a verified batch." }, { status: 403 });
 
     if (action === "create_batch") {
       const batchCode = typeof body?.batchCode === "string" ? body.batchCode.trim().toUpperCase() : "";
-      const productSlug = typeof body?.productSlug === "string" ? body.productSlug.trim() : "a2-bilona-ghee";
+      const productSlug = typeof body?.productSlug === "string" ? body.productSlug.trim() : "";
       const productName = typeof body?.productName === "string" ? body.productName.trim() : "";
-      const variantLabel = typeof body?.variantLabel === "string" ? body.variantLabel.trim() : "1 litre";
+      const variantLabel = typeof body?.variantLabel === "string" ? body.variantLabel.trim() : "";
       const productionDate = typeof body?.productionDate === "string" ? body.productionDate.trim() : "";
       const packagingDate = typeof body?.packagingDate === "string" ? body.packagingDate.trim() : "";
       const productionProcess =
