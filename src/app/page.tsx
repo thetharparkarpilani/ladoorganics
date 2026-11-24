@@ -3,8 +3,9 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import type { LocaleCode, ProductDTO } from "@/types/domain";
+import type { ProductDTO } from "@/types/domain";
 import { TRANSLATIONS } from "@/lib/i18n";
+import { useLocale } from "@/context/LocaleContext";
 import { useCart } from "@/context/CartContext";
 import StorefrontSection from "@/components/StorefrontSection";
 import EssentialsClubSection from "@/components/EssentialsClubSection";
@@ -27,7 +28,7 @@ const INITIAL_PRODUCTS: ProductDTO[] = [
 ];
 
 export default function HomePage() {
-  const [locale, setLocale] = useState<LocaleCode>("en");
+  const { locale, setLocale } = useLocale();
   const [theme, setTheme] = useState<"light" | "dusk">("light");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
