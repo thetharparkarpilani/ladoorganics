@@ -1,0 +1,13 @@
+project_id = "aojsnhnlohakakvnnron"
+
+[api]
+enabled = true
+
+[db]
+major_version = 15
+
+[studio]
+enabled = false
+
+[auth]
+enabled = true
