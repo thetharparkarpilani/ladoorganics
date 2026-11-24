@@ -745,3 +745,58 @@ footer {
   .lado-app-main .glass-nav button[aria-controls="lado-mobile-navigation"] { display: none; }
   .lado-app-main .glass-nav select[aria-label="Language selector"] { display: none; }
 }
+
+
+/* Lado 3.0 floating support controls: keep WhatsApp unmistakably bottom-left
+   and Lado AI bottom-right on every route and viewport. */
+.lado-whatsapp-float {
+  position: fixed !important;
+  left: max(18px, env(safe-area-inset-left)) !important;
+  right: auto !important;
+  bottom: max(18px, env(safe-area-inset-bottom)) !important;
+  z-index: 9999 !important;
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+.lado-whatsapp-icon {
+  width: 54px;
+  height: 54px;
+  background: #25D366;
+  color: #fff;
+  box-shadow: 0 9px 28px rgba(12, 92, 48, .38);
+}
+.lado-whatsapp-label {
+  color: #fff;
+  background: #176b3a;
+}
+.lado-ai-launcher {
+  right: max(18px, env(safe-area-inset-right)) !important;
+  left: auto !important;
+  bottom: max(18px, env(safe-area-inset-bottom)) !important;
+  z-index: 9998 !important;
+}
+.lado-ai-panel {
+  right: max(18px, env(safe-area-inset-right)) !important;
+  left: auto !important;
+  bottom: max(86px, calc(env(safe-area-inset-bottom) + 76px)) !important;
+  z-index: 9997 !important;
+}
+@media (max-width: 640px) {
+  .lado-whatsapp-float {
+    left: max(12px, env(safe-area-inset-left)) !important;
+    bottom: max(12px, env(safe-area-inset-bottom)) !important;
+  }
+  .lado-whatsapp-icon { width: 48px; height: 48px; }
+  .lado-ai-launcher {
+    right: max(12px, env(safe-area-inset-right)) !important;
+    bottom: max(12px, env(safe-area-inset-bottom)) !important;
+  }
+  .lado-ai-panel {
+    right: 8px !important;
+    bottom: max(72px, calc(env(safe-area-inset-bottom) + 64px)) !important;
+    width: calc(100vw - 16px);
+    max-height: calc(100dvh - 88px);
+  }
+}
