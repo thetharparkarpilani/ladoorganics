@@ -48,7 +48,7 @@ export default function AppSidebar() {
       { label: copy.gau, href: "/#adopt", icon: "♡" },
       { label: copy.journal, href: "/#journal", icon: "▧" },
       { label: copy.corporate, href: "/#corporate", icon: "▣" },
-      { label: copy.trace, href: "/trace/LO-PILANI-SAMPLE-001", icon: "◎", externalPage: true },
+      { label: copy.trace, href: "/trace", icon: "◎", externalPage: true }
     ]},
     { title: locale === "hi" ? "आपका खाता" : locale === "ma" ? "थारो खातो" : "YOUR ACCOUNT", items: [
       { label: copy.journey, href: "/dashboard", icon: "◉", externalPage: true },
