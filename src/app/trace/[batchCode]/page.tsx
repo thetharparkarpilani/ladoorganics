@@ -66,7 +66,7 @@ export default function BatchTracePage() {
     loading: "Loading batch ledger...", missing: "Batch record not found.",
     help: "Check the batch code on your label or contact Lado Organics on WhatsApp (+91 96361 00337).",
     batch: "Batch ID", sample: "Sample Reference Record", origin: "Origin Location", production: "Production Date",
-    packaging: "Packaging Date", pending : copy.pending, bestBefore: "Best Before",
+    packaging: "Packaging Date", pending: "Pending confirmation", bestBefore: "Best Before",
     perLabel: "Per batch label", process: "Production Process", quality: "Quality Checks",
     storage: "Storage Instructions", report: "Verified Lab Report", viewReport: "View Published Lab Report ↗",
     noReport: "No third-party lab report file is published yet for this batch record.",
