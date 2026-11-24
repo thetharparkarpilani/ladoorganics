@@ -2,6 +2,7 @@
 
 import React, { useState, use } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import ProductReviewsSection from "@/components/ProductReviewsSection";
 
 interface ProductRecord {
@@ -95,13 +96,27 @@ export default function ProductDetailPage(props: { params: Promise<{ slug: strin
       </div>
 
       <section className={`product-detail-hero product-detail-${visual.kind}`}>
-        <div className="product-detail-art" aria-label={`${product.name} illustrated product artwork`}>
-          <span className="product-detail-art-top">LADO ORGANICS <i>·</i> PILANI</span>
-          <span className="product-detail-art-orbit product-detail-orbit-one" />
-          <span className="product-detail-art-orbit product-detail-orbit-two" />
-          <span className="product-detail-art-symbol" aria-hidden="true">{visual.symbol}</span>
-          <span className="product-detail-art-name">{visual.label}</span>
-          <span className="product-detail-art-bottom">LADO LOVE PURE</span>
+        <div className="product-detail-art relative" aria-label={product.slug.includes("dhoop") ? "Lado Organics Tharparkar Dhoop product photograph" : `${product.name} illustrated product artwork`}>
+          {product.slug.includes("dhoop") ? (
+            <Image
+              src={`/images/lado-organics/${encodeURIComponent("Lado Organics Tharparkar Dhoop.png")}`}
+              alt="Lado Organics Tharparkar Dhoop"
+              fill
+              priority
+              sizes="(max-width: 760px) 100vw, 45vw"
+              unoptimized
+              className="object-cover"
+            />
+          ) : (
+            <>
+              <span className="product-detail-art-top">LADO ORGANICS <i>·</i> PILANI</span>
+              <span className="product-detail-art-orbit product-detail-orbit-one" />
+              <span className="product-detail-art-orbit product-detail-orbit-two" />
+              <span className="product-detail-art-symbol" aria-hidden="true">{visual.symbol}</span>
+              <span className="product-detail-art-name">{visual.label}</span>
+              <span className="product-detail-art-bottom">LADO LOVE PURE</span>
+            </>
+          )}
         </div>
         <div className="product-detail-copy">
           <p className="product-detail-kicker"><span /> {product.category}</p>
