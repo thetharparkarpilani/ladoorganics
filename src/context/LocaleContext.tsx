@@ -17,7 +17,9 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const saved = window.localStorage.getItem("lado-locale");
-      if (saved === "en" || saved === "hi" || saved === "ma") setLocaleState(saved);
+      const cookieLocale = document.cookie.split("; ").find((part) => part.startsWith("lado-locale="))?.split("=")[1];
+      const preferred = saved || cookieLocale;
+      if (preferred === "en" || preferred === "hi" || preferred === "ma") setLocaleState(preferred);
     } catch { /* Storage may be unavailable; English remains the safe default. */ }
     setReady(true);
   }, []);
@@ -30,6 +32,7 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
   const setLocale = (next: LocaleCode) => {
     setLocaleState(next);
     try { window.localStorage.setItem("lado-locale", next); } catch { /* The choice still applies for this session. */ }
+    document.cookie = `lado-locale=${next}; path=/; max-age=31536000; samesite=lax`;
   };
 
   const value = useMemo(() => ({ locale, setLocale, ready }), [locale, ready]);
