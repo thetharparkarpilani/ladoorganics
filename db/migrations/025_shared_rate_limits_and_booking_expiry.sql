@@ -17,5 +17,9 @@ REVOKE ALL ON public.api_rate_limits FROM anon, authenticated;
 ALTER TABLE public.bookings
   ADD COLUMN IF NOT EXISTS expires_at TIMESTAMPTZ;
 
+UPDATE public.bookings
+   SET expires_at = created_at + INTERVAL '24 hours'
+ WHERE status = 'pending' AND expires_at IS NULL;
+
 CREATE INDEX IF NOT EXISTS idx_bookings_pending_expiry
   ON public.bookings(status, expires_at, check_in, check_out);
