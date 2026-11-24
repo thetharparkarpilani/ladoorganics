@@ -83,6 +83,7 @@ export default function AdminBusinessOperations() {
   };
 
   const variants = data?.inventory ?? EMPTY_VARIANTS;
+  const productChoices = useMemo(() => Array.from(new Map(variants.map(v => [v.product_id, { id: v.product_id, name: v.name_en }])).values()), [variants]);
   const lowStock = useMemo(()=>variants.filter(v=>Number(v.stock_qty)<=Math.max(0,Number(threshold)||0)),[variants,threshold]);
   const totalStock = data?.summary.stockUnits || 0;
 
@@ -133,6 +134,14 @@ export default function AdminBusinessOperations() {
           <button className={button} disabled={busy||variants.length===0}>{busy?"Saving…":"Save stock movement"}</button>
         </form>
       </div>
+      <form onSubmit={submit("add_variant")} className="grid gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 md:grid-cols-2">
+        <div className="md:col-span-2"><h2 className="font-serif text-xl font-bold">Add another size or variant</h2><p className="mt-1 text-xs opacity-65">Add a new pack size under an existing product, for example a second jar size or bag weight.</p></div>
+        <label className="block text-xs font-semibold">Existing product<select name="productId" required className={field}><option value="">Choose a product</option>{productChoices.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
+        <label className="block text-xs font-semibold">Pack size / variant label<input name="variantLabel" required placeholder="e.g. 1 kg" className={field}/></label>
+        <label className="block text-xs font-semibold">SKU<input name="sku" required placeholder="e.g. GHEE-1KG" className={field}/></label>
+        <div className="grid grid-cols-2 gap-3"><label className="block text-xs font-semibold">Price (₹)<input name="priceInr" type="number" min="0" step="1" required className={field}/></label><label className="block text-xs font-semibold">Opening stock<input name="openingStock" type="number" min="0" step="1" defaultValue="0" required className={field}/></label></div>
+        <div className="md:col-span-2"><button className={button} disabled={busy||productChoices.length===0}>{busy?"Saving…":"Add variant"}</button></div>
+      </form>
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3"><div><h2 className="font-serif text-xl font-bold">Current inventory</h2><p className="mt-1 text-xs opacity-65">Live quantities from the product catalogue.</p></div><label className="text-xs font-semibold">Low-stock threshold<input value={threshold} onChange={e=>setThreshold(e.target.value)} type="number" min="0" step="1" className="ml-2 w-20 rounded-lg border border-[var(--border)] bg-[var(--bg)] px-2 py-1.5"/></label></div>
         {!variants.length?<p className="py-8 text-center text-sm opacity-60">No products or variants have been created yet. Use &ldquo;Add a product&rdquo; above when your first product details are ready.</p>:<div className="overflow-x-auto"><table className="w-full min-w-[680px] text-left text-sm"><thead><tr className="border-b border-[var(--border)] text-xs opacity-60"><th className="p-3">Product</th><th className="p-3">SKU</th><th className="p-3">Price</th><th className="p-3">Stock</th><th className="p-3">Status</th></tr></thead><tbody>{variants.map(v=><tr key={v.variant_id} className="border-b border-[var(--border)] last:border-0"><td className="p-3 font-semibold">{v.name_en}<span className="block text-xs font-normal opacity-60">{v.label}</span></td><td className="p-3 font-mono text-xs">{v.sku}</td><td className="p-3">{money(v.price_inr)}</td><td className="p-3 font-bold">{Number(v.stock_qty).toLocaleString("en-IN")}</td><td className="p-3">{Number(v.stock_qty)<=Math.max(0,Number(threshold)||0)?<span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-bold text-amber-900">Low stock</span>:<span className="text-xs opacity-65">Available</span>}</td></tr>)}</tbody></table></div>}
