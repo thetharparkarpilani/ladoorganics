@@ -18,6 +18,7 @@ const TABS = [
   ["activity","Activity Log"]
 ] as const;
 type Tab = typeof TABS[number][0];
+const EMPTY_VARIANTS: Variant[] = [];
 const money = (value:unknown) => "₹" + Number(value || 0).toLocaleString("en-IN");
 const date = (value?:string|null) => value ? new Date(value).toLocaleDateString("en-IN") : "—";
 const field = "mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg)] px-3 py-2.5 text-sm";
@@ -81,7 +82,7 @@ export default function AdminBusinessOperations() {
     if(ok){form.reset();after?.();}
   };
 
-  const variants = data?.inventory || [];
+  const variants = data?.inventory ?? EMPTY_VARIANTS;
   const lowStock = useMemo(()=>variants.filter(v=>Number(v.stock_qty)<=Math.max(0,Number(threshold)||0)),[variants,threshold]);
   const totalStock = data?.summary.stockUnits || 0;
 
@@ -134,7 +135,7 @@ export default function AdminBusinessOperations() {
       </div>
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3"><div><h2 className="font-serif text-xl font-bold">Current inventory</h2><p className="mt-1 text-xs opacity-65">Live quantities from the product catalogue.</p></div><label className="text-xs font-semibold">Low-stock threshold<input value={threshold} onChange={e=>setThreshold(e.target.value)} type="number" min="0" step="1" className="ml-2 w-20 rounded-lg border border-[var(--border)] bg-[var(--bg)] px-2 py-1.5"/></label></div>
-        {!variants.length?<p className="py-8 text-center text-sm opacity-60">No products or variants have been created yet. Use “Add a product” above when your first product details are ready.</p>:<div className="overflow-x-auto"><table className="w-full min-w-[680px] text-left text-sm"><thead><tr className="border-b border-[var(--border)] text-xs opacity-60"><th className="p-3">Product</th><th className="p-3">SKU</th><th className="p-3">Price</th><th className="p-3">Stock</th><th className="p-3">Status</th></tr></thead><tbody>{variants.map(v=><tr key={v.variant_id} className="border-b border-[var(--border)] last:border-0"><td className="p-3 font-semibold">{v.name_en}<span className="block text-xs font-normal opacity-60">{v.label}</span></td><td className="p-3 font-mono text-xs">{v.sku}</td><td className="p-3">{money(v.price_inr)}</td><td className="p-3 font-bold">{Number(v.stock_qty).toLocaleString("en-IN")}</td><td className="p-3">{Number(v.stock_qty)<=Math.max(0,Number(threshold)||0)?<span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-bold text-amber-900">Low stock</span>:<span className="text-xs opacity-65">Available</span>}</td></tr>)}</tbody></table></div>}
+        {!variants.length?<p className="py-8 text-center text-sm opacity-60">No products or variants have been created yet. Use &ldquo;Add a product&rdquo; above when your first product details are ready.</p>:<div className="overflow-x-auto"><table className="w-full min-w-[680px] text-left text-sm"><thead><tr className="border-b border-[var(--border)] text-xs opacity-60"><th className="p-3">Product</th><th className="p-3">SKU</th><th className="p-3">Price</th><th className="p-3">Stock</th><th className="p-3">Status</th></tr></thead><tbody>{variants.map(v=><tr key={v.variant_id} className="border-b border-[var(--border)] last:border-0"><td className="p-3 font-semibold">{v.name_en}<span className="block text-xs font-normal opacity-60">{v.label}</span></td><td className="p-3 font-mono text-xs">{v.sku}</td><td className="p-3">{money(v.price_inr)}</td><td className="p-3 font-bold">{Number(v.stock_qty).toLocaleString("en-IN")}</td><td className="p-3">{Number(v.stock_qty)<=Math.max(0,Number(threshold)||0)?<span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-bold text-amber-900">Low stock</span>:<span className="text-xs opacity-65">Available</span>}</td></tr>)}</tbody></table></div>}
       </section>
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3"><div><h2 className="font-serif text-xl font-bold">Stock movement history</h2><p className="mt-1 text-xs opacity-65">Latest 150 entries, including opening stock, purchases, sales, adjustments and returns.</p></div><button type="button" className={secondary} onClick={()=>exportCsv([["Date","Product","SKU","Movement","Quantity change","Unit cost","Supplier","Reference","Notes"],...(data?.movements||[]).map(m=>[m.created_at,m.product_name,m.sku,m.movement_type,m.quantity_delta,m.unit_cost_inr,m.supplier_name,m.reference_id,m.note])],"lado-inventory-ledger.csv")}>Export CSV</button></div>
