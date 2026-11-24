@@ -104,7 +104,6 @@ export default function ProductDetailPage(props: { params: Promise<{ slug: strin
               fill
               priority
               sizes="(max-width: 760px) 100vw, 45vw"
-              unoptimized
               className="object-cover"
             />
           ) : (
