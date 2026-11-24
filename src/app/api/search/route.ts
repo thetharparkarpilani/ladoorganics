@@ -1,10 +1,13 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { enforceRateLimit } from "@/lib/rate-limit";
 
 export async function GET(req: NextRequest) {
+  const rateLimited = await enforceRateLimit(req, "catalog-search", 60, 60);
+  if (rateLimited) return rateLimited;
   try {
     const { searchParams } = new URL(req.url);
-    const query = searchParams.get("q") || "";
+    const query = (searchParams.get("q") || "").trim().slice(0, 80).replace(/[%_\\\\]/g, " ");
 
     if (!query || query.length < 2) {
       return NextResponse.json({ results: [] });

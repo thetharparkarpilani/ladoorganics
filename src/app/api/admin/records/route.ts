@@ -27,6 +27,12 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => null);
     const action = typeof body?.action === "string" ? body.action.trim() : "";
+    if (["record_refund", "confirm_cod_payment", "confirm_manual_upi_payment"].includes(action)) {
+      const financeActor = await getAdminActor(req, "finance");
+      if (!financeActor) {
+        return NextResponse.json({ error: "Finance permission is required for payment confirmation and refunds." }, { status: 403 });
+      }
+    }
     if (action === "create_batch" && actor.role !== "owner" && actor.role !== "manager") return NextResponse.json({ error: "Manager permission is required for batch publishing." }, { status: 403 });
 
     if (action === "create_batch") {
@@ -119,6 +125,19 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ error: "Order not found." }, { status: 404 });
         }
         const previousStatus = String(current.rows[0].status);
+        const allowedTransitions: Record<string, string[]> = {
+          pending_confirmation: ["processing", "cancelled"],
+          paid: ["processing"],
+          processing: ["shipped", "cancelled"],
+          shipped: ["delivered"],
+          delivered: [],
+          cancelled: [],
+          refunded: [],
+        };
+        if (!(allowedTransitions[previousStatus] || []).includes(status)) {
+          await client.query("ROLLBACK");
+          return NextResponse.json({ error: "That order status transition is not permitted. Cancelled and completed orders cannot be reopened." }, { status: 409 });
+        }
         if (status === "cancelled" && ["shipped", "delivered", "refunded"].includes(previousStatus)) {
           await client.query("ROLLBACK");
           return NextResponse.json({ error: "A shipped, delivered or refunded order cannot be cancelled here. Contact the owner to resolve it." }, { status: 409 });
@@ -299,6 +318,7 @@ export async function POST(req: NextRequest) {
             WHERE id = $1
               AND payment_method = 'manual_upi'
               AND payment_status IN ('awaiting_manual_payment', 'payment_submitted')
+              AND status <> 'cancelled'
             RETURNING id, order_number, status, payment_status`,
           [id]
         );
@@ -369,8 +389,8 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ error: "Unsupported admin action." }, { status: 400 });
-  } catch (err) {
-    const detail = err instanceof Error ? err.message : "Admin operation failed";
-    return NextResponse.json({ error: detail }, { status: 500 });
+  } catch (error) {
+    console.error("Admin record operation failed:", error);
+    return NextResponse.json({ error: "The requested admin operation could not be completed." }, { status: 500 });
   }
 }

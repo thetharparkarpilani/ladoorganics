@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { enforceRateLimit } from "@/lib/rate-limit";
 import { getCustomerIdentity } from "@/lib/customer-auth";
 
 export async function GET(req: NextRequest) {
@@ -31,6 +32,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const rateLimited = await enforceRateLimit(req, "community-reviews", 5, 3600);
+  if (rateLimited) return rateLimited;
   try {
     const customer = await getCustomerIdentity(req);
     if (!customer) {

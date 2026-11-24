@@ -1,3 +1,8 @@
-﻿User-agent: *
+User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /login
+Disallow: /auth/
 Sitemap: https://ladoorganics.in/sitemap.xml

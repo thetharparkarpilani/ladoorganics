@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getCustomerIdentity } from "@/lib/customer-auth";
 import { getAdminActor } from "@/lib/admin-auth";
+import { enforceRateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -11,6 +12,8 @@ function clean(value: unknown, max: number) {
 }
 
 export async function POST(req: NextRequest) {
+  const rateLimited = await enforceRateLimit(req, "support-tickets", 5, 3600);
+  if (rateLimited) return rateLimited;
   try {
     const customer = await getCustomerIdentity(req);
     if (!customer) return NextResponse.json({ error: "Please sign in before sending a support request." }, { status: 401 });

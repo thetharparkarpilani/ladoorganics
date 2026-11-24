@@ -3,6 +3,8 @@ import { randomUUID } from "crypto";
 import { db } from "@/lib/db";
 import { sendTemplatedNotification } from "@/lib/customer-notifications";
 import { sendAdminRequestAlert } from "@/lib/admin-notifications";
+import { getCustomerIdentity } from "@/lib/customer-auth";
+import { enforceRateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -22,26 +24,14 @@ type Body = {
 const clean = (value: unknown, max: number) =>
   typeof value === "string" ? value.trim().slice(0, max) : "";
 
-async function signedInEmail(req: NextRequest): Promise<string | null> {
-  const token = req.cookies.get("lado_sb_access")?.value;
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, "");
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-  if (!token || !url || !key) return null;
-
-  try {
-    const response = await fetch(url + "/auth/v1/user", {
-      headers: { apikey: key, Authorization: "Bearer " + token },
-      cache: "no-store",
-    });
-    if (!response.ok) return null;
-    const user = await response.json();
-    return typeof user.email === "string" ? user.email.toLowerCase() : null;
-  } catch {
-    return null;
-  }
-}
 
 export async function POST(req: NextRequest) {
+  const rateLimited = await enforceRateLimit(req, "orders", 5, 600);
+  if (rateLimited) return rateLimited;
+  const idempotencyKey = req.headers.get("idempotency-key")?.trim() || "";
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(idempotencyKey)) {
+    return NextResponse.json({ error: "Checkout session expired. Please refresh your bag and try again." }, { status: 400 });
+  }
   if (!process.env.DATABASE_URL) {
     return NextResponse.json({ error: "Ordering is temporarily unavailable. Please contact us on WhatsApp." }, { status: 503 });
   }
@@ -77,7 +67,14 @@ export async function POST(req: NextRequest) {
   }
 
   const customerName = clean(body.customerName, 100);
-  const email = (await signedInEmail(req)) || clean(body.email, 254).toLowerCase();
+  const customerIdentity = await getCustomerIdentity(req).catch((error) => {
+    console.error("Customer identity lookup failed during checkout:", error);
+    return null;
+  });
+  // Guest email is contact information only. Dashboard ownership is linked
+  // exclusively through the verified, signed-in database user id.
+  const email = customerIdentity?.email || clean(body.email, 254).toLowerCase();
+  const userId = customerIdentity?.databaseUserId || null;
   const phone = clean(body.phone, 30);
   const address1 = clean(body.addressLine1, 180);
   const address2 = clean(body.addressLine2, 180);
@@ -105,6 +102,23 @@ export async function POST(req: NextRequest) {
 
   try {
     await client.query("BEGIN");
+    await client.query("SELECT pg_advisory_xact_lock(hashtext($1))", [idempotencyKey]);
+    const existing = await client.query(
+      "SELECT id, order_number, total_inr, payment_method, payment_status FROM orders WHERE idempotency_key = $1 LIMIT 1",
+      [idempotencyKey]
+    );
+    if (existing.rows[0]) {
+      await client.query("ROLLBACK");
+      return NextResponse.json({
+        success: true,
+        orderId: existing.rows[0].id,
+        orderNumber: existing.rows[0].order_number,
+        totalInr: Number(existing.rows[0].total_inr),
+        paymentMethod: existing.rows[0].payment_method,
+        paymentStatus: existing.rows[0].payment_status,
+        message: "This checkout was already submitted. Your original order is shown here."
+      }, { headers: { "Cache-Control": "no-store" } });
+    }
     const skus = [...quantities.keys()];
     const catalog = await client.query(
       `SELECT pv.sku, pv.label, pv.price_inr, pv.stock_qty, p.slug, p.name_en
@@ -143,10 +157,10 @@ export async function POST(req: NextRequest) {
 
     await client.query(
       `INSERT INTO orders
-       (id, order_number, guest_name, guest_email, guest_phone, shipping_summary, shipping_address,
+       (id, order_number, user_id, idempotency_key, guest_name, guest_email, guest_phone, shipping_summary, shipping_address,
         subtotal_inr, total_inr, status, payment_method, payment_status)
-       VALUES ($1,$2,$3,$4,$5,$6,$6,$7,$7,'pending_confirmation',$8,$9)`,
-      [orderId, orderNumber, customerName, email, phone, address, total, method, paymentStatus]
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$8,$9,$9,'pending_confirmation',$10,$11)`,
+      [orderId, orderNumber, userId, idempotencyKey, customerName, email, phone, address, total, method, paymentStatus]
     );
 
     for (const item of lineItems) {

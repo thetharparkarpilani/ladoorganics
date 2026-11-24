@@ -1,4 +1,9 @@
-﻿import nodemailer from "nodemailer";
+import nodemailer from "nodemailer";
+
+export function escapeHtml(value: unknown): string {
+  return String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/\x27/g, "&#39;");
+}
+
 
 export async function sendNotification(to: string, subject: string, htmlContent: string) {
   if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {

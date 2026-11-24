@@ -2,7 +2,7 @@ import crypto from "crypto";
 import { NextRequest } from "next/server";
 import { db } from "@/lib/db";
 
-export type AdminCapability = "dashboard" | "analytics" | "operations" | "inventory" | "support" | "content" | "communications" | "staff";
+export type AdminCapability = "dashboard" | "analytics" | "operations" | "finance" | "inventory" | "support" | "content" | "communications" | "staff";
 export type AdminActor = { email: string; role: "owner" | "manager" | "orders" | "inventory" | "support" | "content" | "communications" | "viewer" };
 
 function safeEqual(aValue: string, bValue: string) {
@@ -11,7 +11,7 @@ function safeEqual(aValue: string, bValue: string) {
 }
 
 const ROLE_CAPABILITIES: Record<Exclude<AdminActor["role"],"owner">,AdminCapability[]> = {
-  manager:["dashboard","analytics","operations","inventory","support","content","communications","staff"],
+  manager:["dashboard","analytics","operations","finance","inventory","support","content","communications","staff"],
   orders:["dashboard","analytics","operations"],
   inventory:["dashboard","analytics","inventory"],
   support:["dashboard","support"],
@@ -38,7 +38,8 @@ export async function getAdminActor(req:NextRequest, capability:AdminCapability)
     if(!email)return null;
     const result=await db.query("SELECT role FROM staff_accounts WHERE lower(email)=lower($1) AND is_active=TRUE LIMIT 1",[email]);
     const role=result.rows[0]?.role as AdminActor["role"]|undefined;
-    if(!role||role==="owner")return null;
+    if(!role)return null;
+    if(role==="owner")return {email,role};
     if(!ROLE_CAPABILITIES[role as Exclude<AdminActor["role"],"owner">]?.includes(capability))return null;
     return {email,role};
   }catch(error){console.error("Staff authorization failed:",error);return null;}
