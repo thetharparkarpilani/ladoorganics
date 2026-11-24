@@ -66,7 +66,7 @@ export default function BatchTracePage() {
     loading: "Loading batch ledger...", missing: "Batch record not found.",
     help: "Check the batch code on your label or contact Lado Organics on WhatsApp (+91 96361 00337).",
     batch: "Batch ID", sample: "Sample Reference Record", origin: "Origin Location", production: "Production Date",
-    packaging: "Packaging Date", pending: "Pending confirmation", bestBefore: "Best Before",
+    packaging: "Packaging Date", pending : copy.pending, bestBefore: "Best Before",
     perLabel: "Per batch label", process: "Production Process", quality: "Quality Checks",
     storage: "Storage Instructions", report: "Verified Lab Report", viewReport: "View Published Lab Report ↗",
     noReport: "No third-party lab report file is published yet for this batch record.",
@@ -121,16 +121,16 @@ export default function BatchTracePage() {
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
         <Link href="/" className="text-sm font-bold text-[var(--terracotta)] hover:underline">
-          ← Back to Lado Organics Home
+          {copy.back}
         </Link>
         <span className="text-xs font-bold uppercase tracking-widest px-3.5 py-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)]">
-          QR Batch Traceability • Pilani, Rajasthan
+          {copy.badge}
         </span>
       </div>
 
       <div className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 sm:p-10 shadow-sm mb-8">
         <h1 className="text-3xl sm:text-5xl font-serif font-bold mb-3">
-          Product Batch Transparency
+          {copy.title}
         </h1>
         <p className="text-sm sm:text-base opacity-80 mb-6 max-w-2xl">
           {copy.intro}
@@ -156,7 +156,7 @@ export default function BatchTracePage() {
 
       {loading && (
         <div className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-8 text-center text-sm opacity-80">
-          Loading batch ledger...
+          {copy.loading}
         </div>
       )}
 
@@ -164,7 +164,7 @@ export default function BatchTracePage() {
         <div className="bg-[var(--surface)] border border-red-300 rounded-2xl p-8 text-center">
           <p className="font-bold text-red-700 mb-2">{error}</p>
           <p className="text-xs opacity-75">
-            Check the batch code on your label or contact Lado Organics on WhatsApp (+91 96361 00337).
+            {copy.help}
           </p>
         </div>
       )}
@@ -183,7 +183,7 @@ export default function BatchTracePage() {
               </div>
               {batch.source === "sample_reference" && (
                 <span className="text-xs px-3 py-1 rounded-full bg-amber-100 text-amber-900 font-semibold">
-                  Sample Reference Record
+                  {copy.sample}
                 </span>
               )}
             </div>
@@ -203,7 +203,7 @@ export default function BatchTracePage() {
               </div>
               <div>
                 <dt className="text-xs uppercase opacity-60 font-bold">{copy.bestBefore}</dt>
-                <dd className="font-semibold mt-1">{batch.bestBeforeDate ? String(batch.bestBeforeDate) : "Per batch label"}</dd>
+                <dd className="font-semibold mt-1">{batch.bestBeforeDate ? String(batch.bestBeforeDate) : copy.perLabel}</dd>
               </div>
               <div className="sm:col-span-2">
                 <dt className="text-xs uppercase opacity-60 font-bold">{copy.process}</dt>
@@ -227,11 +227,11 @@ export default function BatchTracePage() {
                       rel="noopener noreferrer"
                       className="text-[var(--terracotta)] font-bold underline"
                     >
-                      View Published Lab Report ↗
+                      {copy.viewReport}
                     </a>
                   ) : (
                     <span className="text-xs opacity-75">
-                      No third-party lab report file is published yet for this batch record.
+                      {copy.noReport}
                     </span>
                   )}
                 </dd>
@@ -242,7 +242,7 @@ export default function BatchTracePage() {
           {journey.length > 0 && (
             <div className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 sm:p-8 shadow-sm">
               <h3 className="text-xl sm:text-2xl font-serif font-bold mb-6">
-                Farm-to-Home Journey (6 Stages)
+                {copy.journey}
               </h3>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {journey.map((item) => (
