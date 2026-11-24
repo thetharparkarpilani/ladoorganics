@@ -7,6 +7,7 @@ const navigation = [
   { href: "/admin", label: "Overview", icon: "◫" },
   { href: "/admin/orders", label: "Orders & Payments", icon: "▤" },
   { href: "/admin/inventory", label: "Products & Inventory", icon: "◈" },
+  { href: "/admin/operations", label: "Business Operations", icon: "▦" },
   { href: "/admin/bookings", label: "Bhunga Stays", icon: "⌂" },
   { href: "/admin/sponsorships", label: "Gau Seva", icon: "♡" },
   { href: "/admin/communications", label: "Communications", icon: "✉" },
