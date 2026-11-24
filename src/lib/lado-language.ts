@@ -173,18 +173,18 @@ export function localizedKnowledgeAnswer(title: string, fallback: string, locale
 }
 
 export function detectLadoLocale(message: string, preferred?: LadoLocale): LadoLocale {
-  const value = message.toLocaleLowerCase();
+  const value = message.toLocaleLowerCase().normalize("NFKC");
   const marwariScript = /म्हां|म्हाने|म्हारो|म्हारी|म्हारा|थां|थारे|थारो|घणो|घणी|कोनी|कठै|कितरो|सूं|रो\b|री\b|रै\b|पधारो|खम्मा/.test(value);
-  const marwariRoman = /\b(mhane|mharo|mhari|mhara|thare|tharo|thari|ghano|ghani|koni|kithai|kathai|kitro|suu|syo|padharo|khamma ghani)\b/.test(value);
+  const marwariRoman = /\b(mhane|mharo|mhari|mhara|thare|tharo|thari|thara|ghano|ghani|koni|kithai|kathai|kitro|kitri|suu|syo|padharo|khamma|batawo|karu|karo|ro|ri|rai)\b/.test(value);
   const hindiScript = /[\u0900-\u097f]/.test(value);
-  if (preferred === "ma") return "ma";
+  const romanHindi = /\b(kya|kyun|kaise|kaisa|kaisi|kitna|kitne|kitni|mujhe|mujhko|mera|meri|mere|hamara|hamari|aapka|aapki|aapko|bataye|bataiye|batao|chahiye|kahan|kidhar|kab|hai|hain|ho|karna|kare|karo|kijiye|dijiye|dikhao|milega|milegi|accha|achha|nahi|nahin|haan|ji)\b/.test(value);
+
+  // Detect the language of the actual message before falling back to the widget preference.
+  // This supports Roman Hindi and Shekhawati Marwari when the site UI is set to English.
   if (marwariScript || marwariRoman) return "ma";
-  if (preferred === "hi") return "hi";
-  if (hindiScript) return "hi";
-  if (/\b(kya hai|kaise|kitna|kitne|mujhe|mera|meri|aapka|bataye|batao|chahiye|kahan|kab|kaise kare)\b/.test(value)) return "hi";
+  if (hindiScript || romanHindi) return "hi";
   return preferred || "en";
 }
-
 export function normalizeLadoText(value: string): string {
   return value.toLocaleLowerCase().normalize("NFKD")
     .replace(/[\u0300-\u036f]/g, "")
