@@ -119,6 +119,24 @@ export async function POST(req: NextRequest) {
         message: "This checkout was already submitted. Your original order is shown here."
       }, { headers: { "Cache-Control": "no-store" } });
     }
+    // Limit unresolved COD exposure per verified account/contact. This is
+    // checked inside the checkout transaction so parallel requests serialize
+    // behind the idempotency lock above.
+    const openCod = await client.query(
+      `SELECT COUNT(*)::int AS total
+         FROM orders
+        WHERE payment_method = 'cash_on_delivery'
+          AND payment_status = 'pay_on_delivery'
+          AND status IN ('pending_confirmation', 'processing', 'shipped')
+          AND created_at > NOW() - INTERVAL '7 days'
+          AND (($1::uuid IS NOT NULL AND user_id = $1::uuid) OR lower(COALESCE(guest_email, '')) = lower($2))`,
+      [userId, email]
+    );
+    if (Number(openCod.rows[0]?.total || 0) >= 3 && method === "cash_on_delivery") {
+      await client.query("ROLLBACK");
+      return NextResponse.json({ error: "You already have three unpaid Cash on Delivery orders in progress. Please contact the team before placing another COD order." }, { status: 429 });
+    }
+
     const skus = [...quantities.keys()];
     const catalog = await client.query(
       `SELECT pv.sku, pv.label, pv.price_inr, pv.stock_qty, p.slug, p.name_en
