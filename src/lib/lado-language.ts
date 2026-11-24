@@ -177,7 +177,9 @@ export function detectLadoLocale(message: string, preferred?: LadoLocale): LadoL
   const marwariScript = /म्हां|म्हाने|म्हारो|म्हारी|म्हारा|थां|थारे|थारो|घणो|घणी|कोनी|कठै|कितरो|सूं|रो\b|री\b|रै\b|पधारो|खम्मा/.test(value);
   const marwariRoman = /\b(mhane|mharo|mhari|mhara|thare|tharo|thari|ghano|ghani|koni|kithai|kathai|kitro|suu|syo|padharo|khamma ghani)\b/.test(value);
   const hindiScript = /[\u0900-\u097f]/.test(value);
+  if (preferred === "ma") return "ma";
   if (marwariScript || marwariRoman) return "ma";
+  if (preferred === "hi") return "hi";
   if (hindiScript) return "hi";
   if (/\b(kya hai|kaise|kitna|kitne|mujhe|mera|meri|aapka|bataye|batao|chahiye|kahan|kab|kaise kare)\b/.test(value)) return "hi";
   return preferred || "en";
