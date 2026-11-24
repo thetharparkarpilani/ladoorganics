@@ -17,10 +17,6 @@ function getConnectionString() {
   return url.toString();
 }
 
-if (isProduction && !supabaseCaCert) {
-  throw new Error("SUPABASE_CA_CERT is not configured for this production deployment.");
-}
-
 const pool = new Pool({
   ...(databaseUrl ? { connectionString: getConnectionString() } : {}),
   max: 3,
@@ -42,6 +38,11 @@ pool.on("error", (error) => {
 function assertDatabaseConfigured() {
   if (!process.env.DATABASE_URL) {
     throw new Error("DATABASE_URL is not configured for this deployment.");
+  }
+  // Validate at query time, not module import time: Next.js imports API
+  // route modules during build-time page-data collection.
+  if (isProduction && !supabaseCaCert) {
+    throw new Error("SUPABASE_CA_CERT is not configured for this production deployment.");
   }
 }
 
