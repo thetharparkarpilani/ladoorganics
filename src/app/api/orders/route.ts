@@ -156,7 +156,7 @@ export async function POST(req: NextRequest) {
       `INSERT INTO orders
        (id, order_number, user_id, idempotency_key, guest_name, guest_email, guest_phone, shipping_summary, shipping_address,
         subtotal_inr, total_inr, status, payment_method, payment_status)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$7,$8,$8,'pending_confirmation',$9,$10)`,
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$8,$9,$9,'pending_confirmation',$10,$11)`,
       [orderId, orderNumber, userId, idempotencyKey, customerName, email, phone, address, total, method, paymentStatus]
     );
 
