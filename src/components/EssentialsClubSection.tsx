@@ -4,6 +4,50 @@ import React, { useState } from "react";
 import { useLocale } from "@/context/LocaleContext";
 
 export default function EssentialsClubSection() {
+  const { locale } = useLocale();
+  const copy = locale === "hi" ? {
+    method: "हमारी तैयारी की विधि", title: "बिलोना विधि को सरल भाषा में समझें",
+    intro: "Lado Organics पारंपरिक लकड़ी की बिलोना से दही मथने की प्रक्रिया बताता है। यह विधि का विवरण है, चिकित्सकीय या पोषण श्रेष्ठता का दावा नहीं।",
+    stage: "चरण", curd: "दही से बिलोना विधि", cream: "सीधी मलाई की विधि",
+    start: "शुरुआती सामग्री", milk: "दूध से दही जमाया जाता है", creamSep: "दूध से मलाई अलग की जाती है",
+    fat: "वसा अलग करना", butter: "दही मथकर मक्खन अलग किया जाता है", butterfat: "मलाई से मक्खन की वसा प्राप्त की जाती है",
+    equipment: "उपकरण / विधि", wooden: "पारंपरिक लकड़ी की बिलोना", equipmentCream: "मलाई अलग करने के उपकरण और आगे की प्रक्रिया",
+    disclaimer: "यह तालिका केवल प्रक्रिया की तुलना करती है; सभी उत्पादकों या तैयार घी की पोषण गुणवत्ता पर सामान्य दावा नहीं करती।",
+    repeat: "बार-बार डिलीवरी की रुचि", club: "Lado Essentials Club",
+    clubIntro: "बताएँ कि आप नियमित रूप से क्या लेना चाहेंगे। यह केवल पसंद दर्ज करता है; कोई भुगतान वाली सदस्यता या अपने-आप शुल्क नहीं बनता। टीम उपलब्धता और शर्तें बताएगी।",
+    product: "उत्पाद और पैक", frequency: "पसंदीदा अंतराल", quantity: "मात्रा", email: "ईमेल पता", phone: "फ़ोन / WhatsApp (वैकल्पिक)",
+    every: "हर", days: "दिन", saving: "अनुरोध सहेजा जा रहा है…", submit: "नियमित डिलीवरी में रुचि दर्ज करें",
+    success: "आपकी रुचि दर्ज हो गई है। टीम उपलब्धता, कीमत और डिलीवरी की पुष्टि करेगी। कोई भुगतान या अपने-आप नवीनीकरण शुरू नहीं हुआ है।",
+    error: "कृपया थोड़ी देर बाद फिर कोशिश करें。",
+  } : locale === "ma" ? {
+    method: "म्हारी बनावण री रीति", title: "बिलोना री रीति सरल बात में",
+    intro: "Lado Organics पुराणी लकड़ी री बिलोना सूं दही मथण री बात बतावै है। ई बनावण रो ब्यौरो है, सेहत या पोषण में वधारे होण रो दावा कोनी।",
+    stage: "पड़ाव", curd: "दही सूं बिलोना री रीति", cream: "सीधी मलाई री रीति",
+    start: "पैली सामग्री", milk: "दूध नै दही जमावै", creamSep: "दूध सूं मलाई अलग करै",
+    fat: "मक्खण अलग करणी", butter: "दही मथकै मक्खण अलग करै", butterfat: "मलाई सूं मक्खण री वसा लेवै",
+    equipment: "औजार / रीति", wooden: "पुराणी लकड़ी री बिलोना", equipmentCream: "मलाई अलग करणी रा औजार अर आगळ री प्रक्रिया",
+    disclaimer: "ई तालिका बस बनावण री रीति तुलना करै है; सगळा उत्पादक या घी री पोषण गुणवत्ता पर एकसारो दावा कोनी।",
+    repeat: "बार-बार भेजण री रुचि", club: "Lado Essentials Club",
+    clubIntro: "बतावो थां नियमित काई लेणो चाहो हो। ई बस थारी पसंद लिखै है; भुगतान वाली सदस्यता या अपने-आप रकम कोनी कटै। टीम उपलब्धता अर चालू शर्त बतावैला।",
+    product: "सामान अर पैक", frequency: "कितरे दिन में", quantity: "मात्रा", email: "ईमेल", phone: "फोन / WhatsApp (जरूरी कोनी)",
+    every: "हर", days: "दिन", saving: "अरज सहेजी जावै है…", submit: "नियमित भेजण री रुचि लिखावो",
+    success: "थारी रुचि लिख ली है। टीम उपलब्धता, आखरी भाव अर भेजण री बात पक्की करैला। कोई भुगतान या अपने-आप नवीनीकरण चालू कोनी कर्यो।",
+    error: "थोड़ी देर पाछै फेर कोशिश करो।",
+  } : {
+    method: "Our preparation method", title: "Bilona method, explained simply",
+    intro: "Lado Organics describes a curd-based process using traditional wooden Bilona churning. This describes preparation, not medical or nutritional superiority.",
+    stage: "Stage", curd: "Curd-based Bilona route", cream: "Direct cream route",
+    start: "Starting material", milk: "Milk is cultured into curd", creamSep: "Cream is separated from milk",
+    fat: "Fat separation", butter: "Curd is churned to separate butter", butterfat: "Cream is processed to obtain butterfat",
+    equipment: "Equipment / method", wooden: "Traditional wooden Bilona churning", equipmentCream: "Cream-separation equipment and subsequent processing",
+    disclaimer: "The table compares process routes only. It does not make a blanket claim about producers or the nutritional quality of finished ghee.",
+    repeat: "Repeat delivery enquiry", club: "Lado Essentials Club",
+    clubIntro: "Tell us what you may want regularly. This records interest only; it does not create a paid subscription or automatic charge. Our team will confirm availability and terms.",
+    product: "Product & pack", frequency: "Preferred frequency", quantity: "Quantity", email: "Email address", phone: "Phone / WhatsApp (optional)",
+    every: "Every", days: "days", saving: "Saving request...", submit: "Register repeat-delivery interest",
+    success: "Your repeat-delivery interest has been recorded. The team must confirm availability, final pricing and delivery details. No payment or automatic renewal has been set up.",
+    error: "Please try again later.",
+  };
   const [subscriberEmail, setSubscriberEmail] = useState("");
   const [subscriberPhone, setSubscriberPhone] = useState("");
   const [itemLabel, setItemLabel] = useState("A2 Bilona Ghee — 1 litre");
