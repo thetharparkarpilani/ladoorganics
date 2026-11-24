@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { useLocale } from "@/context/LocaleContext";
 
 interface BatchRecord {
   batchCode: string;
@@ -31,6 +32,47 @@ interface JourneyStep {
 export default function BatchTracePage() {
   const params = useParams<{ batchCode: string }>();
   const router = useRouter();
+  const { locale } = useLocale();
+  const copy = locale === "hi" ? {
+    back: "← Lado Organics होम पर लौटें", badge: "QR बैच ट्रेस • पिलानी, राजस्थान",
+    title: "उत्पाद बैच की पारदर्शिता", intro: "बैच कोड दर्ज करें या स्कैन करें (उदाहरण LO-PILANI-SAMPLE-001) और सत्यापित बैच विवरण तथा खेत से घर तक की यात्रा देखें। लैब रिपोर्ट का लिंक केवल अधिकृत व्यवस्थापक द्वारा प्रकाशित होने पर दिखेगा।",
+    placeholder: "बैच कोड दर्ज करें, जैसे LO-PILANI-SAMPLE-001", verify: "बैच जाँचें", verifying: "जाँच हो रही है…",
+    loading: "बैच रिकॉर्ड लोड हो रहा है…", missing: "बैच रिकॉर्ड नहीं मिला।",
+    help: "लेबल पर बैच कोड देखें या WhatsApp (+91 96361 00337) पर Lado Organics से संपर्क करें।",
+    batch: "बैच आईडी", sample: "नमूना संदर्भ रिकॉर्ड", origin: "मूल स्थान", production: "निर्माण की तारीख",
+    packaging: "पैकिंग की तारीख", pending: "पुष्टि लंबित", bestBefore: "उपयोग की अंतिम तारीख",
+    perLabel: "बैच लेबल के अनुसार", process: "निर्माण प्रक्रिया", quality: "गुणवत्ता जाँच",
+    storage: "भंडारण निर्देश", report: "सत्यापित लैब रिपोर्ट", viewReport: "प्रकाशित लैब रिपोर्ट देखें ↗",
+    noReport: "इस बैच रिकॉर्ड के लिए अभी कोई तीसरी-पक्ष लैब रिपोर्ट प्रकाशित नहीं है।",
+    journey: "खेत से घर तक की यात्रा (6 चरण)", step: "चरण",
+    lookupError: "अभी ट्रेस जानकारी नहीं मिल पा रही।",
+  } : locale === "ma" ? {
+    back: "← Lado Organics रै घर पन्ने पर लौटो", badge: "QR बैच री जांच • पिलानी, राजस्थान",
+    title: "सामान रै बैच री पूरी जानकारी", intro: "बैच कोड लिखो या स्कैन करो (मिसाल LO-PILANI-SAMPLE-001) अर पक्की बैच जानकारी अर खेत सूं घर तक री यात्रा देखो। लैब रिपोर्ट रो लिंक तद ही दिखै जद मंजूर व्यवस्थापक छापै।",
+    placeholder: "बैच कोड लिखो, ज्यूं LO-PILANI-SAMPLE-001", verify: "बैच जांचो", verifying: "जांच चालै है…",
+    loading: "बैच रो हिसाब खुलै है…", missing: "बैच रो रिकॉर्ड कोनी मिल्यो।",
+    help: "लेबल पर बैच कोड देखो या WhatsApp (+91 96361 00337) पर Lado Organics नै खबर करो।",
+    batch: "बैच आईडी", sample: "नमूना संदर्भ रिकॉर्ड", origin: "मूल ठिकाणो", production: "बणावण री तारीख",
+    packaging: "पैक करणी री तारीख", pending: "पुष्टि बाकी", bestBefore: "इस्तेमाल री आखरी तारीख",
+    perLabel: "बैच रै लेबल अनुसार", process: "बणावण री रीति", quality: "गुणवत्ता जांच",
+    storage: "राखण रो तरीका", report: "पक्की लैब रिपोर्ट", viewReport: "छापी री लैब रिपोर्ट देखो ↗",
+    noReport: "ई बैच खातर अभी बाहरी लैब री रिपोर्ट छापी कोनी।",
+    journey: "खेत सूं घर तक री यात्रा (6 पड़ाव)", step: "पड़ाव",
+    lookupError: "अभी बैच री जानकारी मिलै कोनी।",
+  } : {
+    back: "{copy.back}", badge: "{copy.badge}",
+    title: "{copy.title}", intro: "Enter or scan a product batch identifier (try LO-PILANI-SAMPLE-001) to inspect verified batch details and the 6-step farm-to-home journey. Lab links appear only when published by an authorized administrator.",
+    placeholder: "Enter batch code e.g. LO-PILANI-SAMPLE-001", verify: "Verify Batch", verifying: "Verifying...",
+    loading: "{copy.loading}", missing: "Batch record not found.",
+    help: "{copy.help}",
+    batch: "Batch ID", sample: "{copy.sample}", origin: "Origin Location", production: "Production Date",
+    packaging: "Packaging Date", pending: copy.pending, bestBefore: "Best Before",
+    perLabel: copy.perLabel, process: "Production Process", quality: "Quality Checks",
+    storage: "Storage Instructions", report: "Verified Lab Report", viewReport: "{copy.viewReport}",
+    noReport: "{copy.noReport}",
+    journey: "{copy.journey}", step: "STEP",
+    lookupError: "Unable to reach traceability lookup right now.",
+  };
   const initialCode = decodeURIComponent(params?.batchCode || "LO-PILANI-SAMPLE-001").toUpperCase();
 
   const [codeInput, setCodeInput] = useState(initialCode);
@@ -50,13 +92,13 @@ export default function BatchTracePage() {
       if (!res.ok) {
         setBatch(null);
         setJourney([]);
-        setError(data?.error || "Batch record not found.");
+        setError(data?.error || copy.missing);
       } else {
         setBatch(data.batch);
         setJourney(Array.isArray(data.journey) ? data.journey : []);
       }
     } catch {
-      setError("Unable to reach traceability lookup right now.");
+      setError(copy.lookupError);
     } finally {
       setLoading(false);
     }
@@ -91,7 +133,7 @@ export default function BatchTracePage() {
           Product Batch Transparency
         </h1>
         <p className="text-sm sm:text-base opacity-80 mb-6 max-w-2xl">
-          Enter or scan a product batch identifier (try <code className="font-mono font-bold">LO-PILANI-SAMPLE-001</code>) to inspect verified batch details and the 6-step farm-to-home journey. Lab links appear only when published by an authorized administrator.
+          {copy.intro}
         </p>
 
         <form onSubmit={handleLookup} className="flex flex-col sm:flex-row gap-3">
@@ -99,7 +141,7 @@ export default function BatchTracePage() {
             type="text"
             value={codeInput}
             onChange={(e) => setCodeInput(e.target.value)}
-            placeholder="Enter batch code e.g. LO-PILANI-SAMPLE-001"
+            placeholder={copy.placeholder}
             className="flex-1 px-4 py-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-sm font-mono uppercase focus:outline-none focus:border-[var(--terracotta)]"
           />
           <button
@@ -107,7 +149,7 @@ export default function BatchTracePage() {
             disabled={loading}
             className="primary-btn px-6 py-3 rounded-xl text-sm font-bold cursor-pointer disabled:opacity-50"
           >
-            {loading ? "Verifying..." : "Verify Batch"}
+            {loading ? copy.verifying : copy.verify}
           </button>
         </form>
       </div>
@@ -133,7 +175,7 @@ export default function BatchTracePage() {
             <div className="flex flex-wrap items-center justify-between gap-2 pb-4 mb-6 border-b border-[var(--border)]">
               <div>
                 <span className="text-xs font-bold uppercase tracking-widest text-[var(--terracotta)]">
-                  Batch ID: {batch.batchCode}
+                  {copy.batch}: {batch.batchCode}
                 </span>
                 <h2 className="text-2xl sm:text-3xl font-serif font-bold mt-1">
                   {batch.productName} ({batch.variantLabel})
@@ -148,35 +190,35 @@ export default function BatchTracePage() {
 
             <dl className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 text-sm">
               <div>
-                <dt className="text-xs uppercase opacity-60 font-bold">Origin Location</dt>
+                <dt className="text-xs uppercase opacity-60 font-bold">{copy.origin}</dt>
                 <dd className="font-semibold mt-1">{batch.originLocation}</dd>
               </div>
               <div>
-                <dt className="text-xs uppercase opacity-60 font-bold">Production Date</dt>
+                <dt className="text-xs uppercase opacity-60 font-bold">{copy.production}</dt>
                 <dd className="font-semibold mt-1">{String(batch.productionDate)}</dd>
               </div>
               <div>
-                <dt className="text-xs uppercase opacity-60 font-bold">Packaging Date</dt>
+                <dt className="text-xs uppercase opacity-60 font-bold">{copy.packaging}</dt>
                 <dd className="font-semibold mt-1">{batch.packagingDate ? String(batch.packagingDate) : "Pending confirmation"}</dd>
               </div>
               <div>
-                <dt className="text-xs uppercase opacity-60 font-bold">Best Before</dt>
+                <dt className="text-xs uppercase opacity-60 font-bold">{copy.bestBefore}</dt>
                 <dd className="font-semibold mt-1">{batch.bestBeforeDate ? String(batch.bestBeforeDate) : "Per batch label"}</dd>
               </div>
               <div className="sm:col-span-2">
-                <dt className="text-xs uppercase opacity-60 font-bold">Production Process</dt>
+                <dt className="text-xs uppercase opacity-60 font-bold">{copy.process}</dt>
                 <dd className="mt-1 opacity-85">{batch.productionProcess}</dd>
               </div>
               <div className="sm:col-span-2">
-                <dt className="text-xs uppercase opacity-60 font-bold">Quality Checks</dt>
+                <dt className="text-xs uppercase opacity-60 font-bold">{copy.quality}</dt>
                 <dd className="mt-1 opacity-85">{batch.qualityChecks}</dd>
               </div>
               <div>
-                <dt className="text-xs uppercase opacity-60 font-bold">Storage Instructions</dt>
+                <dt className="text-xs uppercase opacity-60 font-bold">{copy.storage}</dt>
                 <dd className="mt-1 opacity-85">{batch.storageInstructions}</dd>
               </div>
               <div className="sm:col-span-2 lg:col-span-3 pt-3 border-t border-[var(--border)]">
-                <dt className="text-xs uppercase opacity-60 font-bold">Verified Lab Report</dt>
+                <dt className="text-xs uppercase opacity-60 font-bold">{copy.report}</dt>
                 <dd className="mt-1">
                   {batch.labReportUrl ? (
                     <a
@@ -209,7 +251,7 @@ export default function BatchTracePage() {
                     className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--bg)]"
                   >
                     <div className="flex items-center justify-between text-xs font-bold text-[var(--terracotta)] mb-1">
-                      <span>STEP {item.step}</span>
+                      <span>{copy.step} {item.step}</span>
                       <span className="uppercase opacity-70">{item.status.replace("_", " ")}</span>
                     </div>
                     <p className="font-serif font-bold text-base mb-1">{item.stage}</p>
