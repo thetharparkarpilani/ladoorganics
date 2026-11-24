@@ -90,7 +90,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-3">
           <Link href="/" aria-label="Lado Organics home" className="inline-flex items-center shrink-0"><Image src="/lado-organics-logo.svg" alt="Lado Organics — Lado Love Pure" width={180} height={120} priority className="h-14 sm:h-16 w-auto object-contain" /></Link>
           <nav aria-label="Primary" className="hidden xl:flex items-center gap-4 text-xs font-bold uppercase tracking-widest">
-            <a href="#store">{dict.section_store}</a><a href="#essentials-club">{dict.nav_essentials}</a><a href="#build-experience">{dict.nav_experience}</a><a href="#adopt">{dict.nav_gau}</a><a href="#journal">{dict.nav_journal}</a><a href="#corporate">{dict.nav_corporate}</a><Link href="/contact">{dict.nav_help}</Link><Link href="/trace/LO-PILANI-SAMPLE-001">{dict.nav_trace}</Link><a href="/dashboard">{dict.nav_journey}</a>
+            <a href="#store">{dict.section_store}</a><a href="#essentials-club">{dict.nav_essentials}</a><a href="#build-experience">{dict.nav_experience}</a><a href="#adopt">{dict.nav_gau}</a><a href="#journal">{dict.nav_journal}</a><a href="#corporate">{dict.nav_corporate}</a><Link href="/contact">{dict.nav_help}</Link><Link href="/trace">{dict.nav_trace}</Link><a href="/dashboard">{dict.nav_journey}</a>
           </nav>
           <div className="flex items-center gap-2">
             <button type="button" className="xl:hidden text-xs font-bold px-3 py-2 rounded-full border border-[var(--border)]" aria-expanded={mobileMenuOpen} aria-controls="lado-mobile-navigation" onClick={() => setMobileMenuOpen(open => !open)}>{mobileMenuOpen ? dict.nav_close : dict.nav_menu}</button>
