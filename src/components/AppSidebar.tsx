@@ -61,6 +61,7 @@ export default function AppSidebar() {
   const closeMobile = () => setMobileOpen(false);
   return (
     <>
+      <Link href="/" className="lado-mobile-brand" aria-label="Lado Organics home"><Image src="/lado-organics-logo.svg" alt="Lado Organics — Lado Love Pure" width={132} height={72} priority /></Link>
       <button type="button" className="lado-mobile-menu-trigger" aria-label={mobileOpen ? copy.close : copy.menu} aria-expanded={mobileOpen} onClick={() => setMobileOpen((value) => !value)}>
         <span aria-hidden="true">{mobileOpen ? "×" : "☰"}</span><span>{copy.menu}</span>
       </button>
