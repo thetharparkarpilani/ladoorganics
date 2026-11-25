@@ -15,7 +15,7 @@ export async function GET() {
     return NextResponse.json({
       source: "database",
       summary: hasEntries ? [{
-        calf_name: "General Gau Seva",
+        category: "General Gau Seva",
         entries_count: Number(row.entries_count),
         recorded_amount_inr: Number(row.recorded_amount_inr)
       }] : [],
