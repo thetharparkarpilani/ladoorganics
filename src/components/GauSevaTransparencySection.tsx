@@ -71,15 +71,15 @@ export default function GauSevaTransparencySection() {
             Gau Seva Ledger
           </span>
           <h2 className="text-2xl sm:text-3xl font-serif font-bold mt-1 mb-2">
-            Sponsorship Transparency
+            Gau Seva Transparency
           </h2>
           <p className="text-xs opacity-80 mb-5 leading-relaxed">
-            Displays sponsorship entries marked active by the Lado team for currently approved profiles. Pending enquiries are not counted. These figures are not an audited expenditure statement or tax receipt.
+            Displays active Gau Seva contributions recorded by the Lado team in aggregate. Pending enquiries are not counted or assigned to an individual animal profile. These figures are not an audited expenditure statement or tax receipt.
           </p>
 
           {rows.length === 0 ? (
             <p className="text-xs opacity-70 p-4 rounded-2xl bg-[var(--bg)] border border-[var(--border)]">
-              No active sponsorship records are available to display yet. New sponsorship enquiries remain pending until reviewed by the Lado team.
+              No active Gau Seva contribution records are available to display yet. New enquiries remain pending until reviewed by the Lado team.
             </p>
           ) : (
             <ul className="space-y-3 text-xs">
