@@ -12,14 +12,14 @@ export const metadata = {
 
 type StoreProduct = {
   slug: string; name_en: string; name_hi?: string | null; name_ma?: string | null;
-  description_en: string; description_hi?: string | null; description_ma?: string | null;
+  description_en: string;
   sku: string; price_inr: number; label: string; image_url?: string | null;
 };
 
 async function getProducts(): Promise<{ products: StoreProduct[]; error: boolean }> {
   try {
     const res = await db.query(`
-      SELECT DISTINCT ON (p.id) p.slug, p.name_en, p.name_hi, p.name_ma, p.description_en, p.description_hi, p.description_ma, p.image_url,
+      SELECT DISTINCT ON (p.id) p.slug, p.name_en, p.name_hi, p.name_ma, p.description_en, p.image_url,
              v.sku, v.price_inr, v.label
       FROM products p
       JOIN product_variants v ON p.id = v.product_id AND v.stock_qty > 0
@@ -38,7 +38,7 @@ export default async function StoreCatalogPage() {
   const localized = catalog.products.map((product) => ({
     slug: product.slug,
     name: locale === "hi" ? product.name_hi || product.name_en : locale === "ma" ? product.name_ma || product.name_en : product.name_en,
-    description: locale === "hi" ? product.description_hi || product.description_en : locale === "ma" ? product.description_ma || product.description_en : product.description_en,
+    description: product.description_en,
     sku: product.sku,
     priceInr: Number(product.price_inr),
     packLabel: product.label,
