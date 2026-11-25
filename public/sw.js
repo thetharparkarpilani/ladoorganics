@@ -1,4 +1,4 @@
-const CACHE_NAME = "lado-organics-v3-cache";
+const CACHE_NAME = "lado-organics-v4-cache";
 const OFFLINE_URL = "/";
 
 self.addEventListener("install", (event) => {
@@ -24,9 +24,7 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET" || new URL(event.request.url).origin !== self.location.origin) {
-    return;
-  }
+  if (event.request.method !== "GET" || new URL(event.request.url).origin !== self.location.origin) return;
 
   if (event.request.mode === "navigate") {
     event.respondWith(
@@ -38,7 +36,5 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request))
-  );
+  event.respondWith(caches.match(event.request).then((cached) => cached || fetch(event.request)));
 });
