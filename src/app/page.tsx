@@ -5,165 +5,199 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import type { ProductDTO, LocaleCode } from "@/types/domain";
-import { TRANSLATIONS } from "@/lib/i18n";
 import { useLocale } from "@/context/LocaleContext";
 import { useCart } from "@/context/CartContext";
 import StorefrontSection from "@/components/StorefrontSection";
 import EssentialsClubSection from "@/components/EssentialsClubSection";
 import TrustAndProcessSection from "@/components/TrustAndProcessSection";
 import FarmCalculatorsSuite from "@/components/FarmCalculatorsSuite";
-import FarmExperienceSection from "@/components/FarmExperienceSection";
-import BuildYourOwnExperience from "@/components/BuildYourOwnExperience";
 import GauSevaTransparencySection from "@/components/GauSevaTransparencySection";
 import JournalLibrarySection from "@/components/JournalLibrarySection";
 import CorporateGiftingSection from "@/components/CorporateGiftingSection";
-import CowAsCoconutMap from "@/components/CowAsCoconutMap";
 import FarmWorldSection from "@/components/FarmWorldSection";
 import CartCheckoutDrawer from "@/components/CartCheckoutDrawer";
+
+const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919636100337";
 
 export default function HomePage() {
   const { locale, setLocale } = useLocale();
   const router = useRouter();
-  const [theme, setTheme] = useState<"light" | "dusk">("light");
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [products, setProducts] = useState<ProductDTO[]>([]);
-  const [catalogStatus, setCatalogStatus] = useState<"loading" | "ready" | "error">("loading");
   const { addToCart, itemCount, setDrawerOpen } = useCart();
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919636100337";
-  const dict = TRANSLATIONS[locale] ?? TRANSLATIONS.en;
+  const [products, setProducts] = useState<ProductDTO[]>([]);
+  const [catalogState, setCatalogState] = useState<"loading" | "ready" | "error">("loading");
+  const [query, setQuery] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  useEffect(() => { document.documentElement.setAttribute("data-theme", theme); }, [theme]);
   useEffect(() => {
-    const sections = Array.from(document.querySelectorAll<HTMLElement>("main > section, main > [data-farm-reveal]"));
+    let active = true;
+    fetch("/api/catalog", { cache: "no-store" })
+      .then((response) => response.ok ? response.json() : Promise.reject(new Error("Catalogue unavailable")))
+      .then((data) => {
+        if (!active) return;
+        if (Array.isArray(data?.catalog)) {
+          setProducts(data.catalog);
+          setCatalogState("ready");
+        } else setCatalogState("error");
+      })
+      .catch(() => { if (active) setCatalogState("error"); });
+    return () => { active = false; };
+  }, []);
+
+  useEffect(() => {
+    const sections = Array.from(document.querySelectorAll<HTMLElement>("[data-lado-reveal]"));
     if (!("IntersectionObserver" in window)) {
-      sections.forEach((section) => section.classList.add("farm-visible"));
+      sections.forEach((section) => section.classList.add("lado-is-visible"));
       return;
     }
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          entry.target.classList.add("farm-visible");
+          entry.target.classList.add("lado-is-visible");
           observer.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.12, rootMargin: "0px 0px -48px 0px" });
-    sections.forEach((section) => {
-      section.classList.add("farm-reveal");
-      observer.observe(section);
-    });
+    }, { threshold: 0.08, rootMargin: "0px 0px -36px 0px" });
+    sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
   }, []);
-  useEffect(() => {
-    let active = true;
-    fetch("/api/catalog", { cache: "no-store" })
-      .then((res) => res.ok ? res.json() : Promise.reject(new Error("Catalogue unavailable")))
-      .then((data) => {
-        if (!active) return;
-        if (Array.isArray(data?.catalog)) {
-          setProducts(data.catalog);
-          setCatalogStatus("ready");
-        } else {
-          setCatalogStatus("error");
-        }
-      })
-      .catch(() => {
-        if (active) setCatalogStatus("error");
-      });
-    return () => { active = false; };
-  }, []);
 
-  const handleAddToBag = (item: { sku: string; title: string; unitPriceInr: number; quantity: number }) => {
-    const product = products.find(p => p.variants.some(v => v.sku === item.sku));
-    const variant = product?.variants.find(v => v.sku === item.sku);
+  const addItem = (item: { sku: string; title: string; unitPriceInr: number; quantity: number }) => {
+    const product = products.find((entry) => entry.variants.some((variant) => variant.sku === item.sku));
+    const variant = product?.variants.find((entry) => entry.sku === item.sku);
     addToCart({
       variantId: variant?.id || item.sku,
       sku: item.sku,
       title: item.title,
       priceInr: item.unitPriceInr,
       quantity: item.quantity,
-      maxStock: Math.max(1, variant?.stockQty || 20)
+      maxStock: Math.max(1, variant?.stockQty || 1),
     });
   };
 
+  const copy = locale === "hi" ? {
+    announcement: "पिलानी, राजस्थान की परंपरा और खेत से जुड़ी शुद्धता",
+    shop: "उत्पाद देखें", farm: "हमारा खेत", story: "हमारी कहानी",
+    headline: "परंपरा की जड़ें। हर दिन की शुद्धता।",
+    subhead: "Lado Organics में आपका स्वागत है — जहाँ पारंपरिक कारीगरी, खेत से जुड़ाव और सोच-समझकर चुने गए उत्पाद साथ आते हैं।",
+    explore: "संग्रह देखें", learn: "Lado के बारे में", promise: "हमारा तरीका",
+    promiseTitle: "सिर्फ उत्पाद नहीं — एक जीवंत परंपरा",
+    promiseText: "हमारी कहानी खेत, पशुपालन और पारंपरिक तरीकों से जुड़ी है। हर उत्पाद की उपलब्धता और जानकारी वही दिखाई जाती है जिसे हम सत्यापित कर सकते हैं।",
+    trace: "बैच ट्रेस करें", account: "मेरा खाता", help: "संपर्क", journal: "कहानियाँ और ज्ञान",
+    loading: "वर्तमान उत्पाद सूची लोड हो रही है…", error: "उत्पाद सूची अभी उपलब्ध नहीं है। कृपया कुछ देर बाद पुनः प्रयास करें।",
+    retry: "पुनः प्रयास", footer: "परंपरा से जुड़ा। प्रकृति के करीब।",
+  } : locale === "ma" ? {
+    announcement: "पिलानी, राजस्थान री परंपरा अर खेत सूं जुड़ी शुद्धता",
+    shop: "सामान देखो", farm: "म्हारो खेत", story: "म्हारी कहाणी",
+    headline: "परंपरा री जड़। रोज री शुद्धता।",
+    subhead: "Lado Organics में पधारो — जठै पुराणी कारीगरी, खेत सूं जुड़ाव अर सोच-समझ कै चुन्या सामान साथ आवै।",
+    explore: "संग्रह देखो", learn: "Lado री जानकारी", promise: "म्हारो तरीका",
+    promiseTitle: "खाली सामान कोनी — जीवती परंपरा",
+    promiseText: "म्हारी कहाणी खेत, पशुपालन अर पुराणी रीति सूं जुड़ी है। हर सामान री उपलब्धता अर जानकारी वही बतावां जिण नै पक्को कर सकां।",
+    trace: "बैच जांचो", account: "म्हारो खातो", help: "संपर्क", journal: "कहाणी अर जानकारी",
+    loading: "चालू सामान री सूची आवै है…", error: "सामान री सूची अभी उपलब्ध कोनी। थोड़ी देर बाद फेर कोशिश करो।",
+    retry: "फेर कोशिश", footer: "परंपरा सूं जुड़्या। प्रकृति रै नजदीक।",
+  } : {
+    announcement: "Rooted in Pilani, Rajasthan · Tradition, care and everyday purity",
+    shop: "Shop collection", farm: "Explore the farm", story: "Our story",
+    headline: "Rooted in tradition. Made for everyday living.",
+    subhead: "Welcome to Lado Organics — where traditional craft, a living farm story and thoughtfully presented products come together.",
+    explore: "Explore the collection", learn: "Discover Lado", promise: "Our approach",
+    promiseTitle: "More than a product. A living tradition.",
+    promiseText: "Our story is connected to the farm, animal care and traditional practices. We show product details and availability only when they can be verified.",
+    trace: "Explore batch traceability", account: "My account", help: "Contact us", journal: "Journal & learning",
+    loading: "Loading the current product collection…", error: "The product collection is temporarily unavailable. Please try again shortly.",
+    retry: "Try again", footer: "Rooted in tradition. Close to nature.",
+  };
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="glass-nav sticky top-0 z-40 border-b border-[var(--border)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-3">
-          <Link href="/" aria-label="Lado Organics home" className="inline-flex items-center shrink-0"><Image src="/lado-organics-logo.svg" alt="Lado Organics — Lado Love Pure" width={180} height={120} priority className="h-14 sm:h-16 w-auto object-contain" /></Link>
-          <nav aria-label="Primary" className="hidden xl:flex items-center gap-4 text-xs font-bold uppercase tracking-widest">
-            <a href="#store">{dict.section_store}</a><a href="#essentials-club">{dict.nav_essentials}</a><a href="#build-experience">{dict.nav_experience}</a><a href="#adopt">{dict.nav_gau}</a><a href="#journal">{dict.nav_journal}</a><a href="#corporate">{dict.nav_corporate}</a><Link href="/contact">{dict.nav_help}</Link><Link href="/trace">{dict.nav_trace}</Link><a href="/dashboard">{dict.nav_journey}</a>
+    <div className="lado-site">
+      <header className="lado-header">
+        <div className="lado-header-inner">
+          <Link href="/" className="lado-brand" aria-label="Lado Organics home">
+            <Image src="/lado-organics-logo.svg" alt="Lado Organics — Lado Love Pure" width={184} height={104} priority />
+          </Link>
+          <button className="lado-menu-toggle" type="button" aria-expanded={menuOpen} aria-controls="lado-primary-nav" onClick={() => setMenuOpen((value) => !value)}>{menuOpen ? "Close" : "Menu"}</button>
+          <nav id="lado-primary-nav" className={menuOpen ? "lado-nav is-open" : "lado-nav"} aria-label="Main navigation">
+            <a href="#collection" onClick={() => setMenuOpen(false)}>{copy.shop}</a>
+            <a href="#farm-world" onClick={() => setMenuOpen(false)}>{copy.farm}</a>
+            <a href="#our-approach" onClick={() => setMenuOpen(false)}>{copy.promise}</a>
+            <Link href="/trace" onClick={() => setMenuOpen(false)}>{copy.trace}</Link>
+            <Link href="/contact" onClick={() => setMenuOpen(false)}>{copy.help}</Link>
           </nav>
-          <div className="flex items-center gap-2">
-            <button type="button" className="xl:hidden text-xs font-bold px-3 py-2 rounded-full border border-[var(--border)]" aria-expanded={mobileMenuOpen} aria-controls="lado-mobile-navigation" onClick={() => setMobileMenuOpen(open => !open)}>{mobileMenuOpen ? dict.nav_close : dict.nav_menu}</button>
-            <input type="search" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder={dict.search} aria-label={dict.search} onKeyDown={(event) => { if (event.key === "Enter" && searchQuery.trim().length >= 2) router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`); }} className="text-xs px-3 py-1.5 rounded-full border border-[var(--border)] bg-white/80 w-28 sm:w-36" />
-            <button type="button" onClick={() => setDrawerOpen(true)} className="text-xs font-bold px-3 py-1.5 rounded-full bg-[var(--terracotta)] text-white">{dict.bag} ({itemCount})</button>
-            <select aria-label="Language selector" value={locale} onChange={e => setLocale(e.target.value as LocaleCode)} className="text-xs font-bold px-2.5 py-1.5 rounded-full border border-[var(--border)] bg-white/80">
+          <div className="lado-header-actions">
+            <select aria-label="Choose language" value={locale} onChange={(event) => setLocale(event.target.value as LocaleCode)}>
               <option value="en">EN</option><option value="hi">हिंदी</option><option value="ma">मारवाड़ी</option>
             </select>
-            <button type="button" onClick={() => setTheme(t => t === "light" ? "dusk" : "light")} className="text-xs font-bold px-3 py-1.5 rounded-full border border-[var(--border)]">{theme === "light" ? dict.theme_dusk : dict.theme_sand}</button>
+            <Link href="/dashboard" className="lado-account-link">{copy.account}</Link>
+            <button className="lado-cart-button" type="button" onClick={() => setDrawerOpen(true)}>Bag <span>{itemCount}</span></button>
           </div>
         </div>
-        {mobileMenuOpen && (
-          <nav id="lado-mobile-navigation" aria-label="Mobile primary" className="lado-mobile-navigation xl:hidden">
-            <a href="#store" onClick={() => setMobileMenuOpen(false)}>{dict.mobile_shop}</a>
-            <a href="#farm-world" onClick={() => setMobileMenuOpen(false)}>{dict.mobile_farm}</a>
-            <a href="#essentials-club" onClick={() => setMobileMenuOpen(false)}>Essentials Club</a>
-            <a href="#adopt" onClick={() => setMobileMenuOpen(false)}>Gau Seva</a>
-            <a href="#journal" onClick={() => setMobileMenuOpen(false)}>Journal</a>
-            <Link href="/contact" onClick={() => setMobileMenuOpen(false)}>Help & Support</Link>
-            <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>My Lado Journey</Link>
-          </nav>
-        )}
       </header>
-      <main className="flex-1">
-        <section className="farm-hero farm-hero-editorial relative isolate overflow-hidden px-4 sm:px-6 lg:px-8">
-          <div className="farm-hero-shade" aria-hidden="true" />
-          <div className="farm-hero-content relative z-10 max-w-7xl mx-auto">
-            <div className="farm-hero-copy">
-              <p className="farm-hero-kicker"><span /> {dict.hero_kicker}</p>
-              <h1>{dict.hero_title}</h1>
-              <p className="farm-hero-description">{dict.hero_subtitle}</p>
-              <div className="farm-hero-actions">
-                <a href="#store" className="farm-hero-primary">{dict.cta_shop} <span aria-hidden="true">↗</span></a>
-                <a href="#farm-world" className="farm-hero-secondary">{dict.hero_cta_farm} <span aria-hidden="true">↓</span></a>
-              </div>
-              <div className="farm-hero-signature"><span className="farm-signature-mark">L</span><span><strong>Lado Organics</strong><small>Lado Love Pure</small></span></div>
+
+      <main>
+        <section className="lado-hero">
+          <div className="lado-hero-text">
+            <p className="lado-eyebrow">LADO ORGANICS <span>·</span> LADO LOVE PURE</p>
+            <h1>{copy.headline}</h1>
+            <p className="lado-hero-description">{copy.subhead}</p>
+            <div className="lado-hero-actions">
+              <a className="lado-button lado-button-primary" href="#collection">{copy.explore}<span aria-hidden="true">↗</span></a>
+              <a className="lado-button lado-button-quiet" href="#farm-world">{copy.learn}<span aria-hidden="true">↓</span></a>
             </div>
-            <div className="farm-hero-side-note"><span className="farm-side-line" /><span>{dict.hero_side}</span></div>
+            <div className="lado-hero-footnote"><span className="lado-seal">L</span><span><strong>Lado Organics</strong><small>Pilani · Rajasthan · India</small></span></div>
           </div>
-          <a className="farm-hero-scroll" href="#farm-world"><span /> {dict.scroll}</a>
+          <div className="lado-hero-art" aria-hidden="true">
+            <div className="lado-art-sun" /><div className="lado-art-hill lado-art-hill-back" /><div className="lado-art-hill lado-art-hill-front" />
+            <div className="lado-art-caption">A slower, more thoughtful way of living</div>
+          </div>
+          <div className="lado-hero-bottom"><span>01 / THE LADO STORY</span><span>SCROLL TO EXPLORE ↓</span></div>
         </section>
-        <div data-farm-reveal><FarmWorldSection /></div>
-        <div data-farm-reveal>
-          {catalogStatus === "loading" ? (
-            <section id="store" className="py-20 px-4 text-center border-t border-[var(--border)]" role="status">Loading the live Lado Organics catalogue…</section>
-          ) : catalogStatus === "error" ? (
-            <section id="store" className="py-20 px-4 text-center border-t border-[var(--border)]">
-              <h2 className="text-3xl font-serif font-bold">The store is temporarily unavailable</h2>
-              <p className="mt-3 text-sm opacity-75">We could not verify current product prices and stock. Please try again shortly or contact our team.</p>
-              <button type="button" onClick={() => window.location.reload()} className="primary-btn mt-5 rounded-full px-5 py-3 text-sm font-bold">Try again</button>
-            </section>
-          ) : (
-            <StorefrontSection products={products} locale={locale} searchQuery={searchQuery} whatsappNumber={whatsappNumber} onAddToBag={handleAddToBag} />
-          )}
-        </div>
-        <div data-farm-reveal><EssentialsClubSection /></div>
-        <div data-farm-reveal><TrustAndProcessSection whatsappNumber={whatsappNumber} /></div>
-        <div data-farm-reveal><FarmCalculatorsSuite locale={locale} /></div>
-        <section id="adopt" className="py-20 px-4 sm:px-6 lg:px-8 border-t border-[var(--border)]">
-          <div className="max-w-6xl mx-auto"><div className="text-center mb-12"><h2 className="text-3xl sm:text-5xl font-serif font-bold">{dict.section_adopt}</h2><p className="mt-3 max-w-2xl mx-auto opacity-80">{dict.adopt_description}</p></div>
-            <div className="grid sm:grid-cols-3 gap-6">{["Dholi Sheri","Tara","Roshni"].map(name => <div key={name} className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 text-center"><h3 className="text-2xl font-serif font-bold text-[var(--terracotta)]">{name}</h3><p className="text-sm opacity-80 my-3">{dict.calf_tag}</p><a href="#experiences" className="primary-btn inline-block px-5 py-2.5 rounded-full text-xs font-bold">{dict.sponsor} {name}</a></div>)}</div>
+
+        <section className="lado-intro" id="our-approach" data-lado-reveal>
+          <p className="lado-eyebrow">{copy.promise}</p>
+          <h2>{copy.promiseTitle}</h2>
+          <p>{copy.promiseText}</p>
+          <div className="lado-intro-links">
+            <Link href="/trace">{copy.trace} ↗</Link><Link href="/dashboard">{copy.account} ↗</Link><Link href="/contact">{copy.help} ↗</Link>
           </div>
         </section>
-        <div data-farm-reveal><FarmExperienceSection whatsappNumber={whatsappNumber} /></div>
-        <div data-farm-reveal><BuildYourOwnExperience whatsappNumber={whatsappNumber} /></div>
-        <div data-farm-reveal><GauSevaTransparencySection /></div>
-        <div data-farm-reveal><JournalLibrarySection locale={locale} /></div>
-        <div data-farm-reveal><CorporateGiftingSection whatsappNumber={whatsappNumber} /></div>
-        <div data-farm-reveal><CowAsCoconutMap /></div>
+
+        <section id="collection" className="lado-collection" data-lado-reveal>
+          <div className="lado-section-heading">
+            <div><p className="lado-eyebrow">THE LADO COLLECTION</p><h2>{copy.shop}</h2></div>
+            <p>Explore the products currently listed in our live catalogue.</p>
+          </div>
+          {catalogState === "loading" ? <div className="lado-state" role="status">{copy.loading}</div> :
+            catalogState === "error" ? <div className="lado-state"><p>{copy.error}</p><button className="lado-button lado-button-primary" type="button" onClick={() => window.location.reload()}>{copy.retry}</button></div> :
+            <StorefrontSection products={products} locale={locale} searchQuery={query} whatsappNumber={whatsappNumber} onAddToBag={addItem} />}
+          <div className="lado-catalog-tools">
+            <label htmlFor="lado-product-search">Search collection</label>
+            <input id="lado-product-search" type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search products…" onKeyDown={(event) => { if (event.key === "Enter" && query.trim().length > 1) router.push("/search?q=" + encodeURIComponent(query.trim())); }} />
+          </div>
+        </section>
+
+        <div data-lado-reveal><FarmWorldSection /></div>
+        <div data-lado-reveal><EssentialsClubSection /></div>
+        <div data-lado-reveal><TrustAndProcessSection whatsappNumber={whatsappNumber} /></div>
+        <div data-lado-reveal><FarmCalculatorsSuite locale={locale} /></div>
+        <div data-lado-reveal><GauSevaTransparencySection /></div>
+        <div data-lado-reveal><JournalLibrarySection locale={locale} /></div>
+        <div data-lado-reveal><CorporateGiftingSection whatsappNumber={whatsappNumber} /></div>
+
+        <section className="lado-journey-strip" data-lado-reveal>
+          <div><p className="lado-eyebrow">CONTINUE YOUR LADO JOURNEY</p><h2>Know your product. Follow its journey.</h2><p>Visit your account, explore available batch information or speak with our team.</p></div>
+          <div className="lado-journey-actions"><Link href="/trace">Batch traceability ↗</Link><Link href="/dashboard">My account ↗</Link><Link href="/contact">Get in touch ↗</Link></div>
+        </section>
       </main>
-      <footer className="py-8 px-4 border-t border-[var(--border)] text-center text-xs opacity-75">© 2026 Lado Organics • Pilani, Rajasthan • ladoorganics.in • <a href="/contact" className="underline">{dict.footer_help}</a> • <a href="/policies" className="underline">{dict.footer_policies}</a></footer>
+
+      <footer className="lado-footer">
+        <div className="lado-footer-main">
+          <Link href="/" aria-label="Lado Organics home"><Image src="/lado-organics-logo.svg" alt="Lado Organics" width={160} height={88} /></Link>
+          <p>{copy.footer}</p>
+          <nav aria-label="Footer navigation"><Link href="/contact">{copy.help}</Link><Link href="/policies">Policies</Link><Link href="/trace">{copy.trace}</Link><Link href="/dashboard">{copy.account}</Link></nav>
+        </div>
+        <div className="lado-footer-bottom"><span>© {new Date().getFullYear()} Lado Organics</span><span>Pilani, Rajasthan, India</span><span>Lado Love Pure</span></div>
+      </footer>
       <CartCheckoutDrawer />
     </div>
   );

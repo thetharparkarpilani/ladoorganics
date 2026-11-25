@@ -1,0 +1,120 @@
+:root {
+  --lado-ink: #29271f;
+  --lado-forest: #254b36;
+  --lado-forest-deep: #183526;
+  --lado-ivory: #f8f5ec;
+  --lado-paper: #fffdf7;
+  --lado-clay: #b86d4c;
+  --lado-gold: #c9a66b;
+  --lado-line: rgba(41,39,31,.14);
+  --lado-muted: #777366;
+}
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--lado-paper); color: var(--lado-ink); font-family: "DM Sans", sans-serif; }
+.lado-site { overflow: clip; background: var(--lado-paper); }
+.lado-announcement { padding: 9px 18px; text-align: center; color: #f8f5ec; background: var(--lado-forest-deep); font-size: 10px; letter-spacing: .16em; text-transform: uppercase; }
+.lado-header { position: sticky; top: 0; z-index: 50; background: rgba(255,253,247,.94); border-bottom: 1px solid var(--lado-line); backdrop-filter: blur(16px); }
+.lado-header-inner { width: min(1440px, calc(100% - 64px)); min-height: 88px; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 28px; }
+.lado-brand { display: flex; align-items: center; flex: 0 0 auto; }
+.lado-brand img { width: 146px; height: 78px; object-fit: contain; }
+.lado-nav { display: flex; align-items: center; gap: clamp(14px,2vw,30px); }
+.lado-nav a,.lado-footer a { color: var(--lado-ink); text-decoration: none; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; transition: color .2s ease; }
+.lado-nav a:hover,.lado-footer a:hover { color: var(--lado-clay); }
+.lado-header-actions { display: flex; align-items: center; gap: 10px; }
+.lado-header-actions select { border: 1px solid var(--lado-line); border-radius: 99px; background: transparent; padding: 9px 10px; color: var(--lado-ink); font-size: 11px; }
+.lado-account-link { color: var(--lado-ink); text-decoration: none; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.lado-cart-button { border: 0; border-radius: 99px; padding: 11px 17px; background: var(--lado-forest); color: white; font-size: 11px; font-weight: 700; cursor: pointer; }
+.lado-cart-button span { display: inline-grid; place-items: center; min-width: 19px; height: 19px; margin-left: 6px; border-radius: 50%; background: #f4e8cf; color: var(--lado-forest-deep); }
+.lado-menu-toggle { display: none; }
+.lado-hero { position: relative; min-height: min(760px, calc(100svh - 100px)); display: grid; grid-template-columns: 1.03fr .97fr; align-items: center; gap: 4vw; padding: 88px max(7vw, calc((100vw - 1320px)/2)) 100px; background: linear-gradient(120deg,#f3efe2 0%,#f8f5ec 52%,#e7eadc 100%); isolation: isolate; }
+.lado-hero-text { position: relative; z-index: 2; max-width: 650px; }
+.lado-eyebrow { margin: 0 0 20px; color: var(--lado-clay); font-size: 10px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; }
+.lado-eyebrow span { color: var(--lado-gold); }
+.lado-hero h1 { max-width: 700px; margin: 0; color: var(--lado-forest-deep); font-family: "Playfair Display",serif; font-size: clamp(48px,6.3vw,88px); font-weight: 500; line-height: 1.04; letter-spacing: -.045em; }
+.lado-hero-description { max-width: 510px; margin: 26px 0 0; color: #68665b; font-size: 15px; line-height: 1.9; }
+.lado-hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
+.lado-button { display: inline-flex; align-items: center; justify-content: center; gap: 18px; min-height: 48px; padding: 0 21px; border-radius: 2px; text-decoration: none; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; transition: transform .2s ease,background .2s ease; }
+.lado-button:hover { transform: translateY(-2px); }
+.lado-button-primary { border: 1px solid var(--lado-forest); background: var(--lado-forest); color: white; }
+.lado-button-quiet { border: 1px solid var(--lado-line); color: var(--lado-forest); background: rgba(255,255,255,.35); }
+.lado-hero-footnote { display: flex; align-items: center; gap: 12px; margin-top: 52px; }
+.lado-seal { display: grid; width: 38px; height: 38px; place-items: center; border: 1px solid var(--lado-gold); border-radius: 50%; color: var(--lado-forest); font-family: "Playfair Display",serif; font-size: 22px; }
+.lado-hero-footnote strong,.lado-hero-footnote small { display: block; }
+.lado-hero-footnote strong { font-family: "Playfair Display",serif; font-size: 14px; }
+.lado-hero-footnote small { margin-top: 3px; color: var(--lado-muted); font-size: 9px; letter-spacing: .12em; text-transform: uppercase; }
+.lado-hero-art { position: relative; min-height: 470px; height: 100%; max-height: 560px; overflow: hidden; border-radius: 48% 48% 3px 3px; background: radial-gradient(circle at 65% 22%,#fff2c8 0 8%,transparent 8.5%),linear-gradient(180deg,#d9dfc6 0%,#e8e6d2 48%,#b8c39e 100%); }
+.lado-art-sun { position: absolute; top: 15%; right: 18%; width: 112px; aspect-ratio: 1; border-radius: 50%; background: #f5dca5; box-shadow: 0 0 60px rgba(245,220,165,.55); }
+.lado-art-hill { position: absolute; left: -12%; width: 125%; border-radius: 50% 50% 0 0; }
+.lado-art-hill-back { bottom: 15%; height: 42%; background: linear-gradient(160deg,#899b72,#657d58); transform: rotate(-8deg); }
+.lado-art-hill-front { bottom: -14%; height: 42%; background: linear-gradient(160deg,#637d53,#35563e); transform: rotate(5deg); }
+.lado-art-caption { position: absolute; right: 20px; bottom: 22px; z-index: 2; color: rgba(255,255,255,.9); font-family: "Playfair Display",serif; font-size: 15px; font-style: italic; }
+.lado-hero-bottom { position: absolute; right: max(7vw, calc((100vw - 1320px)/2)); bottom: 26px; left: max(7vw, calc((100vw - 1320px)/2)); display: flex; justify-content: space-between; color: #777366; font-size: 9px; letter-spacing: .16em; }
+.lado-intro { max-width: 850px; margin: auto; padding: 112px 24px 106px; text-align: center; }
+.lado-intro h2,.lado-section-heading h2,.lado-journey-strip h2 { margin: 0; color: var(--lado-forest-deep); font-family: "Playfair Display",serif; font-size: clamp(36px,4.4vw,58px); font-weight: 500; line-height: 1.12; letter-spacing: -.03em; }
+.lado-intro > p:not(.lado-eyebrow) { max-width: 690px; margin: 22px auto 0; color: var(--lado-muted); font-size: 14px; line-height: 1.9; }
+.lado-intro-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 24px; margin-top: 32px; }
+.lado-intro-links a,.lado-journey-actions a { color: var(--lado-forest); text-decoration: none; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.lado-collection { padding: 90px max(5vw,calc((100vw - 1320px)/2)); background: var(--lado-ivory); }
+.lado-section-heading { display: flex; align-items: end; justify-content: space-between; gap: 30px; margin-bottom: 35px; }
+.lado-section-heading .lado-eyebrow { margin-bottom: 10px; }
+.lado-section-heading h2 { font-size: clamp(38px,4vw,54px); }
+.lado-section-heading > p { max-width: 340px; margin: 0 0 6px; color: var(--lado-muted); font-size: 13px; line-height: 1.8; }
+.lado-collection #store { padding: 10px 0 30px; border: 0; }
+.lado-collection #store > div { max-width: none; }
+.lado-collection #store > div > div:first-child { display: none; }
+.lado-catalog-tools { display: flex; align-items: center; gap: 14px; max-width: 480px; margin: 26px auto 0; }
+.lado-catalog-tools label { color: var(--lado-muted); font-size: 10px; font-weight: 700; text-transform: uppercase; white-space: nowrap; }
+.lado-catalog-tools input { width: 100%; min-width: 0; border: 1px solid var(--lado-line); border-radius: 0; padding: 13px 14px; background: var(--lado-paper); color: var(--lado-ink); font-size: 12px; }
+.lado-state { display: grid; min-height: 160px; place-items: center; align-content: center; gap: 16px; padding: 30px; color: var(--lado-muted); text-align: center; font-size: 13px; }
+.lado-journey-strip { display: flex; align-items: center; justify-content: space-between; gap: 50px; padding: 86px max(7vw,calc((100vw - 1320px)/2)); background: #e9ecdf; }
+.lado-journey-strip h2 { max-width: 600px; font-size: clamp(34px,4vw,52px); }
+.lado-journey-strip p:not(.lado-eyebrow) { max-width: 550px; color: var(--lado-muted); font-size: 13px; line-height: 1.8; }
+.lado-journey-actions { display: grid; gap: 16px; min-width: 190px; }
+.lado-footer { padding: 54px max(5vw,calc((100vw - 1320px)/2)) 20px; background: var(--lado-forest-deep); color: #f8f5ec; }
+.lado-footer-main { display: flex; align-items: center; justify-content: space-between; gap: 25px; padding-bottom: 40px; }
+.lado-footer-main img { width: 130px; height: 75px; object-fit: contain; filter: brightness(0) invert(1); }
+.lado-footer-main p { color: rgba(255,255,255,.7); font-family: "Playfair Display",serif; font-size: 17px; font-style: italic; }
+.lado-footer nav { display: flex; flex-wrap: wrap; gap: 18px; }
+.lado-footer a { color: #f8f5ec; font-size: 9px; }
+.lado-footer-bottom { display: flex; justify-content: space-between; gap: 16px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.18); color: rgba(255,255,255,.55); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
+[data-lado-reveal] { opacity: 0; transform: translateY(22px); transition: opacity .7s ease,transform .7s ease; }
+[data-lado-reveal].lado-is-visible { opacity: 1; transform: none; }
+@media (max-width: 1080px) {
+  .lado-header-inner { width: calc(100% - 36px); gap: 14px; }
+  .lado-nav { gap: 12px; }
+  .lado-nav a { font-size: 9px; }
+  .lado-account-link { display: none; }
+  .lado-hero { padding-right: 5vw; padding-left: 5vw; }
+}
+@media (max-width: 760px) {
+  .lado-announcement { font-size: 8px; letter-spacing: .1em; }
+  .lado-header-inner { min-height: 72px; flex-wrap: wrap; }
+  .lado-brand img { width: 116px; height: 64px; }
+  .lado-menu-toggle { display: inline-flex; margin-left: auto; border: 1px solid var(--lado-line); padding: 9px 13px; background: transparent; color: var(--lado-ink); font-size: 10px; font-weight: 700; text-transform: uppercase; }
+  .lado-nav { display: none; order: 4; width: 100%; padding: 12px 0 18px; }
+  .lado-nav.is-open { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+  .lado-nav a { font-size: 10px; }
+  .lado-header-actions { gap: 6px; }
+  .lado-header-actions select { padding: 8px 6px; font-size: 9px; }
+  .lado-cart-button { padding: 9px 11px; font-size: 10px; }
+  .lado-hero { min-height: 0; grid-template-columns: 1fr; gap: 35px; padding: 68px 24px 75px; }
+  .lado-hero h1 { font-size: clamp(46px,12vw,68px); }
+  .lado-hero-description { font-size: 13px; }
+  .lado-hero-art { min-height: 300px; max-height: 350px; width: 88%; margin: 0 auto; }
+  .lado-hero-bottom { right: 24px; left: 24px; bottom: 18px; font-size: 7px; }
+  .lado-intro { padding: 78px 24px; }
+  .lado-collection { padding: 70px 18px; }
+  .lado-section-heading { display: block; }
+  .lado-section-heading > p { margin-top: 12px; }
+  .lado-catalog-tools { display: grid; gap: 7px; }
+  .lado-journey-strip { display: block; padding: 68px 24px; }
+  .lado-journey-actions { margin-top: 28px; }
+  .lado-footer-main { align-items: flex-start; flex-direction: column; }
+  .lado-footer nav { display: grid; grid-template-columns: 1fr 1fr; }
+  .lado-footer-bottom { flex-direction: column; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,*::before,*::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  [data-lado-reveal] { opacity: 1; transform: none; }
+}
