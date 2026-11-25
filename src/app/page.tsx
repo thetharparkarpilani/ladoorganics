@@ -128,7 +128,7 @@ export default function HomePage() {
                 <a href="#store" className="farm-hero-primary">{dict.cta_shop} <span aria-hidden="true">↗</span></a>
                 <a href="#farm-world" className="farm-hero-secondary">{dict.hero_cta_farm} <span aria-hidden="true">↓</span></a>
               </div>
-              <div className="farm-hero-signature"><span className="farm-signature-mark">L</span><span><strong>Lado Organics</strong><small>Lado Love Pure</small></span></div>
+              <div className="farm-hero-signature"><Image src="/lado-organics-logo.svg" alt="" width={124} height={68} className="farm-signature-logo" /><span><strong>Lado Organics</strong><small>Lado Love Pure</small></span></div>
             </div>
             <div className="farm-hero-side-note"><span className="farm-side-line" /><span>{dict.hero_side}</span></div>
           </div>
@@ -151,9 +151,15 @@ export default function HomePage() {
         <div data-farm-reveal><EssentialsClubSection /></div>
         <div data-farm-reveal><TrustAndProcessSection whatsappNumber={whatsappNumber} /></div>
         <div data-farm-reveal><FarmCalculatorsSuite locale={locale} /></div>
-        <section id="adopt" className="py-20 px-4 sm:px-6 lg:px-8 border-t border-[var(--border)]">
-          <div className="max-w-6xl mx-auto"><div className="text-center mb-12"><h2 className="text-3xl sm:text-5xl font-serif font-bold">{dict.section_adopt}</h2><p className="mt-3 max-w-2xl mx-auto opacity-80">{dict.adopt_description}</p></div>
-            <div className="grid sm:grid-cols-3 gap-6">{["Dholi Sheri","Tara","Roshni"].map(name => <div key={name} className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 text-center"><h3 className="text-2xl font-serif font-bold text-[var(--terracotta)]">{name}</h3><p className="text-sm opacity-80 my-3">{dict.calf_tag}</p><a href="#experiences" className="primary-btn inline-block px-5 py-2.5 rounded-full text-xs font-bold">{dict.sponsor} {name}</a></div>)}</div>
+        <section id="adopt" className="lado-gauseva-invitation border-t border-[var(--border)] px-4 py-20 sm:px-6 lg:px-8">
+          <div className="mx-auto grid max-w-6xl items-center gap-8 rounded-[28px] border border-[var(--border)] bg-[var(--surface)] p-7 shadow-sm sm:p-10 lg:grid-cols-[1fr_auto]">
+            <div>
+              <span className="store-eyebrow">LADO ORGANICS · GAU SEVA</span>
+              <h2 className="mt-4 font-serif text-3xl font-bold text-[var(--mud)] sm:text-5xl">{dict.section_adopt}</h2>
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--muted)]">{dict.adopt_description}</p>
+              <p className="mt-3 max-w-2xl text-xs leading-6 text-[var(--muted)]">Current sponsorship opportunities and animal records are shared only after they have been verified by the Lado team.</p>
+            </div>
+            <Link href="/contact" className="primary-btn inline-flex min-h-12 items-center justify-center rounded-full px-7 py-3 text-xs font-bold">{dict.nav_help} <span className="ml-2" aria-hidden="true">↗</span></Link>
           </div>
         </section>
         <div data-farm-reveal><FarmExperienceSection whatsappNumber={whatsappNumber} /></div>
