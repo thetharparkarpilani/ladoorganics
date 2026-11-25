@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 
 export const runtime = "nodejs";
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const configuredBase = process.env.NEXT_PUBLIC_SITE_URL || "https://ladoorganics.in";
