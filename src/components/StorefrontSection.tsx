@@ -23,19 +23,19 @@ export default function StorefrontSection({
 }: StorefrontSectionProps) {
   const dict = TRANSLATIONS[locale] ?? TRANSLATIONS.en;
   const copy = locale === "hi" ? {
-    noMatch: "आपकी खोज से मिलता-जुलता कोई उत्पाद नहीं मिला।", discover: "उत्पाद की जानकारी देखें",
+    noMatch: "आपकी खोज से मिलता-जुलता कोई उत्पाद नहीं मिला।", emptyTitle: "अभी कोई उत्पाद लाइव सूची में उपलब्ध नहीं है।", emptyDescription: "मौजूदा उत्पाद, पैक और कीमत की पुष्टि के लिए Lado टीम से संपर्क करें।", contact: "टीम से संपर्क करें", discover: "उत्पाद की जानकारी देखें",
     per: "प्रति", unit: "इकाई", add: "बैग में जोड़ें", order: "व्हाट्सऐप से ऑर्डर पूछें",
     photoKicker: "पिलानी की एक झलक", photoTitle: "खेत, कारीगरी और उत्पाद।",
     photoDescription: "Lado Organics के खेत और पारंपरिक उत्पादों की एक झलक।",
     calculator: "ऑर्डर और भुंगा स्टे अनुमानक",
-    calculatorNote: "दर्ज आधार कीमतों से मात्रा और अनुमानित राशि देखें। अंतिम शिपिंग और लागू कर ऑर्डर पूरा होने से पहले बताए जाएँगे।",
-    ghee: "A2 बिलोना घी (1 लीटर)", dhoop: "थारपारकर धूप (डिब्बा)",
-    khad: "शुद्ध केंचुआ खाद (5 किलो बैग)", stay: "डीप वर्क भुंगा स्टे (रातें)",
+    calculatorNote: "मौजूदा कैटलॉग में उपलब्ध पैक विकल्पों के आधार पर मात्रा चुनें। कीमत या उपलब्धता दर्ज न हो तो टीम से पुष्टि करें।",
+    ghee: "बिलोना घी", dhoop: "थारपारकर धूप",
+    khad: "केंचुआ खाद", stay: "भुंगा स्टे (रातें)",
     subtotal: "अनुमानित कुल", send: "व्हाट्सऐप पर चयन भेजें",
     photo1: "खेत से घर तक", photo2: "खेत से जुड़ी जड़ें", photo3: "सोच-समझकर बनी परंपरा",
-    waGreeting: "नमस्ते Lado Organics!", waItem: "उत्पाद", waPrice: "दर्ज कीमत",
+    waGreeting: "नमस्ते Lado Organics!", waItem: "उत्पाद", waPrice: "कैटलॉग कीमत",
     waAvailability: "कृपया मौजूदा बैच की उपलब्धता और ऑर्डर की जानकारी दें।",
-    waSelection: "चुने गए उत्पाद", waEstimate: "अनुमानित राशि (शिपिंग/कर से पहले)",
+    waSelection: "चुने गए उत्पाद", waEstimate: "दर्ज कैटलॉग कुल (शिपिंग/कर से पहले)",
     waConfirm: "कृपया उपलब्धता और अंतिम जानकारी की पुष्टि करें।",
     descriptions: {
       "a2-bilona-ghee": "पिलानी, राजस्थान में देसी थारपारकर गाय के दही से पारंपरिक बिलोना विधि द्वारा मथा गया घी।",
@@ -44,19 +44,19 @@ export default function StorefrontSection({
       "deep-work-bhunga-stay": "पिलानी में पारंपरिक राजस्थानी मिट्टी की वास्तुकला वाला भुंगा ठहराव।",
     } as Record<string,string>,
   } : locale === "ma" ? {
-    noMatch: "थारी खोज सूं मेल खातो सामान कोनी मिल्यो।", discover: "ई सामान री पूरी बात देखो",
+    noMatch: "थारी खोज सूं मेल खातो सामान कोनी मिल्यो।", emptyTitle: "अभी चालू सूची में कोई सामान उपलब्ध कोनी है।", emptyDescription: "चालू सामान, पैक अर भाव पक्को करवा Lado टीम सूं बात करो।", contact: "टीम नै खबर करो", discover: "ई सामान री पूरी बात देखो",
     per: "एक", unit: "इकाई", add: "थैली में जोड़ो", order: "व्हाट्सऐप पर ऑर्डर पूछो",
     photoKicker: "पिलानी री एक झलक", photoTitle: "खेत, कारीगरी अर सामान।",
     photoDescription: "Lado Organics रै खेत अर पुराणी रीति सूं बण्या सामान री झलक।",
     calculator: "ऑर्डर अर भुंगा ठहराव रो हिसाब",
-    calculatorNote: "लिख्या आधार भाव सूं मात्रा अर अंदाजी रकम देखो। आखरी भेजण रो खर्चो अर लागू कर ऑर्डर पूरा होण सूं पैली बतावैला।",
-    ghee: "A2 बिलोना घी (1 लीटर)", dhoop: "थारपारकर धूप (डिब्बो)",
-    khad: "चोखी केंचुआ खाद (5 किलो थैली)", stay: "डीप वर्क भुंगा ठहराव (रात)",
+    calculatorNote: "चालू कैटलॉग में उपलब्ध पैक विकल्पां सूं मात्रा चुनो। भाव या उपलब्धता दर्ज कोनी होवै तो टीम सूं पक्को करो।",
+    ghee: "बिलोना घी", dhoop: "थारपारकर धूप",
+    khad: "केंचुआ खाद", stay: "भुंगा ठहराव (रात)",
     subtotal: "अंदाजी कुल", send: "चयन व्हाट्सऐप पर भेजो",
     photo1: "खेत सूं घर तक", photo2: "खेत री जड़", photo3: "सोच-समझ री परंपरा",
-    waGreeting: "खम्मा घणी Lado Organics!", waItem: "सामान", waPrice: "लिख्यो भाव",
+    waGreeting: "खम्मा घणी Lado Organics!", waItem: "सामान", waPrice: "कैटलॉग भाव",
     waAvailability: "कृपा कर चालू बैच री उपलब्धता अर ऑर्डर री जानकारी देवो।",
-    waSelection: "चुन्या सामान", waEstimate: "अंदाजी रकम (भेजण/कर सूं पैली)",
+    waSelection: "चुन्या सामान", waEstimate: "दर्ज कैटलॉग कुल (भेजण/कर सूं पैली)",
     waConfirm: "कृपा कर उपलब्धता अर आखरी जानकारी पक्की करो।",
     descriptions: {
       "a2-bilona-ghee": "पिलानी में देसी थारपारकर गाय रै दही नै पुराणी लकड़ी री बिलोना सूं मथकै बणायो घी।",
@@ -65,26 +65,26 @@ export default function StorefrontSection({
       "deep-work-bhunga-stay": "पिलानी में राजस्थानी माटी री पुराणी बनावट वालो भुंगा ठहराव।",
     } as Record<string,string>,
   } : {
-    noMatch: "No matching items found for your search.", discover: "Discover this product",
+    noMatch: "No matching products found for your search.", emptyTitle: "No products are currently listed in the live catalogue.", emptyDescription: "Contact the Lado team to confirm current products, pack options and prices.", contact: "Contact the team", discover: "Discover this product",
     per: "Per", unit: "Unit", add: "Add to Bag", order: "Order via WhatsApp",
     photoKicker: "A glimpse of Pilani", photoTitle: "The farm, the craft, the collection.",
     photoDescription: "A visual introduction to the Lado Organics farm story and traditional product collection.",
-    calculator: "Order & Bhunga Stay Estimator",
-    calculatorNote: "Estimate quantities using listed baseline rates. Final shipping and applicable taxes are confirmed prior to order completion.",
-    ghee: "A2 Bilona Ghee (1 litre)", dhoop: "Tharparkar Dhoop (Box)",
-    khad: "Pure Kechua Khad (5 kg Bag)", stay: "Deep Work Bhunga Stay (Nights)",
-    subtotal: "Estimated Subtotal", send: "Send Selection on WhatsApp",
+    calculator: "Product quantity planner & Bhunga stay enquiry",
+    calculatorNote: "Choose quantities using the current catalogue variants. If a price or availability is not listed, the team will confirm it before an order.",
+    ghee: "Bilona Ghee", dhoop: "Tharparkar Dhoop",
+    khad: "Vermicompost", stay: "Bhunga Stay (nights)",
+    subtotal: "Listed catalogue subtotal", send: "Send Selection on WhatsApp",
     photo1: "From farm to home", photo2: "Rooted in the farm", photo3: "Tradition, thoughtfully made",
-    waGreeting: "Namaste Lado Organics!", waItem: "Item", waPrice: "Listed Price",
+    waGreeting: "Namaste Lado Organics!", waItem: "Item", waPrice: "Current listed price",
     waAvailability: "Please share current batch availability and order details.",
-    waSelection: "Selected items", waEstimate: "Estimated subtotal (before shipping/applicable taxes)",
+    waSelection: "Selected items", waEstimate: "Listed catalogue subtotal (before shipping/applicable taxes)",
     waConfirm: "Please confirm availability and final details.",
     descriptions: {} as Record<string,string>,
   };
   const [selectedVariantByProduct, setSelectedVariantByProduct] = useState<Record<string, string>>({});
-  const [gheeLitres, setGheeLitres] = useState<number>(1);
-  const [dhoopBoxes, setDhoopBoxes] = useState<number>(0);
-  const [khadBags, setKhadBags] = useState<number>(0);
+  const [gheeUnits, setGheeUnits] = useState<number>(0);
+  const [dhoopUnits, setDhoopUnits] = useState<number>(0);
+  const [khadUnits, setKhadUnits] = useState<number>(0);
   const [stayNights, setStayNights] = useState<number>(0);
 
   const filteredProducts = useMemo(() => {
@@ -115,23 +115,23 @@ export default function StorefrontSection({
   }, [products]);
 
   const hasUnpricedSelection =
-    (gheeLitres > 0 && !estimatedRates.ghee) ||
-    (dhoopBoxes > 0 && !estimatedRates.dhoop) ||
-    (khadBags > 0 && !estimatedRates.khad) ||
+    (gheeUnits > 0 && !estimatedRates.ghee) ||
+    (dhoopUnits > 0 && !estimatedRates.dhoop) ||
+    (khadUnits > 0 && !estimatedRates.khad) ||
     (stayNights > 0 && !estimatedRates.stay);
 
   const estimatedTotal = useMemo(() => (
-    gheeLitres * (estimatedRates.ghee?.price ?? 0) +
-    dhoopBoxes * (estimatedRates.dhoop?.price ?? 0) +
-    khadBags * (estimatedRates.khad?.price ?? 0) +
+    gheeUnits * (estimatedRates.ghee?.price ?? 0) +
+    dhoopUnits * (estimatedRates.dhoop?.price ?? 0) +
+    khadUnits * (estimatedRates.khad?.price ?? 0) +
     stayNights * (estimatedRates.stay?.price ?? 0)
-  ), [gheeLitres, dhoopBoxes, khadBags, stayNights, estimatedRates]);
+  ), [gheeUnits, dhoopUnits, khadUnits, stayNights, estimatedRates]);
 
-  const sendWhatsAppOrder = (productName: string, unitLabel: string, priceInr: number) => {
+  const sendWhatsAppOrder = (productName: string, unitLabel: string, priceInr: number | null) => {
     const message = [
       copy.waGreeting,
       `${copy.waItem}: ${productName} (${unitLabel})`,
-      `${copy.waPrice}: ₹${priceInr.toLocaleString("en-IN")}`,
+      priceInr === null ? "Current price: to be confirmed by the Lado team." : `${copy.waPrice}: ₹${priceInr.toLocaleString("en-IN")}`,
       copy.waAvailability
     ].join("\n");
     const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
@@ -145,13 +145,14 @@ export default function StorefrontSection({
         ? quantity + " x " + name + " (" + rate.label + " @ ₹" + rate.price.toLocaleString("en-IN") + " each)"
         : quantity + " x " + name + " (current price to be confirmed)");
     };
-    addLine(gheeLitres, "A2 Bilona Ghee", estimatedRates.ghee);
-    addLine(dhoopBoxes, "Tharparkar Dhoop", estimatedRates.dhoop);
-    addLine(khadBags, "Pure Kechua Khad", estimatedRates.khad);
-    addLine(stayNights, '"Deep Work" Bhunga Stay', estimatedRates.stay);
+    addLine(gheeUnits, "Bilona Ghee", estimatedRates.ghee);
+    addLine(dhoopUnits, "Tharparkar Dhoop", estimatedRates.dhoop);
+    addLine(khadUnits, "Vermicompost", estimatedRates.khad);
+    addLine(stayNights, "Bhunga Stay", estimatedRates.stay);
 
-    const summary = parts.length > 0 ? parts.join(", ") : "Custom enquiry";
-    const subtotal = hasUnpricedSelection ? "Rates to be confirmed by the Lado team" : "₹" + estimatedTotal.toLocaleString("en-IN");
+    const hasSelection = parts.length > 0;
+    const summary = hasSelection ? parts.join(", ") : "Please confirm current products and options";
+    const subtotal = !hasSelection ? "No quantities selected; please confirm current options" : hasUnpricedSelection ? "Rates to be confirmed by the Lado team" : "₹" + estimatedTotal.toLocaleString("en-IN");
     const message = [
       copy.waGreeting,
       `${copy.waSelection}: ${summary}`,
@@ -173,9 +174,16 @@ export default function StorefrontSection({
             <h2 className="text-3xl sm:text-5xl font-serif font-bold mt-2">{dict.section_store}</h2>
           </div>
 
-          {filteredProducts.length === 0 ? (
+          {products.length === 0 ? (
+            <div className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-10 text-center">
+              <h3 className="font-serif text-2xl font-bold text-[var(--mud)]">{copy.emptyTitle}</h3>
+              <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-[var(--muted)]">{copy.emptyDescription}</p>
+              <Link href="/contact" className="primary-btn mt-6 inline-flex rounded-full px-6 py-3 text-xs font-bold">{copy.contact}</Link>
+            </div>
+          ) : filteredProducts.length === 0 ? (
             <div className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-10 text-center">
               <p className="font-medium">{copy.noMatch} “{searchQuery}”.</p>
+              <Link href="/store" className="mt-4 inline-flex text-xs font-bold text-[var(--terracotta)] underline underline-offset-4">{copy.discover}</Link>
             </div>
           ) : (
             <div className="home-store-grid grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -260,8 +268,8 @@ export default function StorefrontSection({
                         <span className="text-xs uppercase tracking-wider opacity-70">
                           {copy.per} {activeVariant?.label ?? copy.unit}
                         </span>
-                        <span className="text-2xl font-serif font-bold text-[var(--terracotta)]">
-                          ₹{(activeVariant?.priceInr ?? 0).toLocaleString("en-IN")}
+                        <span className="text-right text-sm font-serif font-bold text-[var(--terracotta)]">
+                          {activeVariant ? "₹" + activeVariant.priceInr.toLocaleString("en-IN") : "Availability & price to be confirmed"}
                         </span>
                       </div>
 
@@ -272,7 +280,7 @@ export default function StorefrontSection({
                             onClick={() =>
                               onAddToBag({
                                 sku: activeVariant.sku,
-                                title: `${product.nameEn} (${activeVariant.label})`,
+                                title: `${displayName} (${activeVariant.label})`,
                                 unitPriceInr: activeVariant.priceInr,
                                 quantity: 1
                               })
@@ -288,7 +296,7 @@ export default function StorefrontSection({
                             sendWhatsAppOrder(
                               product.nameEn,
                               activeVariant?.label ?? "Unit",
-                              activeVariant?.priceInr ?? 0
+                              activeVariant?.priceInr ?? null
                             )
                           }
                           className="w-full py-2.5 rounded-xl text-xs font-semibold border border-[var(--border)] hover:border-[var(--terracotta)] cursor-pointer"
@@ -347,42 +355,42 @@ export default function StorefrontSection({
           <div className="grid sm:grid-cols-2 gap-6 mb-8">
             <div>
               <label className="block text-xs font-bold uppercase mb-1">
-                {copy.ghee}: {gheeLitres}
+                {copy.ghee}: {gheeUnits}
               </label>
               <input
                 type="range"
                 min={0}
                 max={10}
-                value={gheeLitres}
-                onChange={(e) => setGheeLitres(Number(e.target.value))}
+                value={gheeUnits}
+                onChange={(e) => setGheeUnits(Number(e.target.value))}
                 className="w-full accent-[#c2410c]"
               />
             </div>
 
             <div>
               <label className="block text-xs font-bold uppercase mb-1">
-                {copy.dhoop}: {dhoopBoxes}
+                {copy.dhoop}: {dhoopUnits}
               </label>
               <input
                 type="range"
                 min={0}
                 max={10}
-                value={dhoopBoxes}
-                onChange={(e) => setDhoopBoxes(Number(e.target.value))}
+                value={dhoopUnits}
+                onChange={(e) => setDhoopUnits(Number(e.target.value))}
                 className="w-full accent-[#c2410c]"
               />
             </div>
 
             <div>
               <label className="block text-xs font-bold uppercase mb-1">
-                {copy.khad}: {khadBags}
+                {copy.khad}: {khadUnits}
               </label>
               <input
                 type="range"
                 min={0}
                 max={10}
-                value={khadBags}
-                onChange={(e) => setKhadBags(Number(e.target.value))}
+                value={khadUnits}
+                onChange={(e) => setKhadUnits(Number(e.target.value))}
                 className="w-full accent-[#c2410c]"
               />
             </div>
