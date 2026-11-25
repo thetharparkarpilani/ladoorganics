@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useCart } from "@/context/CartContext";
+import type { ProductDTO } from "@/types/domain";
 
 type OrderItem = {
   id: string;
@@ -32,6 +34,9 @@ export default function OrderHistoryPage() {
   const [orders, setOrders] = useState<CustomerOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [reorderingOrderId, setReorderingOrderId] = useState<string | null>(null);
+  const [reorderNotice, setReorderNotice] = useState<{ orderId: string; message: string } | null>(null);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     fetch("/api/dashboard/orders", { cache: "no-store" })
@@ -43,6 +48,52 @@ export default function OrderHistoryPage() {
       .catch((err) => setError(err instanceof Error ? err.message : "Unable to load your orders."))
       .finally(() => setLoading(false));
   }, []);
+
+  const reorder = async (order: CustomerOrder) => {
+    setReorderingOrderId(order.id);
+    setReorderNotice(null);
+    try {
+      const response = await fetch("/api/catalog", { cache: "no-store" });
+      if (!response.ok) throw new Error("The live catalogue is unavailable. Please try again later.");
+      const data = await response.json() as { catalog?: ProductDTO[] };
+      const catalog = Array.isArray(data.catalog) ? data.catalog : [];
+      let added = 0;
+      const unavailable: string[] = [];
+
+      for (const item of order.items || []) {
+        const product = catalog.find((entry) => entry.variants.some((variant) => variant.sku === item.variant_sku));
+        const variant = product?.variants.find((entry) => entry.sku === item.variant_sku);
+        const stock = Number(variant?.stockQty || 0);
+        if (!product || !variant || stock < 1) {
+          unavailable.push(item.item_title);
+          continue;
+        }
+        addToCart({
+          variantId: variant.id,
+          sku: variant.sku,
+          title: product.nameEn + " — " + variant.label,
+          priceInr: Number(variant.priceInr),
+          quantity: Math.min(Math.max(1, Number(item.quantity) || 1), stock),
+          maxStock: stock,
+        });
+        added += 1;
+      }
+
+      const message = added > 0
+        ? unavailable.length > 0
+          ? `${added} item(s) added using current prices. ${unavailable.length} item(s) are no longer available: ${unavailable.join(", ")}.`
+          : `${added} item(s) added using current catalogue prices and stock.`
+        : "None of the items in this order are currently available in the live catalogue.";
+      setReorderNotice({ orderId: order.id, message });
+    } catch (err) {
+      setReorderNotice({
+        orderId: order.id,
+        message: err instanceof Error ? err.message : "Unable to repeat this order right now.",
+      });
+    } finally {
+      setReorderingOrderId(null);
+    }
+  };
 
   const requestReturn = async (orderId: string) => {
     const reason = window.prompt("Please describe why you need to return this order (at least 5 characters).");
@@ -138,11 +189,16 @@ export default function OrderHistoryPage() {
                 </p>
               )}
               <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--border)] pt-4">
-                <div className="text-xs text-[var(--muted)]">
+                <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--muted)]">
                   {order.return_status ? <>Return request: <strong className="capitalize">{statusLabel(order.return_status)}</strong></> : order.status === "delivered" ? <button onClick={() => void requestReturn(order.id)} className="rounded-full border border-[var(--border)] px-4 py-2 font-semibold text-[var(--mud)]">Request a return</button> : null}
+                  <button type="button" onClick={() => void reorder(order)} disabled={reorderingOrderId !== null || !order.items?.length}
+                    className="rounded-full bg-[var(--terracotta)] px-4 py-2 font-semibold text-white disabled:opacity-50">
+                    {reorderingOrderId === order.id ? "Checking live stock…" : "Buy these items again"}
+                  </button>
                 </div>
                 <p className="text-sm text-[var(--muted)]">Order total <span className="ml-2 text-lg font-bold text-[var(--terracotta)]">₹{Number(order.total_inr).toLocaleString("en-IN")}</span></p>
               </div>
+              {reorderNotice?.orderId === order.id && <p role="status" className="mt-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] p-3 text-xs text-[var(--muted)]">{reorderNotice.message}</p>}
             </article>
           ))}
         </div>
