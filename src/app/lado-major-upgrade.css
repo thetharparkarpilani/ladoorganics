@@ -301,3 +301,41 @@ main:has(.trace-batch),main:has([data-traceability]) { background: var(--lado-iv
 @media (prefers-reduced-motion: reduce) {
   *,*::before,*::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+
+/* Shared chrome on every inner page */
+.lado-global-header { position: sticky; top: 0; z-index: 48; border-bottom: 1px solid var(--lado-line); background: rgba(255,253,247,.96); backdrop-filter: blur(16px); }
+.lado-global-header-inner { width: min(1380px,calc(100% - 48px)); min-height: 82px; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.lado-global-brand { display: flex; align-items: center; flex: 0 0 auto; }
+.lado-global-brand img { width: 132px; height: 72px; object-fit: contain; }
+.lado-global-nav { display: flex; align-items: center; gap: clamp(14px,2vw,28px); }
+.lado-global-nav a,.lado-global-footer a { color: var(--lado-ink); text-decoration: none; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.lado-global-nav a:hover,.lado-global-footer a:hover { color: var(--lado-clay); }
+.lado-global-actions { display: flex; align-items: center; gap: 12px; }
+.lado-global-actions select { border: 1px solid var(--lado-line); border-radius: 99px; padding: 8px; background: transparent; color: var(--lado-ink); font-size: 10px; }
+.lado-global-account { color: var(--lado-forest); text-decoration: none; font-size: 10px; font-weight: 700; white-space: nowrap; }
+.lado-global-bag { border: 0; border-radius: 99px; padding: 10px 15px; background: var(--lado-forest); color: white; font-size: 10px; font-weight: 700; }
+.lado-global-bag span { display: inline-grid; min-width: 19px; height: 19px; margin-left: 7px; place-items: center; border-radius: 50%; background: #f4e8cf; color: var(--lado-forest-deep); }
+.lado-global-menu-toggle { display: none; }
+.lado-global-footer { padding: 42px max(24px,calc((100vw - 1320px)/2)) 18px; background: var(--lado-forest-deep); color: #f8f5ec; }
+.lado-global-footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-bottom: 30px; }
+.lado-global-footer-inner img { width: 116px; height: 66px; object-fit: contain; filter: brightness(0) invert(1); }
+.lado-global-footer-inner p { color: rgba(255,255,255,.72); font: italic 15px "Playfair Display",Georgia,serif; }
+.lado-global-footer nav { display: flex; flex-wrap: wrap; gap: 16px; }
+.lado-global-footer a { color: #f8f5ec; font-size: 9px; }
+.lado-global-footer-bottom { display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,.18); padding-top: 16px; color: rgba(255,255,255,.58); font-size: 9px; letter-spacing: .12em; text-transform: uppercase; }
+@media(max-width:760px) {
+ .lado-global-header-inner { width: calc(100% - 28px); min-height: 70px; gap: 8px; flex-wrap: wrap; }
+ .lado-global-brand img { width: 108px; height: 60px; }
+ .lado-global-menu-toggle { display: inline-flex; margin-left: auto; border: 1px solid var(--lado-line); background: transparent; padding: 8px 11px; color: var(--lado-ink); font-size: 9px; font-weight: 700; text-transform: uppercase; }
+ .lado-global-nav { display: none; order: 4; width: 100%; padding: 8px 0 16px; }
+ .lado-global-nav.is-open { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+ .lado-global-nav a { font-size: 10px; }
+ .lado-global-actions { gap: 5px; }
+ .lado-global-actions select { padding: 7px 5px; font-size: 9px; }
+ .lado-global-account { display: none; }
+ .lado-global-bag { padding: 8px 10px; font-size: 9px; }
+ .lado-global-footer-inner { align-items: flex-start; flex-direction: column; }
+ .lado-global-footer nav { display: grid; grid-template-columns: 1fr 1fr; }
+ .lado-global-footer-bottom { flex-direction: column; gap: 8px; }
+}

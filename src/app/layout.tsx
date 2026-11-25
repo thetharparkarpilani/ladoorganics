@@ -7,6 +7,7 @@ import AnalyticsProvider from "@/components/AnalyticsProvider";
 import PWARegistration from "@/components/PWARegistration";
 import ConciergeWidget from "@/components/ConciergeWidget";
 import SiteAnnouncement from "@/components/SiteAnnouncement";
+import GlobalSiteChrome from "@/components/GlobalSiteChrome";
 import { LocaleProvider } from "@/context/LocaleContext";
 
 export const metadata: Metadata = {
@@ -44,6 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <AnalyticsProvider>
             <CartProvider>
               <SiteAnnouncement />
+              <GlobalSiteChrome />
               <div className="min-h-screen">{children}</div>
               <ConciergeWidget whatsappNumber={process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919636100337"} />
             </CartProvider>
