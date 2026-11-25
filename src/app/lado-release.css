@@ -78,3 +78,14 @@
 .farm-hero-primary:hover{background:#173b29;transform:translateY(-2px)}
 .farm-hero-secondary{border:1px solid rgba(45,56,40,.25);color:#34452f;background:rgba(255,255,255,.28)}
 @media(max-width:760px){.farm-hero-editorial{min-height:650px}.farm-hero-content{padding-top:90px;padding-bottom:90px}.farm-hero-copy h1{font-size:clamp(3rem,13vw,4.8rem)}.farm-hero-side-note{display:none}.home-store-card{padding:14px;border-radius:20px}}
+
+.admin-overview{max-width:1480px;margin:0 auto}
+.admin-overview-header{align-items:flex-end!important;border-bottom:1px solid var(--border);padding-bottom:24px}
+.admin-overview-header h1{font-size:clamp(28px,3vw,42px);letter-spacing:-.035em;color:var(--mud)}
+.admin-metric-grid{gap:16px!important}
+.admin-metric-card{position:relative;overflow:hidden;border-radius:22px!important;box-shadow:0 9px 28px rgba(54,43,31,.045)!important;transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease}
+.admin-metric-card:hover{transform:translateY(-3px);border-color:rgba(201,92,60,.4)}
+.admin-metric-card>span:first-child{letter-spacing:.15em}
+[aria-label="Admin navigation"] a.is-active,[aria-label="Mobile admin navigation"] a.is-active{background:rgba(32,78,54,.1);color:var(--accent-forest);font-weight:800}
+[aria-label="Admin navigation"] a:focus-visible,[aria-label="Mobile admin navigation"] a:focus-visible{outline-offset:2px}
+@media(max-width:640px){.admin-overview-header{align-items:flex-start!important;flex-direction:column}.admin-metric-card{padding:20px!important}}
