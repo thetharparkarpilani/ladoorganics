@@ -95,7 +95,7 @@ export default function ProductDetailPage(props: PageProps) {
         <p className="mt-3 text-sm opacity-75">{loadError}</p>
         <div className="mt-6 flex justify-center gap-3">
           <button type="button" onClick={() => window.location.reload()} className="primary-btn rounded-full px-5 py-3 text-sm font-bold">{labels.retry}</button>
-          <Link href="/#store" className="rounded-full border border-[var(--border)] px-5 py-3 text-sm font-bold">{labels.collection}</Link>
+          <Link href="/store" className="rounded-full border border-[var(--border)] px-5 py-3 text-sm font-bold">{labels.collection}</Link>
         </div>
       </main>
     );
@@ -106,7 +106,7 @@ export default function ProductDetailPage(props: PageProps) {
       <main className="min-h-[60vh] max-w-3xl mx-auto px-4 py-20 text-center">
         <h1 className="font-serif text-3xl font-bold">{labels.notFound}</h1>
         <p className="mt-3 text-sm opacity-75">{labels.missing}</p>
-        <Link href="/#store" className="primary-btn mt-6 inline-flex rounded-full px-6 py-3 text-sm font-bold">{labels.explore}</Link>
+        <Link href="/store" className="primary-btn mt-6 inline-flex rounded-full px-6 py-3 text-sm font-bold">{labels.explore}</Link>
       </main>
     );
   }
@@ -136,7 +136,7 @@ export default function ProductDetailPage(props: PageProps) {
     <main className="product-detail-page min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productStructuredData).replace(/</g, "\\u003c") }} />
       <div className="flex flex-wrap items-center justify-between gap-4 mb-7">
-        <Link href="/#store" className="product-detail-back">{labels.back}</Link>
+        <Link href="/store" className="product-detail-back">{labels.back}</Link>
         <Link href="/trace" className="product-detail-trace">{labels.trace}</Link>
       </div>
 
