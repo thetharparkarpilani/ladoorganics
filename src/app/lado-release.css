@@ -131,3 +131,7 @@
 .lado-admin-main td{background:#fffdf7;color:#555e51;font-size:12px}
 .lado-admin-main input,.lado-admin-main select,.lado-admin-main textarea{min-height:42px;border-radius:11px;background:#fffefa}
 @media(max-width:767px){.lado-admin-main>div{padding:18px!important}.lado-admin-mobile-header{padding-top:max(12px,env(safe-area-inset-top));}.lado-admin-main table{display:block;max-width:100%;overflow-x:auto;white-space:nowrap}}
+
+/* When the customer sidebar is suppressed, let the admin workspace use the full viewport. */
+body:has(.lado-admin-route-marker) .lado-app-main{width:100%;margin-left:0}
+.lado-admin-route-marker{display:none!important}
