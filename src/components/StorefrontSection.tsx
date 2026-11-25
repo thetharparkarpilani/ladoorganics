@@ -37,12 +37,6 @@ export default function StorefrontSection({
     waAvailability: "कृपया मौजूदा बैच की उपलब्धता और ऑर्डर की जानकारी दें।",
     waSelection: "चुने गए उत्पाद", waEstimate: "दर्ज कैटलॉग कुल (शिपिंग/कर से पहले)",
     waConfirm: "कृपया उपलब्धता और अंतिम जानकारी की पुष्टि करें।",
-    descriptions: {
-      "a2-bilona-ghee": "पिलानी, राजस्थान में देसी थारपारकर गाय के दही से पारंपरिक बिलोना विधि द्वारा मथा गया घी।",
-      "tharparkar-dhoop": "पिलानी में देसी गाय के गोबर और प्राकृतिक वनस्पति बाइंडर से तैयार धूप।",
-      "pure-kechua-khad": "घर, छत और जैविक बगीचों के लिए वर्मी कम्पोस्ट।",
-      "deep-work-bhunga-stay": "पिलानी में पारंपरिक राजस्थानी मिट्टी की वास्तुकला वाला भुंगा ठहराव।",
-    } as Record<string,string>,
   } : locale === "ma" ? {
     noMatch: "थारी खोज सूं मेल खातो सामान कोनी मिल्यो।", emptyTitle: "अभी चालू सूची में कोई सामान उपलब्ध कोनी है।", emptyDescription: "चालू सामान, पैक अर भाव पक्को करवा Lado टीम सूं बात करो।", contact: "टीम नै खबर करो", discover: "ई सामान री पूरी बात देखो",
     per: "एक", unit: "इकाई", add: "थैली में जोड़ो", order: "व्हाट्सऐप पर ऑर्डर पूछो",
@@ -58,12 +52,6 @@ export default function StorefrontSection({
     waAvailability: "कृपा कर चालू बैच री उपलब्धता अर ऑर्डर री जानकारी देवो।",
     waSelection: "चुन्या सामान", waEstimate: "दर्ज कैटलॉग कुल (भेजण/कर सूं पैली)",
     waConfirm: "कृपा कर उपलब्धता अर आखरी जानकारी पक्की करो।",
-    descriptions: {
-      "a2-bilona-ghee": "पिलानी में देसी थारपारकर गाय रै दही नै पुराणी लकड़ी री बिलोना सूं मथकै बणायो घी।",
-      "tharparkar-dhoop": "पिलानी में देसी गाय रै गोबर अर कुदरती वनस्पति सूं बणाई धूप।",
-      "pure-kechua-khad": "घर, छत अर देसी बगीचा खातर केंचुआ खाद।",
-      "deep-work-bhunga-stay": "पिलानी में राजस्थानी माटी री पुराणी बनावट वालो भुंगा ठहराव।",
-    } as Record<string,string>,
   } : {
     noMatch: "No matching products found for your search.", emptyTitle: "No products are currently listed in the live catalogue.", emptyDescription: "Contact the Lado team to confirm current products, pack options and prices.", contact: "Contact the team", discover: "Discover this product",
     per: "Per", unit: "Unit", add: "Add to Bag", order: "Order via WhatsApp",
@@ -79,7 +67,6 @@ export default function StorefrontSection({
     waAvailability: "Please share current batch availability and order details.",
     waSelection: "Selected items", waEstimate: "Listed catalogue subtotal (before shipping/applicable taxes)",
     waConfirm: "Please confirm availability and final details.",
-    descriptions: {} as Record<string,string>,
   };
   const [selectedVariantByProduct, setSelectedVariantByProduct] = useState<Record<string, string>>({});
   const [gheeUnits, setGheeUnits] = useState<number>(0);
@@ -95,10 +82,10 @@ export default function StorefrontSection({
       return (
         title.toLowerCase().includes(q) ||
         p.nameEn.toLowerCase().includes(q) ||
-        (copy.descriptions[p.slug] || p.descriptionEn).toLowerCase().includes(q)
+        p.descriptionEn.toLowerCase().includes(q)
       );
     });
-  }, [products, searchQuery, locale, copy.descriptions]);
+  }, [products, searchQuery, locale]);
 
   const estimatedRates = useMemo(() => {
     const rateFor = (slug: string) => {
@@ -230,7 +217,7 @@ export default function StorefrontSection({
                         </div>
                       )}
                       <h3 className="home-store-title text-xl font-serif font-bold mb-2">{displayName}</h3>
-                      <p className="text-sm opacity-80 leading-relaxed mb-4">{copy.descriptions[product.slug] || product.descriptionEn}</p>
+                      <p className="text-sm opacity-80 leading-relaxed mb-4">{product.descriptionEn}</p>
                       {["a2-bilona-ghee", "tharparkar-dhoop", "pure-kechua-khad", "deep-work-bhunga-stay"].includes(product.slug) && (
                         <Link href={`/store/${product.slug}`} className="inline-flex items-center gap-2 mb-4 text-[10px] font-extrabold uppercase tracking-[.14em] text-[var(--terracotta)] hover:gap-3 transition-all">
                           {copy.discover} <span aria-hidden="true">↗</span>
