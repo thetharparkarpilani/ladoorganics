@@ -24,10 +24,15 @@ async function createIcon(size, filename, maskable = false) {
     </svg>`
   );
 
+  const outputPath = path.join(publicDir, filename);
   await sharp(background)
     .composite([{ input: artwork, gravity: "centre" }])
     .png()
-    .toFile(path.join(publicDir, filename));
+    .toFile(outputPath);
+  const metadata = await sharp(outputPath).metadata();
+  if (metadata.width !== size || metadata.height !== size) {
+    throw new Error(`Invalid dimensions for ${filename}: ${metadata.width}x${metadata.height}`);
+  }
 }
 
 await Promise.all([
@@ -39,4 +44,4 @@ await Promise.all([
   createIcon(512, "icon-maskable-512.png", true),
 ]);
 
-console.log("Generated Lado Organics favicon, Apple touch, Android and maskable icons from the approved master logo.");
+console.log("Verified Lado Organics icon dimensions: 16, 32, 180, 192 and 512px (including maskable) from the approved master logo.");
