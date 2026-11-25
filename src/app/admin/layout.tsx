@@ -35,8 +35,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </header>
       <aside className="hidden md:flex w-64 shrink-0 bg-[var(--surface)] border-r border-[var(--border)] flex-col min-h-screen sticky top-0 h-screen">
         <div className="p-6 border-b border-[var(--border)]">
-          <h2 className="text-xl font-serif font-bold text-[var(--mud)]">Lado Command</h2>
-          <p className="text-[10px] uppercase tracking-widest opacity-60 mt-1">Admin Workspace</p>
+          <Link href="/admin" aria-label="Lado Organics Admin home" className="inline-flex flex-col items-start gap-2"><Image src="/lado-organics-logo.svg" alt="Lado Organics — Lado Love Pure" width={156} height={82} priority className="h-[68px] w-auto object-contain object-left" /><span className="text-[10px] uppercase tracking-[.2em] font-bold opacity-60">Admin Workspace</span></Link>
         </div>
         <nav aria-label="Admin navigation" className="flex-1 p-4 space-y-2 text-sm font-medium">
           {navigation.map(item => <Link key={item.href} href={item.href} className="flex items-center gap-3 px-4 py-3 rounded-xl text-[var(--muted)] hover:bg-[var(--bg)] hover:text-[var(--mud)] transition"><span aria-hidden="true" className="w-5 text-center text-[var(--terracotta)]">{item.icon}</span>{item.label}</Link>)}
