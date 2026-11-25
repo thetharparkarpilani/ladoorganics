@@ -180,3 +180,5 @@ body:has(.lado-admin-route-marker) .lado-app-main{width:100%;margin-left:0}
 
 .product-detail-note-mark{display:grid!important;place-items:center;min-width:74px;min-height:58px;border:1px solid rgba(49,75,49,.12);border-radius:13px;background:#fffdf7;padding:7px}
 .product-detail-note-logo{display:block;width:66px;height:auto;max-height:40px;object-fit:contain}
+
+@media(max-width:640px){.dashboard-welcome-logo{position:relative!important;right:auto!important;bottom:auto!important;display:inline-flex;margin-top:20px}.dashboard-welcome-logo img{height:44px!important}}
