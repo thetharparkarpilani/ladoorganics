@@ -101,6 +101,7 @@ export default function CartCheckoutDrawer() {
                   <span className="font-bold text-[var(--text-charcoal)]">₹{cartTotal.toLocaleString("en-IN")}</span>
                 </div>
                 <p className="mb-4 text-[10px] text-[var(--text-muted)]">Final item prices are verified securely when you place your order. Delivery charges, if applicable, will be confirmed before dispatch.</p>
+                <Link href="/checkout" onClick={closeDrawer} className="mb-3 flex w-full items-center justify-center rounded-full border border-[var(--accent-forest)] px-5 py-3 text-xs font-bold text-[var(--accent-forest)]">Open full-page checkout →</Link>
                 <ManualCheckout items={items.map(item => ({ sku: item.sku, quantity: item.quantity }))} onSuccess={(orderNumber, method, total) => finishOrder(orderNumber, method, total)} />
                 <p className="mt-5 text-center text-[10px] leading-relaxed text-[var(--text-muted)]">
                   By proceeding, you agree to our <Link href="/policies/terms" className="underline">Terms</Link> and <Link href="/policies/refunds" className="underline">Refund Policy</Link>.

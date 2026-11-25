@@ -164,7 +164,7 @@ export default function StorefrontSection({
 
   return (
     <>
-      <section id="store" className="py-20 px-4 sm:px-6 lg:px-8 border-t border-[var(--border)]">
+      <section id="store" className="home-store-section py-20 px-4 sm:px-6 lg:px-8 border-t border-[var(--border)]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <span className="text-xs font-bold tracking-widest uppercase text-[var(--terracotta)]">
@@ -178,7 +178,7 @@ export default function StorefrontSection({
               <p className="font-medium">{copy.noMatch} “{searchQuery}”.</p>
             </div>
           ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="home-store-grid grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {filteredProducts.map((product) => {
                 const displayName =
                   (locale === "hi" ? product.nameHi : locale === "ma" ? product.nameMa : product.nameEn) ||
@@ -198,11 +198,11 @@ export default function StorefrontSection({
                 return (
                   <article
                     key={product.id}
-                    className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 flex flex-col justify-between shadow-sm"
+                    className="home-store-card flex flex-col justify-between"
                   >
                     <div>
                       {product.imageUrl || product.slug.includes("dhoop") ? (
-                        <div className="relative mb-4 aspect-[4/3] overflow-hidden rounded-2xl bg-[var(--bg)]">
+                        <div className="home-store-image relative mb-4 aspect-[4/3] overflow-hidden rounded-2xl bg-[var(--bg)]">
                           <Image
                             src={product.imageUrl || `/images/lado-organics/${encodeURIComponent("Lado Organics Tharparkar Dhoop.png")}`}
                             alt={displayName}
@@ -212,14 +212,14 @@ export default function StorefrontSection({
                           />
                         </div>
                       ) : (
-                        <div className={`product-art product-art-${productArt.kind} mb-4 aspect-[4/3] rounded-2xl`} aria-label={`${displayName} product artwork placeholder`}>
+                        <div className={`home-store-art product-art product-art-${productArt.kind} mb-4 aspect-[4/3] rounded-2xl`} aria-label={`${displayName} product artwork placeholder`}>
                           <span className="product-art-brand">LADO ORGANICS <i>·</i> PILANI</span>
                           <span className="product-art-symbol" aria-hidden="true">{productArt.symbol}</span>
                           <span className="product-art-name">{productArt.label}</span>
                           <span className="product-art-foot">LADO LOVE PURE</span>
                         </div>
                       )}
-                      <h3 className="text-xl font-serif font-bold mb-2">{displayName}</h3>
+                      <h3 className="home-store-title text-xl font-serif font-bold mb-2">{displayName}</h3>
                       <p className="text-sm opacity-80 leading-relaxed mb-4">{copy.descriptions[product.slug] || product.descriptionEn}</p>
                       {["a2-bilona-ghee", "tharparkar-dhoop", "pure-kechua-khad", "deep-work-bhunga-stay"].includes(product.slug) && (
                         <Link href={`/store/${product.slug}`} className="inline-flex items-center gap-2 mb-4 text-[10px] font-extrabold uppercase tracking-[.14em] text-[var(--terracotta)] hover:gap-3 transition-all">
@@ -255,7 +255,7 @@ export default function StorefrontSection({
                       )}
                     </div>
 
-                    <div className="pt-4 border-t border-[var(--border)]">
+                    <div className="home-store-purchase pt-4 border-t border-[var(--border)]">
                       <div className="flex items-baseline justify-between mb-4">
                         <span className="text-xs uppercase tracking-wider opacity-70">
                           {copy.per} {activeVariant?.label ?? copy.unit}

@@ -110,8 +110,8 @@ export default function DashboardPage() {
   const orders = data?.orders || [];
 
   return (
-    <div className="space-y-8">
-      <section className="relative overflow-hidden rounded-3xl bg-[#2b180c] p-8 text-[#fef3c7] shadow-xl sm:p-10">
+    <div className="dashboard-page space-y-8">
+      <section className="dashboard-welcome relative overflow-hidden rounded-3xl bg-[#2b180c] p-8 text-[#fef3c7] shadow-xl sm:p-10">
         <div className="relative z-10">
           <span className="mb-2 block text-xs uppercase tracking-widest text-[#fbbf24]">
             Lado Organics · My Account
@@ -127,7 +127,7 @@ export default function DashboardPage() {
         <span aria-hidden="true" className="absolute -bottom-10 -right-4 text-[150px] opacity-[0.07]">✿</span>
       </section>
 
-      <section aria-labelledby="account-shortcuts-heading">
+      <section className="dashboard-shortcuts" aria-labelledby="account-shortcuts-heading">
         <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 id="account-shortcuts-heading" className="font-serif text-2xl font-bold text-[var(--mud)]">
@@ -145,7 +145,7 @@ export default function DashboardPage() {
             <Link
               key={item.href}
               href={item.href}
-              className="group rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 transition hover:-translate-y-0.5 hover:border-[var(--terracotta)] hover:shadow-md"
+              className="dashboard-shortcut group rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 transition hover:-translate-y-0.5 hover:border-[var(--terracotta)] hover:shadow-md"
             >
               <div className="flex items-start justify-between gap-3">
                 <h3 className="font-serif text-lg font-bold text-[var(--mud)]">{item.title}</h3>
@@ -158,7 +158,7 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      <section className="rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-6 sm:p-8">
+      <section className="dashboard-orders rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-6 sm:p-8">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="font-serif text-xl font-bold text-[var(--mud)]">Recent Orders</h2>
