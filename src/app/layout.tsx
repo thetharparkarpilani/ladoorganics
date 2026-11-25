@@ -8,6 +8,7 @@ import ConciergeWidget from "@/components/ConciergeWidget";
 import SiteAnnouncement from "@/components/SiteAnnouncement";
 import { LocaleProvider } from "@/context/LocaleContext";
 import AppSidebar from "@/components/AppSidebar";
+import SiteFooter from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ladoorganics.in"),
@@ -74,6 +75,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <AppSidebar />
                 <div className="lado-app-main">
                   <main className="min-h-screen">{children}</main>
+                  <SiteFooter />
                 </div>
               </div>
               <ConciergeWidget whatsappNumber={process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919636100337"} />
