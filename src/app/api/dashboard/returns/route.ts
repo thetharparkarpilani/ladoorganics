@@ -36,8 +36,8 @@ export async function POST(req: NextRequest) {
   try { body = await req.json(); } catch { return NextResponse.json({ error: "Invalid return request." }, { status: 400 }); }
 
   const orderId = typeof body.orderId === "string" ? body.orderId.trim() : "";
-  const reason = typeof body.reason === "string" ? body.reason.replace(/[\\u0000-\\u001F\\u007F]/g, " ").trim().slice(0, 1000) : "";
-  const note = typeof body.note === "string" ? body.note.replace(/[\\u0000-\\u001F\\u007F]/g, " ").trim().slice(0, 1000) : null;
+  const reason = typeof body.reason === "string" ? body.reason.replace(/[\u0000-\u001F\u007F]/g, " ").trim().slice(0, 1000) : "";
+  const note = typeof body.note === "string" ? body.note.replace(/[\u0000-\u001F\u007F]/g, " ").trim().slice(0, 1000) : null;
 
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(orderId) || reason.length < 5) {
     return NextResponse.json({ error: "Choose a valid order and provide a return reason (at least 5 characters)." }, { status: 400 });
