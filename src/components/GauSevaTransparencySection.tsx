@@ -22,8 +22,8 @@ const FAQS = [
     a: "Current product prices and available pack sizes are shown in the live store catalogue. Shipping charges and delivery timing are confirmed before dispatch. Repeat-delivery forms record interest only; no automatic payment or scheduled delivery is started."
   },
   {
-    q: "Which calves are featured in our Pilani Gaushala sponsorship section?",
-    a: "Dholi Sheri, Tara, and Roshni are featured in our Pilani calf sponsorship workflow."
+    q: "Which sponsorship profiles are shown in the transparency ledger?",
+    a: "Only sponsorship profiles and entries approved by the Lado team appear in the live ledger. New enquiries remain pending until reviewed, and no animal profile is presented as available unless the team has verified it."
   }
 ];
 
@@ -74,7 +74,7 @@ export default function GauSevaTransparencySection() {
             Sponsorship Transparency
           </h2>
           <p className="text-xs opacity-80 mb-5 leading-relaxed">
-            Displays sponsorship entries marked active by the Lado team for Dholi Sheri, Tara, and Roshni. Pending enquiries are not counted. These figures are not an audited expenditure statement or tax receipt.
+            Displays sponsorship entries marked active by the Lado team for currently approved profiles. Pending enquiries are not counted. These figures are not an audited expenditure statement or tax receipt.
           </p>
 
           {rows.length === 0 ? (
