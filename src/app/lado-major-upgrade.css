@@ -339,3 +339,25 @@ main:has(.trace-batch),main:has([data-traceability]) { background: var(--lado-iv
  .lado-global-footer nav { display: grid; grid-template-columns: 1fr 1fr; }
  .lado-global-footer-bottom { flex-direction: column; gap: 8px; }
 }
+
+
+/* Customer dashboard: persistent account navigation with a mobile scroll rail */
+.lado-dashboard-layout { background: var(--lado-ivory); }
+.lado-dashboard-layout-inner { display: flex; align-items: flex-start; gap: clamp(18px,3vw,34px); }
+.lado-dashboard-sidebar { position: relative; }
+.lado-dashboard-sidebar-card { border-color: var(--lado-line); box-shadow: var(--lado-shadow-soft); }
+.lado-dashboard-nav { display: grid; gap: 5px; }
+.lado-dashboard-nav-link { color: #68665b; font-size: 12px; font-weight: 650; text-decoration: none; white-space: nowrap; }
+.lado-dashboard-nav-link:hover { background: #f1eee4; color: var(--lado-forest-deep); }
+.lado-dashboard-nav-link.is-active { background: var(--lado-forest-deep); color: #fffdf7; box-shadow: 0 8px 18px rgba(24,53,38,.14); }
+.lado-dashboard-content { min-width: 0; }
+@media(max-width:767px) {
+  .lado-dashboard-layout { padding-top: 18px; }
+  .lado-dashboard-layout-inner { display: flex; flex-direction: column; gap: 18px; }
+  .lado-dashboard-sidebar-card { position: static; padding: 14px; }
+  .lado-dashboard-sidebar-card > div:first-child { margin-bottom: 12px; }
+  .lado-dashboard-nav { display: flex; gap: 7px; overflow-x: auto; padding: 2px 1px 7px; scrollbar-width: thin; }
+  .lado-dashboard-nav-link { flex: 0 0 auto; padding: 10px 13px; border: 1px solid var(--lado-line); border-radius: 999px; font-size: 11px; }
+  .lado-dashboard-nav-link.is-active { border-color: var(--lado-forest-deep); }
+  .lado-dashboard-sidebar-card > div:last-child { margin-top: 10px; padding-top: 10px; }
+}
