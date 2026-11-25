@@ -8,8 +8,8 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export const metadata = {
-  title: "Circular Store | Lado Organics",
-  description: "Direct-from-farm products and farm experiences rooted in Pilani, Rajasthan.",
+  title: "Shop the Collection | Lado Organics",
+  description: "Explore the current Lado Organics collection and listed pack prices from Pilani, Rajasthan.",
 };
 
 type StoreProduct = {
