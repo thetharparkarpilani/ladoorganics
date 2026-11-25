@@ -120,6 +120,8 @@ export default function StorefrontSection({
     (khadUnits > 0 && !estimatedRates.khad) ||
     (stayNights > 0 && !estimatedRates.stay);
 
+  const hasSelection = gheeUnits > 0 || dhoopUnits > 0 || khadUnits > 0 || stayNights > 0;
+
   const estimatedTotal = useMemo(() => (
     gheeUnits * (estimatedRates.ghee?.price ?? 0) +
     dhoopUnits * (estimatedRates.dhoop?.price ?? 0) +
@@ -150,8 +152,7 @@ export default function StorefrontSection({
     addLine(khadUnits, "Vermicompost", estimatedRates.khad);
     addLine(stayNights, "Bhunga Stay", estimatedRates.stay);
 
-    const hasSelection = parts.length > 0;
-    const summary = hasSelection ? parts.join(", ") : "Please confirm current products and options";
+    const summary = parts.length > 0 ? parts.join(", ") : "Please confirm current products and options";
     const subtotal = !hasSelection ? "No quantities selected; please confirm current options" : hasUnpricedSelection ? "Rates to be confirmed by the Lado team" : "₹" + estimatedTotal.toLocaleString("en-IN");
     const message = [
       copy.waGreeting,
@@ -355,7 +356,7 @@ export default function StorefrontSection({
           <div className="grid sm:grid-cols-2 gap-6 mb-8">
             <div>
               <label className="block text-xs font-bold uppercase mb-1">
-                {copy.ghee}: {gheeUnits}
+                {copy.ghee}: {gheeUnits} {estimatedRates.ghee?.label ? `× ${estimatedRates.ghee.label}` : copy.unit}
               </label>
               <input
                 type="range"
@@ -369,7 +370,7 @@ export default function StorefrontSection({
 
             <div>
               <label className="block text-xs font-bold uppercase mb-1">
-                {copy.dhoop}: {dhoopUnits}
+                {copy.dhoop}: {dhoopUnits} {estimatedRates.dhoop?.label ? `× ${estimatedRates.dhoop.label}` : copy.unit}
               </label>
               <input
                 type="range"
@@ -383,7 +384,7 @@ export default function StorefrontSection({
 
             <div>
               <label className="block text-xs font-bold uppercase mb-1">
-                {copy.khad}: {khadUnits}
+                {copy.khad}: {khadUnits} {estimatedRates.khad?.label ? `× ${estimatedRates.khad.label}` : copy.unit}
               </label>
               <input
                 type="range"
@@ -397,7 +398,7 @@ export default function StorefrontSection({
 
             <div>
               <label className="block text-xs font-bold uppercase mb-1">
-                {copy.stay}: {stayNights}
+                {copy.stay}: {stayNights} {estimatedRates.stay?.label ? `× ${estimatedRates.stay.label}` : ""}
               </label>
               <input
                 type="range"
@@ -416,7 +417,7 @@ export default function StorefrontSection({
                 {copy.subtotal}
               </span>
               <span className="text-3xl font-serif font-bold text-[var(--terracotta)]">
-                {hasUnpricedSelection ? "To be confirmed" : "₹" + estimatedTotal.toLocaleString("en-IN")}
+                {!hasSelection ? "Choose quantities to calculate" : hasUnpricedSelection ? "To be confirmed" : "₹" + estimatedTotal.toLocaleString("en-IN")}
               </span>
             </div>
 
