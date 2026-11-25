@@ -21,9 +21,9 @@ interface ChatMessage {
 interface ConciergeWidgetProps { whatsappNumber: string; }
 
 const STARTERS: Record<"en" | "hi" | "ma", string[]> = {
-  en: ["What products do you have?", "Tell me about your A2 Bilona Ghee", "How does delivery work?", "How can I check my order?", "Tell me about Bhunga stays", "How does Gau Seva work?"],
-  hi: ["आपके पास कौन-कौन से उत्पाद हैं?", "A2 बिलोना घी कैसे बनता है?", "डिलीवरी कैसे होती है?", "मेरा ऑर्डर कैसे देखें?", "भुंगा स्टे के बारे में बताएं", "गौ सेवा कैसे काम करती है?"],
-  ma: ["थांरै कठै-कठै सामान मिलै है?", "A2 बिलोना घी किण रीति सूं बणै है?", "सामान घर तक किण रीति आवै?", "म्हारो ऑर्डर कियां देखूं?", "भुंगा ठहराव री जानकारी देवो", "गौ सेवा कियां चालै है?"],
+  en: ["What products do you have?", "Tell me about your Bilona Ghee", "How does delivery work?", "How can I check my order?", "Tell me about Bhunga stays", "How does Gau Seva work?"],
+  hi: ["आपके पास कौन-कौन से उत्पाद हैं?", "बिलोना घी कैसे बनता है?", "डिलीवरी कैसे होती है?", "मेरा ऑर्डर कैसे देखें?", "भुंगा स्टे के बारे में बताएं", "गौ सेवा कैसे काम करती है?"],
+  ma: ["थांरै कठै-कठै सामान मिलै है?", "बिलोना घी किण रीति सूं बणै है?", "सामान घर तक किण रीति आवै?", "म्हारो ऑर्डर कियां देखूं?", "भुंगा ठहराव री जानकारी देवो", "गौ सेवा कियां चालै है?"],
 };
 
 const WELCOME: ChatMessage = {
