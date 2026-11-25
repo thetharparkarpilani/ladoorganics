@@ -15,7 +15,7 @@ export default function EssentialsClubSection() {
     disclaimer: "यह तालिका केवल प्रक्रिया की तुलना करती है; सभी उत्पादकों या तैयार घी की पोषण गुणवत्ता पर सामान्य दावा नहीं करती।",
     repeat: "बार-बार डिलीवरी की रुचि", club: "Lado Essentials Club",
     clubIntro: "बताएँ कि आप नियमित रूप से क्या लेना चाहेंगे। यह केवल पसंद दर्ज करता है; कोई भुगतान वाली सदस्यता या अपने-आप शुल्क नहीं बनता। टीम उपलब्धता और शर्तें बताएगी।",
-    product: "उत्पाद और पैक", frequency: "पसंदीदा अंतराल", quantity: "मात्रा", email: "ईमेल पता", phone: "फ़ोन / WhatsApp (वैकल्पिक)",
+    product: "उत्पाद या श्रेणी", productPlaceholder: "उत्पाद या श्रेणी लिखें; टीम मौजूदा पैक विकल्प बताएगी", frequency: "पसंदीदा अंतराल", quantity: "मात्रा", email: "ईमेल पता", phone: "फ़ोन / WhatsApp (वैकल्पिक)",
     every: "हर", days: "दिन", saving: "अनुरोध सहेजा जा रहा है…", submit: "नियमित डिलीवरी में रुचि दर्ज करें",
     success: "आपकी रुचि दर्ज हो गई है। टीम उपलब्धता, कीमत और डिलीवरी की पुष्टि करेगी। कोई भुगतान या अपने-आप नवीनीकरण शुरू नहीं हुआ है।",
     error: "कृपया थोड़ी देर बाद फिर कोशिश करें。",
@@ -29,7 +29,7 @@ export default function EssentialsClubSection() {
     disclaimer: "ई तालिका बस बनावण री रीति तुलना करै है; सगळा उत्पादक या घी री पोषण गुणवत्ता पर एकसारो दावा कोनी।",
     repeat: "बार-बार भेजण री रुचि", club: "Lado Essentials Club",
     clubIntro: "बतावो थां नियमित काई लेणो चाहो हो। ई बस थारी पसंद लिखै है; भुगतान वाली सदस्यता या अपने-आप रकम कोनी कटै। टीम उपलब्धता अर चालू शर्त बतावैला।",
-    product: "सामान अर पैक", frequency: "कितरे दिन में", quantity: "मात्रा", email: "ईमेल", phone: "फोन / WhatsApp (जरूरी कोनी)",
+    product: "सामान या श्रेणी", productPlaceholder: "सामान या श्रेणी लिखो; टीम चालू पैक विकल्प पक्के करैला", frequency: "कितरे दिन में", quantity: "मात्रा", email: "ईमेल", phone: "फोन / WhatsApp (जरूरी कोनी)",
     every: "हर", days: "दिन", saving: "अरज सहेजी जावै है…", submit: "नियमित भेजण री रुचि लिखावो",
     success: "थारी रुचि लिख ली है। टीम उपलब्धता, आखरी भाव अर भेजण री बात पक्की करैला। कोई भुगतान या अपने-आप नवीनीकरण चालू कोनी कर्यो।",
     error: "थोड़ी देर पाछै फेर कोशिश करो।",
@@ -43,14 +43,14 @@ export default function EssentialsClubSection() {
     disclaimer: "The table compares process routes only. It does not make a blanket claim about producers or the nutritional quality of finished ghee.",
     repeat: "Repeat delivery enquiry", club: "Lado Essentials Club",
     clubIntro: "Tell us what you may want regularly. This records interest only; it does not create a paid subscription or automatic charge. Our team will confirm availability and terms.",
-    product: "Product & pack", frequency: "Preferred frequency", quantity: "Quantity", email: "Email address", phone: "Phone / WhatsApp (optional)",
+    product: "Product or category of interest", productPlaceholder: "Enter a product or category; the team will confirm current pack options", frequency: "Preferred frequency", quantity: "Quantity", email: "Email address", phone: "Phone / WhatsApp (optional)",
     every: "Every", days: "days", saving: "Saving request...", submit: "Register repeat-delivery interest",
     success: "Your repeat-delivery interest has been recorded. The team must confirm availability, final pricing and delivery details. No payment or automatic renewal has been set up.",
     error: "Please try again later.",
   };
   const [subscriberEmail, setSubscriberEmail] = useState("");
   const [subscriberPhone, setSubscriberPhone] = useState("");
-  const [itemLabel, setItemLabel] = useState("A2 Bilona Ghee — 1 litre");
+  const [itemLabel, setItemLabel] = useState("");
   const [intervalDays, setIntervalDays] = useState(30);
   const [quantity, setQuantity] = useState(1);
   const [submitting, setSubmitting] = useState(false);
@@ -106,13 +106,7 @@ export default function EssentialsClubSection() {
           <form onSubmit={handlePreference} className="space-y-3.5 text-xs">
             <div>
               <label className="block font-bold uppercase mb-1" htmlFor="essentials-product">{copy.product}</label>
-              <select id="essentials-product" value={itemLabel} onChange={(e) => setItemLabel(e.target.value)} className="w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)]">
-                <option>A2 Bilona Ghee — 250 ml</option>
-                <option>A2 Bilona Ghee — 500 ml</option>
-                <option>A2 Bilona Ghee — 1 litre</option>
-                <option>Tharparkar Dhoop — Box</option>
-                <option>Pure Kechua Khad — 5 kg Bag</option>
-              </select>
+              <input id="essentials-product" type="text" required value={itemLabel} onChange={(e) => setItemLabel(e.target.value)} placeholder={copy.productPlaceholder} className="w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)]" />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
