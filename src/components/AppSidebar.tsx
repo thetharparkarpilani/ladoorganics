@@ -38,6 +38,7 @@ export default function AppSidebar() {
     { title: locale === "hi" ? "मुख्य" : locale === "ma" ? "मुख्य" : "MAIN", items: [
       { label: copy.home, href: "/", icon: "⌂" },
       { label: copy.shop, href: "/#store", icon: "▦" },
+      { label: locale === "hi" ? "खोजें" : locale === "ma" ? "खोजो" : "Search everything", href: "/search", icon: "⌕", externalPage: true },
       { label: copy.orders, href: "/dashboard/orders", icon: "▤", externalPage: true },
       { label: copy.explore, href: "/#farm-world", icon: "⌖" },
       { label: copy.featured, href: "/#store", icon: "✧" },

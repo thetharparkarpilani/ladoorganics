@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import type { ProductDTO, LocaleCode } from "@/types/domain";
 import { TRANSLATIONS } from "@/lib/i18n";
 import { useLocale } from "@/context/LocaleContext";
@@ -22,6 +23,7 @@ import CartCheckoutDrawer from "@/components/CartCheckoutDrawer";
 
 export default function HomePage() {
   const { locale, setLocale } = useLocale();
+  const router = useRouter();
   const [theme, setTheme] = useState<"light" | "dusk">("light");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -94,7 +96,7 @@ export default function HomePage() {
           </nav>
           <div className="flex items-center gap-2">
             <button type="button" className="xl:hidden text-xs font-bold px-3 py-2 rounded-full border border-[var(--border)]" aria-expanded={mobileMenuOpen} aria-controls="lado-mobile-navigation" onClick={() => setMobileMenuOpen(open => !open)}>{mobileMenuOpen ? dict.nav_close : dict.nav_menu}</button>
-            <input type="search" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder={dict.search} aria-label={dict.search} className="text-xs px-3 py-1.5 rounded-full border border-[var(--border)] bg-white/80 w-28 sm:w-36" />
+            <input type="search" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder={dict.search} aria-label={dict.search} onKeyDown={(event) => { if (event.key === "Enter" && searchQuery.trim().length >= 2) router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`); }} className="text-xs px-3 py-1.5 rounded-full border border-[var(--border)] bg-white/80 w-28 sm:w-36" />
             <button type="button" onClick={() => setDrawerOpen(true)} className="text-xs font-bold px-3 py-1.5 rounded-full bg-[var(--terracotta)] text-white">{dict.bag} ({itemCount})</button>
             <select aria-label="Language selector" value={locale} onChange={e => setLocale(e.target.value as LocaleCode)} className="text-xs font-bold px-2.5 py-1.5 rounded-full border border-[var(--border)] bg-white/80">
               <option value="en">EN</option><option value="hi">हिंदी</option><option value="ma">मारवाड़ी</option>

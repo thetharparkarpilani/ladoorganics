@@ -110,12 +110,32 @@ export default function ProductDetailPage(props: PageProps) {
   }
 
   const hasVariants = product.variants.length > 0;
+  const productStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: displayName,
+    description: displayDescription,
+    image: product.imageUrl || undefined,
+    brand: { "@type": "Brand", name: "Lado Organics" },
+    category: visual.category,
+    offers: activeVariant ? {
+      "@type": "Offer",
+      priceCurrency: "INR",
+      price: Number(activeVariant.priceInr).toFixed(2),
+      availability: Number(activeVariant.stockQty) > 0
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      url: `https://ladoorganics.in/store/${encodeURIComponent(slug)}`,
+      itemCondition: "https://schema.org/NewCondition",
+    } : undefined,
+  };
 
   return (
     <main className="product-detail-page min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productStructuredData).replace(/</g, "\\u003c") }} />
       <div className="flex flex-wrap items-center justify-between gap-4 mb-7">
         <Link href="/#store" className="product-detail-back">{labels.back}</Link>
-        <Link href="/contact" className="product-detail-trace">{labels.trace}</Link>
+        <Link href="/trace" className="product-detail-trace">{labels.trace}</Link>
       </div>
 
       <section className={`product-detail-hero product-detail-${visual.kind}`}>
