@@ -177,3 +177,6 @@ body:has(.lado-admin-route-marker) .lado-app-main{width:100%;margin-left:0}
 .store-no-results{margin-top:20px}
 @media(max-width:760px){.store-editorial-hero{grid-template-columns:1fr;gap:20px;border-radius:24px}.store-editorial-mark{min-height:110px;max-width:260px}.store-editorial-mark img{max-height:82px}.store-toolbar{grid-template-columns:1fr}.store-sort-field{justify-content:space-between}.store-sort-field select{max-width:65%}.store-product-media{min-height:220px}.store-product-art{height:220px}}
 @media(max-width:420px){.store-editorial-hero{padding:24px}.store-editorial-copy h1{font-size:34px}.store-category-tabs button{padding:0 13px}.store-results-heading{font-size:10px}}
+
+.product-detail-note-mark{display:grid!important;place-items:center;min-width:74px;min-height:58px;border:1px solid rgba(49,75,49,.12);border-radius:13px;background:#fffdf7;padding:7px}
+.product-detail-note-logo{display:block;width:66px;height:auto;max-height:40px;object-fit:contain}
