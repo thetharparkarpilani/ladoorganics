@@ -15,38 +15,38 @@ const FARM_ZONES: FarmZone[] = [
   {
     id: "gaushala",
     code: "ZONE 01",
-    title: "Tharparkar Gaushala & Calf Care",
-    inputLabel: "Indigenous fodder & Pilani care",
-    outputLabel: "A2 milk & fresh cow dung",
+    title: "Tharparkar cattle care",
+    inputLabel: "Fodder and animal care",
+    outputLabel: "Milk and farm by-products",
     detail:
-      "Home to indigenous Tharparkar cattle and calves including Dholi Sheri, Tara, and Roshni in Pilani, Rajasthan."
+      "The farm story begins with indigenous Tharparkar cattle and the care routines described by the Lado team. Individual animal profiles are not displayed until verified."
   },
   {
     id: "bilona",
     code: "ZONE 02",
     title: "Traditional Bilona Ghee Unit",
     inputLabel: "Whole A2 milk cultured into curd",
-    outputLabel: "A2 Bilona Ghee (₹5,000 / 1L)",
+    outputLabel: "Bilona ghee",
     detail:
-      "Curd is churned using the traditional Bilona process and logged into batch traceability records."
+      "Lado describes a curd-based Bilona process. Batch-specific records are published when an approved batch record is available."
   },
   {
     id: "biogas-khad",
     code: "ZONE 03",
     title: "Biogas Digester & Kechua Khad Beds",
     inputLabel: "Fresh dung & anaerobic biogas slurry",
-    outputLabel: "Clean gas & Pure Kechua Khad (₹2,000 / 5 kg)",
+    outputLabel: "Biogas process and composting",
     detail:
-      "Biogas slurry feeds vermicompost beds to produce Pure Kechua Khad for organic gardens and soil health."
+      "The site describes a circular use of farm by-products. Current operating details and output records should be confirmed with the Lado team."
   },
   {
     id: "dhoop-bhunga",
     code: "ZONE 04",
     title: "Tharparkar Dhoop & Bhunga Stays",
     inputLabel: "Sun-dried dung, botanicals & mud architecture",
-    outputLabel: "Tharparkar Dhoop (₹1,000 / Box) & Bhunga Stay (₹4,000 / Night)",
+    outputLabel: "Dhoop and farm-stay enquiries",
     detail:
-      "Connects circular farm outputs with local farming families in Pilani and climate-responsive Bhunga stays."
+      "Ask the team about current product and stay availability. Prices, booking terms and service details are confirmed before an order or visit."
   }
 ];
 
@@ -59,13 +59,13 @@ export default function CowAsCoconutMap() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-10">
           <span className="text-xs font-bold uppercase tracking-widest text-[var(--terracotta)]">
-            Interactive Digital Farm Map • Pilani, Rajasthan
+            Interactive Farm Ecosystem • Pilani, Rajasthan
           </span>
           <h2 className="text-3xl sm:text-5xl font-serif font-bold mt-2">
-            My Lado Farm: Cow as a Coconut
+            The Lado Farm Ecosystem
           </h2>
           <p className="text-sm sm:text-base opacity-80 max-w-3xl mx-auto mt-3 leading-relaxed">
-            Founded by Akash Saini (BITS Pilani), Lado Organics models circular resource reuse across four interconnected farm zones in Pilani. Select a zone below to inspect its inputs and outputs.
+            Explore the farm relationships described by Lado Organics. Select a zone to see its described inputs and outputs; batch-level details are published only when they are recorded and approved.
           </p>
         </div>
 
@@ -108,7 +108,7 @@ export default function CowAsCoconutMap() {
               <span className="font-semibold text-sm mt-1 block">{activeZone.inputLabel}</span>
             </div>
             <div className="p-4 rounded-2xl bg-[var(--surface)] border border-[var(--border)]">
-              <span className="block font-bold uppercase opacity-60">Verified Output</span>
+              <span className="block font-bold uppercase opacity-60">Described Output</span>
               <span className="font-semibold text-sm text-[var(--terracotta)] mt-1 block">
                 {activeZone.outputLabel}
               </span>
@@ -117,18 +117,8 @@ export default function CowAsCoconutMap() {
         </div>
 
         <div className="flex flex-wrap justify-center gap-3 text-xs font-bold">
-          <span className="px-4 py-2 rounded-full border border-[var(--border)] bg-[var(--bg)]">
-            MSME: UDYAM-RJ-21-0104324
-          </span>
-          <span className="px-4 py-2 rounded-full border border-[var(--border)] bg-[var(--bg)]">
-            ZED Bronze Certified
-          </span>
-          <a
-            href="/policies"
-            className="px-4 py-2 rounded-full border border-[var(--border)] bg-[var(--bg)] text-[var(--terracotta)] hover:underline"
-          >
-            Policies & Legal Templates →
-          </a>
+          <span className="px-4 py-2 rounded-full border border-[var(--border)] bg-[var(--bg)]">Lado Organics · Pilani, Rajasthan</span>
+          <a href="/contact" className="px-4 py-2 rounded-full border border-[var(--border)] bg-[var(--bg)] text-[var(--terracotta)] hover:underline">Ask the farm team →</a>
         </div>
       </div>
     </section>
