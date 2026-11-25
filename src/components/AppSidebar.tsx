@@ -12,6 +12,9 @@ export default function AppSidebar() {
   const { locale, setLocale } = useLocale();
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Admin has its own role-aware navigation shell; do not render the customer menu there.
+  if (pathname.startsWith("/admin")) return null;
   const copy = locale === "hi" ? {
     menu: "मेन्यू", home: "होम", shop: "खरीदारी", orders: "मेरे ऑर्डर", explore: "खेत की दुनिया",
     featured: "मुख्य उत्पाद", club: "एसेंशियल्स क्लब", experiences: "खेत अनुभव और भुंगा स्टे",
