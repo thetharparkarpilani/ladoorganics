@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 
 interface TransparencyRow {
-  calf_name: string;
+  category: string;
   entries_count: number;
   recorded_amount_inr: string | number;
 }
@@ -85,7 +85,7 @@ export default function GauSevaTransparencySection() {
             <ul className="space-y-3 text-xs">
               {rows.map((r) => (
                 <li
-                  key={r.calf_name}
+                  key={r.category}
                   className="p-3.5 rounded-2xl bg-[var(--bg)] border border-[var(--border)] flex items-center justify-between"
                 >
                   <div>
