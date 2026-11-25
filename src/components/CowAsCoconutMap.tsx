@@ -25,7 +25,7 @@ const FARM_ZONES: FarmZone[] = [
     id: "bilona",
     code: "ZONE 02",
     title: "Traditional Bilona Ghee Unit",
-    inputLabel: "Whole A2 milk cultured into curd",
+    inputLabel: "Milk cultured into curd",
     outputLabel: "Bilona ghee",
     detail:
       "Lado describes a curd-based Bilona process. Batch-specific records are published when an approved batch record is available."
