@@ -122,6 +122,7 @@ export default function HomePage() {
             <a href="#farm-world" onClick={() => setMenuOpen(false)}>{copy.farm}</a>
             <a href="#our-approach" onClick={() => setMenuOpen(false)}>{copy.promise}</a>
             <Link href="/trace" onClick={() => setMenuOpen(false)}>{copy.trace}</Link>
+            <Link href="/search" onClick={() => setMenuOpen(false)}>Search</Link>
             <Link href="/contact" onClick={() => setMenuOpen(false)}>{copy.help}</Link>
           </nav>
           <div className="lado-header-actions">

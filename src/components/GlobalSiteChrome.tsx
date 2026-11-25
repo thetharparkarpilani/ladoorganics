@@ -16,7 +16,7 @@ export default function GlobalSiteChrome() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   // The homepage owns its editorial header and footer.
-  if (pathname === "/") return null;
+  if (pathname === "/" || pathname.startsWith("/admin")) return null;
 
   const labels = locale === "hi"
     ? { shop: "उत्पाद", farm: "हमारा खेत", trace: "बैच ट्रेस", search: "खोजें", account: "मेरा खाता", contact: "संपर्क", bag: "बैग", menu: "मेन्यू", close: "बंद करें" }

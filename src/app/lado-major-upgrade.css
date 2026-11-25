@@ -361,3 +361,16 @@ main:has(.trace-batch),main:has([data-traceability]) { background: var(--lado-iv
   .lado-dashboard-nav-link.is-active { border-color: var(--lado-forest-deep); }
   .lado-dashboard-sidebar-card > div:last-child { margin-top: 10px; padding-top: 10px; }
 }
+
+
+/* Admin workspace navigation: consistent route state and compact mobile menu */
+.lado-admin-nav-link { border-radius: 12px; color: var(--lado-ink); text-decoration: none; transition: background .18s ease, color .18s ease, transform .18s ease; }
+.lado-admin-nav-link:hover { background: rgba(36,75,53,.07); color: var(--lado-forest-deep); }
+.lado-admin-nav-link.is-active { background: var(--lado-forest-deep); color: #fffdf7; box-shadow: inset 3px 0 0 #d7b56d; font-weight: 750; }
+.lado-admin-nav-link.is-active span { color: #f2dcae; }
+@media(max-width:767px) {
+  .lado-admin-nav-link { min-height: 42px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .lado-admin-nav-link { transition: none; }
+}
