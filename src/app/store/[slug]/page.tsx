@@ -77,10 +77,11 @@ export default function ProductDetailPage(props: PageProps) {
     : locale === "ma" ? { back: "← सामान री सूची पर लौटो", trace: "बैच री जानकारी पूछो ↗", choose: "आपरो पैक चुनो", bring: "खेत री अच्छाई घर लावो।", selected: "चुन्यो पैक", add: "थैली में जोड़ो", order: "व्हाट्सऐप पर पूछो", unavailable: "ई सामान अभी उपलब्ध कोनी।", note: "ऑर्डर पक्को होण सूं पैली टीम बैच, भेजण अर भुगतान पक्को करैला।", know: "जाणो थां घर काई लावो हो", origin: "खेत री बात सूं रोज रै काम तक।", sourcing: "म्हारी सोर्सिंग", method: "ई कियां बणै", storage: "रखरखाव अर भंडारण", loading: "चालू सामान री जानकारी खुलै है…", failed: "सामान री जानकारी अभी उपलब्ध कोनी", retry: "फेर कोशिश करो", collection: "सामान री सूची पर लौटो", notFound: "सामान कोनी मिल्यो", missing: "ई सामान अभी चालू सूची में कोनी।", explore: "सामान देखो" }
     : { back: "← Back to the collection", trace: "Ask about batch records ↗", choose: "CHOOSE YOUR PACK", bring: "Bring a little farm goodness home.", selected: "Selected pack", add: "Add to bag", order: "Enquire on WhatsApp", unavailable: "This product is currently out of stock.", note: "The Lado team confirms batch availability, delivery and payment before an order is finalised.", know: "KNOW WHAT YOU BRING HOME", origin: "From our farm story to your everyday rituals.", sourcing: "Our sourcing", method: "How it is made", storage: "Care & storage", loading: "Loading live product details…", failed: "{labels.failed}", retry: "Try again", collection: "Back to collection", notFound: "Product not found", missing: "This product is not currently listed in the live catalogue.", explore: "Explore the collection" };
   const visual = productPresentation(slug);
+  const hasListedPrice = Boolean(activeVariant && Number(activeVariant.priceInr) > 0);
   const whatsappNumber = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919636100337").replace(/\D/g, "");
   const whatsappUrl = product && activeVariant
     ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-        `Namaste Lado Organics!\nProduct: ${displayName} (${activeVariant.label})\nCurrent listed price: ₹${activeVariant.priceInr.toLocaleString("en-IN")}\nPlease confirm batch availability, delivery and payment details.`
+        `Namaste Lado Organics!\nProduct: ${displayName} (${activeVariant.label})\nCurrent listed price: ${hasListedPrice ? "₹" + activeVariant.priceInr.toLocaleString("en-IN") : "to be confirmed by the Lado team"}\nPlease confirm batch availability, delivery and payment details.`
       )}`
     : `https://wa.me/${whatsappNumber}?text=${encodeURIComponent("Namaste Lado Organics, please help me with your product collection.")}`;
 
@@ -120,7 +121,7 @@ export default function ProductDetailPage(props: PageProps) {
     image: product.imageUrl || undefined,
     brand: { "@type": "Brand", name: "Lado Organics" },
     category: visual.category,
-    offers: activeVariant ? {
+    offers: hasListedPrice && activeVariant ? {
       "@type": "Offer",
       priceCurrency: "INR",
       price: Number(activeVariant.priceInr).toFixed(2),
@@ -184,7 +185,7 @@ export default function ProductDetailPage(props: PageProps) {
                 {product.variants.map((variant) => (
                   <button key={variant.id} type="button" aria-pressed={variant.id === activeVariant?.id} onClick={() => { setSelectedVariantId(variant.id); setQuantity(1); }} className={variant.id === activeVariant?.id ? "is-selected" : ""}>
                     <span>{variant.label}</span>
-                    <strong>₹{variant.priceInr.toLocaleString("en-IN")}</strong>
+                    <strong>{Number(variant.priceInr) > 0 ? "₹" + variant.priceInr.toLocaleString("en-IN") : "Price to be confirmed"}</strong>
                   </button>
                 ))}
               </div>
@@ -193,7 +194,7 @@ export default function ProductDetailPage(props: PageProps) {
               <div className="product-detail-checkout">
                 <div>
                   <span>{labels.selected} · {activeVariant.label}</span>
-                  <strong>₹{activeVariant.priceInr.toLocaleString("en-IN")}</strong>
+                  <strong>{hasListedPrice ? "₹" + activeVariant.priceInr.toLocaleString("en-IN") : "Price to be confirmed"}</strong>
                   <small className="block mt-1 opacity-70">{activeVariant.stockQty > 0 ? `${activeVariant.stockQty} currently listed in stock` : "Currently unavailable"}</small>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
@@ -202,8 +203,8 @@ export default function ProductDetailPage(props: PageProps) {
                     <span aria-live="polite">{quantity}</span>
                     <button type="button" aria-label="Increase quantity" onClick={() => setQuantity(value => Math.min(Math.max(1, activeVariant.stockQty), value + 1))} disabled={quantity >= activeVariant.stockQty}>+</button>
                   </div>
-                  <button type="button" disabled={activeVariant.stockQty <= 0} onClick={() => addToCart({ variantId: activeVariant.id, sku: activeVariant.sku, title: `${displayName} (${activeVariant.label})`, priceInr: activeVariant.priceInr, quantity, maxStock: activeVariant.stockQty })} className="product-detail-order disabled:cursor-not-allowed disabled:opacity-50">
-                    {activeVariant.stockQty > 0 ? labels.add : "Out of stock"} <span aria-hidden="true">+</span>
+                  <button type="button" disabled={activeVariant.stockQty <= 0 || !hasListedPrice} onClick={() => addToCart({ variantId: activeVariant.id, sku: activeVariant.sku, title: `${displayName} (${activeVariant.label})`, priceInr: activeVariant.priceInr, quantity, maxStock: activeVariant.stockQty })} className="product-detail-order disabled:cursor-not-allowed disabled:opacity-50">
+                    {activeVariant.stockQty <= 0 ? "Out of stock" : hasListedPrice ? labels.add : "Enquire for price"} <span aria-hidden="true">+</span>
                   </button>
                   <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="product-detail-order">
                     {labels.order} <span aria-hidden="true">↗</span>
