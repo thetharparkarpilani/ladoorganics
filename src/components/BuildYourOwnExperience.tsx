@@ -120,7 +120,7 @@ export default function BuildYourOwnExperience({ whatsappNumber }: BuildYourOwnE
     const msg = [
       "Namaste Lado Organics!",
       "Build Your Own Farm Experience Package:",
-      `- Accommodation: "Deep Work" Bhunga Stay (${nights} night(s); price to be confirmed)`,
+      `- Accommodation: Bhunga stay (${nights} night(s); price to be confirmed)`,
       `- Guests: ${guests}`,
       `- Check-in: ${checkIn || "Flexible"}`,
       `- Selected Experiences: ${acts}`,
