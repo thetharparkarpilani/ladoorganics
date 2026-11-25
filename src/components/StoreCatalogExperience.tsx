@@ -142,6 +142,8 @@ export default function StoreCatalogExperience({ products, locale }: { products:
                       <div className={`store-product-media store-product-media-${artwork.kind}`}>
                         {product.imageUrl ? (
                           <Image src={product.imageUrl} alt={product.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover transition duration-700 group-hover:scale-[1.035]" />
+                        ) : product.slug.includes("dhoop") ? (
+                          <Image src={`/images/lado-organics/${encodeURIComponent("Lado Organics Tharparkar Dhoop.png")}`} alt={product.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover transition duration-700 group-hover:scale-[1.035]" />
                         ) : (
                           <div className="store-product-art" aria-hidden="true">
                             <span className="store-product-art-symbol">{artwork.symbol}</span>
