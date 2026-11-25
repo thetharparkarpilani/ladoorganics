@@ -158,7 +158,7 @@ export default function StoreCatalogExperience({ products, locale }: { products:
                         <h2 className="mt-1 font-serif text-2xl font-bold text-[var(--mud)] transition group-hover:text-[var(--terracotta)]">{product.name}</h2>
                         <p className="mt-3 mb-6 flex-grow text-sm leading-7 text-[var(--muted)] line-clamp-3">{product.description}</p>
                         <div className="flex items-end justify-between gap-3 border-t border-[var(--border)] pt-4">
-                          <div><span className="block text-[9px] font-bold uppercase tracking-[.16em] text-[var(--muted)]">{product.packLabel}</span><strong className="mt-1 block font-serif text-2xl text-[var(--terracotta)]">₹{product.priceInr.toLocaleString("en-IN")}</strong></div>
+                          <div><span className="block text-[9px] font-bold uppercase tracking-[.16em] text-[var(--muted)]">{product.packLabel}</span><strong className="mt-1 block font-serif text-2xl text-[var(--terracotta)]">{product.priceInr > 0 ? "₹" + product.priceInr.toLocaleString("en-IN") : "Price to be confirmed"}</strong></div>
                           <span className="text-xs font-bold uppercase tracking-widest text-[var(--terracotta)]">{copy.view} ↗</span>
                         </div>
                       </div>
