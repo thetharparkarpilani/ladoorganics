@@ -20,7 +20,7 @@ export default function FarmExperienceSection({ whatsappNumber }: FarmExperience
     sponsorIntro: "यह सामान्य गौ सेवा सहयोग की रुचि है। किसी व्यक्तिगत पशु की प्रोफ़ाइल तभी दिखाई जाएगी जब टीम उसे सत्यापित करे।",
     plan: "योगदान की आवृत्ति", amount: "आपका प्रस्तावित योगदान (₹)", amountPlaceholder: "अपनी प्रस्तावित राशि लिखें",
     name: "आपका नाम", email: "ईमेल", phone: "फ़ोन / WhatsApp (वैकल्पिक)", fullName: "पूरा नाम",
-    submit: "रुचि दर्ज करें", submitting: "दर्ज हो रहा है…", whatsapp: "WhatsApp पर पूछें ↗",
+    submit: "रुचि दर्ज करें", submitting: "दर्ज हो रहा है…", whatsapp: "WhatsApp पर पूछें ↗", stayWhatsapp: "तारीख WhatsApp पर पूछें ↗",
     stayLabel: "कृषि पर्यटन · पिलानी, राजस्थान", stay: "भुंगा स्टे की उपलब्धता पूछें",
     stayIntro: "अपनी तारीखें और मेहमानों की जानकारी भेजें। उपलब्धता और अंतिम कीमत टीम पुष्टि करेगी। अनुरोध भेजने से बुकिंग पक्की नहीं होती।",
     checkIn: "आगमन", checkOut: "प्रस्थान", guests: "मेहमान (1–4)",
@@ -32,7 +32,7 @@ export default function FarmExperienceSection({ whatsappNumber }: FarmExperience
     sponsorIntro: "ई सामान्य गौ सेवा सहयोग री अरज है। किसी एक पशु री जानकारी टीम पक्की करै पाछै ही दिखाई जावैला।",
     plan: "योगदान रो समय", amount: "थारो प्रस्तावित योगदान (₹)", amountPlaceholder: "आपरी प्रस्तावित रकम लिखो",
     name: "थारो नाम", email: "ईमेल", phone: "फोन / WhatsApp (जरूरी कोनी)", fullName: "पूरो नाम",
-    submit: "रुचि लिखावो", submitting: "लिखी जावै है…", whatsapp: "WhatsApp पर पूछो ↗",
+    submit: "रुचि लिखावो", submitting: "लिखी जावै है…", whatsapp: "WhatsApp पर पूछो ↗", stayWhatsapp: "तारीख WhatsApp पर पूछो ↗",
     stayLabel: "खेत पर्यटन · पिलानी, राजस्थान", stay: "भुंगा ठहराव री उपलब्धता पूछो",
     stayIntro: "तारीख अर मेहमान री जानकारी भेजो। उपलब्धता अर आखरी भाव टीम पक्को करैला। अरज भेजण सूं बुकिंग पक्की कोनी होवै।",
     checkIn: "आवण री तारीख", checkOut: "जावण री तारीख", guests: "मेहमान (1–4)",
@@ -44,7 +44,7 @@ export default function FarmExperienceSection({ whatsappNumber }: FarmExperience
     sponsorIntro: "This is a general Gau Seva enquiry. Individual animal profiles will be shown only when the Lado team has verified and approved them.",
     plan: "Contribution frequency requested", amount: "Your proposed contribution (₹)", amountPlaceholder: "Enter an amount you propose",
     name: "Your name", email: "Email", phone: "Phone / WhatsApp (optional)", fullName: "Full name",
-    submit: "Send contribution enquiry", submitting: "Sending enquiry…", whatsapp: "Ask on WhatsApp ↗",
+    submit: "Send contribution enquiry", submitting: "Sending enquiry…", whatsapp: "Ask on WhatsApp ↗", stayWhatsapp: "Ask about dates on WhatsApp ↗",
     stayLabel: "AGRO-TOURISM · PILANI, RAJASTHAN", stay: "Enquire about a Bhunga stay",
     stayIntro: "Share your dates and guest details. The team will confirm availability and final pricing. Sending a request does not confirm a reservation.",
     checkIn: "Check-in", checkOut: "Check-out", guests: "Guests (1–4)",
@@ -135,6 +135,9 @@ export default function FarmExperienceSection({ whatsappNumber }: FarmExperience
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
     `Namaste Lado Organics. I would like to enquire about general Gau Seva support. Frequency: ${planType}. Proposed amount: ${amountInr ? "₹" + amountInr : "to be discussed"}. Please confirm the current process and details.`
   )}`;
+  const stayWhatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+    `Namaste Lado Organics. I would like to enquire about a Bhunga stay. Check-in: ${checkIn || "to be discussed"}. Check-out: ${checkOut || "to be discussed"}. Guests: ${guestsCount}. Please confirm availability and current pricing.`
+  )}`;
 
   return (
     <section id="experiences" className="py-20 px-4 sm:px-6 lg:px-8 border-t border-[var(--border)]">
@@ -206,7 +209,10 @@ export default function FarmExperienceSection({ whatsappNumber }: FarmExperience
               <input type="tel" required value={guestPhone} onChange={(event) => setGuestPhone(event.target.value)} placeholder="+91..." className="mt-1 w-full p-3 rounded-xl border border-[var(--border)] bg-[var(--bg)]" />
             </label>
             {bookMessage && <div role="status" className={`p-3.5 rounded-xl text-xs font-medium ${bookMessage.type === "ok" ? "bg-green-50 text-green-900 border border-green-200" : "bg-red-50 text-red-900 border border-red-200"}`}>{bookMessage.text}</div>}
-            <button type="submit" disabled={bookLoading} className="primary-btn px-6 py-3 rounded-xl text-xs font-bold disabled:opacity-50">{bookLoading ? copy.checking : copy.request}</button>
+            <div className="flex flex-wrap items-center gap-3">
+              <button type="submit" disabled={bookLoading} className="primary-btn px-6 py-3 rounded-xl text-xs font-bold disabled:opacity-50">{bookLoading ? copy.checking : copy.request}</button>
+              <a href={stayWhatsappUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-[var(--terracotta)] hover:underline">{copy.stayWhatsapp}</a>
+            </div>
           </form>
         </article>
       </div>
