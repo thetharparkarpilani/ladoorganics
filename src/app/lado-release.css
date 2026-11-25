@@ -50,3 +50,31 @@
 :where(button,a,input,select,textarea):focus-visible{outline:3px solid rgba(201,92,60,.48);outline-offset:3px}
 @media(max-width:640px){.store-product-card{border-radius:21px}.store-product-media{aspect-ratio:5/4}.store-product-body{min-height:0;padding:20px}.checkout-line{gap:10px}.checkout-line>strong{font-size:15px}.dashboard-page{padding:16px}.dashboard-welcome{border-radius:22px;padding:26px}}
 @media(prefers-reduced-motion:reduce){.store-product-card,.store-product-media img,.product-detail-order,.lado-sidebar-link{transition:none!important}}
+
+/* Homepage editorial product discovery */
+.home-store-section{background:linear-gradient(180deg,rgba(244,237,220,.42),transparent 68%)}
+.home-store-section>div>div:first-child{max-width:760px;margin-left:auto;margin-right:auto}
+.home-store-grid{align-items:stretch}
+.home-store-card{min-width:0;padding:18px;border:1px solid var(--border-light);border-radius:25px;background:var(--bg-ivory);box-shadow:0 10px 32px rgba(54,43,31,.045);transition:transform .3s ease,border-color .3s ease,box-shadow .3s ease}
+.home-store-card:hover{transform:translateY(-5px);border-color:rgba(201,92,60,.42);box-shadow:0 20px 42px rgba(54,43,31,.1)}
+.home-store-image{border-radius:18px;background:linear-gradient(140deg,#eee4cc,#d8d7b9)}
+.home-store-image img{transition:transform .7s ease}
+.home-store-card:hover .home-store-image img{transform:scale(1.05)}
+.home-store-art{width:100%;border:0!important}
+.home-store-title{color:var(--text-mud)}
+.home-store-purchase{margin-top:18px}
+.home-store-card .primary-btn{min-height:44px;border-radius:999px;background:var(--accent-forest);color:#fffdf6;transition:background .2s ease,transform .2s ease}
+.home-store-card .primary-btn:hover{background:#173b29;transform:translateY(-1px)}
+.home-store-card button:not(.primary-btn){min-height:42px;border-radius:999px}
+.home-store-section figure{box-shadow:0 12px 32px rgba(54,43,31,.07)}
+.farm-hero-editorial{min-height:min(760px,calc(100svh - 60px));display:flex;align-items:center;background:radial-gradient(ellipse at 76% 16%,rgba(255,239,194,.85),transparent 34%),linear-gradient(135deg,#f8ebd2 0%,#e9e8d0 52%,#b7c49d 100%)}
+.farm-hero-content{width:100%;padding-top:clamp(50px,8vw,110px);padding-bottom:clamp(70px,10vw,130px)}
+.farm-hero-copy{max-width:740px}
+.farm-hero-copy h1{max-width:720px;font-size:clamp(3.2rem,7vw,6.7rem);line-height:.98;letter-spacing:-.055em;color:#2d3828}
+.farm-hero-description{max-width:580px;font-size:clamp(15px,1.4vw,18px);line-height:1.8;color:#59634b}
+.farm-hero-kicker{font-size:10px;letter-spacing:.2em;font-weight:850;color:#8c593b}
+.farm-hero-actions a{min-height:48px;border-radius:999px;padding:14px 22px;font-size:11px;font-weight:850;letter-spacing:.1em;text-transform:uppercase}
+.farm-hero-primary{background:#204e36;color:#fffdf6;box-shadow:0 12px 28px rgba(32,78,54,.18)}
+.farm-hero-primary:hover{background:#173b29;transform:translateY(-2px)}
+.farm-hero-secondary{border:1px solid rgba(45,56,40,.25);color:#34452f;background:rgba(255,255,255,.28)}
+@media(max-width:760px){.farm-hero-editorial{min-height:650px}.farm-hero-content{padding-top:90px;padding-bottom:90px}.farm-hero-copy h1{font-size:clamp(3rem,13vw,4.8rem)}.farm-hero-side-note{display:none}.home-store-card{padding:14px;border-radius:20px}}
