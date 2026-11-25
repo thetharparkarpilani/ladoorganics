@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import type { LocaleCode } from "@/types/domain";
 import { TRANSLATIONS } from "@/lib/i18n";
 
@@ -12,7 +12,8 @@ export default function FarmCalculatorsSuite({ locale }: FarmCalculatorsSuitePro
   const dict = TRANSLATIONS[locale] ?? TRANSLATIONS.en;
   const [familyMembers, setFamilyMembers] = useState(1);
   const [dailyMlPerPerson, setDailyMlPerPerson] = useState(0);
-  const [daysPeriod, setDaysPeriod] = useState(30);
+  const [gheeDays, setGheeDays] = useState(30);
+  const [dhoopDays, setDhoopDays] = useState(30);
   const [dhoopSessionsPerWeek, setDhoopSessionsPerWeek] = useState(0);
   const [gardenSqFt, setGardenSqFt] = useState(100);
   const [labelRateKgPer10SqFt, setLabelRateKgPer10SqFt] = useState(0);
@@ -20,12 +21,12 @@ export default function FarmCalculatorsSuite({ locale }: FarmCalculatorsSuitePro
   const [contributionMonths, setContributionMonths] = useState(1);
 
   const gheeUsage = useMemo(
-    () => familyMembers * dailyMlPerPerson * daysPeriod,
-    [familyMembers, dailyMlPerPerson, daysPeriod]
+    () => familyMembers * dailyMlPerPerson * gheeDays,
+    [familyMembers, dailyMlPerPerson, gheeDays]
   );
   const dhoopSessions = useMemo(
-    () => Math.ceil((dhoopSessionsPerWeek / 7) * daysPeriod),
-    [dhoopSessionsPerWeek, daysPeriod]
+    () => Math.ceil((dhoopSessionsPerWeek / 7) * dhoopDays),
+    [dhoopSessionsPerWeek, dhoopDays]
   );
   const compostKg = useMemo(
     () => labelRateKgPer10SqFt > 0 ? (gardenSqFt / 10) * labelRateKgPer10SqFt : null,
@@ -61,7 +62,7 @@ export default function FarmCalculatorsSuite({ locale }: FarmCalculatorsSuitePro
                 <input type="number" min={0} max={1000} value={dailyMlPerPerson} onChange={(e) => setDailyMlPerPerson(Math.max(0, Number(e.target.value) || 0))} className="mt-1 w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)]" />
               </label>
               <label className="block font-bold uppercase">Days
-                <input type="number" min={1} max={365} value={daysPeriod} onChange={(e) => setDaysPeriod(Math.min(365, Math.max(1, Number(e.target.value) || 1)))} className="mt-1 w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)]" />
+                <input type="number" min={1} max={365} value={gheeDays} onChange={(e) => setGheeDays(Math.min(365, Math.max(1, Number(e.target.value) || 1)))} className="mt-1 w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)]" />
               </label>
             </div>
             <div className="p-4 rounded-2xl bg-[var(--bg)] border border-[var(--border)]">
@@ -83,7 +84,7 @@ export default function FarmCalculatorsSuite({ locale }: FarmCalculatorsSuitePro
               <input type="range" min={0} max={21} value={dhoopSessionsPerWeek} onChange={(e) => setDhoopSessionsPerWeek(Number(e.target.value))} className="mt-3 w-full accent-[#c2410c]" />
             </label>
             <label className="block font-bold uppercase">Planning period (days)
-              <input type="number" min={1} max={365} value={daysPeriod} onChange={(e) => setDaysPeriod(Math.min(365, Math.max(1, Number(e.target.value) || 1)))} className="mt-1 w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)]" />
+              <input type="number" min={1} max={365} value={dhoopDays} onChange={(e) => setDhoopDays(Math.min(365, Math.max(1, Number(e.target.value) || 1)))} className="mt-1 w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)]" />
             </label>
             <div className="p-4 rounded-2xl bg-[var(--bg)] border border-[var(--border)]">
               <p className="text-sm text-[var(--muted)]">Planned sessions: <strong className="font-serif text-2xl text-[var(--terracotta)]">{dhoopSessions}</strong></p>
