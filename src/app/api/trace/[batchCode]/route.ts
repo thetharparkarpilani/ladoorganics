@@ -1,28 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { enforceRateLimit } from "@/lib/rate-limit";
 
-function buildJourney(originLocation: string, productionDate: string, packagingDate: string | null) {
+function buildJourney(
+  originLocation: string,
+  productionDate: string,
+  packagingDate: string | null,
+  qualityChecks: string | null
+) {
+  const hasQualityRecord = Boolean(qualityChecks && qualityChecks.trim());
   return [
-    { step: 1, stage: "Farm Origin", location: originLocation, date: productionDate, status: "recorded" },
-    { step: 2, stage: "Production", location: originLocation, date: productionDate, status: "recorded" },
-    { step: 3, stage: "Quality Checks", location: originLocation, date: packagingDate || productionDate, status: "recorded" },
-    { step: 4, stage: "Packaging", location: originLocation, date: packagingDate || "Pending confirmation", status: packagingDate ? "recorded" : "pending" },
-    { step: 5, stage: "Dispatch", location: "Pilani Dispatch Hub", date: "Confirmed per order", status: "order_dependent" },
-    { step: 6, stage: "Delivery", location: "Customer Address", date: "Confirmed per shipment", status: "order_dependent" }
+    { step: 1, stage: "Farm Origin", location: originLocation || "Pending confirmation", date: productionDate, status: originLocation ? "recorded" : "pending" },
+    { step: 2, stage: "Production", location: originLocation || "Pending confirmation", date: productionDate, status: "recorded" },
+    { step: 3, stage: "Quality Checks", location: originLocation || "Pending confirmation", date: hasQualityRecord ? (packagingDate || productionDate) : "Pending confirmation", status: hasQualityRecord ? "recorded" : "pending" },
+    { step: 4, stage: "Packaging", location: originLocation || "Pending confirmation", date: packagingDate || "Pending confirmation", status: packagingDate ? "recorded" : "pending" },
+    { step: 5, stage: "Dispatch", location: "Confirmed per order", date: "Confirmed per shipment", status: "order_dependent" },
+    { step: 6, stage: "Delivery", location: "Confirmed per shipment", date: "Confirmed per shipment", status: "order_dependent" }
   ];
 }
 
-export async function GET(_req: NextRequest, context: { params: Promise<{ batchCode: string }> }) {
+export async function GET(req: NextRequest, context: { params: Promise<{ batchCode: string }> }) {
+  const rateLimited = await enforceRateLimit(req, "public-batch-trace", 30, 60);
+  if (rateLimited) return rateLimited;
+
   const { batchCode } = await context.params;
   let normalizedCode = "";
   try {
     normalizedCode = decodeURIComponent(batchCode || "").trim().toUpperCase();
   } catch {
-    return NextResponse.json({ error: "Invalid batch code." }, { status: 400 });
+    return NextResponse.json({ error: "Invalid batch code." }, { status: 400, headers: { "Cache-Control": "no-store" } });
   }
 
   if (!/^[A-Z0-9][A-Z0-9-]{2,63}$/.test(normalizedCode)) {
-    return NextResponse.json({ error: "Invalid batch code." }, { status: 400 });
+    return NextResponse.json({ error: "Invalid batch code." }, { status: 400, headers: { "Cache-Control": "no-store" } });
   }
   // This legacy sample record was seeded for development and is not evidence
   // of an actual production batch. Never expose it as verified traceability.
@@ -52,6 +62,7 @@ export async function GET(_req: NextRequest, context: { params: Promise<{ batchC
     const row = result.rows[0];
     const productionDate = String(row.production_date);
     const packagingDate = row.packaging_date ? String(row.packaging_date) : null;
+    const qualityChecks = typeof row.quality_checks === "string" ? row.quality_checks : null;
     return NextResponse.json({
       batch: {
         batchCode: row.batch_code,
@@ -68,7 +79,7 @@ export async function GET(_req: NextRequest, context: { params: Promise<{ batchC
         bestBeforeDate: row.best_before_date,
         source: "database"
       },
-      journey: buildJourney(row.origin_location, productionDate, packagingDate)
+      journey: buildJourney(row.origin_location, productionDate, packagingDate, qualityChecks)
     }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     console.error("Batch trace lookup failed:", error);
