@@ -11,8 +11,6 @@ export default function CartCheckoutDrawer() {
   const [completedMethod, setCompletedMethod] = useState<"cash_on_delivery" | "manual_upi">("cash_on_delivery");
   const [completedTotal, setCompletedTotal] = useState(0);
 
-  if (!isDrawerOpen) return null;
-
   const finishOrder = (orderNumber: string, method: "cash_on_delivery" | "manual_upi", totalInr: number) => {
     setCompletedOrder(orderNumber);
     setCompletedMethod(method);
@@ -41,6 +39,8 @@ export default function CartCheckoutDrawer() {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isDrawerOpen, setDrawerOpen]);
+
+  if (!isDrawerOpen) return null;
 
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919636100337";
   const upiId = process.env.NEXT_PUBLIC_UPI_ID || "";
