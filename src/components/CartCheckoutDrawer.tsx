@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useCart } from "@/context/CartContext";
 import ManualCheckout from "@/components/ManualCheckout";
 
@@ -40,7 +41,7 @@ export default function CartCheckoutDrawer() {
       <button aria-label="Close shopping bag" className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeDrawer} />
       <div className="relative flex h-full w-full max-w-md flex-col border-l border-[var(--border-light)] bg-[var(--bg-ivory)] shadow-2xl animate-fade-in">
         <div className="flex items-center justify-between border-b border-[var(--border-light)] bg-[var(--bg-sand)] p-6">
-          <h2 className="text-2xl font-serif font-bold text-[var(--text-charcoal)]">Your Ecosystem Bag</h2>
+          <div className="flex min-w-0 items-center gap-3"><Image src="/lado-organics-logo.svg" alt="Lado Organics" width={92} height={50} className="h-10 w-auto object-contain" /><div><h2 className="text-xl font-serif font-bold text-[var(--text-charcoal)]">Your shopping bag</h2><p className="text-[9px] font-bold uppercase tracking-[.18em] text-[var(--text-muted)]">Lado Love Pure</p></div></div>
           <button onClick={closeDrawer} className="rounded-lg border border-[var(--border-light)] px-3 py-1 text-[10px] font-bold uppercase tracking-widest">Close</button>
         </div>
 
