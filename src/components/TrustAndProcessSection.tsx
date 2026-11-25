@@ -5,7 +5,7 @@ import React, { useState } from "react";
 const STEPS = [
   { number: "01", title: "Boiling", detail: "Milk is heated as the first stage of the documented traditional process." },
   { number: "02", title: "Curdling", detail: "The milk is cultured into curd before churning." },
-  { number: "03", title: "Wooden churning", detail: "Curd is churned using the traditional wooden Bilona." },
+  { number: "03", title: "Bilona churning", detail: "Curd is churned using the Bilona process described by Lado Organics." },
   { number: "04", title: "Separating", detail: "The butter is separated from the buttermilk." },
   { number: "05", title: "Slow heating", detail: "The butter is gently heated to prepare ghee." }
 ];
@@ -13,7 +13,7 @@ const STEPS = [
 const FAQS = [
   {
     q: "How is Lado Organics Bilona Ghee prepared?",
-    a: "The process described by Lado Organics is milk heating, curdling, wooden Bilona churning, butter separation and slow heating. Batch-specific details should be checked against the product label and published batch record."
+    a: "The process described by Lado Organics is milk heating, curdling, Bilona churning, butter separation and slow heating. Batch-specific details should be checked against the product label and published batch record."
   },
   {
     q: "Why can Bilona ghee have a grainy texture?",
@@ -65,7 +65,7 @@ export default function TrustAndProcessSection({ whatsappNumber }: { whatsappNum
     }
   };
 
-  const consultationUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent("Namaste Lado Organics. I would like to enquire about a biogas and zero-waste farm systems consultation. Please share whether this service is available.")}`;
+  const consultationUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent("Namaste Lado Organics. I would like to enquire about a biogas and circular-farm systems consultation. Please share whether this service is available.")}`;
 
   return (
     <section id="process-and-trust" className="border-t border-[var(--border)] py-20 px-4 sm:px-6 lg:px-8">
