@@ -89,7 +89,7 @@ export default function GauSevaTransparencySection() {
                   className="p-3.5 rounded-2xl bg-[var(--bg)] border border-[var(--border)] flex items-center justify-between"
                 >
                   <div>
-                    <p className="font-bold text-sm">{r.calf_name}</p>
+                    <p className="font-bold text-sm">{r.category}</p>
                     <p className="opacity-70">{r.entries_count} recorded entry(s)</p>
                   </div>
                   <span className="font-serif font-bold text-base text-[var(--terracotta)]">
