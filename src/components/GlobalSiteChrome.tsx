@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { useLocale } from "@/context/LocaleContext";
 import { useCart } from "@/context/CartContext";
 import type { LocaleCode } from "@/types/domain";
+import CartCheckoutDrawer from "@/components/CartCheckoutDrawer";
 
 export default function GlobalSiteChrome() {
   const pathname = usePathname();
@@ -18,10 +19,10 @@ export default function GlobalSiteChrome() {
   if (pathname === "/") return null;
 
   const labels = locale === "hi"
-    ? { shop: "उत्पाद", farm: "हमारा खेत", trace: "बैच ट्रेस", account: "मेरा खाता", contact: "संपर्क", bag: "बैग", menu: "मेन्यू", close: "बंद करें" }
+    ? { shop: "उत्पाद", farm: "हमारा खेत", trace: "बैच ट्रेस", search: "खोजें", account: "मेरा खाता", contact: "संपर्क", bag: "बैग", menu: "मेन्यू", close: "बंद करें" }
     : locale === "ma"
-      ? { shop: "सामान", farm: "म्हारो खेत", trace: "बैच जांच", account: "म्हारो खातो", contact: "संपर्क", bag: "थैली", menu: "मेन्यू", close: "बंद" }
-      : { shop: "Shop", farm: "Our farm", trace: "Trace a batch", account: "My account", contact: "Contact", bag: "Bag", menu: "Menu", close: "Close" };
+      ? { shop: "सामान", farm: "म्हारो खेत", trace: "बैच जांच", search: "खोज", account: "म्हारो खातो", contact: "संपर्क", bag: "थैली", menu: "मेन्यू", close: "बंद" }
+      : { shop: "Shop", farm: "Our farm", trace: "Trace a batch", search: "Search", account: "My account", contact: "Contact", bag: "Bag", menu: "Menu", close: "Close" };
 
   const closeMenu = () => setMenuOpen(false);
 
@@ -39,6 +40,7 @@ export default function GlobalSiteChrome() {
             <Link href="/store" onClick={closeMenu}>{labels.shop}</Link>
             <Link href="/#farm-world" onClick={closeMenu}>{labels.farm}</Link>
             <Link href="/trace" onClick={closeMenu}>{labels.trace}</Link>
+            <Link href="/search" onClick={closeMenu}>{labels.search}</Link>
             <Link href="/contact" onClick={closeMenu}>{labels.contact}</Link>
           </nav>
           <div className="lado-global-actions">
@@ -55,11 +57,12 @@ export default function GlobalSiteChrome() {
           <Link href="/" aria-label="Lado Organics home"><Image src="/lado-organics-logo.svg" alt="Lado Organics" width={138} height={76} /></Link>
           <p>Lado Love Pure · Rooted in tradition. Close to nature.</p>
           <nav aria-label="Footer navigation">
-            <Link href="/store">Shop</Link><Link href="/trace">Batch traceability</Link><Link href="/dashboard">My account</Link><Link href="/contact">Contact</Link><Link href="/policies">Policies</Link>
+            <Link href="/store">Shop</Link><Link href="/search">Search</Link><Link href="/trace">Batch traceability</Link><Link href="/dashboard">My account</Link><Link href="/contact">Contact</Link><Link href="/policies">Policies</Link>
           </nav>
         </div>
         <div className="lado-global-footer-bottom"><span>© {new Date().getFullYear()} Lado Organics</span><span>Pilani, Rajasthan, India</span></div>
       </footer>
+      <CartCheckoutDrawer />
     </>
   );
 }
