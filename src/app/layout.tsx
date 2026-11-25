@@ -20,12 +20,12 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   icons: {
     icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
-      { url: "/icon-192.svg", sizes: "192x192", type: "image/svg+xml" },
-      { url: "/icon-512.svg", sizes: "512x512", type: "image/svg+xml" },
+      { url: "/lado-app-icon.svg", type: "image/svg+xml" },
+      { url: "/lado-app-icon.svg", sizes: "192x192", type: "image/svg+xml" },
+      { url: "/lado-app-icon.svg", sizes: "512x512", type: "image/svg+xml" },
     ],
-    shortcut: [{ url: "/favicon.svg", type: "image/svg+xml" }],
-    apple: [{ url: "/apple-touch-icon.svg", type: "image/svg+xml" }],
+    shortcut: [{ url: "/lado-app-icon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/lado-app-icon.svg", type: "image/svg+xml" }],
   },
   openGraph: {
     type: "website",
@@ -58,8 +58,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="scroll-smooth">
       <head>
-        <link rel="apple-touch-icon" href="/apple-touch-icon.svg" />
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/lado-app-icon.svg" />
+        <link rel="icon" href="/lado-app-icon.svg" type="image/svg+xml" />
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
         {/* eslint-disable-next-line @next/next/no-page-custom-font -- App Router loads this stylesheet from the root layout. */}
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
