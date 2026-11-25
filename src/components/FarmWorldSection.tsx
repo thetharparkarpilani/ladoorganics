@@ -18,7 +18,7 @@ export default function FarmWorldSection() {
     intro: "जानें कि पशुओं की देखभाल, पारंपरिक उत्पाद, खाद, मिट्टी और हरियाली Lado Organics की कहानी में कैसे जुड़ते हैं।",
     explore: "खेत का चक्र देखें", choose: "एक अध्याय चुनें", where: "यहीं से कहानी शुरू होती है।",
     photo: "थारपारकर गाय का चित्र", photoTop: "01 — हमारा पशुधन", photoCountry: "थारपारकर · भारत",
-    credits: "नस्ल संदर्भ चित्र", products: ["थारपारकर धूप", "केंचुआ खाद", "A2 दूध", "बिलोना घी", "केसर"],
+    credits: "नस्ल संदर्भ चित्र", products: ["थारपारकर धूप", "केंचुआ खाद", "थारपारकर गाय का दूध", "बिलोना घी", "केसर"],
     chapters: [
       ["हमारी गायें", "देखभाल से शुरुआत।", "Lado की कहानी के केंद्र में देसी थारपारकर गायें हैं। उनकी देखभाल, आराम और खेत के पारिस्थितिकी तंत्र में उनकी भूमिका सबसे पहले आती है।", "थारपारकर गौशाला"],
       ["गोबर", "कुछ भी व्यर्थ नहीं।", "गोबर खेत का उपयोगी संसाधन है। इसे पारंपरिक धूप के लिए सुखाया जा सकता है या प्रबंधित बायोगैस और कम्पोस्ट प्रक्रिया में इस्तेमाल किया जा सकता है।", "पारंपरिक धूप • बायोगैस"],
@@ -31,7 +31,7 @@ export default function FarmWorldSection() {
     intro: "जाणो पशुवां री देखभाल, पुराणो सामान, खाद, माटी अर हरियाळी Lado Organics री बात में कियां जुड़ै है।",
     explore: "खेत रो चक्र देखो", choose: "एक पड़ाव चुनो", where: "कहाणी ईंठै सूं चालै।",
     photo: "थारपारकर गाय रो चित्र", photoTop: "01 — म्हारी गायां", photoCountry: "थारपारकर · भारत",
-    credits: "नस्ल रो संदर्भ चित्र", products: ["थारपारकर धूप", "केंचुआ खाद", "A2 दूध", "बिलोना घी", "केसर"],
+    credits: "नस्ल रो संदर्भ चित्र", products: ["थारपारकर धूप", "केंचुआ खाद", "थारपारकर गाय का दूध", "बिलोना घी", "केसर"],
     chapters: [
       ["गायां", "पैली देखभाल।", "Lado री बात रै बीच में देसी थारपारकर गायां है। उण री देखभाल, आराम अर खेत में उण रो स्थान पैली आवै।", "थारपारकर गौशाला"],
       ["गोबर", "काई भी बेकार कोनी।", "गोबर खेत रो काम रो संसाधन है। ई नै सुखाय कै धूप बणै या बायोगैस अर खाद रै चक्र में काम ले सकै।", "देसी धूप • बायोगैस"],
@@ -44,7 +44,7 @@ export default function FarmWorldSection() {
     intro: "Explore how animal care, traditional products, compost, soil and growing things connect in the Lado Organics story.",
     explore: "Explore the cycle", choose: "Choose a chapter", where: "Where the story begins.",
     photo: "Photograph of a Tharparkar cow", photoTop: "01 — THE HERD", photoCountry: "THARPARKAR · INDIA",
-    credits: "Breed reference photograph", products: ["Tharparkar Dhoop", "Vermicompost", "A2 Milk", "Bilona Ghee", "Kesar"],
+    credits: "Breed reference photograph", products: ["Tharparkar Dhoop", "Vermicompost", "Tharparkar Cow Milk", "Bilona Ghee", "Kesar"],
     chapters: [
       ["The herd", "It begins with care.", "Meet the indigenous Tharparkar cows at the heart of the Lado story. Their care, comfort and place in the farm ecosystem come first.", "THARPARKAR GAUSHALA"],
       ["The dung", "Nothing goes to waste.", "Cow dung is a useful farm resource. It can be dried for traditional dhoop making or processed through a managed biogas and composting cycle.", "TRADITIONAL DHOOP • BIOGAS"],
