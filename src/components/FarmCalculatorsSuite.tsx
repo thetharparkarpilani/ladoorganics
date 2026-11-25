@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useMemo, useState } from "react";
 import type { LocaleCode } from "@/types/domain";
@@ -10,198 +10,121 @@ interface FarmCalculatorsSuiteProps {
 
 export default function FarmCalculatorsSuite({ locale }: FarmCalculatorsSuiteProps) {
   const dict = TRANSLATIONS[locale] ?? TRANSLATIONS.en;
+  const [familyMembers, setFamilyMembers] = useState(1);
+  const [dailyMlPerPerson, setDailyMlPerPerson] = useState(0);
+  const [daysPeriod, setDaysPeriod] = useState(30);
+  const [dhoopSessionsPerWeek, setDhoopSessionsPerWeek] = useState(0);
+  const [gardenSqFt, setGardenSqFt] = useState(100);
+  const [labelRateKgPer10SqFt, setLabelRateKgPer10SqFt] = useState(0);
+  const [proposedMonthlyAmount, setProposedMonthlyAmount] = useState(0);
+  const [contributionMonths, setContributionMonths] = useState(1);
 
-  // 1. Ghee quantity calculator (assumption: ~15 ml per person per day when used daily)
-  const [familyMembers, setFamilyMembers] = useState<number>(4);
-  const [daysPeriod, setDaysPeriod] = useState<number>(30);
-  const [dailyMlPerPerson, setDailyMlPerPerson] = useState<number>(15);
-
-  // 2. Dhoop & Compost estimators (clearly stated assumptions)
-  const [dhoopSessionsPerWeek, setDhoopSessionsPerWeek] = useState<number>(7);
-  const [gardenSqFt, setGardenSqFt] = useState<number>(200);
-
-  // 3. Sponsorship estimator (assumption: monthly contribution * months)
-  const [monthlySponsorInr, setMonthlySponsorInr] = useState<number>(2100);
-  const [sponsorMonths, setSponsorMonths] = useState<number>(6);
-
-  const gheeEstimate = useMemo(() => {
-    const totalMl = familyMembers * dailyMlPerPerson * daysPeriod;
-    const litres = totalMl / 1000;
-    const fullLitrePacks = Math.max(1, Math.ceil(litres));
-    const estCostInr = fullLitrePacks * 5000;
-    return { totalMl, litres: litres.toFixed(2), fullLitrePacks, estCostInr };
-  }, [familyMembers, dailyMlPerPerson, daysPeriod]);
-
-  const dhoopEstimate = useMemo(() => {
-    // Assumption: 1 dhoop stick/cone per session; ~30 sessions per box (admin-configurable placeholder assumption)
-    const totalSessions = Math.round((dhoopSessionsPerWeek / 7) * daysPeriod);
-    const boxesNeeded = Math.max(1, Math.ceil(totalSessions / 30));
-    return { totalSessions, boxesNeeded, estCostInr: boxesNeeded * 1000 };
-  }, [dhoopSessionsPerWeek, daysPeriod]);
-
-  const compostEstimate = useMemo(() => {
-    // Assumption: ~0.5 kg Pure Kechua Khad per 10 sq ft for initial top-dressing (not a guaranteed yield claim)
-    const kgNeeded = Math.max(5, Math.ceil((gardenSqFt / 10) * 0.5));
-    const bagsOf5Kg = Math.ceil(kgNeeded / 5);
-    return { kgNeeded, bagsOf5Kg, estCostInr: bagsOf5Kg * 2000 };
-  }, [gardenSqFt]);
-
-  const sponsorshipTotalInr = monthlySponsorInr * sponsorMonths;
+  const gheeUsage = useMemo(
+    () => familyMembers * dailyMlPerPerson * daysPeriod,
+    [familyMembers, dailyMlPerPerson, daysPeriod]
+  );
+  const dhoopSessions = useMemo(
+    () => Math.ceil((dhoopSessionsPerWeek / 7) * daysPeriod),
+    [dhoopSessionsPerWeek, daysPeriod]
+  );
+  const compostKg = useMemo(
+    () => labelRateKgPer10SqFt > 0 ? (gardenSqFt / 10) * labelRateKgPer10SqFt : null,
+    [gardenSqFt, labelRateKgPer10SqFt]
+  );
+  const proposedContributionTotal = proposedMonthlyAmount * contributionMonths;
 
   return (
     <section id="calculators-suite" className="py-20 px-4 sm:px-6 lg:px-8 border-t border-[var(--border)]">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <span className="text-xs font-bold uppercase tracking-widest text-[var(--terracotta)]">
-            Assumption-Based Planning Tools
+            Planning tools · your own assumptions
           </span>
           <h2 className="text-3xl sm:text-5xl font-serif font-bold mt-2">{dict.section_calculators}</h2>
           <p className="text-xs sm:text-sm opacity-80 max-w-2xl mx-auto mt-3">
-            Estimates use explicit household or garden assumptions and baseline listed prices (₹5,000/1L Ghee, ₹1,000/Box Dhoop, ₹2,000/5kg Kechua Khad). Compost figures are planning estimates, not guaranteed agricultural outcomes.
+            Use your own household usage, product-label instructions and proposed contribution amount. These tools do not set product prices, recommend dietary intake or replace product-label guidance.
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 text-xs">
-          {/* Ghee Quantity Calculator */}
-          <div className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 space-y-4">
-            <h3 className="text-xl font-serif font-bold">1. A2 Bilona Ghee Quantity Estimator</h3>
+          <article className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 space-y-4">
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--terracotta)]">01 · Household planning</span>
+              <h3 className="mt-1 text-xl font-serif font-bold">Ghee usage planner</h3>
+              <p className="mt-2 text-xs leading-6 text-[var(--muted)]">Enter your own intended usage. The default is zero and is not a dietary recommendation.</p>
+            </div>
             <div className="grid sm:grid-cols-3 gap-3">
-              <div>
-                <label className="block font-bold uppercase mb-1">Members</label>
-                <input
-                  type="number"
-                  min={1}
-                  max={20}
-                  value={familyMembers}
-                  onChange={(e) => setFamilyMembers(Math.max(1, Number(e.target.value) || 1))}
-                  className="w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)]"
-                />
-              </div>
-              <div>
-                <label className="block font-bold uppercase mb-1">ml / Person / Day</label>
-                <input
-                  type="number"
-                  min={5}
-                  max={60}
-                  value={dailyMlPerPerson}
-                  onChange={(e) => setDailyMlPerPerson(Math.max(5, Number(e.target.value) || 15))}
-                  className="w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)]"
-                />
-              </div>
-              <div>
-                <label className="block font-bold uppercase mb-1">Days</label>
-                <input
-                  type="number"
-                  min={7}
-                  max={180}
-                  value={daysPeriod}
-                  onChange={(e) => setDaysPeriod(Math.max(7, Number(e.target.value) || 30))}
-                  className="w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)]"
-                />
-              </div>
-            </div>
-            <div className="p-4 rounded-2xl bg-[var(--bg)] border border-[var(--border)] flex items-center justify-between">
-              <div>
-                <p className="opacity-75">Estimated need: <strong>{gheeEstimate.litres} L</strong> ({gheeEstimate.totalMl.toLocaleString("en-IN")} ml)</p>
-                <p className="opacity-65 mt-0.5">Suggested 1L units: {gheeEstimate.fullLitrePacks} (@ ₹5,000/L)</p>
-              </div>
-              <span className="text-xl font-serif font-bold text-[var(--terracotta)]">
-                ₹{gheeEstimate.estCostInr.toLocaleString("en-IN")}
-              </span>
-            </div>
-          </div>
-
-          {/* Dhoop Requirement Calculator */}
-          <div className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 space-y-4">
-            <h3 className="text-xl font-serif font-bold">2. Tharparkar Dhoop Estimator</h3>
-            <div>
-              <label className="block font-bold uppercase mb-1">
-                Sessions per Week: {dhoopSessionsPerWeek} (over {daysPeriod} days)
+              <label className="block font-bold uppercase">People
+                <input type="number" min={1} max={20} value={familyMembers} onChange={(e) => setFamilyMembers(Math.min(20, Math.max(1, Number(e.target.value) || 1)))} className="mt-1 w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)]" />
               </label>
-              <input
-                type="range"
-                min={1}
-                max={21}
-                value={dhoopSessionsPerWeek}
-                onChange={(e) => setDhoopSessionsPerWeek(Number(e.target.value))}
-                className="w-full accent-[#c2410c]"
-              />
+              <label className="block font-bold uppercase">Your ml / person / day
+                <input type="number" min={0} max={1000} value={dailyMlPerPerson} onChange={(e) => setDailyMlPerPerson(Math.max(0, Number(e.target.value) || 0))} className="mt-1 w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)]" />
+              </label>
+              <label className="block font-bold uppercase">Days
+                <input type="number" min={1} max={365} value={daysPeriod} onChange={(e) => setDaysPeriod(Math.min(365, Math.max(1, Number(e.target.value) || 1)))} className="mt-1 w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)]" />
+              </label>
             </div>
-            <div className="p-4 rounded-2xl bg-[var(--bg)] border border-[var(--border)] flex items-center justify-between">
-              <div>
-                <p className="opacity-75">Estimated sessions: <strong>{dhoopEstimate.totalSessions}</strong></p>
-                <p className="opacity-65 mt-0.5">Assumption: ~30 sessions/box (@ ₹1,000/Box)</p>
-              </div>
-              <span className="text-xl font-serif font-bold text-[var(--terracotta)]">
-                ₹{dhoopEstimate.estCostInr.toLocaleString("en-IN")}
-              </span>
+            <div className="p-4 rounded-2xl bg-[var(--bg)] border border-[var(--border)]">
+              {dailyMlPerPerson > 0 ? (
+                <p className="text-sm text-[var(--mud)]">Your planned quantity: <strong>{(gheeUsage / 1000).toFixed(2)} L</strong> ({gheeUsage.toLocaleString("en-IN")} ml)</p>
+              ) : (
+                <p className="text-sm text-[var(--muted)]">Enter your own usage amount to calculate a household quantity.</p>
+              )}
             </div>
-          </div>
+          </article>
 
-          {/* Compost Calculator */}
-          <div className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 space-y-4">
-            <h3 className="text-xl font-serif font-bold">3. Pure Kechua Khad Estimator</h3>
+          <article className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 space-y-4">
             <div>
-              <label className="block font-bold uppercase mb-1">Garden / Terrace Area (sq. ft.): {gardenSqFt}</label>
-              <input
-                type="range"
-                min={50}
-                max={2000}
-                step={50}
-                value={gardenSqFt}
-                onChange={(e) => setGardenSqFt(Number(e.target.value))}
-                className="w-full accent-[#c2410c]"
-              />
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--terracotta)]">02 · Routine planning</span>
+              <h3 className="mt-1 text-xl font-serif font-bold">Dhoop session planner</h3>
+              <p className="mt-2 text-xs leading-6 text-[var(--muted)]">Estimate the number of sessions in your chosen period. No sessions-per-box or price assumption is applied.</p>
             </div>
-            <div className="p-4 rounded-2xl bg-[var(--bg)] border border-[var(--border)] flex items-center justify-between">
-              <div>
-                <p className="opacity-75">Estimated application: <strong>{compostEstimate.kgNeeded} kg</strong> ({compostEstimate.bagsOf5Kg} × 5 kg bag)</p>
-                <p className="opacity-65 mt-0.5">Assumption: 0.5 kg per 10 sq. ft. (@ ₹2,000/5 kg)</p>
-              </div>
-              <span className="text-xl font-serif font-bold text-[var(--terracotta)]">
-                ₹{compostEstimate.estCostInr.toLocaleString("en-IN")}
-              </span>
+            <label className="block font-bold uppercase">Your sessions per week: {dhoopSessionsPerWeek}
+              <input type="range" min={0} max={21} value={dhoopSessionsPerWeek} onChange={(e) => setDhoopSessionsPerWeek(Number(e.target.value))} className="mt-3 w-full accent-[#c2410c]" />
+            </label>
+            <label className="block font-bold uppercase">Planning period (days)
+              <input type="number" min={1} max={365} value={daysPeriod} onChange={(e) => setDaysPeriod(Math.min(365, Math.max(1, Number(e.target.value) || 1)))} className="mt-1 w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)]" />
+            </label>
+            <div className="p-4 rounded-2xl bg-[var(--bg)] border border-[var(--border)]">
+              <p className="text-sm text-[var(--muted)]">Planned sessions: <strong className="font-serif text-2xl text-[var(--terracotta)]">{dhoopSessions}</strong></p>
             </div>
-          </div>
+          </article>
 
-          {/* Calf Sponsorship Plan Estimator */}
-          <div className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 space-y-4">
-            <h3 className="text-xl font-serif font-bold">4. Calf Sponsorship Commitment Estimator</h3>
+          <article className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 space-y-4">
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--terracotta)]">03 · Product-label planning</span>
+              <h3 className="mt-1 text-xl font-serif font-bold">Compost quantity planner</h3>
+              <p className="mt-2 text-xs leading-6 text-[var(--muted)]">Use the application rate printed on your current product label. This calculator does not recommend an application rate.</p>
+            </div>
+            <label className="block font-bold uppercase">Garden / terrace area (sq. ft.): {gardenSqFt}
+              <input type="range" min={10} max={5000} step={10} value={gardenSqFt} onChange={(e) => setGardenSqFt(Number(e.target.value))} className="mt-3 w-full accent-[#c2410c]" />
+            </label>
+            <label className="block font-bold uppercase">Label rate (kg per 10 sq. ft.)
+              <input type="number" min={0} max={100} step={0.1} value={labelRateKgPer10SqFt} onChange={(e) => setLabelRateKgPer10SqFt(Math.max(0, Number(e.target.value) || 0))} className="mt-1 w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)]" />
+            </label>
+            <div className="p-4 rounded-2xl bg-[var(--bg)] border border-[var(--border)]">
+              {compostKg !== null ? <p className="text-sm text-[var(--muted)]">Quantity at your entered label rate: <strong className="font-serif text-2xl text-[var(--terracotta)]">{compostKg.toFixed(2)} kg</strong></p> : <p className="text-sm text-[var(--muted)]">Enter the application rate from the current product label to calculate a quantity.</p>}
+            </div>
+          </article>
+
+          <article className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 space-y-4">
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--terracotta)]">04 · Gau Seva enquiry</span>
+              <h3 className="mt-1 text-xl font-serif font-bold">Proposed contribution planner</h3>
+              <p className="mt-2 text-xs leading-6 text-[var(--muted)]">Enter an amount you may wish to propose. This is not an official rate, payment request or commitment.</p>
+            </div>
             <div className="grid sm:grid-cols-2 gap-3">
-              <div>
-                <label className="block font-bold uppercase mb-1">Monthly Amount (₹)</label>
-                <input
-                  type="number"
-                  min={500}
-                  max={100000}
-                  step={100}
-                  value={monthlySponsorInr}
-                  onChange={(e) => setMonthlySponsorInr(Math.max(100, Number(e.target.value) || 2100))}
-                  className="w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)]"
-                />
-              </div>
-              <div>
-                <label className="block font-bold uppercase mb-1">Months</label>
-                <input
-                  type="number"
-                  min={1}
-                  max={24}
-                  value={sponsorMonths}
-                  onChange={(e) => setSponsorMonths(Math.max(1, Number(e.target.value) || 1))}
-                  className="w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)]"
-                />
-              </div>
+              <label className="block font-bold uppercase">Your proposed monthly amount (₹)
+                <input type="number" min={0} max={1000000} step={1} value={proposedMonthlyAmount} onChange={(e) => setProposedMonthlyAmount(Math.max(0, Number(e.target.value) || 0))} className="mt-1 w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)]" />
+              </label>
+              <label className="block font-bold uppercase">Months
+                <input type="number" min={1} max={24} value={contributionMonths} onChange={(e) => setContributionMonths(Math.min(24, Math.max(1, Number(e.target.value) || 1)))} className="mt-1 w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)]" />
+              </label>
             </div>
-            <div className="p-4 rounded-2xl bg-[var(--bg)] border border-[var(--border)] flex items-center justify-between">
-              <div>
-                <p className="opacity-75">Commitment over <strong>{sponsorMonths} month(s)</strong></p>
-                <p className="opacity-65 mt-0.5">For Dholi Sheri, Tara, or Roshni care enquiries</p>
-              </div>
-              <span className="text-xl font-serif font-bold text-[var(--terracotta)]">
-                ₹{sponsorshipTotalInr.toLocaleString("en-IN")}
-              </span>
+            <div className="p-4 rounded-2xl bg-[var(--bg)] border border-[var(--border)]">
+              {proposedMonthlyAmount > 0 ? <p className="text-sm text-[var(--muted)]">Your proposed total: <strong className="font-serif text-2xl text-[var(--terracotta)]">₹{proposedContributionTotal.toLocaleString("en-IN")}</strong></p> : <p className="text-sm text-[var(--muted)]">Enter a proposed amount to see your own planning total.</p>}
             </div>
-          </div>
+          </article>
         </div>
       </div>
     </section>
