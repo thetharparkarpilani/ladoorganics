@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="112" fill="#204E36"/>
-  <circle cx="256" cy="256" r="190" fill="none" stroke="#D9C49A" stroke-width="8"/>
-  <path d="M178 360V152h54l94 133V152h54v208h-50l-98-138v138z" fill="#FDF9F5"/>
-  <path d="M332 115c26-28 59-33 83-26-5 28-25 54-62 59" fill="none" stroke="#D9C49A" stroke-width="12" stroke-linecap="round"/>
+  <rect width="512" height="512" rx="104" fill="#204E36"/>
+  <rect x="24" y="24" width="464" height="464" rx="88" fill="none" stroke="#D9C49A" stroke-width="8"/>
+  <circle cx="256" cy="256" r="198" fill="#FDF9F5"/>
+  <image href="/lado-organics-logo.svg" x="48" y="156" width="416" height="200" preserveAspectRatio="xMidYMid meet"/>
 </svg>
