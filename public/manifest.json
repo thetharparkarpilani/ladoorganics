@@ -1,6 +1,6 @@
 {
   "name": "Lado Organics",
-  "short_name": "Lado Organics",
+  "short_name": "Lado",
   "description": "Lado Love Pure — traditional farm products from Pilani, Rajasthan.",
   "start_url": "/",
   "display": "standalone",
@@ -13,7 +13,6 @@
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
-    }
     },
     {
       "src": "/images/lado-organics/Ladologo.png",
