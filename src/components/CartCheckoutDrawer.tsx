@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import ManualCheckout from "@/components/ManualCheckout";
@@ -10,6 +10,7 @@ export default function CartCheckoutDrawer() {
   const [completedOrder, setCompletedOrder] = useState("");
   const [completedMethod, setCompletedMethod] = useState<"cash_on_delivery" | "manual_upi">("cash_on_delivery");
   const [completedTotal, setCompletedTotal] = useState(0);
+  const dialogRef = useRef<HTMLElement>(null);
 
   const finishOrder = (orderNumber: string, method: "cash_on_delivery" | "manual_upi", totalInr: number) => {
     setCompletedOrder(orderNumber);
@@ -26,17 +27,50 @@ export default function CartCheckoutDrawer() {
   useEffect(() => {
     if (!isDrawerOpen) return;
     const previousOverflow = document.body.style.overflow;
+    const previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     document.body.style.overflow = "hidden";
+
+    const getFocusable = () => Array.from(
+      dialogRef.current?.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      ) || []
+    ).filter(element => element.getAttribute("aria-hidden") !== "true");
+
+    requestAnimationFrame(() => {
+      const focusable = getFocusable();
+      (focusable[0] || dialogRef.current)?.focus();
+    });
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
+        event.preventDefault();
         setDrawerOpen(false);
         setCompletedOrder("");
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const focusable = getFocusable();
+      if (!focusable.length) {
+        event.preventDefault();
+        dialogRef.current?.focus();
+        return;
+      }
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
       }
     };
+
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
+      previouslyFocused?.focus();
     };
   }, [isDrawerOpen, setDrawerOpen]);
 
@@ -55,7 +89,7 @@ export default function CartCheckoutDrawer() {
   return (
     <div className="fixed inset-0 z-[100] flex justify-end">
       <button aria-label="Close shopping bag" className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeDrawer} />
-      <section role="dialog" aria-modal="true" aria-labelledby="lado-cart-drawer-title" className="relative flex h-full w-full max-w-md flex-col border-l border-[var(--border-light)] bg-[var(--bg-ivory)] shadow-2xl animate-fade-in">
+      <section ref={dialogRef} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="lado-cart-drawer-title" className="relative flex h-full w-full max-w-md flex-col border-l border-[var(--border-light)] bg-[var(--bg-ivory)] shadow-2xl animate-fade-in">
         <div className="flex items-center justify-between border-b border-[var(--border-light)] bg-[var(--bg-sand)] p-6">
           <h2 id="lado-cart-drawer-title" className="text-2xl font-serif font-bold text-[var(--text-charcoal)]">Your Lado Bag</h2>
           <button onClick={closeDrawer} className="rounded-lg border border-[var(--border-light)] px-3 py-1 text-[10px] font-bold uppercase tracking-widest">Close</button>
