@@ -52,7 +52,7 @@ export default function SmartSearchOverlay({ isOpen, onClose }: { isOpen: boolea
             autoFocus
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search A2 Ghee, Dhoop, Stays..."
+            placeholder="Search Ghee, Dhoop, Stays..."
             className="flex-1 bg-transparent border-none focus:outline-none text-lg text-[var(--mud)] placeholder-[var(--muted)]/50 font-serif"
           />
           <button onClick={onClose} className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest bg-[var(--bg)] border border-[var(--border)] rounded-lg hover:border-[var(--terracotta)] transition">
