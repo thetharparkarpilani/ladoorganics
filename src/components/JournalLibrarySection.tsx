@@ -34,7 +34,7 @@ const ARTICLES: JournalArticle[] = [
     excerpt:
       "Connecting indigenous Tharparkar care, biogas slurry vermicompost (Pure Kechua Khad), and Tharparkar Dhoop with local farming families.",
     body: [
-      "Inspired by the 'Cow as a Coconut' zero-waste philosophy, our Pilani ecosystem focuses on responsible resource circulation supporting 100+ local farming families.",
+      "Inspired by a circular-farm approach, the Pilani story explores responsible use of farm resources and by-products. Specific operating details are shared only when verified.",
       "Fresh dung supports biogas and vermicomposting (Pure Kechua Khad), while dried dung and natural botanicals are used for Tharparkar Dhoop."
     ]
   },
@@ -42,11 +42,11 @@ const ARTICLES: JournalArticle[] = [
     id: "bits-pilani-roots",
     category: "Founder Note",
     readTime: "4 Min Read",
-    title: "From BITS Pilani Mathematics to Pilani Farm Operations",
+    title: "Traditional Practices, Clear Records",
     excerpt:
-      "Founder Akash Saini (Integrated M.Sc. in Mathematics, BITS Pilani) on applying structured systems and batch transparency to rural enterprise.",
+      "How Lado Organics approaches traditional practices, batch records and transparent customer communication.",
     body: [
-      "Founded by BITS Pilani alumnus Akash Saini in Pilani, Lado Organics pairs traditional rural practices with clear batch records, server-checked bookings, and transparent communications.",
+      "Lado Organics aims to pair traditional rural practices with clear batch records, server-checked bookings and transparent communications. Batch-specific details are published when records are available and approved.",
       "We avoid unverified health claims or fabricated certifications, keeping records grounded in actual farm and order data."
     ]
   }
@@ -65,8 +65,8 @@ const LIBRARY_RESOURCES = [
   },
   {
     title: "Deep Work Bhunga Stay & Seva Guide",
-    topic: "Pilani Visits & Calf Sponsorship",
-    note: "Covers Dholi Sheri, Tara, and Roshni sponsorship enquiries and Bhunga stay rates."
+    topic: "Pilani Visits & General Gau Seva Enquiries",
+    note: "Explains how to enquire about Gau Seva and Bhunga stays. Availability and final rates are confirmed by the Lado team; no individual animal profile is published until verified."
   }
 ];
 
