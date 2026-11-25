@@ -104,7 +104,7 @@ export default function StorefrontSection({
     const rateFor = (slug: string) => {
       const product = products.find((item) => item.slug === slug);
       const variant = product?.variants.find((item) => item.isDefault) ?? product?.variants[0];
-      return variant ? { price: Number(variant.priceInr), label: variant.label } : null;
+      return variant && Number(variant.priceInr) > 0 ? { price: Number(variant.priceInr), label: variant.label } : null;
     };
     return {
       ghee: rateFor("a2-bilona-ghee"),
@@ -203,6 +203,7 @@ export default function StorefrontSection({
                 const chosenSku = selectedVariantByProduct[product.id] ?? defaultVar?.sku;
                 const activeVariant =
                   product.variants.find((v) => v.sku === chosenSku) ?? defaultVar;
+                const hasListedPrice = Boolean(activeVariant && Number(activeVariant.priceInr) > 0);
 
                 return (
                   <article
@@ -270,12 +271,12 @@ export default function StorefrontSection({
                           {copy.per} {activeVariant?.label ?? copy.unit}
                         </span>
                         <span className="text-right text-sm font-serif font-bold text-[var(--terracotta)]">
-                          {activeVariant ? "₹" + activeVariant.priceInr.toLocaleString("en-IN") : "Availability & price to be confirmed"}
+                          {hasListedPrice ? "₹" + activeVariant!.priceInr.toLocaleString("en-IN") : "Availability & price to be confirmed"}
                         </span>
                       </div>
 
                       <div className="space-y-2">
-                        {activeVariant && (
+                        {activeVariant && hasListedPrice && (
                           <button
                             type="button"
                             onClick={() =>
@@ -297,7 +298,7 @@ export default function StorefrontSection({
                             sendWhatsAppOrder(
                               product.nameEn,
                               activeVariant?.label ?? "Unit",
-                              activeVariant?.priceInr ?? null
+                              hasListedPrice ? activeVariant!.priceInr : null
                             )
                           }
                           className="w-full py-2.5 rounded-xl text-xs font-semibold border border-[var(--border)] hover:border-[var(--terracotta)] cursor-pointer"
