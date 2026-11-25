@@ -104,15 +104,15 @@ export default function AdminDashboardPage() {
             <span className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-[var(--terracotta)]">Collected Revenue</span>
             <span className="font-serif text-3xl font-bold">₹{stats.revenue.toLocaleString("en-IN")}</span>
           </div>
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm">
+          <div className="admin-metric-card rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm">
             <span className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-[var(--terracotta)]">Total Orders</span>
             <span className="font-serif text-3xl font-bold">{stats.orders}</span>
           </div>
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm">
+          <div className="admin-metric-card rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm">
             <span className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-[var(--terracotta)]">Active Bookings</span>
             <span className="font-serif text-3xl font-bold">{stats.bookings}</span>
           </div>
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm">
+          <div className="admin-metric-card rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm">
             <span className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-[var(--terracotta)]">Total SKU Units</span>
             <span className="font-serif text-3xl font-bold">{stats.inventory}</span>
           </div>
