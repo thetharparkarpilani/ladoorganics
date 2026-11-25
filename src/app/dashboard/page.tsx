@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface DashboardOrder {
   id: string | number;
@@ -124,7 +125,9 @@ export default function DashboardPage() {
             product reviews, rewards and profile details from one place.
           </p>
         </div>
-        <span aria-hidden="true" className="absolute -bottom-10 -right-4 text-[150px] opacity-[0.07]">✿</span>
+        <div className="dashboard-welcome-logo absolute bottom-5 right-5 rounded-2xl bg-[#fffdf7] p-3 shadow-lg">
+          <Image src="/lado-organics-logo.svg" alt="Lado Organics" width={150} height={82} className="h-14 w-auto object-contain" />
+        </div>
       </section>
 
       <section className="dashboard-shortcuts" aria-labelledby="account-shortcuts-heading">
