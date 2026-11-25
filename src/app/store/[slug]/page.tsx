@@ -28,6 +28,7 @@ export default function ProductDetailPage(props: PageProps) {
   const { locale } = useLocale();
   const [product, setProduct] = useState<ProductDTO | null>(null);
   const [selectedVariantId, setSelectedVariantId] = useState("");
+  const [quantity, setQuantity] = useState(1);
   const [loadState, setLoadState] = useState<LoadState>("loading");
   const [loadError, setLoadError] = useState("");
 
@@ -180,7 +181,7 @@ export default function ProductDetailPage(props: PageProps) {
             {product.variants.length > 1 && (
               <div className="product-detail-variants">
                 {product.variants.map((variant) => (
-                  <button key={variant.id} type="button" aria-pressed={variant.id === activeVariant?.id} onClick={() => setSelectedVariantId(variant.id)} className={variant.id === activeVariant?.id ? "is-selected" : ""}>
+                  <button key={variant.id} type="button" aria-pressed={variant.id === activeVariant?.id} onClick={() => { setSelectedVariantId(variant.id); setQuantity(1); }} className={variant.id === activeVariant?.id ? "is-selected" : ""}>
                     <span>{variant.label}</span>
                     <strong>₹{variant.priceInr.toLocaleString("en-IN")}</strong>
                   </button>
@@ -192,11 +193,16 @@ export default function ProductDetailPage(props: PageProps) {
                 <div>
                   <span>{labels.selected} · {activeVariant.label}</span>
                   <strong>₹{activeVariant.priceInr.toLocaleString("en-IN")}</strong>
-                  <small className="block mt-1 opacity-70">{activeVariant.stockQty} currently listed in stock</small>
+                  <small className="block mt-1 opacity-70">{activeVariant.stockQty > 0 ? `${activeVariant.stockQty} currently listed in stock` : "Currently unavailable"}</small>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  <button type="button" onClick={() => addToCart({ variantId: activeVariant.id, sku: activeVariant.sku, title: `${product.nameEn} (${activeVariant.label})`, priceInr: activeVariant.priceInr, quantity: 1, maxStock: activeVariant.stockQty })} className="product-detail-order">
-                    {labels.add} <span aria-hidden="true">+</span>
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="product-quantity-control" aria-label="Choose quantity">
+                    <button type="button" aria-label="Decrease quantity" onClick={() => setQuantity(value => Math.max(1, value - 1))} disabled={quantity <= 1}>−</button>
+                    <span aria-live="polite">{quantity}</span>
+                    <button type="button" aria-label="Increase quantity" onClick={() => setQuantity(value => Math.min(Math.max(1, activeVariant.stockQty), value + 1))} disabled={quantity >= activeVariant.stockQty}>+</button>
+                  </div>
+                  <button type="button" disabled={activeVariant.stockQty <= 0} onClick={() => addToCart({ variantId: activeVariant.id, sku: activeVariant.sku, title: `${product.nameEn} (${activeVariant.label})`, priceInr: activeVariant.priceInr, quantity, maxStock: activeVariant.stockQty })} className="product-detail-order disabled:cursor-not-allowed disabled:opacity-50">
+                    {activeVariant.stockQty > 0 ? labels.add : "Out of stock"} <span aria-hidden="true">+</span>
                   </button>
                   <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="product-detail-order">
                     {labels.order} <span aria-hidden="true">↗</span>
