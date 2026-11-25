@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { db } from "@/lib/db";
 import { getServerLocale } from "@/lib/server-locale";
 
@@ -74,7 +75,7 @@ export default async function StoreCatalogPage() {
             return (
               <Link href={`/store/${product.slug}`} key={product.sku} className="store-product-card group flex flex-col overflow-hidden">
                 <div className="store-product-media">
-                  {product.image_url ? <img src={product.image_url} alt={name} loading="lazy" /> : <div className="store-product-art" aria-hidden="true"><span>{product.slug.includes("ghee") ? "◉" : product.slug.includes("dhoop") ? "✺" : product.slug.includes("khad") ? "❧" : product.slug.includes("milk") ? "◒" : product.slug.includes("kesar") ? "✿" : "✳"}</span><small>LADO ORGANICS · PILANI</small></div>}
+                  {product.image_url ? <Image src={product.image_url} alt={name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" /> : <div className="store-product-art" aria-hidden="true"><span>{product.slug.includes("ghee") ? "◉" : product.slug.includes("dhoop") ? "✺" : product.slug.includes("khad") ? "❧" : product.slug.includes("milk") ? "◒" : product.slug.includes("kesar") ? "✿" : "✳"}</span><small>LADO ORGANICS · PILANI</small></div>}
                   <span className="store-product-ribbon">{copy.direct}</span>
                 </div>
                 <div className="p-6 flex flex-col flex-grow">
