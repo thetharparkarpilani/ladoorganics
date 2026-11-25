@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -58,8 +59,8 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         <button onClick={onClose} className="absolute right-4 top-4 text-xs font-bold uppercase tracking-widest opacity-60 transition hover:opacity-100" aria-label="Close sign-in">Close</button>
 
         <div className="mb-7 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-[var(--border)] bg-[#3b2314] text-xl text-[#fbbf24]">
-            <i className="fas fa-leaf" aria-hidden="true" />
+          <div className="mx-auto mb-5 flex min-h-24 items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--bg)] px-5 py-3">
+            <Image src="/lado-organics-logo.svg" alt="Lado Organics — Lado Love Pure" width={250} height={138} priority className="h-auto max-h-24 w-auto object-contain" />
           </div>
           <h2 className="mb-2 text-2xl font-serif font-bold">My Lado Journey</h2>
           <p className="text-xs opacity-80">Sign in securely to access your Lado Organics customer account.</p>
