@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 const navigation = [
   { href: "/admin", label: "Overview", icon: "◫" },
@@ -29,7 +30,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="min-h-screen bg-[var(--bg)] flex flex-col md:flex-row">
       <header className="md:hidden sticky top-0 z-30 flex items-center justify-between border-b border-[var(--border)] bg-[var(--surface)] px-4 py-3">
-        <Link href="/admin" className="font-serif text-lg font-bold text-[var(--mud)]">Lado Command</Link>
+        <Link href="/admin" aria-label="Lado Organics Admin home" className="inline-flex items-center gap-3"><Image src="/lado-organics-logo.svg" alt="Lado Organics — Lado Love Pure" width={112} height={58} priority className="h-11 w-auto object-contain" /><span className="font-serif text-base font-bold text-[var(--mud)]">Admin</span></Link>
         <button type="button" onClick={() => setMenuOpen(v => !v)} aria-expanded={menuOpen} className="rounded-lg border border-[var(--border)] px-3 py-2 text-sm font-bold">{menuOpen ? "Close" : "Menu"}</button>
       </header>
       <aside className="hidden md:flex w-64 shrink-0 bg-[var(--surface)] border-r border-[var(--border)] flex-col min-h-screen sticky top-0 h-screen">
