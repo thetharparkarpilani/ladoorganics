@@ -374,3 +374,29 @@ main:has(.trace-batch),main:has([data-traceability]) { background: var(--lado-iv
 @media(prefers-reduced-motion:reduce) {
   .lado-admin-nav-link { transition: none; }
 }
+
+
+/* Keyboard accessibility: reveal the skip link only when it receives focus. */
+.lado-skip-link {
+  position: fixed;
+  z-index: 200;
+  top: 10px;
+  left: 10px;
+  transform: translateY(-160%);
+  border-radius: 999px;
+  padding: 12px 18px;
+  background: var(--lado-forest-deep);
+  color: #fffdf7;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: var(--lado-shadow-card);
+}
+.lado-skip-link:focus { transform: translateY(0); }
+.lado-global-nav a[aria-current="page"],
+.lado-global-account[aria-current="page"] {
+  color: var(--lado-clay);
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+#main-content:focus { outline: none; }
