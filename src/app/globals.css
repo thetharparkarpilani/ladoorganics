@@ -1049,3 +1049,30 @@ footer a { color: #e4c88e; }
 @media (prefers-reduced-motion: reduce) {
   #store .grid > article,#store .grid > article img { transition: none !important; }
 }
+
+
+/* Lado UI quality pass: visible mobile identity, accessible focus and resilient controls. */
+.lado-mobile-brand { display: none; }
+@media (max-width: 760px) {
+  .lado-mobile-brand {
+    display: inline-flex; position: fixed; z-index: 68; top: 7px; right: max(10px, env(safe-area-inset-right));
+    align-items: center; justify-content: center; width: 126px; height: 48px; padding: 3px 7px;
+    border: 1px solid rgba(55,75,49,.12); border-radius: 13px; background: rgba(251,250,246,.97);
+    box-shadow: 0 4px 18px rgba(30,40,25,.08);
+  }
+  .lado-mobile-brand img { display: block; width: 112px; height: 42px; object-fit: contain; }
+  .lado-mobile-menu-trigger { top: max(10px, env(safe-area-inset-top)); left: max(10px, env(safe-area-inset-left)); min-height: 44px; }
+  .lado-sidebar { padding-top: max(22px, env(safe-area-inset-top)); padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+}
+
+:where(a,button,input,select,textarea,[tabindex]):focus-visible {
+  outline: 3px solid rgba(198,164,91,.9); outline-offset: 3px;
+}
+:where(button,a) { -webkit-tap-highlight-color: transparent; }
+button:disabled,[aria-disabled="true"] { cursor: not-allowed; }
+img { max-width: 100%; }
+html { scroll-padding-top: 5.5rem; }
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within { scroll-behavior: auto !important; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
