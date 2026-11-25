@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useLocale } from "@/context/LocaleContext";
@@ -20,7 +21,9 @@ export default function DashboardSidebar() {
     <aside className="lado-dashboard-sidebar w-full md:w-72 shrink-0">
       <div className="lado-dashboard-sidebar-card bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-5 sm:p-6 sticky top-28 shadow-sm">
         <div className="flex items-center gap-4 mb-8">
-          <div className="w-14 h-14 rounded-full bg-[var(--earth)]/20 flex items-center justify-center text-[var(--mud)] font-serif font-bold text-xl border border-[var(--earth)]">L</div>
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--earth)] bg-[var(--earth)]/10 p-1">
+            <Image src="/icon.svg" alt="Lado Organics" width={48} height={48} />
+          </div>
           <div>
             <h2 className="font-serif font-bold text-lg text-[var(--mud)]">{labels.title}</h2>
             <span className="text-[10px] font-mono tracking-widest uppercase text-[var(--terracotta)]">{labels.patron}</span>
