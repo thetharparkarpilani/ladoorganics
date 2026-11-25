@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 
 export default function GlobalError({
   reset,
@@ -18,7 +19,7 @@ export default function GlobalError({
             <h1 style={{ margin: "12px 0", color: "#244b35", fontFamily: "Georgia, serif", fontSize: "34px", fontWeight: 500 }}>We’ll be right back</h1>
             <p style={{ color: "#777568", fontSize: "14px", lineHeight: 1.8 }}>A technical issue interrupted this page. Please try again. Your saved account and order records are not changed by this screen.</p>
             <button type="button" onClick={() => reset()} style={{ marginTop: "18px", border: 0, borderRadius: "999px", padding: "13px 24px", background: "#244b35", color: "white", fontWeight: 700, cursor: "pointer" }}>Try again</button>
-            <p style={{ marginTop: "22px", fontSize: "12px" }}><a href="/" style={{ color: "#8c6048" }}>Return to Lado Organics</a></p>
+            <p style={{ marginTop: "22px", fontSize: "12px" }}><Link href="/" style={{ color: "#8c6048" }}>Return to Lado Organics</Link></p>
           </section>
         </main>
       </body>
