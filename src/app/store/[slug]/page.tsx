@@ -50,6 +50,7 @@ export default function ProductDetailPage(props: PageProps) {
           return;
         }
         setProduct(found);
+        setQuantity(1);
         setSelectedVariantId(found.variants.find((variant) => variant.isDefault)?.id || found.variants[0]?.id || "");
         setLoadState("ready");
       })
