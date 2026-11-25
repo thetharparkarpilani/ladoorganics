@@ -30,14 +30,17 @@ export default function CartCheckoutDrawer() {
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") closeDrawer();
+      if (event.key === "Escape") {
+        setDrawerOpen(false);
+        setCompletedOrder("");
+      }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isDrawerOpen]);
+  }, [isDrawerOpen, setDrawerOpen]);
 
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919636100337";
   const upiId = process.env.NEXT_PUBLIC_UPI_ID || "";
