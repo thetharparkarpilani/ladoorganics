@@ -137,7 +137,7 @@ export default function OrderHistoryPage() {
         <div className="rounded-3xl border border-dashed border-[var(--border)] bg-[var(--surface)] p-10 text-center">
           <h2 className="font-serif text-xl font-bold text-[var(--mud)]">No orders yet</h2>
           <p className="mt-2 text-sm text-[var(--muted)]">When you place an order using this Google account email, it will appear here.</p>
-          <Link href="/#products" className="primary-btn mt-6 inline-flex rounded-full px-6 py-3 text-sm font-bold">Explore our products</Link>
+          <Link href="/store" className="primary-btn mt-6 inline-flex rounded-full px-6 py-3 text-sm font-bold">Explore our products</Link>
         </div>
       )}
 
