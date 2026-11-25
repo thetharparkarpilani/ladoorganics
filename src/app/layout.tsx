@@ -13,8 +13,23 @@ export const metadata: Metadata = {
   description: "Traditional farm products and farm experiences rooted in Pilani, Rajasthan. Explore the Lado Organics collection and story.",
   manifest: "/manifest.json",
   icons: {
-    icon: "/icon.svg",
-    shortcut: "/icon.svg",
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    shortcut: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/icon.svg", type: "image/svg+xml" }],
+  },
+  openGraph: {
+    type: "website",
+    siteName: "Lado Organics",
+    title: "Lado Organics | Lado Love Pure",
+    description: "Traditional farm products and farm experiences rooted in Rajasthan.",
+    url: "https://ladoorganics.in",
+    images: [{ url: "/lado-organics-logo.svg", alt: "Lado Organics — Lado Love Pure" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Lado Organics | Lado Love Pure",
+    description: "Traditional farm products and farm experiences rooted in Rajasthan.",
+    images: ["/lado-organics-logo.svg"],
   },
   appleWebApp: {
     capable: true,
