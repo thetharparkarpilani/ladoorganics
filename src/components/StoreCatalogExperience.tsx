@@ -36,7 +36,7 @@ function artworkFor(slug: string) {
   return { symbol: "✳", label: "LADO ORGANICS", kind: "earth" };
 }
 
-export default function StoreCatalogExperience({ products, locale }: { products: StoreCatalogItem[]; locale: Locale }) {
+export default function StoreCatalogExperience({ products, locale, catalogError = false }: { products: StoreCatalogItem[]; locale: Locale; catalogError?: boolean }) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<Category>("all");
   const [sort, setSort] = useState("featured");
@@ -53,14 +53,14 @@ export default function StoreCatalogExperience({ products, locale }: { products:
     search: "सामान खोजो", all: "सगळो सामान", dairy: "दूध-घी", dhoop: "धूप", soil: "माटी री देखभाल", kesar: "केसर", stays: "भुंगा ठहराव",
     count: "सामान", sort: "क्रम", featured: "खास", low: "कम भाव पैली", high: "ज्यादा भाव पैली", az: "नांव A–Z",
     direct: "पिलानी संग्रह", view: "सामान देखो", noResults: "थारी खोज सूं मेल खातो सामान कोनी मिल्यो।", clear: "छंटाई हटाओ",
-    empty: "चालू स्टोर री सूची अभी कोनी मिलै। पुराणो या अंदाजी भाव बतावण री जगह टीम सूं पक्को करावो।", contact: "टीम नै खबर करो",
+    empty: "अभी लाइव सूची में कोई सामान प्रकाशित कोनी है। पक्के उत्पाद रिकॉर्ड प्रकाशित होवै पाछै इहाँ दिखाई देला।", unavailable: "लाइव सूची अभी लोड कोनी हो सकी। चालू सामान अर भाव पक्को करवा टीम सूं बात करो।", contact: "टीम नै खबर करो",
     intro: "साफ जानकारी · चालू पैक · लाइव सूची"
   } : {
     kicker: "MODULE D · THE CIRCULAR STORE", title: "Thoughtful products, direct from Pilani", subtitle: "Explore the current collection and listed pack prices from the Pilani farm.",
     search: "Search the collection", all: "All products", dairy: "Dairy", dhoop: "Dhoop", soil: "Soil care", kesar: "Kesar", stays: "Farm stays",
     count: "products", sort: "Sort", featured: "Featured", low: "Price: low to high", high: "Price: high to low", az: "Name: A to Z",
     direct: "PILANI COLLECTION", view: "Discover product", noResults: "No products match your search and filters.", clear: "Clear filters",
-    empty: "The live store catalogue is temporarily unavailable. We won't show old or estimated prices. Please contact the team to confirm current products and prices.",
+    empty: "No products are currently published in the live catalogue. Products will appear here when verified catalogue records are published.", unavailable: "The live catalogue could not be loaded. Please try again later or contact the team to confirm current products and prices.",
     contact: "Contact the team", intro: "CLEAR PRODUCT DETAILS · CURRENT PACKS · LIVE CATALOGUE"
   };
 
@@ -99,7 +99,7 @@ export default function StoreCatalogExperience({ products, locale }: { products:
 
         {products.length === 0 ? (
           <div className="mx-auto max-w-2xl rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-9 text-center sm:p-12">
-            <p className="text-sm leading-7 text-[var(--muted)]">{copy.empty}</p>
+            <p className="text-sm leading-7 text-[var(--muted)]">{catalogError ? copy.unavailable : copy.empty}</p>
             <Link href="/contact" className="primary-btn mt-6 inline-flex rounded-full px-6 py-3 text-xs font-bold">{copy.contact}</Link>
           </div>
         ) : (
