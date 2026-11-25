@@ -166,7 +166,7 @@ export default function ProductDetailPage(props: PageProps) {
             <span>Product details from the live catalogue</span>
           </div>
           <div className="product-detail-note">
-            <span className="product-detail-note-mark">L</span>
+            <span className="product-detail-note-mark"><Image src="/lado-organics-logo.svg" alt="" width={66} height={36} className="product-detail-note-logo" /></span>
             <span><strong>{visual.note}</strong><small>A part of the Lado Organics farm story</small></span>
           </div>
         </div>
@@ -202,7 +202,7 @@ export default function ProductDetailPage(props: PageProps) {
                     <span aria-live="polite">{quantity}</span>
                     <button type="button" aria-label="Increase quantity" onClick={() => setQuantity(value => Math.min(Math.max(1, activeVariant.stockQty), value + 1))} disabled={quantity >= activeVariant.stockQty}>+</button>
                   </div>
-                  <button type="button" disabled={activeVariant.stockQty <= 0} onClick={() => addToCart({ variantId: activeVariant.id, sku: activeVariant.sku, title: `${product.nameEn} (${activeVariant.label})`, priceInr: activeVariant.priceInr, quantity, maxStock: activeVariant.stockQty })} className="product-detail-order disabled:cursor-not-allowed disabled:opacity-50">
+                  <button type="button" disabled={activeVariant.stockQty <= 0} onClick={() => addToCart({ variantId: activeVariant.id, sku: activeVariant.sku, title: `${displayName} (${activeVariant.label})`, priceInr: activeVariant.priceInr, quantity, maxStock: activeVariant.stockQty })} className="product-detail-order disabled:cursor-not-allowed disabled:opacity-50">
                     {activeVariant.stockQty > 0 ? labels.add : "Out of stock"} <span aria-hidden="true">+</span>
                   </button>
                   <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="product-detail-order">
