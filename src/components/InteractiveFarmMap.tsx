@@ -1,6 +1,6 @@
-﻿"use client";
+"use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 
 type FarmNodeId = "gaushala" | "biogas" | "compost" | "bilona" | "bhunga";
 
@@ -9,130 +9,108 @@ interface FarmNode {
   title: string;
   icon: string;
   description: string;
-  verifiedFact: string;
-  coordinates: { x: number; y: number }; // Percentage-based positioning for the map
+  farmNote: string;
+  coordinates: { x: number; y: number };
 }
 
 const FARM_NODES: FarmNode[] = [
   {
     id: "gaushala",
-    title: "Tharparkar Gaushala",
+    title: "Tharparkar Cattle Care",
     icon: "fas fa-cow",
-    description: "Home to indigenous desert-adapted cows like Dholi Sheri, Tara, and Roshni. They graze on medicinal flora and are milked only after the calves have had their fill.",
-    verifiedFact: "100% A2 Beta-Casein milk source.",
+    description: "The Lado farm story centers on indigenous Tharparkar cattle and the care routines described by the team. Individual animal profiles are not published until verified.",
+    farmNote: "No animal-specific or milk-composition claim is made here without an approved record.",
     coordinates: { x: 50, y: 15 }
   },
   {
     id: "biogas",
-    title: "Anaerobic Biogas Digester",
+    title: "Farm By-products & Biogas",
     icon: "fas fa-fire-flame-curved",
-    description: "Fresh cow dung is collected and processed here to generate clean methane gas, which powers our farm's water heating and cooking needs.",
-    verifiedFact: "Replaces fossil-fuel reliance for Bilona boiling.",
+    description: "The Lado farm story describes interest in circular use of farm by-products. Ask the team for current operating details.",
+    farmNote: "No energy-output or fuel-replacement figures are published in this overview.",
     coordinates: { x: 80, y: 50 }
   },
   {
     id: "compost",
-    title: "Kechua Khad (Vermicompost)",
+    title: "Vermicompost",
     icon: "fas fa-seedling",
-    description: "The nutrient-dense slurry output from the biogas plant is fed to Eisenia fetida earthworms to create premium organic vermicompost.",
-    verifiedFact: "Restores local soil microbiome without synthetic fertilizers.",
+    description: "Vermicompost is part of the Lado Organics product range. Follow the current product label for application instructions.",
+    farmNote: "Application rates, composition and certification are not assumed in this map.",
     coordinates: { x: 50, y: 85 }
   },
   {
     id: "bhunga",
-    title: "Deep Work Bhunga Stays",
+    title: "Bhunga Stay Enquiry",
     icon: "fas fa-house-chimney",
-    description: "Climate-responsive mud architecture built using traditional Rajasthani techniques, providing thermal insulation for agro-tourism guests.",
-    verifiedFact: "Constructed using locally sourced mud and cow dung.",
+    description: "The site accepts enquiries about farm stays. Dates, availability, architecture details and price are confirmed by the Lado team.",
+    farmNote: "This is an enquiry overview, not a confirmed booking or construction certification.",
     coordinates: { x: 20, y: 50 }
   },
   {
     id: "bilona",
-    title: "Vedic Bilona Churning",
+    title: "Bilona Ghee Process",
     icon: "fas fa-jar",
-    description: "Whole A2 milk is cultured overnight into curd, then hand-churned bi-directionally using a wooden Bilona during Brahma Muhurta.",
-    verifiedFact: "~28 to 30 litres of milk yields 1 litre of A2 Ghee.",
+    description: "Lado describes a Bilona process for ghee. Batch-specific details are published only when recorded and approved.",
+    farmNote: "No yield, milk-type, temperature or timing claim is made here without a verified batch record.",
     coordinates: { x: 50, y: 50 }
   }
 ];
 
 export default function InteractiveFarmMap() {
   const [activeNode, setActiveNode] = useState<FarmNodeId>("gaushala");
-
-  const activeData = FARM_NODES.find((n) => n.id === activeNode);
+  const activeData = FARM_NODES.find((node) => node.id === activeNode);
 
   return (
-    <section id="my-lado-farm" className="py-20 px-4 sm:px-6 lg:px-8 border-t border-[var(--border)] bg-[#2b180c] text-[#fef3c7] overflow-hidden">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-[#fbbf24] block mb-2">
-            Module J • My Lado Farm
-          </span>
-          <h2 className="text-3xl sm:text-5xl font-serif font-bold mb-4">
-            The &quot;Cow as a Coconut&quot; Ecosystem
-          </h2>
-          <p className="text-sm opacity-80 max-w-2xl mx-auto leading-relaxed">
-            Explore our zero-waste Pilani blueprint. Click the interactive nodes below to see how every resource flows through our closed-loop regenerative farm.
+    <section id="my-lado-farm" className="overflow-hidden border-t border-[var(--border)] bg-[#204E36] px-4 py-20 text-[#FDF9F5] sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-12 text-center">
+          <span className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-[#e7d6a8]">FARM ECOSYSTEM · PILANI, RAJASTHAN</span>
+          <h2 className="mb-4 font-serif text-3xl font-bold sm:text-5xl">The Lado Farm Ecosystem</h2>
+          <p className="mx-auto max-w-2xl text-sm leading-relaxed opacity-85">
+            Explore the farm relationships described by Lado Organics. Select a node for a general overview; operational and batch-level details are published only when verified records are available.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-12 gap-8 items-center">
-          
-          {/* Interactive Visual Map */}
-          <div className="lg:col-span-7 relative aspect-square max-w-md mx-auto w-full bg-[#3b2314] rounded-full border-4 border-[#fbbf24]/20 shadow-2xl p-8">
-            {/* Connecting SVG Lines */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="35" fill="none" stroke="#fbbf24" strokeWidth="0.5" strokeDasharray="2 2" />
-              <line x1="50" y1="15" x2="80" y2="50" stroke="#fbbf24" strokeWidth="0.5" />
-              <line x1="80" y1="50" x2="50" y2="85" stroke="#fbbf24" strokeWidth="0.5" />
-              <line x1="50" y1="85" x2="20" y2="50" stroke="#fbbf24" strokeWidth="0.5" />
-              <line x1="20" y1="50" x2="50" y2="15" stroke="#fbbf24" strokeWidth="0.5" />
-              <line x1="50" y1="15" x2="50" y2="50" stroke="#fbbf24" strokeWidth="0.5" />
+        <div className="grid items-center gap-8 lg:grid-cols-12">
+          <div className="relative mx-auto aspect-square w-full max-w-md rounded-full border-4 border-[#e7d6a8]/20 bg-[#315B40] p-8 shadow-2xl lg:col-span-7">
+            <svg className="pointer-events-none absolute inset-0 h-full w-full opacity-25" viewBox="0 0 100 100" aria-hidden="true">
+              <circle cx="50" cy="50" r="35" fill="none" stroke="#e7d6a8" strokeWidth="0.5" strokeDasharray="2 2" />
+              <line x1="50" y1="15" x2="80" y2="50" stroke="#e7d6a8" strokeWidth="0.5" />
+              <line x1="80" y1="50" x2="50" y2="85" stroke="#e7d6a8" strokeWidth="0.5" />
+              <line x1="50" y1="85" x2="20" y2="50" stroke="#e7d6a8" strokeWidth="0.5" />
+              <line x1="20" y1="50" x2="50" y2="15" stroke="#e7d6a8" strokeWidth="0.5" />
+              <line x1="50" y1="15" x2="50" y2="50" stroke="#e7d6a8" strokeWidth="0.5" />
             </svg>
-
-            {/* Farm Nodes */}
             {FARM_NODES.map((node) => (
               <button
                 key={node.id}
+                type="button"
                 onClick={() => setActiveNode(node.id)}
-                className={`absolute w-14 h-14 -ml-7 -mt-7 rounded-full flex items-center justify-center transition-all duration-300 z-10 cursor-pointer ${
-                  activeNode === node.id 
-                    ? "bg-[#fbbf24] text-[#2b180c] scale-125 shadow-[0_0_20px_rgba(251,191,36,0.4)]" 
-                    : "bg-[#54331d] text-[#fef3c7] hover:bg-[#784a2b]"
-                }`}
+                className={`absolute z-10 -ml-7 -mt-7 flex h-14 w-14 items-center justify-center rounded-full transition-all duration-300 ${activeNode === node.id ? "scale-125 bg-[#e7d6a8] text-[#204E36] shadow-[0_0_20px_rgba(231,214,168,.4)]" : "bg-[#244b34] text-[#FDF9F5] hover:bg-[#3D6B4B]"}`}
                 style={{ left: `${node.coordinates.x}%`, top: `${node.coordinates.y}%` }}
                 aria-label={`View ${node.title}`}
+                aria-pressed={activeNode === node.id}
               >
-                <i className={`text-xl ${node.icon}`}></i>
+                <i className={`text-xl ${node.icon}`} aria-hidden="true"></i>
               </button>
             ))}
           </div>
 
-          {/* Active Node Detail Panel */}
-          <div className="lg:col-span-5 bg-[#3b2314]/80 backdrop-blur-md border border-[#fbbf24]/20 rounded-3xl p-8 min-h-[300px] flex flex-col justify-center transition-opacity duration-300">
+          <div className="flex min-h-[300px] flex-col justify-center rounded-3xl border border-[#e7d6a8]/20 bg-[#315B40]/90 p-8 backdrop-blur-md lg:col-span-5">
             {activeData && (
-              <div className="animate-fade-in">
-                <div className="w-12 h-12 bg-[#fbbf24]/10 rounded-xl flex items-center justify-center mb-6">
-                  <i className={`${activeData.icon} text-2xl text-[#fbbf24]`}></i>
+              <div>
+                <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-[#e7d6a8]/10">
+                  <i className={`${activeData.icon} text-2xl text-[#e7d6a8]`} aria-hidden="true"></i>
                 </div>
-                <h3 className="text-2xl font-serif font-bold text-[#fbbf24] mb-3">
-                  {activeData.title}
-                </h3>
-                <p className="text-sm opacity-90 leading-relaxed mb-6">
-                  {activeData.description}
-                </p>
-                <div className="px-4 py-3 bg-black/20 rounded-xl border border-white/5">
-                  <span className="block text-[10px] font-bold uppercase tracking-widest text-white/50 mb-1">
-                    Verified Farm Detail
-                  </span>
-                  <span className="text-xs font-medium text-white/90">
-                    {activeData.verifiedFact}
-                  </span>
+                <h3 className="mb-3 font-serif text-2xl font-bold text-[#e7d6a8]">{activeData.title}</h3>
+                <p className="mb-6 text-sm leading-relaxed opacity-90">{activeData.description}</p>
+                <div className="rounded-xl border border-white/10 bg-black/15 px-4 py-3">
+                  <span className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-white/60">Farm note</span>
+                  <span className="text-xs font-medium text-white/90">{activeData.farmNote}</span>
                 </div>
               </div>
             )}
           </div>
-
         </div>
       </div>
     </section>
