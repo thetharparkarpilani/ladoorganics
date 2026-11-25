@@ -15,9 +15,9 @@ export const metadata: Metadata = {
   description: "Traditional farm products and a living farm story from Pilani, Rajasthan. Discover Lado Organics.",
   manifest: "/manifest.json",
   icons: {
-    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
-    shortcut: [{ url: "/icon.svg", type: "image/svg+xml" }],
-    apple: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    icon: [{ url: "/lado-organics-logo.svg", type: "image/svg+xml" }],
+    shortcut: [{ url: "/lado-organics-logo.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/images/lado-organics/Ladologo.png", type: "image/png" }],
   },
   openGraph: {
     type: "website",

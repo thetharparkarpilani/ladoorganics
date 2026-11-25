@@ -22,7 +22,7 @@ export default function DashboardSidebar() {
       <div className="lado-dashboard-sidebar-card bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-5 sm:p-6 sticky top-28 shadow-sm">
         <div className="flex items-center gap-4 mb-8">
           <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--earth)] bg-[var(--earth)]/10 p-1">
-            <Image src="/icon.svg" alt="Lado Organics" width={48} height={48} />
+            <Image src="/lado-organics-logo.svg" alt="Lado Organics" width={48} height={48} />
           </div>
           <div>
             <h2 className="font-serif font-bold text-lg text-[var(--mud)]">{labels.title}</h2>
