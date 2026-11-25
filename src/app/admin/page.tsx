@@ -79,8 +79,8 @@ export default function AdminDashboardPage() {
   };
 
   return (
-    <div>
-      <div className="mb-8 flex items-center justify-between">
+    <div className="admin-overview">
+      <div className="admin-overview-header mb-8 flex items-center justify-between">
         <div>
           <h1 className="mb-2 font-serif text-3xl font-bold">Command Center Overview</h1>
           <p className="text-sm opacity-70">Monitor farm operations, inventory locks, and ecosystem revenue.</p>
@@ -99,8 +99,8 @@ export default function AdminDashboardPage() {
       {loading ? (
         <div className="p-8 text-center text-sm opacity-60">Loading secure ecosystem metrics...</div>
       ) : stats ? (
-        <div className="mb-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm">
+        <div className="admin-metric-grid mb-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="admin-metric-card rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm">
             <span className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-[var(--terracotta)]">Collected Revenue</span>
             <span className="font-serif text-3xl font-bold">₹{stats.revenue.toLocaleString("en-IN")}</span>
           </div>
