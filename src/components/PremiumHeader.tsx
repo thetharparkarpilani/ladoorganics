@@ -1,89 +1,74 @@
-﻿"use client";
+"use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
+import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useLocale } from "@/context/LocaleContext";
+import { useCart } from "@/context/CartContext";
 
 export default function PremiumHeader() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [locale, setLocale] = useState("en");
+  const router = useRouter();
+  const { locale, setLocale } = useLocale();
+  const { itemCount, setDrawerOpen } = useCart();
+
+  const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const query = searchQuery.trim();
+    if (query) router.push(`/search?q=${encodeURIComponent(query)}`);
+  };
 
   return (
-    <header className="sticky top-0 z-50 shadow-sm flex flex-col">
-      {/* 1. Top Contact Strip */}
-      <div className="bg-[#3b2314] text-[#fef3c7] py-1.5 px-4 text-center text-xs font-medium tracking-wide flex justify-center items-center gap-4">
-        <span>
-          <i className="fas fa-phone-alt text-[var(--earth)] mr-2"></i> 
-          Contact Us: +91 96361 00337 | +91 94081 40329
-        </span>
+    <header className="sticky top-0 z-50 flex flex-col border-b border-[var(--border)] bg-[var(--surface)]/95 shadow-sm backdrop-blur-xl">
+      <div className="flex items-center justify-center gap-2 bg-[#204E36] px-4 py-2 text-center text-[9px] font-bold uppercase tracking-[.2em] text-[#f7ebcf]">
+        <span>PILANI · RAJASTHAN · INDIA</span>
+        <span aria-hidden="true">·</span>
+        <span>LADO LOVE PURE</span>
       </div>
 
-      {/* 2. Running Discount & Announcement Bar */}
-      <div className="running-discount-bar py-2 px-4 text-center font-bold tracking-wider flex justify-center items-center gap-3 text-[10px] sm:text-xs">
-        <span>🎉 Flat 16% OFF on Tharparkar A2 Bilona Ghee.</span>
-        <Link href="/#store" className="underline hover:text-[var(--earth)] transition">Shop Now</Link>
-        <span className="bg-black/30 px-2 py-0.5 rounded ml-2 font-mono">04 DAYS 13 HOURS</span>
-      </div>
-
-      {/* 3. Main Navigation Bar with Search & Utility Icons */}
-      <nav className="glass-nav border-b border-[var(--border)] transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
-            
-          {/* Brand Logo */}
-          <Link href="/" aria-label="Lado Organics home" className="inline-flex items-center shrink-0">
-            <Image src="/lado-organics-logo.svg" alt="Lado Organics — Lado Love Pure" width={180} height={120} priority className="h-14 md:h-16 w-auto object-contain" />
+      <nav aria-label="Main navigation" className="glass-nav transition-all duration-300">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 py-3 md:flex-row md:px-6">
+          <Link href="/" aria-label="Lado Organics home" className="inline-flex shrink-0 items-center">
+            <Image src="/lado-organics-logo.svg" alt="Lado Organics — Lado Love Pure" width={180} height={120} priority className="h-14 w-auto object-contain md:h-16" />
           </Link>
 
-          {/* Centralized Search Bar */}
-          <div className="relative w-full md:w-96">
-            <input 
-              type="text" 
+          <form onSubmit={handleSearch} role="search" className="relative w-full md:w-96">
+            <label htmlFor="premium-header-search" className="sr-only">Search Lado Organics</label>
+            <input
+              id="premium-header-search"
+              type="search"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="I'm shopping for A2 Ghee, Dhoop, Khad..." 
-              className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-full py-2.5 pl-5 pr-10 text-xs focus:outline-none focus:border-[var(--terracotta)] text-[var(--mud)] shadow-inner"
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder="Search products and stories…"
+              className="w-full rounded-full border border-[var(--border)] bg-[var(--bg)] py-2.5 pl-5 pr-12 text-xs text-[var(--mud)] shadow-inner focus:border-[var(--terracotta)] focus:outline-none"
             />
-            <i className="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-[var(--mud)]/50 text-xs"></i>
-          </div>
+            <button type="submit" aria-label="Search" className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full px-2 py-1 text-sm text-[var(--mud)]/70 hover:text-[var(--terracotta)]">⌕</button>
+          </form>
 
-          {/* User Utilities & Language Toggle */}
-          <div className="flex items-center gap-5 text-sm text-[var(--mud)]">
-            <select 
-              value={locale}
-              onChange={(e) => setLocale(e.target.value)}
-              className="bg-transparent border border-[var(--border)] text-[var(--mud)] text-xs font-bold p-1.5 rounded cursor-pointer focus:outline-none hover:border-[var(--terracotta)] transition"
-            >
+          <div className="flex items-center gap-4 text-sm text-[var(--mud)]">
+            <label className="sr-only" htmlFor="premium-header-locale">Language</label>
+            <select id="premium-header-locale" value={locale} onChange={(event) => setLocale(event.target.value as typeof locale)} className="cursor-pointer rounded border border-[var(--border)] bg-transparent p-1.5 text-xs font-bold text-[var(--mud)]">
               <option value="en">EN</option>
               <option value="hi">हिंदी</option>
               <option value="ma">मारवाड़ी</option>
             </select>
-            
-            <Link href="/dashboard" className="hover:text-[var(--terracotta)] transition" title="My Lado Journey">
-              <i className="far fa-user text-lg"></i>
-            </Link>
-            
-            <button className="hover:text-[var(--terracotta)] transition relative cursor-pointer" title="Shopping Bag">
-              <i className="fas fa-shopping-bag text-lg"></i>
-              <span className="absolute -top-2 -right-2 bg-[var(--terracotta)] text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
-                0
-              </span>
-            </button>
-            
-            <button className="hover:text-[var(--terracotta)] transition cursor-pointer" title="Wishlist">
-              <i className="far fa-heart text-lg"></i>
+            <Link href="/dashboard" className="transition hover:text-[var(--terracotta)]" title="My Lado Journey" aria-label="My Lado Journey">♙</Link>
+            <button type="button" onClick={() => setDrawerOpen(true)} className="relative cursor-pointer transition hover:text-[var(--terracotta)]" title="Shopping bag" aria-label={`Open shopping bag, ${itemCount} items`}>
+              <span aria-hidden="true">♧</span>
+              <span className="absolute -right-3 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--terracotta)] px-1 text-[9px] font-bold text-white">{itemCount}</span>
             </button>
           </div>
         </div>
 
-        {/* Sub-Menu Category Links */}
-        <div className="bg-white/60 border-t border-[var(--border)] py-2.5 px-4 md:px-6">
-          <div className="max-w-7xl mx-auto flex justify-start sm:justify-center space-x-8 text-[10px] sm:text-xs font-bold tracking-widest text-[var(--mud)] overflow-x-auto no-scrollbar">
-            <Link href="/" className="hover:text-[var(--terracotta)] transition whitespace-nowrap">HOME</Link>
-            <Link href="/#store" className="hover:text-[var(--terracotta)] transition whitespace-nowrap">CATALOG</Link>
-            <Link href="/#blueprint" className="hover:text-[var(--terracotta)] transition whitespace-nowrap">ZERO-WASTE ECOSYSTEM</Link>
-            <Link href="/#adopt" className="hover:text-[var(--terracotta)] transition whitespace-nowrap">ADOPT A CALF</Link>
-            <Link href="/#experiences" className="hover:text-[var(--terracotta)] transition whitespace-nowrap">BHUNGA FARM STAYS</Link>
-            <Link href="/trace/LO-PILANI-SAMPLE-001" className="hover:text-[var(--terracotta)] transition whitespace-nowrap">VERIFY BATCH</Link>
+        <div className="border-t border-[var(--border)] bg-white/60 px-4 py-2.5 md:px-6">
+          <div className="mx-auto flex max-w-7xl justify-start gap-7 overflow-x-auto whitespace-nowrap text-[10px] font-bold tracking-widest text-[var(--mud)] sm:justify-center sm:text-xs">
+            <Link href="/" className="transition hover:text-[var(--terracotta)]">HOME</Link>
+            <Link href="/store" className="transition hover:text-[var(--terracotta)]">SHOP</Link>
+            <Link href="/#farm-world" className="transition hover:text-[var(--terracotta)]">OUR FARM</Link>
+            <Link href="/#adopt" className="transition hover:text-[var(--terracotta)]">GAU SEVA</Link>
+            <Link href="/#experiences" className="transition hover:text-[var(--terracotta)]">FARM STAYS</Link>
+            <Link href="/trace" className="transition hover:text-[var(--terracotta)]">TRACEABILITY</Link>
           </div>
         </div>
       </nav>
