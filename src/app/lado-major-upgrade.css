@@ -118,3 +118,186 @@ body { margin: 0; background: var(--lado-paper); color: var(--lado-ink); font-fa
   *,*::before,*::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
   [data-lado-reveal] { opacity: 1; transform: none; }
 }
+
+
+
+/* ---------------------------------------------------------
+   LADO ORGANICS — complete application experience layer
+   Store, product, checkout, account, traceability and admin
+   --------------------------------------------------------- */
+:root {
+  --lado-radius-sm: 10px;
+  --lado-radius-md: 18px;
+  --lado-radius-lg: 26px;
+  --lado-shadow-soft: 0 12px 38px rgba(35,48,34,.07);
+  --lado-shadow-card: 0 22px 55px rgba(35,48,34,.10);
+}
+* { box-sizing: border-box; }
+button, input, select, textarea { font: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 3px solid rgba(201,166,107,.72); outline-offset: 3px;
+}
+::selection { background: #dce5d4; color: #183526; }
+
+/* Shared page canvas and headings */
+.store-page, .checkout-page, .dashboard-page { background: var(--lado-paper); }
+.store-page h1, .store-page h2, .checkout-page h1, .checkout-page h2,
+.dashboard-page h1, .dashboard-page h2, .dashboard-page h3 {
+  font-family: "Playfair Display", Georgia, serif;
+  letter-spacing: -.025em;
+}
+.store-page .store-page-heading, .store-page-heading { padding: 50px 0 36px; }
+.store-page-heading h1 { color: var(--lado-forest-deep); font-size: clamp(38px,5vw,64px); line-height: 1.08; }
+.store-page-heading p { color: var(--lado-muted); line-height: 1.85; }
+.store-product-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 22px; }
+.store-product-card { border-radius: var(--lado-radius-lg); overflow: hidden; background: #fffdf7; }
+.store-product-media { aspect-ratio: 1.12; }
+.store-product-body { padding: 22px; }
+.store-product-body h2,.store-product-body h3 { color: var(--lado-forest-deep); font-family: "Playfair Display",Georgia,serif; font-size: 24px; }
+.store-product-body p { color: var(--lado-muted); line-height: 1.75; }
+.store-product-card a:not(.primary-btn) { color: var(--lado-forest); }
+.store-product-card button,.primary-btn,.store-page button[type="submit"] {
+  border-radius: 999px; background: var(--lado-forest); color: white; border: 1px solid var(--lado-forest);
+  padding: 12px 20px; font-weight: 700; transition: .2s ease;
+}
+.store-product-card button:hover,.primary-btn:hover,.store-page button[type="submit"]:hover {
+  background: var(--lado-forest-deep); transform: translateY(-1px);
+}
+.store-product-pack { max-width: 100%; border-radius: 999px; background: #f3f0e6; }
+.store-product-ribbon { border-radius: 999px; color: var(--lado-forest-deep); }
+
+/* Product detail — gallery, variant selection, quantity and information */
+.product-detail-page, .product-page { color: var(--lado-ink); }
+.product-detail-page h1,.product-page h1 { color: var(--lado-forest-deep); font: 500 clamp(38px,5vw,62px)/1.08 "Playfair Display",Georgia,serif; }
+.product-detail-page section,.product-page section { border-color: var(--lado-line); }
+.product-detail-page button,.product-page button { transition: background .2s ease, transform .2s ease; }
+.product-detail-page button:hover,.product-page button:hover { transform: translateY(-1px); }
+.product-detail-page input,.product-detail-page select,.product-page input,.product-page select {
+  min-height: 44px; border: 1px solid var(--lado-line); border-radius: 12px; background: #fffdf7; padding: 10px 12px;
+}
+
+/* Cart drawer and checkout */
+.checkout-page { padding-top: clamp(32px,6vw,72px); }
+.checkout-page > div { max-width: 1120px; }
+.checkout-page header { padding-bottom: 24px; border-bottom: 1px solid var(--lado-line); }
+.checkout-page h1 { color: var(--lado-forest-deep); }
+.checkout-page section { border: 1px solid var(--lado-line); border-radius: var(--lado-radius-lg); background: #fffdf7; box-shadow: var(--lado-shadow-soft); padding: clamp(20px,4vw,36px); }
+.checkout-page input,.checkout-page select,.checkout-page textarea,
+.checkout-page form input,.checkout-page form select,.checkout-page form textarea {
+  width: 100%; min-height: 46px; border: 1px solid rgba(41,39,31,.18); border-radius: 12px; background: #fffefa; padding: 11px 13px; color: var(--lado-ink);
+}
+.checkout-page label { color: #5f5b50; font-size: 12px; font-weight: 700; }
+.checkout-confirmation { max-width: 760px; margin: 24px auto; text-align: center; }
+.checkout-confirmation-mark { display: grid; width: 62px; height: 62px; margin: auto; place-items: center; border-radius: 50%; background: #e6eddf; color: var(--lado-forest); font-size: 28px; }
+.checkout-empty { text-align: center; }
+.cart-checkout-drawer,.cart-drawer { color: var(--lado-ink); }
+.cart-checkout-drawer [role="dialog"],.cart-drawer [role="dialog"] { background: #fffdf7; }
+
+/* Customer account area */
+.dashboard-page { width: min(1240px,100%); margin-inline: auto; padding: clamp(20px,4vw,48px); }
+.dashboard-page h1 { color: var(--lado-forest-deep); font-size: clamp(34px,4vw,52px); }
+.dashboard-page h2 { color: var(--lado-forest-deep); }
+.dashboard-page a { transition: border-color .2s ease,box-shadow .2s ease,transform .2s ease; }
+.dashboard-page a:hover { transform: translateY(-2px); }
+.dashboard-page .grid > a,.dashboard-page .grid > div,
+.dashboard-page article,.dashboard-page [class*="rounded-"] {
+  border-color: var(--lado-line);
+}
+.dashboard-page .grid > a {
+  background: #fffdf7; border-radius: 20px; box-shadow: 0 8px 26px rgba(35,48,34,.045);
+}
+.dashboard-page .grid > a:hover { border-color: rgba(184,109,76,.5); box-shadow: var(--lado-shadow-soft); }
+.dashboard-page button { border-radius: 999px; }
+
+/* Dashboard sidebar and account navigation */
+.dashboard-shell,.dashboard-layout { background: var(--lado-ivory); }
+.dashboard-sidebar,.dashboard-nav {
+  background: var(--lado-forest-deep); color: #f8f5ec;
+}
+.dashboard-sidebar a,.dashboard-nav a { color: rgba(255,253,247,.82); }
+.dashboard-sidebar a[aria-current="page"],.dashboard-nav a[aria-current="page"],
+.dashboard-sidebar a.active,.dashboard-nav a.active {
+  background: rgba(255,255,255,.12); color: #fff; border-radius: 12px;
+}
+
+/* Admin — calm, high-clarity operations workspace */
+body:has(.admin-shell), body:has([data-admin-layout]) { background: #f4f2eb; }
+.admin-shell,.admin-layout { background: #f4f2eb; }
+.admin-shell aside,.admin-layout aside { background: #183526; color: #f8f5ec; border-color: rgba(255,255,255,.12); }
+.admin-shell aside a,.admin-layout aside a { color: rgba(255,253,247,.78); }
+.admin-shell aside a[aria-current="page"],.admin-layout aside a[aria-current="page"],
+.admin-shell aside a.active,.admin-layout aside a.active {
+  background: rgba(255,255,255,.13); color: white; border-radius: 12px;
+}
+.admin-shell main,.admin-layout main { min-width: 0; }
+.admin-shell main h1,.admin-layout main h1 { color: var(--lado-forest-deep); font: 500 clamp(30px,3.5vw,46px)/1.15 "Playfair Display",Georgia,serif; }
+.admin-shell main section,.admin-layout main section,
+.admin-shell main article,.admin-layout main article {
+  border-color: var(--lado-line); border-radius: 18px;
+}
+.admin-shell main table,.admin-layout main table { width: 100%; border-collapse: separate; border-spacing: 0; }
+.admin-shell main th,.admin-layout main th {
+  background: #eeece3; color: #666253; font-size: 10px; letter-spacing: .09em; text-transform: uppercase;
+}
+.admin-shell main td,.admin-layout main td { border-bottom: 1px solid var(--lado-line); padding: 13px 12px; font-size: 12px; }
+.admin-shell main input,.admin-shell main select,.admin-shell main textarea,
+.admin-layout main input,.admin-layout main select,.admin-layout main textarea {
+  min-height: 42px; border: 1px solid var(--lado-line); border-radius: 10px; background: #fffdf7; padding: 9px 12px;
+}
+.admin-shell main button,.admin-layout main button {
+  border-radius: 999px; transition: transform .2s ease,background .2s ease;
+}
+.admin-shell main button:hover,.admin-layout main button:hover { transform: translateY(-1px); }
+
+/* Farm, story, journal, gifting and transparency modules */
+.farm-world,.farm-experience,.trust-process,.journal-library,.corporate-gifting {
+  scroll-margin-top: 100px;
+}
+.lado-site main > section:not(.lado-hero):not(.lado-collection):not(.lado-intro):not(.lado-journey-strip) {
+  scroll-margin-top: 100px;
+}
+.lado-site main > div[data-lado-reveal] { min-width: 0; }
+.lado-site main img { max-width: 100%; }
+.lado-site :is(h2,h3) { text-wrap: balance; }
+.lado-site :is(p,li) { text-wrap: pretty; }
+
+/* Traceability, policies, contact and community */
+main:has(form) input,main:has(form) select,main:has(form) textarea {
+  max-width: 100%; border-radius: 12px;
+}
+main:has(form) textarea { min-height: 110px; }
+main:has(form) button[type="submit"] {
+  min-height: 46px; border-radius: 999px; background: var(--lado-forest); color: white; padding: 12px 22px; font-weight: 700;
+}
+main:has(form) button[type="submit"]:hover { background: var(--lado-forest-deep); }
+main:has(.trace-batch),main:has([data-traceability]) { background: var(--lado-ivory); }
+
+/* Announcement and floating concierge */
+.site-announcement,.announcement-bar { position: relative; z-index: 45; }
+.concierge-widget,.concierge-launcher { z-index: 60; }
+
+/* Small screens and touch layouts */
+@media (max-width: 900px) {
+  .store-product-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+  .dashboard-page { padding: 22px 16px; }
+}
+@media (max-width: 640px) {
+  .store-product-grid { grid-template-columns: 1fr; gap: 15px; }
+  .store-product-card { border-radius: 20px; }
+  .store-product-media { aspect-ratio: 1.2; }
+  .store-product-body { padding: 18px; min-height: auto; }
+  .store-page-heading { padding: 30px 0 24px; }
+  .checkout-page { padding: 26px 14px; }
+  .checkout-page section { border-radius: 18px; padding: 18px; }
+  .checkout-page .ml-3 { margin-left: 0; }
+  .dashboard-page { padding: 18px 14px; }
+  .dashboard-page .grid { gap: 12px; }
+  .dashboard-page .grid > a { padding: 18px; }
+  .admin-shell aside,.admin-layout aside { position: static; height: auto; min-height: 0; }
+  .admin-shell main,.admin-layout main { padding: 16px !important; }
+  .admin-shell main table,.admin-layout main table { display: block; overflow-x: auto; white-space: nowrap; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,*::before,*::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
