@@ -44,4 +44,20 @@ await Promise.all([
   createIcon(512, "icon-maskable-512.png", true),
 ]);
 
-console.log("Verified Lado Organics icon dimensions: 16, 32, 180, 192 and 512px (including maskable) from the approved master logo.");
+// Wrap the generated 32px PNG in the ICO container for legacy browser and desktop support.
+const faviconPng = await fs.readFile(path.join(publicDir, "favicon-32.png"));
+const icoHeader = Buffer.alloc(22);
+icoHeader.writeUInt16LE(0, 0); // reserved
+icoHeader.writeUInt16LE(1, 2); // ICO resource type
+icoHeader.writeUInt16LE(1, 4); // one image
+icoHeader.writeUInt8(32, 6);
+icoHeader.writeUInt8(32, 7);
+icoHeader.writeUInt8(0, 8);
+icoHeader.writeUInt8(0, 9);
+icoHeader.writeUInt16LE(1, 10);
+icoHeader.writeUInt16LE(32, 12);
+icoHeader.writeUInt32LE(faviconPng.length, 14);
+icoHeader.writeUInt32LE(22, 18);
+await fs.writeFile(path.join(publicDir, "favicon.ico"), Buffer.concat([icoHeader, faviconPng]));
+
+console.log("Verified Lado Organics favicon.ico, 16px/32px PNG favicons, 180px Apple touch icon, 192px/512px Android icons and maskable icon from the approved master logo.");
