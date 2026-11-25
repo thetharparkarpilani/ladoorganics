@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useCart } from "@/context/CartContext";
 import ManualCheckout from "@/components/ManualCheckout";
 type CompletedOrder = { orderNumber: string; method: "cash_on_delivery" | "manual_upi"; total: number };
@@ -12,7 +13,12 @@ export default function CheckoutPage() {
     <main className="checkout-page min-h-screen px-4 py-10 sm:px-6 sm:py-16">
       <div className="mx-auto max-w-6xl">
         <Link href="/store" className="text-xs font-bold uppercase tracking-widest text-[var(--accent-forest)] hover:underline">← Continue shopping</Link>
-        <header className="mb-10 mt-6"><span className="store-eyebrow">LADO ORGANICS · SECURE ORDER</span><h1 className="mt-3 font-serif text-4xl font-bold text-[var(--mud)] sm:text-5xl">{completed ? "Order received" : "Your checkout"}</h1><p className="mt-3 max-w-2xl text-sm leading-7 text-[var(--muted)]">{completed ? "Your order has been recorded. Our team will confirm fulfilment and payment details." : "Review your selection and share delivery details. The server verifies current prices and stock when your order is placed."}</p></header>
+        <header className="mb-10 mt-6">
+          <Link href="/" aria-label="Lado Organics home" className="mb-7 inline-flex rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-2">
+            <Image src="/lado-organics-logo.svg" alt="Lado Organics — Lado Love Pure" width={150} height={82} className="h-12 w-auto object-contain" priority />
+          </Link>
+          <div><span className="store-eyebrow">LADO ORGANICS · SECURE ORDER</span><h1 className="mt-3 font-serif text-4xl font-bold text-[var(--mud)] sm:text-5xl">{completed ? "Order received" : "Your checkout"}</h1><p className="mt-3 max-w-2xl text-sm leading-7 text-[var(--muted)]">{completed ? "Your order has been recorded. Our team will confirm fulfilment and payment details." : "Review your selection and share delivery details. The server verifies current prices and stock when your order is placed."}</p></div>
+        </header>
         {completed ? (
           <section className="checkout-confirmation"><span className="checkout-confirmation-mark">✓</span><p className="store-eyebrow">THANK YOU FOR CHOOSING LADO</p><h2 className="mt-3 font-serif text-3xl font-bold text-[var(--mud)]">Your order is recorded</h2><p className="mt-3 text-sm text-[var(--muted)]">Order reference</p><strong className="mt-1 block font-mono text-lg">{completed.orderNumber}</strong><p className="mt-3 font-semibold">₹{completed.total.toLocaleString("en-IN")}</p><p className="mt-3 text-sm text-[var(--muted)]">{completed.method === "cash_on_delivery" ? "Cash on Delivery selected." : "Manual UPI selected. Payment will be verified by the Lado team."}</p><Link href="/dashboard/orders" className="primary-btn mt-6 inline-flex rounded-full px-6 py-3 text-sm font-bold">View order history</Link><Link href="/store" className="ml-3 mt-6 inline-flex rounded-full border border-[var(--border)] px-6 py-3 text-sm font-bold">Continue shopping</Link></section>
         ) : items.length === 0 ? (
