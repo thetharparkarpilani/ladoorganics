@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -15,7 +15,20 @@ export default function GlobalSiteChrome() {
   const { itemCount, setDrawerOpen } = useCart();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // The homepage owns its editorial header and footer.
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [menuOpen]);
+
+  // The homepage owns its editorial header and footer; admin has a separate workspace shell.
   if (pathname === "/" || pathname.startsWith("/admin")) return null;
 
   const labels = locale === "hi"
@@ -25,9 +38,15 @@ export default function GlobalSiteChrome() {
       : { shop: "Shop", farm: "Our farm", trace: "Trace a batch", search: "Search", account: "My account", contact: "Contact", bag: "Bag", menu: "Menu", close: "Close" };
 
   const closeMenu = () => setMenuOpen(false);
+  const isCurrent = (href: string) => href === "/store"
+    ? pathname === "/store" || pathname.startsWith("/store/")
+    : href === "/#farm-world"
+      ? false
+      : pathname === href || pathname.startsWith(href + "/");
 
   return (
     <>
+      <a href="#main-content" className="lado-skip-link">Skip to content</a>
       <header className="lado-global-header">
         <div className="lado-global-header-inner">
           <Link href="/" className="lado-global-brand" aria-label="Lado Organics home" onClick={closeMenu}>
@@ -37,18 +56,19 @@ export default function GlobalSiteChrome() {
             {menuOpen ? labels.close : labels.menu}
           </button>
           <nav id="lado-global-nav" className={menuOpen ? "lado-global-nav is-open" : "lado-global-nav"} aria-label="Primary navigation">
-            <Link href="/store" onClick={closeMenu}>{labels.shop}</Link>
+            <Link href="/store" aria-current={isCurrent("/store") ? "page" : undefined} onClick={closeMenu}>{labels.shop}</Link>
             <Link href="/#farm-world" onClick={closeMenu}>{labels.farm}</Link>
-            <Link href="/trace" onClick={closeMenu}>{labels.trace}</Link>
-            <Link href="/search" onClick={closeMenu}>{labels.search}</Link>
-            <Link href="/contact" onClick={closeMenu}>{labels.contact}</Link>
+            <Link href="/trace" aria-current={isCurrent("/trace") ? "page" : undefined} onClick={closeMenu}>{labels.trace}</Link>
+            <Link href="/search" aria-current={isCurrent("/search") ? "page" : undefined} onClick={closeMenu}>{labels.search}</Link>
+            <Link href="/contact" aria-current={isCurrent("/contact") ? "page" : undefined} onClick={closeMenu}>{labels.contact}</Link>
           </nav>
           <div className="lado-global-actions">
-            <select aria-label="Choose language" value={locale} onChange={event => setLocale(event.target.value as LocaleCode)}>
+            <label className="sr-only" htmlFor="lado-global-locale">Choose language</label>
+            <select id="lado-global-locale" value={locale} onChange={event => setLocale(event.target.value as LocaleCode)}>
               <option value="en">EN</option><option value="hi">हिंदी</option><option value="ma">मारवाड़ी</option>
             </select>
-            <Link className="lado-global-account" href="/dashboard">{labels.account}</Link>
-            <button className="lado-global-bag" type="button" onClick={() => setDrawerOpen(true)}>{labels.bag}<span>{itemCount}</span></button>
+            <Link className="lado-global-account" href="/dashboard" aria-current={isCurrent("/dashboard") ? "page" : undefined}>{labels.account}</Link>
+            <button className="lado-global-bag" type="button" aria-label={`${labels.bag}, ${itemCount} items`} onClick={() => setDrawerOpen(true)}>{labels.bag}<span aria-hidden="true">{itemCount}</span></button>
           </div>
         </div>
       </header>
