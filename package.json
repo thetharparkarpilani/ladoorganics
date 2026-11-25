@@ -9,7 +9,9 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "test:lado-ai": "node --experimental-strip-types scripts/test-lado-ai-retrieval.mjs",
-    "generate:icons": "node scripts/generate-brand-icons.mjs"
+    "generate:icons": "node scripts/generate-brand-icons.mjs",
+    "predev": "node scripts/generate-brand-icons.mjs",
+    "prestart": "node scripts/generate-brand-icons.mjs"
   },
   "dependencies": {
     "next": "15.5.29",
