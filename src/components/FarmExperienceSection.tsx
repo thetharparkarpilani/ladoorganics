@@ -19,7 +19,7 @@ export default function FarmExperienceSection({ whatsappNumber }: FarmExperience
     gau: "गौ सेवा · पिलानी", sponsor: "गौ सेवा में सहयोग की रुचि दर्ज करें",
     sponsorIntro: "यह सामान्य गौ सेवा सहयोग की रुचि है। किसी व्यक्तिगत पशु की प्रोफ़ाइल तभी दिखाई जाएगी जब टीम उसे सत्यापित करे।",
     plan: "योगदान की आवृत्ति", amount: "आपका प्रस्तावित योगदान (₹)", amountPlaceholder: "अपनी प्रस्तावित राशि लिखें",
-    name: "आपका नाम", email: "ईमेल", phone: "फ़ोन / WhatsApp (वैकल्पिक)", fullName: "पूरा नाम",
+    name: "आपका नाम", email: "ईमेल", phone: "फ़ोन / WhatsApp", fullName: "पूरा नाम",
     submit: "रुचि दर्ज करें", submitting: "दर्ज हो रहा है…", whatsapp: "WhatsApp पर पूछें ↗", stayWhatsapp: "तारीख WhatsApp पर पूछें ↗",
     stayLabel: "कृषि पर्यटन · पिलानी, राजस्थान", stay: "भुंगा स्टे की उपलब्धता पूछें",
     stayIntro: "अपनी तारीखें और मेहमानों की जानकारी भेजें। उपलब्धता और अंतिम कीमत टीम पुष्टि करेगी। अनुरोध भेजने से बुकिंग पक्की नहीं होती।",
@@ -31,7 +31,7 @@ export default function FarmExperienceSection({ whatsappNumber }: FarmExperience
     gau: "गौ सेवा · पिलानी", sponsor: "गौ सेवा में सहयोग री रुचि लिखावो",
     sponsorIntro: "ई सामान्य गौ सेवा सहयोग री अरज है। किसी एक पशु री जानकारी टीम पक्की करै पाछै ही दिखाई जावैला।",
     plan: "योगदान रो समय", amount: "थारो प्रस्तावित योगदान (₹)", amountPlaceholder: "आपरी प्रस्तावित रकम लिखो",
-    name: "थारो नाम", email: "ईमेल", phone: "फोन / WhatsApp (जरूरी कोनी)", fullName: "पूरो नाम",
+    name: "थारो नाम", email: "ईमेल", phone: "फोन / WhatsApp", fullName: "पूरो नाम",
     submit: "रुचि लिखावो", submitting: "लिखी जावै है…", whatsapp: "WhatsApp पर पूछो ↗", stayWhatsapp: "तारीख WhatsApp पर पूछो ↗",
     stayLabel: "खेत पर्यटन · पिलानी, राजस्थान", stay: "भुंगा ठहराव री उपलब्धता पूछो",
     stayIntro: "तारीख अर मेहमान री जानकारी भेजो। उपलब्धता अर आखरी भाव टीम पक्को करैला। अरज भेजण सूं बुकिंग पक्की कोनी होवै।",
@@ -43,7 +43,7 @@ export default function FarmExperienceSection({ whatsappNumber }: FarmExperience
     gau: "GAU SEVA · PILANI", sponsor: "Register a Gau Seva contribution enquiry",
     sponsorIntro: "This is a general Gau Seva enquiry. Individual animal profiles will be shown only when the Lado team has verified and approved them.",
     plan: "Contribution frequency requested", amount: "Your proposed contribution (₹)", amountPlaceholder: "Enter an amount you propose",
-    name: "Your name", email: "Email", phone: "Phone / WhatsApp (optional)", fullName: "Full name",
+    name: "Your name", email: "Email", phone: "Phone / WhatsApp", fullName: "Full name",
     submit: "Send contribution enquiry", submitting: "Sending enquiry…", whatsapp: "Ask on WhatsApp ↗", stayWhatsapp: "Ask about dates on WhatsApp ↗",
     stayLabel: "AGRO-TOURISM · PILANI, RAJASTHAN", stay: "Enquire about a Bhunga stay",
     stayIntro: "Share your dates and guest details. The team will confirm availability and final pricing. Sending a request does not confirm a reservation.",
@@ -171,7 +171,7 @@ export default function FarmExperienceSection({ whatsappNumber }: FarmExperience
               </label>
             </div>
             <label className="block text-xs font-bold uppercase">{copy.phone}
-              <input type="tel" value={sponsorPhone} onChange={(event) => setSponsorPhone(event.target.value)} placeholder="+91..." className="mt-1 w-full p-3 rounded-xl border border-[var(--border)] bg-[var(--bg)]" />
+              <input type="tel" value={sponsorPhone} onChange={(event) => setSponsorPhone(event.target.value)} placeholder="+91..." required className="mt-1 w-full p-3 rounded-xl border border-[var(--border)] bg-[var(--bg)]" />
             </label>
             {sponMessage && <div role="status" className={`p-3.5 rounded-xl text-xs font-medium ${sponMessage.type === "ok" ? "bg-green-50 text-green-900 border border-green-200" : "bg-red-50 text-red-900 border border-red-200"}`}>{sponMessage.text}</div>}
             <div className="flex flex-wrap items-center gap-3 pt-2">
