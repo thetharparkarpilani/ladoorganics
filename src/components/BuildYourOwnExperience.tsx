@@ -25,21 +25,18 @@ const ACTIVITIES: FarmActivityOption[] = [
     title: "Biogas & Pure Kechua Khad Demonstration",
     duration: "90 Mins",
     description: "Enquire about a farm-systems walk-through; the team will confirm what is available."
-    addonInr: 0
   },
   {
     id: "calf-care",
     title: "Tharparkar cattle care enquiry",
     duration: "Subject to confirmation",
     description: "Ask the farm team whether a supervised gaushala visit can be arranged."
-    addonInr: 0
   },
   {
     id: "organic-farm-walk",
     title: "Pilani Farm Tour & Traditional Meal",
     duration: "Half Day",
     description: "Ask the team about a guided farm walk and any meal options available for your dates."
-    addonInr: 0
   }
 ];
 
