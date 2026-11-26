@@ -9,6 +9,7 @@ type CatalogRow = {
   name_en: string;
   is_active: boolean;
   image_url: string | null;
+  business_category: "food" | "non_food" | "experience" | "other";
   variant_id: string | null;
   sku: string | null;
   label: string | null;
@@ -18,6 +19,8 @@ type CatalogRow = {
 };
 
 type Draft = { priceInr: string; stockQty: string };
+type ProductDraft = { nameEn: string; slug: string; descriptionEn: string; businessCategory: "food" | "non_food" | "experience" | "other"; sku: string; variantLabel: string; priceInr: string; stockQty: string };
+const EMPTY_PRODUCT: ProductDraft = { nameEn: "", slug: "", descriptionEn: "", businessCategory: "food", sku: "", variantLabel: "", priceInr: "", stockQty: "0" };
 
 export default function AdminProductInventory({ adminToken }: { adminToken: string }) {
   const [rows, setRows] = useState<CatalogRow[]>([]);
@@ -27,6 +30,8 @@ export default function AdminProductInventory({ adminToken }: { adminToken: stri
   const [saving, setSaving] = useState("");
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [newProduct, setNewProduct] = useState<ProductDraft>(EMPTY_PRODUCT);
+  const [creating, setCreating] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -69,6 +74,38 @@ export default function AdminProductInventory({ adminToken }: { adminToken: stri
     }
     return Array.from(grouped.values());
   }, [rows]);
+
+  const updateNewProduct = (field: keyof ProductDraft, value: string) => {
+    setNewProduct((current) => ({ ...current, [field]: value }));
+  };
+
+  const createProduct = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setCreating(true);
+    setError("");
+    setNotice("");
+    try {
+      const response = await fetch("/api/admin/catalog", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-token": adminToken },
+        body: JSON.stringify({
+          action: "create_product",
+          ...newProduct,
+          priceInr: Number(newProduct.priceInr),
+          stockQty: Number(newProduct.stockQty),
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data?.error || "Unable to create product.");
+      setNewProduct(EMPTY_PRODUCT);
+      setNotice("Product created as hidden. Review the details and publish it when ready.");
+      await load();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to create product.");
+    } finally {
+      setCreating(false);
+    }
+  };
 
   const updateDraft = (id: string, field: keyof Draft, value: string) => {
     setDrafts((current) => ({
@@ -170,6 +207,47 @@ export default function AdminProductInventory({ adminToken }: { adminToken: stri
         </button>
       </div>
 
+      <form onSubmit={createProduct} className="mb-6 rounded-2xl border border-[var(--border)] bg-[var(--bg)] p-4 sm:p-5">
+        <div className="mb-4">
+          <h3 className="font-serif text-xl font-bold">Register a product</h3>
+          <p className="mt-1 text-xs opacity-70">New products are saved hidden from customers. Enter verified details, then review stock and publish when ready.</p>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <label className="text-xs font-semibold">Product name
+            <input required maxLength={160} value={newProduct.nameEn} onChange={(event) => updateNewProduct("nameEn", event.target.value)} className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] p-2.5 text-sm" />
+          </label>
+          <label className="text-xs font-semibold">URL slug
+            <input required maxLength={100} pattern="[a-z0-9]+(-[a-z0-9]+)*" placeholder="bilona-ghee" value={newProduct.slug} onChange={(event) => updateNewProduct("slug", event.target.value.toLowerCase())} className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] p-2.5 text-sm" />
+          </label>
+          <label className="text-xs font-semibold">Business category
+            <select value={newProduct.businessCategory} onChange={(event) => updateNewProduct("businessCategory", event.target.value as ProductDraft["businessCategory"])} className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] p-2.5 text-sm">
+              <option value="food">Food product</option>
+              <option value="non_food">Non-food product</option>
+              <option value="experience">Farm experience</option>
+              <option value="other">Other</option>
+            </select>
+          </label>
+          <label className="text-xs font-semibold">Variant / pack label
+            <input required maxLength={80} placeholder="Enter the approved pack size" value={newProduct.variantLabel} onChange={(event) => updateNewProduct("variantLabel", event.target.value)} className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] p-2.5 text-sm" />
+          </label>
+          <label className="text-xs font-semibold">SKU
+            <input required maxLength={80} pattern="[A-Za-z0-9][A-Za-z0-9_-]{1,79}" placeholder="LO-GHEE-001" value={newProduct.sku} onChange={(event) => updateNewProduct("sku", event.target.value.toUpperCase())} className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] p-2.5 text-sm" />
+          </label>
+          <label className="text-xs font-semibold">Price (₹)
+            <input required type="number" min="1" max="100000000" step="1" value={newProduct.priceInr} onChange={(event) => updateNewProduct("priceInr", event.target.value)} className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] p-2.5 text-sm" />
+          </label>
+          <label className="text-xs font-semibold">Opening stock quantity
+            <input required type="number" min="0" max="1000000" step="1" value={newProduct.stockQty} onChange={(event) => updateNewProduct("stockQty", event.target.value)} className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] p-2.5 text-sm" />
+          </label>
+          <label className="text-xs font-semibold sm:col-span-2">Product description
+            <textarea required maxLength={2000} rows={3} value={newProduct.descriptionEn} onChange={(event) => updateNewProduct("descriptionEn", event.target.value)} className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] p-2.5 text-sm" />
+          </label>
+        </div>
+        <button type="submit" disabled={creating} className="primary-btn mt-4 rounded-xl px-5 py-3 text-xs font-bold disabled:opacity-50">
+          {creating ? "Creating product…" : "Create hidden product"}
+        </button>
+      </form>
+
       {error && <p role="alert" className="mb-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-800">{error}</p>}
       {notice && <p role="status" className="mb-4 rounded-xl border border-green-200 bg-green-50 p-3 text-sm text-green-900">{notice}</p>}
       {loading && rows.length === 0 ? <p className="py-8 text-center text-sm opacity-60">Loading product inventory…</p> :
@@ -197,7 +275,7 @@ export default function AdminProductInventory({ adminToken }: { adminToken: stri
                 <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <h3 className="font-serif text-xl font-bold">{product.name_en}</h3>
-                    <p className="text-xs opacity-60">{product.slug}</p>
+                    <p className="text-xs opacity-60">{product.slug} · {product.business_category.replace("_", " ")}</p>
                     <span className={`mt-2 inline-block rounded-full px-2.5 py-1 text-[10px] font-bold ${product.is_active ? "bg-green-100 text-green-800" : "bg-gray-200 text-gray-700"}`}>
                       {product.is_active ? "Visible on storefront" : "Hidden from storefront"}
                     </span>

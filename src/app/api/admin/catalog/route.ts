@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
   }
   try {
     const result = await db.query(
-      `SELECT p.id AS product_id, p.slug, p.name_en, p.is_active, p.image_url,
+      `SELECT p.id AS product_id, p.slug, p.name_en, p.is_active, p.image_url, p.business_category,
               v.id AS variant_id, v.sku, v.label, v.price_inr, v.stock_qty, v.is_default
          FROM products p
          LEFT JOIN product_variants v ON v.product_id = p.id
@@ -30,6 +30,48 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => null);
     const action = typeof body?.action === "string" ? body.action : "";
+
+    if (action === "create_product") {
+      const nameEn = clean(body?.nameEn, 160);
+      const slug = clean(body?.slug, 100).toLowerCase();
+      const descriptionEn = clean(body?.descriptionEn, 2000);
+      const sku = clean(body?.sku, 80).toUpperCase();
+      const variantLabel = clean(body?.variantLabel, 80);
+      const businessCategory = clean(body?.businessCategory, 24);
+      const price = Number(body?.priceInr);
+      const stock = Number(body?.stockQty);
+      if (!nameEn || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || !descriptionEn ||
+          !/^[A-Z0-9][A-Z0-9_-]{1,79}$/.test(sku) || !variantLabel ||
+          !["food", "non_food", "experience", "other"].includes(businessCategory) ||
+          !Number.isSafeInteger(price) || price < 1 || price > 100000000 ||
+          !Number.isInteger(stock) || stock < 0 || stock > 1000000) {
+        return NextResponse.json({ error: "Complete every product field with a valid slug, SKU, category, whole-rupee price and stock quantity." }, { status: 400 });
+      }
+      const client = await db.getClient();
+      try {
+        await client.query("BEGIN");
+        const product = await client.query(
+          "INSERT INTO products (slug, name_en, description_en, business_category, is_active) VALUES ($1,$2,$3,$4,FALSE) RETURNING id, slug, name_en, business_category, is_active",
+          [slug, nameEn, descriptionEn, businessCategory]
+        );
+        const variant = await client.query(
+          "INSERT INTO product_variants (product_id, sku, label, price_inr, stock_qty, is_default) VALUES ($1,$2,$3,$4,$5,TRUE) RETURNING id, sku, label, price_inr, stock_qty",
+          [product.rows[0].id, sku, variantLabel, price, stock]
+        );
+        await client.query(
+          "INSERT INTO audit_logs(action,entity_type,entity_id,metadata) VALUES('PRODUCT_CREATED','product',$1,$2::jsonb)",
+          [product.rows[0].id, JSON.stringify({ slug, businessCategory, sku, initialStock: stock, published: false })]
+        );
+        await client.query("COMMIT");
+        return NextResponse.json({ ok: true, product: product.rows[0], variant: variant.rows[0], message: "Product created as hidden. Review its details and publish it when ready." }, { status: 201 });
+      } catch (error) {
+        await client.query("ROLLBACK").catch(() => undefined);
+        if (error && typeof error === "object" && "code" in error && error.code === "23505") {
+          return NextResponse.json({ error: "That product slug or SKU is already in use." }, { status: 409 });
+        }
+        throw error;
+      } finally { client.release(); }
+    }
 
     if (action === "update_variant") {
       const variantId = typeof body?.variantId === "string" ? body.variantId.trim() : "";
