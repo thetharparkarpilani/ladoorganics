@@ -11,6 +11,8 @@ import StorefrontSection from "@/components/StorefrontSection";
 import EssentialsClubSection from "@/components/EssentialsClubSection";
 import TrustAndProcessSection from "@/components/TrustAndProcessSection";
 import FarmCalculatorsSuite from "@/components/FarmCalculatorsSuite";
+import FarmExperienceSection from "@/components/FarmExperienceSection";
+import BuildYourOwnExperience from "@/components/BuildYourOwnExperience";
 import GauSevaTransparencySection from "@/components/GauSevaTransparencySection";
 import JournalLibrarySection from "@/components/JournalLibrarySection";
 import CorporateGiftingSection from "@/components/CorporateGiftingSection";
@@ -179,6 +181,8 @@ export default function HomePage() {
         </section>
 
         <div data-lado-reveal><FarmWorldSection /></div>
+        <div data-lado-reveal><FarmExperienceSection whatsappNumber={whatsappNumber} /></div>
+        <div data-lado-reveal><BuildYourOwnExperience whatsappNumber={whatsappNumber} /></div>
         <div data-lado-reveal><EssentialsClubSection /></div>
         <div data-lado-reveal><TrustAndProcessSection whatsappNumber={whatsappNumber} /></div>
         <div data-lado-reveal><FarmCalculatorsSuite locale={locale} /></div>
