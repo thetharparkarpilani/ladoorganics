@@ -68,7 +68,7 @@ Do not describe the site as production-ready solely because a build passes. Data
 Order creation writes customer and (when configured) administrator email work to \`notification_outbox\` in the same database transaction as the order. A committed order therefore retains its notification work even when SMTP is temporarily unavailable.
 
 Before enabling the worker:
-1. Apply and verify migration \`029_catalogue_taxonomy_and_notification_outbox.sql\` on an isolated Supabase branch first.
+1. Run the PostgreSQL migration integration suite locally or in GitHub Actions first (`npm run test:db-migrations`). This uses a disposable local/CI PostgreSQL database and does not create a paid Supabase branch. Review the SQL and confirm the target project's current migration history before any live change.
 2. Configure SMTP credentials and \`ADMIN_NOTIFICATION_EMAIL\` in the intended Vercel environments.
 3. Generate a strong random \`CRON_SECRET\` (at least 32 characters) and set it as a server-only Vercel environment variable.
 4. Configure a trusted scheduler to POST \`/api/internal/notifications/process\` with \`Authorization: Bearer <CRON_SECRET>\`.
