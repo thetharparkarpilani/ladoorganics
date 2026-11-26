@@ -4,7 +4,7 @@ import { sendTemplatedNotification } from "@/lib/customer-notifications";
 import { sendAdminRequestAlert } from "@/lib/admin-notifications";
 import { enforceRateLimit } from "@/lib/rate-limit";
 
-const NIGHTLY_RATE_INR = Number(process.env.BHUNGA_NIGHTLY_RATE_INR || 4000);
+const NIGHTLY_RATE_INR = Number(process.env.BHUNGA_NIGHTLY_RATE_INR || 0);
 
 function validDate(value: unknown): value is string {
   if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
