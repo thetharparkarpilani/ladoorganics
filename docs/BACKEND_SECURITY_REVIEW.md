@@ -9,7 +9,7 @@
 - Next.js 15 App Router with TypeScript is the application/API layer.
 - The server connects to PostgreSQL through the server-only `DATABASE_URL` pool in `src/lib/db.ts`.
 - Supabase Auth issues the customer/staff identity token. The server validates it against `/auth/v1/user`.
-- The customer profile API uses the Supabase Data API with the customer's access token. Its `customer_profiles` table is protected by ownership RLS policies.
+- The customer profile API proxies requests to the Supabase Data API using the customer's access token. Its `customer_profiles` table is protected by ownership RLS policies.
 - Order history, catalogue, checkout, payments, staff administration, inventory and traceability are handled by server-side routes and PostgreSQL transactions.
 - No payment gateway or courier provider is assumed active merely because integration code exists.
 

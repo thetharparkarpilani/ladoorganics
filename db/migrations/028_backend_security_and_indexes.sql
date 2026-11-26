@@ -1,8 +1,9 @@
 -- 028: Tighten Supabase Data API privileges and optimize core foreign-key lookups.
 --
 -- The application uses the Next.js server as its trusted data-access layer.
--- The only intentional browser-to-Data-API table access is customer_profiles,
--- protected by auth.uid()-scoped RLS policies and the user's access token.
+-- The only intentional authenticated Data API table access in the application
+-- is the server-proxied customer_profiles endpoint, protected by auth.uid()-scoped
+-- RLS policies and the signed-in user's access token.
 --
 -- Migration 023 revoked anon privileges but left broad default Supabase
 -- authenticated grants on several public tables. In particular, authenticated
