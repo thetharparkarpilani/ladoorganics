@@ -2,7 +2,7 @@ name: Lado Organics quality checks
 
 on:
   push:
-    branches: [main, lado-major-ui-roadmap]
+    branches: ["**"]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -33,6 +33,8 @@ jobs:
         run: npm run typecheck
       - name: Test Lado AI multilingual retrieval
         run: npm run test:lado-ai
+      - name: Test roadmap safety contracts
+        run: npm run test:roadmap
       - name: Run ESLint
         run: npm run lint
       - name: Build Next.js application
