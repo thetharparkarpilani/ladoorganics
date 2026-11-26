@@ -311,6 +311,7 @@ export default function StorefrontSection({
       </section>
 
       {products.length > 0 && (
+      <>
       <section aria-labelledby="lado-photo-story-title" className="border-t border-[var(--border)] py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
@@ -422,6 +423,7 @@ export default function StorefrontSection({
           </div>
         </div>
       </section>
+      </>
       )}
     </>
   );

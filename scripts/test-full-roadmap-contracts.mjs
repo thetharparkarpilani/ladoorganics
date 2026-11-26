@@ -8,7 +8,7 @@ assert.match(migration,/CREATE TABLE IF NOT EXISTS public\.notification_outbox/i
 assert.match(migration,/idempotency_key TEXT NOT NULL UNIQUE/i);
 assert.match(migration,/ENABLE ROW LEVEL SECURITY/i);
 assert.match(migration,/REVOKE ALL PRIVILEGES ON TABLE public\.notification_outbox FROM anon,authenticated/i);
-assert.match(catalogApi,/getAdminActor\(req,"inventory"\)/);
+assert.match(catalogApi,/getAdminActor\(req,\s*"inventory"\)/);
 assert.match(catalogApi,/action === "create_product"/);
 assert.match(catalogApi,/business_category, is_active\) VALUES \(\$1,\$2,\$3,\$4,FALSE\)/);
 assert.match(catalogApi,/INSERT INTO product_variants/);
