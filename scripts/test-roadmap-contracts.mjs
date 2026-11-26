@@ -50,7 +50,7 @@ assert.match(trace, /LO-PILANI-SAMPLE-001/);
 // Unconfigured phone OTP and gateway payment flows must stay closed.
 assert.match(otpSend, /status: 503/);
 assert.match(otpVerify, /status: 503/);
-assert.match(paymentCreate, /status: 503/);
+assert.match(paymentCreate, /status: 410/);
 assert.match(docs, /manual UPI/i);
 assert.match(docs, /does not integrate a courier service/i);
 
