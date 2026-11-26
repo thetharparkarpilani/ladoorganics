@@ -4,7 +4,7 @@ import { sendTemplatedNotification } from "@/lib/customer-notifications";
 import { sendAdminRequestAlert } from "@/lib/admin-notifications";
 import { enforceRateLimit } from "@/lib/rate-limit";
 
-const ALLOWED_CALVES = new Set(["Dholi Sheri", "Tara", "Roshni"]);
+const ALLOWED_CALVES = new Set(["General Gau Seva"]);
 const ALLOWED_PLANS = new Set(["one_time", "monthly", "yearly"]);
 
 export async function POST(req: NextRequest) {
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     const amountInr = Number(body.amountInr);
 
     if (!ALLOWED_CALVES.has(calfName) || !ALLOWED_PLANS.has(planType)) {
-      return NextResponse.json({ error: "Choose a valid calf and sponsorship plan." }, { status: 400 });
+      return NextResponse.json({ error: "Choose the general Gau Seva enquiry and a contribution frequency." }, { status: 400 });
     }
     if (!sponsorName || sponsorName.length > 120 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(sponsorEmail)) {
       return NextResponse.json({ error: "Enter your name and a valid email address." }, { status: 400 });
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
       amount: amountInr,
     });
     await sendAdminRequestAlert("Gau Seva sponsorship request", {
-      "Calf": calfName,
+      "Enquiry category": calfName,
       "Sponsor": sponsorName,
       "Email": sponsorEmail,
       "Phone": sponsorPhone,
