@@ -193,12 +193,16 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
     void askQuestion(input);
   };
 
-  const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/\D/g, "")}?text=${encodeURIComponent(locale === "hi" ? "नमस्ते Lado Organics, मुझे वेबसाइट पर मदद चाहिए।" : locale === "ma" ? "खम्मा घणी Lado Organics, म्हाने वेबसाइट पर मदद चाहिजै।" : "Namaste Lado Organics, I need help with a question from the website.")}`;
+  const configuredWhatsApp = whatsappNumber.replace(/\D/g, "");
+  const whatsappUrl = configuredWhatsApp
+    ? `https://wa.me/${configuredWhatsApp}?text=${encodeURIComponent(locale === "hi" ? "नमस्ते Lado Organics, मुझे वेबसाइट पर मदद चाहिए।" : locale === "ma" ? "खम्मा घणी Lado Organics, म्हाने वेबसाइट पर मदद चाहिजै।" : "Namaste Lado Organics, I need help with a question from the website.")}`
+    : null;
 
   if (pathname.startsWith("/admin")) return null;
 
   return (
     <>
+      {whatsappUrl && (
       <a
         href={whatsappUrl}
         target="_blank"
@@ -213,6 +217,7 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
         </span>
         <span className="lado-whatsapp-label">WhatsApp</span>
       </a>
+      )}
 
       <button
         type="button"
