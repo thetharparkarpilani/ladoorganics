@@ -23,7 +23,7 @@ assert.match(migration, /ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA pu
 assert.match(profileRoute, /Authorization: `Bearer \$\{accessToken\}`/);
 assert.match(profileRoute, /rest\/v1\/customer_profiles/);
 assert.match(migration, /USING \(\(SELECT auth\.uid\(\)\) = auth_user_id\)/i);
-assert.match(migration, /WITH CHECK \(\(SELECT auth\.uid\(\)\) = auth_user_id\)/i);
+assert.equal((migration.match(/lower\\(email\\) = lower\\(\\(SELECT auth\\.jwt\\(\\) ->> 'email'\\)\\)/gi) || []).length, 2);
 
 // The public customer order route derives identity from the validated session;
 // it does not accept a caller-supplied email or depend on a public RPC.
