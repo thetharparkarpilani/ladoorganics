@@ -61,13 +61,20 @@ export default function ManualCheckout({ items, onSuccess }: Props) {
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Unable to place your order.");
+      const confirmedMethod = result.paymentMethod;
+      const confirmedTotal = Number(result.totalInr);
+      if (typeof result.orderNumber !== "string" || !result.orderNumber.trim() ||
+          (confirmedMethod !== "cash_on_delivery" && confirmedMethod !== "manual_upi") ||
+          !Number.isFinite(confirmedTotal) || confirmedTotal < 0) {
+        throw new Error("We received an unexpected order confirmation. Please contact the Lado team before retrying.");
+      }
       setPlaced({
         orderNumber: result.orderNumber,
-        totalInr: result.totalInr,
-        paymentMethod,
-        message: result.message
+        totalInr: confirmedTotal,
+        paymentMethod: confirmedMethod,
+        message: typeof result.message === "string" ? result.message : "Your order has been recorded."
       });
-      onSuccess(result.orderNumber, paymentMethod, result.totalInr);
+      onSuccess(result.orderNumber, confirmedMethod, confirmedTotal);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to place your order.");
     } finally {
@@ -76,7 +83,7 @@ export default function ManualCheckout({ items, onSuccess }: Props) {
   };
 
   if (placed) {
-    const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919636100337";
+    const whatsapp = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/\D/g, "");
     const message = encodeURIComponent(
       `Namaste Lado Organics, I have placed order ${placed.orderNumber} for ₹${placed.totalInr.toLocaleString("en-IN")}. Please confirm my order.` +
       (placed.paymentMethod === "manual_upi" ? " Please share your UPI payment details." : " I selected Cash on Delivery.")
@@ -87,14 +94,20 @@ export default function ManualCheckout({ items, onSuccess }: Props) {
         <p className="font-mono font-bold">Order #{placed.orderNumber}</p>
         <p>{placed.message}</p>
         <p className="font-semibold">Order total: ₹{placed.totalInr.toLocaleString("en-IN")}</p>
-        <a
-          href={`https://wa.me/${whatsapp}?text=${message}`}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex rounded-full bg-green-700 px-5 py-3 font-bold text-white"
-        >
-          {placed.paymentMethod === "manual_upi" ? "Get UPI payment details on WhatsApp" : "Confirm order on WhatsApp"}
-        </a>
+        {whatsapp ? (
+          <a
+            href={`https://wa.me/${whatsapp}?text=${message}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex rounded-full bg-green-700 px-5 py-3 font-bold text-white"
+          >
+            {placed.paymentMethod === "manual_upi" ? "Get UPI payment details on WhatsApp" : "Confirm order on WhatsApp"}
+          </a>
+        ) : (
+          <p className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-amber-900">
+            WhatsApp support is not configured on this website yet. Your order is recorded; please use the Contact page to reach our team.
+          </p>
+        )}
         <button type="button" onClick={() => window.location.href = "/dashboard/orders"} className="block text-xs font-semibold underline">
           View Order History (sign in required)
         </button>
