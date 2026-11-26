@@ -41,13 +41,19 @@ CREATE POLICY "Customers can view their own profile"
 DROP POLICY IF EXISTS "Customers can create their own profile" ON public.customer_profiles;
 CREATE POLICY "Customers can create their own profile"
   ON public.customer_profiles FOR INSERT TO authenticated
-  WITH CHECK ((SELECT auth.uid()) = auth_user_id);
+  WITH CHECK (
+    (SELECT auth.uid()) = auth_user_id
+    AND lower(email) = lower((SELECT auth.jwt() ->> 'email'))
+  );
 
 DROP POLICY IF EXISTS "Customers can update their own profile" ON public.customer_profiles;
 CREATE POLICY "Customers can update their own profile"
   ON public.customer_profiles FOR UPDATE TO authenticated
   USING ((SELECT auth.uid()) = auth_user_id)
-  WITH CHECK ((SELECT auth.uid()) = auth_user_id);
+  WITH CHECK (
+    (SELECT auth.uid()) = auth_user_id
+    AND lower(email) = lower((SELECT auth.jwt() ->> 'email'))
+  );
 
 -- Cover the foreign keys reported by Supabase's performance advisor.
 CREATE INDEX IF NOT EXISTS idx_bhunga_bookings_user_id

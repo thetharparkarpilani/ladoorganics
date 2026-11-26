@@ -27,7 +27,7 @@
 - Revoke all Data API table and sequence privileges from `anon` and `authenticated`, then restore only the required SELECT/INSERT/UPDATE privileges on `customer_profiles`.
 - Tighten default privileges for new objects created by the `postgres` migration owner.
 - Revoke execution of the unused exposed `get_my_customer_orders()` SECURITY DEFINER RPC.
-- Optimize the three customer profile RLS policies without changing their ownership semantics.
+- Optimize the three customer profile RLS policies without changing their ownership semantics, and require the stored profile email to match the signed-in JWT email on insert/update.
 - Add eight foreign-key indexes reported by the live advisor.
 
 ## Release and verification boundary
