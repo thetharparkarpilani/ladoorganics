@@ -79,6 +79,49 @@ export async function POST(req: NextRequest) {
       } finally { client.release(); }
     }
 
+    if (action === "create_variant") {
+      const productId = typeof body?.productId === "string" ? body.productId.trim() : "";
+      const sku = clean(body?.sku, 80).toUpperCase();
+      const label = clean(body?.label, 80);
+      const price = Number(body?.priceInr);
+      const stock = Number(body?.stockQty);
+      const requestedDefault = body?.isDefault === true;
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(productId) ||
+          !/^[A-Z0-9][A-Z0-9_-]{1,79}$/.test(sku) || !label ||
+          !Number.isSafeInteger(price) || price < 1 || price > 100000000 ||
+          !Number.isInteger(stock) || stock < 0 || stock > 1000000) {
+        return NextResponse.json({ error: "Enter a valid product, SKU, pack label, whole-rupee price and stock quantity." }, { status: 400 });
+      }
+      const client = await db.getClient();
+      try {
+        await client.query("BEGIN");
+        const product = await client.query("SELECT id FROM products WHERE id=$1 FOR UPDATE", [productId]);
+        if (!product.rows[0]) {
+          await client.query("ROLLBACK");
+          return NextResponse.json({ error: "Product not found." }, { status: 404 });
+        }
+        const existing = await client.query("SELECT COUNT(*)::int AS count FROM product_variants WHERE product_id=$1", [productId]);
+        const isDefault = requestedDefault || Number(existing.rows[0]?.count || 0) === 0;
+        if (isDefault) await client.query("UPDATE product_variants SET is_default=FALSE WHERE product_id=$1", [productId]);
+        const variant = await client.query(
+          "INSERT INTO product_variants(product_id,sku,label,price_inr,stock_qty,is_default) VALUES($1,$2,$3,$4,$5,$6) RETURNING id,sku,label,price_inr,stock_qty,is_default",
+          [productId,sku,label,price,stock,isDefault]
+        );
+        await client.query(
+          "INSERT INTO audit_logs(action,entity_type,entity_id,metadata) VALUES('PRODUCT_VARIANT_CREATED','product_variant',$1,$2::jsonb)",
+          [variant.rows[0].id, JSON.stringify({ productId, sku, label, priceInr: price, stockQty: stock, isDefault })]
+        );
+        await client.query("COMMIT");
+        return NextResponse.json({ ok:true, variant:variant.rows[0] }, { status:201 });
+      } catch (error) {
+        await client.query("ROLLBACK").catch(() => undefined);
+        if (error && typeof error === "object" && "code" in error && error.code === "23505") {
+          return NextResponse.json({ error: "That SKU is already in use." }, { status: 409 });
+        }
+        throw error;
+      } finally { client.release(); }
+    }
+
     if (action === "update_variant") {
       const variantId = typeof body?.variantId === "string" ? body.variantId.trim() : "";
       const price = Number(body?.priceInr);

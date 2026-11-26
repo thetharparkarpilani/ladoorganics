@@ -12,6 +12,8 @@ assert.match(catalogApi,/getAdminActor\(req,\s*"inventory"\)/);
 assert.match(catalogApi,/action === "create_product"/);
 assert.match(catalogApi,/business_category, is_active\) VALUES \(\$1,\$2,\$3,\$4,FALSE\)/);
 assert.match(catalogApi,/INSERT INTO product_variants/);
+assert.match(catalogApi,/action === "create_variant"/);
+assert.match(adminUi,/Add another pack or variant/);
 assert.match(catalogApi,/PRODUCT_CREATED/);
 assert.match(adminUi,/Register a product/);
 assert.match(adminUi,/Create hidden product/);

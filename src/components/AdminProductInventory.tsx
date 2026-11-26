@@ -20,6 +20,8 @@ type CatalogRow = {
 
 type Draft = { priceInr: string; stockQty: string };
 type ProductDraft = { nameEn: string; slug: string; descriptionEn: string; businessCategory: "food" | "non_food" | "experience" | "other"; sku: string; variantLabel: string; priceInr: string; stockQty: string };
+type VariantDraft = { sku: string; label: string; priceInr: string; stockQty: string; isDefault: boolean };
+const EMPTY_VARIANT: VariantDraft = { sku: "", label: "", priceInr: "", stockQty: "0", isDefault: false };
 const EMPTY_PRODUCT: ProductDraft = { nameEn: "", slug: "", descriptionEn: "", businessCategory: "food", sku: "", variantLabel: "", priceInr: "", stockQty: "0" };
 
 export default function AdminProductInventory({ adminToken }: { adminToken: string }) {
@@ -32,6 +34,7 @@ export default function AdminProductInventory({ adminToken }: { adminToken: stri
   const [notice, setNotice] = useState("");
   const [newProduct, setNewProduct] = useState<ProductDraft>(EMPTY_PRODUCT);
   const [creating, setCreating] = useState(false);
+  const [variantDrafts, setVariantDrafts] = useState<Record<string, VariantDraft>>({});
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -104,6 +107,34 @@ export default function AdminProductInventory({ adminToken }: { adminToken: stri
       setError(err instanceof Error ? err.message : "Unable to create product.");
     } finally {
       setCreating(false);
+    }
+  };
+
+  const updateVariantTextDraft = (productId: string, field: "sku" | "label" | "priceInr" | "stockQty", value: string) => {
+    setVariantDrafts((current) => ({ ...current, [productId]: { ...(current[productId] || EMPTY_VARIANT), [field]: value } }));
+  };
+
+  const addVariant = async (event: React.FormEvent<HTMLFormElement>, productId: string) => {
+    event.preventDefault();
+    const draft = variantDrafts[productId] || EMPTY_VARIANT;
+    setSaving(productId + "-variant");
+    setError("");
+    setNotice("");
+    try {
+      const response = await fetch("/api/admin/catalog", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-token": adminToken },
+        body: JSON.stringify({ action: "create_variant", productId, ...draft, priceInr: Number(draft.priceInr), stockQty: Number(draft.stockQty) }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data?.error || "Unable to add product variant.");
+      setVariantDrafts((current) => ({ ...current, [productId]: EMPTY_VARIANT }));
+      setNotice("New pack or variant added.");
+      await load();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to add product variant.");
+    } finally {
+      setSaving("");
     }
   };
 
@@ -312,6 +343,30 @@ export default function AdminProductInventory({ adminToken }: { adminToken: stri
                     </div>
                   );
                 })}
+                <form onSubmit={(event) => void addVariant(event, product.product_id)} className="mt-4 rounded-xl border border-dashed border-[var(--border)] p-3">
+                  <p className="mb-3 text-xs font-bold">Add another pack or variant</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <label className="text-[11px] font-semibold">Pack label
+                      <input required maxLength={80} value={(variantDrafts[product.product_id] || EMPTY_VARIANT).label} onChange={(event) => updateVariantTextDraft(product.product_id, "label", event.target.value)} placeholder="Approved pack size" className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] p-2 text-xs" />
+                    </label>
+                    <label className="text-[11px] font-semibold">SKU
+                      <input required maxLength={80} pattern="[A-Za-z0-9][A-Za-z0-9_-]{1,79}" value={(variantDrafts[product.product_id] || EMPTY_VARIANT).sku} onChange={(event) => updateVariantTextDraft(product.product_id, "sku", event.target.value.toUpperCase())} placeholder="LO-GHEE-500" className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] p-2 text-xs" />
+                    </label>
+                    <label className="text-[11px] font-semibold">Price (₹)
+                      <input required type="number" min="1" step="1" value={(variantDrafts[product.product_id] || EMPTY_VARIANT).priceInr} onChange={(event) => updateVariantTextDraft(product.product_id, "priceInr", event.target.value)} className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] p-2 text-xs" />
+                    </label>
+                    <label className="text-[11px] font-semibold">Opening stock
+                      <input required type="number" min="0" step="1" value={(variantDrafts[product.product_id] || EMPTY_VARIANT).stockQty} onChange={(event) => updateVariantTextDraft(product.product_id, "stockQty", event.target.value)} className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] p-2 text-xs" />
+                    </label>
+                  </div>
+                  <label className="mt-2 flex items-center gap-2 text-[11px]">
+                    <input type="checkbox" checked={(variantDrafts[product.product_id] || EMPTY_VARIANT).isDefault} onChange={(event) => setVariantDrafts((current) => ({ ...current, [product.product_id]: { ...(current[product.product_id] || EMPTY_VARIANT), isDefault: event.target.checked } }))} />
+                    Set as default pack
+                  </label>
+                  <button type="submit" disabled={saving === product.product_id + "-variant"} className="mt-3 rounded-lg border border-[var(--border)] px-3 py-2 text-xs font-bold disabled:opacity-50">
+                    {saving === product.product_id + "-variant" ? "Adding variant…" : "Add variant"}
+                  </button>
+                </form>
                 {group.every((row) => !row.variant_id) && <p className="text-sm opacity-60">No variants configured.</p>}
               </article>
             );
