@@ -35,6 +35,8 @@ jobs:
         run: npm run test:lado-ai
       - name: Test roadmap safety contracts
         run: npm run test:roadmap
+      - name: Test backend security contracts
+        run: npm run test:backend-security
       - name: Run ESLint
         run: npm run lint
       - name: Build Next.js application
