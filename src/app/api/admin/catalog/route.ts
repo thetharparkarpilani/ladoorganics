@@ -4,6 +4,12 @@ import { getAdminActor } from "@/lib/admin-auth";
 
 export const runtime = "nodejs";
 
+function clean(value: unknown, maxLength: number): string {
+  return typeof value === "string"
+    ? value.replace(/[\\u0000-\\u001f\\u007f]/g, " ").trim().slice(0, maxLength)
+    : "";
+}
+
 export async function GET(req: NextRequest) {
   if (!(await getAdminActor(req, "inventory"))) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
