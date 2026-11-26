@@ -54,7 +54,7 @@ export default function TraceabilityEntryPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[var(--bg)] px-4 py-12 sm:px-6 lg:px-8">
+    <main className="lado-trace-page min-h-screen bg-[var(--bg)] px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-3xl">
         <Link href="/" className="text-sm font-bold text-[var(--terracotta)] hover:underline">{copy.back}</Link>
         <section className="mt-8 rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm sm:p-10">
