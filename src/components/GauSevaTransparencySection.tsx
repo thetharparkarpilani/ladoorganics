@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 
 interface TransparencyRow {
-  calf_name: string;
+  category: string;
   entries_count: number;
   recorded_amount_inr: string | number;
 }
@@ -22,8 +22,8 @@ const FAQS = [
     a: "Current product prices and available pack sizes are shown in the live store catalogue. Shipping charges and delivery timing are confirmed before dispatch. Repeat-delivery forms record interest only; no automatic payment or scheduled delivery is started."
   },
   {
-    q: "Which calves are featured in our Pilani Gaushala sponsorship section?",
-    a: "Dholi Sheri, Tara, and Roshni are featured in our Pilani calf sponsorship workflow."
+    q: "Which sponsorship profiles are shown in the transparency ledger?",
+    a: "Only sponsorship profiles and entries approved by the Lado team appear in the live ledger. New enquiries remain pending until reviewed, and no animal profile is presented as available unless the team has verified it."
   }
 ];
 
@@ -71,25 +71,25 @@ export default function GauSevaTransparencySection() {
             Gau Seva Ledger
           </span>
           <h2 className="text-2xl sm:text-3xl font-serif font-bold mt-1 mb-2">
-            Sponsorship Transparency
+            Gau Seva Transparency
           </h2>
           <p className="text-xs opacity-80 mb-5 leading-relaxed">
-            Displays sponsorship entries marked active by the Lado team for Dholi Sheri, Tara, and Roshni. Pending enquiries are not counted. These figures are not an audited expenditure statement or tax receipt.
+            Displays active Gau Seva contributions recorded by the Lado team in aggregate. Pending enquiries are not counted or assigned to an individual animal profile. These figures are not an audited expenditure statement or tax receipt.
           </p>
 
           {rows.length === 0 ? (
             <p className="text-xs opacity-70 p-4 rounded-2xl bg-[var(--bg)] border border-[var(--border)]">
-              No active sponsorship records are available to display yet. New sponsorship enquiries remain pending until reviewed by the Lado team.
+              No active Gau Seva contribution records are available to display yet. New enquiries remain pending until reviewed by the Lado team.
             </p>
           ) : (
             <ul className="space-y-3 text-xs">
               {rows.map((r) => (
                 <li
-                  key={r.calf_name}
+                  key={r.category}
                   className="p-3.5 rounded-2xl bg-[var(--bg)] border border-[var(--border)] flex items-center justify-between"
                 >
                   <div>
-                    <p className="font-bold text-sm">{r.calf_name}</p>
+                    <p className="font-bold text-sm">{r.category}</p>
                     <p className="opacity-70">{r.entries_count} recorded entry(s)</p>
                   </div>
                   <span className="font-serif font-bold text-base text-[var(--terracotta)]">
