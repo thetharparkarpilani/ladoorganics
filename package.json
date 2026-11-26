@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test:lado-ai": "node --experimental-strip-types scripts/test-lado-ai-retrieval.mjs"
+    "test:lado-ai": "node --experimental-strip-types scripts/test-lado-ai-retrieval.mjs",
+    "test:roadmap": "node scripts/test-roadmap-contracts.mjs"
   },
   "dependencies": {
     "next": "15.5.29",
