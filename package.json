@@ -12,7 +12,7 @@
     "test:roadmap": "node scripts/test-roadmap-contracts.mjs"
   },
   "dependencies": {
-    "next": "15.5.29",
+    "next": "16.4.6",
     "nodemailer": "^10.6.1",
     "openai": "^7.62.0",
     "pg": "^8.13.1",
