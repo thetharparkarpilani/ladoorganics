@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { db } from "@/lib/db";
-import { sendTemplatedNotification } from "@/lib/customer-notifications";
-import { sendAdminRequestAlert } from "@/lib/admin-notifications";
+import { enqueueOrderNotifications } from "@/lib/notification-outbox";
 import { getCustomerIdentity } from "@/lib/customer-auth";
 import { enforceRateLimit } from "@/lib/rate-limit";
 
@@ -204,22 +203,8 @@ export async function POST(req: NextRequest) {
       [orderId, method, randomUUID(), total]
     );
 
+    await enqueueOrderNotifications(client, { orderId, orderNumber, customerName, customerEmail: email, customerPhone: phone, totalInr: total, paymentMethod: method === "cash_on_delivery" ? "Cash on Delivery" : "Manual UPI", paymentStatus });
     await client.query("COMMIT");
-    await sendTemplatedNotification("order_received", email, {
-      name: customerName,
-      order_number: orderNumber,
-      amount: total,
-      payment_method: method === "cash_on_delivery" ? "Cash on Delivery" : "Manual UPI",
-    });
-    await sendAdminRequestAlert("customer order", {
-      "Order number": orderNumber,
-      "Customer": customerName,
-      "Email": email,
-      "Phone": phone,
-      "Total (INR)": total,
-      "Payment method": method === "cash_on_delivery" ? "Cash on Delivery" : "Manual UPI",
-      "Status": "pending_confirmation",
-    });
     return NextResponse.json({
       success: true,
       orderId,

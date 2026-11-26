@@ -61,3 +61,21 @@ For production database access, confirm that `DATABASE_URL` and the complete `SU
 - Confirm the custom domain and HTTPS after a successful production deployment.
 
 Do not describe the site as production-ready solely because a build passes. Database connectivity, authentication, checkout, payment reconciliation, admin permissions and customer-facing flows require runtime verification.
+
+
+## Transactional order email delivery
+
+Order creation writes customer and (when configured) administrator email work to \`notification_outbox\` in the same database transaction as the order. A committed order therefore retains its notification work even when SMTP is temporarily unavailable.
+
+Before enabling the worker:
+1. Apply and verify migration \`029_catalogue_taxonomy_and_notification_outbox.sql\` on an isolated Supabase branch first.
+2. Configure SMTP credentials and \`ADMIN_NOTIFICATION_EMAIL\` in the intended Vercel environments.
+3. Generate a strong random \`CRON_SECRET\` (at least 32 characters) and set it as a server-only Vercel environment variable.
+4. Configure a trusted scheduler to POST \`/api/internal/notifications/process\` with \`Authorization: Bearer <CRON_SECRET>\`.
+5. Test a non-production order, email delivery, retry behaviour and idempotency.
+
+No scheduler is configured by this code change: the available Vercel plan and preferred scheduler have not been confirmed. Do not expose \`CRON_SECRET\` through a \`NEXT_PUBLIC_\` variable.
+
+## Catalogue administration
+
+The inventory workspace now supports creating a product and its first variant. New records are created hidden from customers. An authorized inventory administrator must verify the product description, business category, SKU, pack label, price and opening stock, add the approved image, and explicitly publish the product. Food, non-food and farm-experience entries are categorized separately. Legacy JSON and seed files are not automatically imported because their prices and stock may be stale.
