@@ -14,6 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const publicRoutes: Array<[string, MetadataRoute.Sitemap[number]["changeFrequency"], number]> = [
     ["/", "weekly", 1],
     ["/store", "daily", 0.95],
+    ["/our-story", "monthly", 0.8],
     ["/community", "weekly", 0.75],
     ["/contact", "monthly", 0.65],
     ["/trace", "monthly", 0.55],

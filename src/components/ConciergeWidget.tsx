@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useLocale } from "@/context/LocaleContext";
 import { AI_COPY } from "@/lib/lado-language";
@@ -33,6 +34,7 @@ const WELCOME: ChatMessage = {
 };
 
 export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps) {
+  const pathname = usePathname();
   const { locale } = useLocale();
   const copy = AI_COPY[locale];
   const starters = STARTERS[locale];
@@ -192,6 +194,8 @@ export default function ConciergeWidget({ whatsappNumber }: ConciergeWidgetProps
   };
 
   const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/\D/g, "")}?text=${encodeURIComponent(locale === "hi" ? "नमस्ते Lado Organics, मुझे वेबसाइट पर मदद चाहिए।" : locale === "ma" ? "खम्मा घणी Lado Organics, म्हाने वेबसाइट पर मदद चाहिजै।" : "Namaste Lado Organics, I need help with a question from the website.")}`;
+
+  if (pathname.startsWith("/admin")) return null;
 
   return (
     <>

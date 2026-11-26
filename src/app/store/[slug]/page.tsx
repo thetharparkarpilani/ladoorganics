@@ -75,7 +75,7 @@ export default function ProductDetailPage(props: PageProps) {
       : product?.descriptionEn || "";
   const labels = locale === "hi" ? { back: "← उत्पाद संग्रह पर लौटें", trace: "बैच जानकारी पूछें ↗", choose: "अपना पैक चुनें", bring: "खेत की अच्छाई अपने घर लाएँ।", selected: "चुना गया पैक", add: "बैग में जोड़ें", order: "व्हाट्सऐप पर पूछें", unavailable: "यह उत्पाद अभी उपलब्ध नहीं है।", note: "ऑर्डर पक्का होने से पहले टीम बैच, डिलीवरी और भुगतान की पुष्टि करेगी।", know: "आप क्या घर ला रहे हैं, जानें", origin: "खेत से आपकी रोज़मर्रा तक।", sourcing: "हमारी सोर्सिंग", method: "इसे कैसे बनाया जाता है", storage: "देखभाल और भंडारण", loading: "लाइव उत्पाद जानकारी लोड हो रही है…", failed: "उत्पाद की जानकारी अभी उपलब्ध नहीं है", retry: "फिर कोशिश करें", collection: "संग्रह पर लौटें", notFound: "उत्पाद नहीं मिला", missing: "यह उत्पाद अभी लाइव कैटलॉग में सूचीबद्ध नहीं है।", explore: "उत्पाद देखें" }
     : locale === "ma" ? { back: "← सामान री सूची पर लौटो", trace: "बैच री जानकारी पूछो ↗", choose: "आपरो पैक चुनो", bring: "खेत री अच्छाई घर लावो।", selected: "चुन्यो पैक", add: "थैली में जोड़ो", order: "व्हाट्सऐप पर पूछो", unavailable: "ई सामान अभी उपलब्ध कोनी।", note: "ऑर्डर पक्को होण सूं पैली टीम बैच, भेजण अर भुगतान पक्को करैला।", know: "जाणो थां घर काई लावो हो", origin: "खेत री बात सूं रोज रै काम तक।", sourcing: "म्हारी सोर्सिंग", method: "ई कियां बणै", storage: "रखरखाव अर भंडारण", loading: "चालू सामान री जानकारी खुलै है…", failed: "सामान री जानकारी अभी उपलब्ध कोनी", retry: "फेर कोशिश करो", collection: "सामान री सूची पर लौटो", notFound: "सामान कोनी मिल्यो", missing: "ई सामान अभी चालू सूची में कोनी।", explore: "सामान देखो" }
-    : { back: "← Back to the collection", trace: "Ask about batch records ↗", choose: "CHOOSE YOUR PACK", bring: "Bring a little farm goodness home.", selected: "Selected pack", add: "Add to bag", order: "Enquire on WhatsApp", unavailable: "This product is currently out of stock.", note: "The Lado team confirms batch availability, delivery and payment before an order is finalised.", know: "KNOW WHAT YOU BRING HOME", origin: "From our farm story to your everyday rituals.", sourcing: "Our sourcing", method: "How it is made", storage: "Care & storage", loading: "Loading live product details…", failed: "{labels.failed}", retry: "Try again", collection: "Back to collection", notFound: "Product not found", missing: "This product is not currently listed in the live catalogue.", explore: "Explore the collection" };
+    : { back: "← Back to the collection", trace: "Ask about batch records ↗", choose: "CHOOSE YOUR PACK", bring: "Bring a little farm goodness home.", selected: "Selected pack", add: "Add to bag", order: "Enquire on WhatsApp", unavailable: "This product is currently out of stock.", note: "The Lado team confirms batch availability, delivery and payment before an order is finalised.", know: "KNOW WHAT YOU BRING HOME", origin: "From our farm story to your everyday rituals.", sourcing: "Our sourcing", method: "How it is made", storage: "Care & storage", loading: "Loading live product details…", failed: "Product information is temporarily unavailable.", retry: "Try again", collection: "Back to collection", notFound: "Product not found", missing: "This product is not currently listed in the live catalogue.", explore: "Explore the collection" };
   const visual = productPresentation(slug);
   const whatsappNumber = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919636100337").replace(/\D/g, "");
   const whatsappUrl = product && activeVariant
@@ -95,7 +95,7 @@ export default function ProductDetailPage(props: PageProps) {
         <p className="mt-3 text-sm opacity-75">{loadError}</p>
         <div className="mt-6 flex justify-center gap-3">
           <button type="button" onClick={() => window.location.reload()} className="primary-btn rounded-full px-5 py-3 text-sm font-bold">{labels.retry}</button>
-          <Link href="/#store" className="rounded-full border border-[var(--border)] px-5 py-3 text-sm font-bold">{labels.collection}</Link>
+          <Link href="/store" className="rounded-full border border-[var(--border)] px-5 py-3 text-sm font-bold">{labels.collection}</Link>
         </div>
       </main>
     );
@@ -106,7 +106,7 @@ export default function ProductDetailPage(props: PageProps) {
       <main className="min-h-[60vh] max-w-3xl mx-auto px-4 py-20 text-center">
         <h1 className="font-serif text-3xl font-bold">{labels.notFound}</h1>
         <p className="mt-3 text-sm opacity-75">{labels.missing}</p>
-        <Link href="/#store" className="primary-btn mt-6 inline-flex rounded-full px-6 py-3 text-sm font-bold">{labels.explore}</Link>
+        <Link href="/store" className="primary-btn mt-6 inline-flex rounded-full px-6 py-3 text-sm font-bold">{labels.explore}</Link>
       </main>
     );
   }
@@ -136,7 +136,7 @@ export default function ProductDetailPage(props: PageProps) {
     <main className="product-detail-page min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productStructuredData).replace(/</g, "\\u003c") }} />
       <div className="flex flex-wrap items-center justify-between gap-4 mb-7">
-        <Link href="/#store" className="product-detail-back">{labels.back}</Link>
+        <Link href="/store" className="product-detail-back">{labels.back}</Link>
         <Link href="/trace" className="product-detail-trace">{labels.trace}</Link>
       </div>
 

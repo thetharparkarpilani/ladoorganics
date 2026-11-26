@@ -27,6 +27,8 @@ type CustomerOrder = {
   items: OrderItem[];
 };
 
+type ReturnNotice = { orderId: string; kind: "success" | "error"; message: string };
+
 const statusLabel = (status: string) =>
   status.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
 
@@ -36,17 +38,27 @@ export default function OrderHistoryPage() {
   const [error, setError] = useState("");
   const [reorderingOrderId, setReorderingOrderId] = useState<string | null>(null);
   const [reorderNotice, setReorderNotice] = useState<{ orderId: string; message: string } | null>(null);
+  const [returnFormOrderId, setReturnFormOrderId] = useState<string | null>(null);
+  const [returnReason, setReturnReason] = useState("");
+  const [returnSubmitting, setReturnSubmitting] = useState(false);
+  const [returnNotice, setReturnNotice] = useState<ReturnNotice | null>(null);
   const { addToCart } = useCart();
 
   useEffect(() => {
+    let active = true;
     fetch("/api/dashboard/orders", { cache: "no-store" })
       .then(async (response) => {
         const result = await response.json();
         if (!response.ok) throw new Error(result.error || "Unable to load your orders.");
-        setOrders(Array.isArray(result.orders) ? result.orders : []);
+        if (active) setOrders(Array.isArray(result.orders) ? result.orders : []);
       })
-      .catch((err) => setError(err instanceof Error ? err.message : "Unable to load your orders."))
-      .finally(() => setLoading(false));
+      .catch((err) => {
+        if (active) setError(err instanceof Error ? err.message : "Unable to load your orders.");
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => { active = false; };
   }, []);
 
   const reorder = async (order: CustomerOrder) => {
@@ -95,20 +107,37 @@ export default function OrderHistoryPage() {
     }
   };
 
-  const requestReturn = async (orderId: string) => {
-    const reason = window.prompt("Please describe why you need to return this order (at least 5 characters).");
-    if (!reason || reason.trim().length < 5) return;
+  const submitReturn = async (orderId: string) => {
+    const reason = returnReason.trim();
+    if (reason.length < 5) {
+      setReturnNotice({ orderId, kind: "error", message: "Please enter at least 5 characters explaining your return request." });
+      return;
+    }
+
+    setReturnSubmitting(true);
+    setReturnNotice(null);
     try {
       const response = await fetch("/api/dashboard/returns", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderId, reason: reason.trim() }),
+        body: JSON.stringify({ orderId, reason }),
       });
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error || "Unable to submit return request.");
-      setOrders(current => current.map(order => order.id === orderId ? { ...order, return_status: "requested" } : order));
+      if (!response.ok) throw new Error(result.error || "Unable to submit your return request.");
+      setOrders((current) => current.map((order) =>
+        order.id === orderId ? { ...order, return_status: result.returnRequest?.status || "requested" } : order
+      ));
+      setReturnFormOrderId(null);
+      setReturnReason("");
+      setReturnNotice({ orderId, kind: "success", message: "Your return request has been submitted. The Lado team will review it and update its status here." });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to submit return request.");
+      setReturnNotice({
+        orderId,
+        kind: "error",
+        message: err instanceof Error ? err.message : "Unable to submit your return request. Please try again.",
+      });
+    } finally {
+      setReturnSubmitting(false);
     }
   };
 
@@ -136,8 +165,8 @@ export default function OrderHistoryPage() {
       {!loading && !error && orders.length === 0 && (
         <div className="rounded-3xl border border-dashed border-[var(--border)] bg-[var(--surface)] p-10 text-center">
           <h2 className="font-serif text-xl font-bold text-[var(--mud)]">No orders yet</h2>
-          <p className="mt-2 text-sm text-[var(--muted)]">When you place an order using this Google account email, it will appear here.</p>
-          <Link href="/#products" className="primary-btn mt-6 inline-flex rounded-full px-6 py-3 text-sm font-bold">Explore our products</Link>
+          <p className="mt-2 text-sm text-[var(--muted)]">When you place an order using this Google account, it will appear here.</p>
+          <Link href="/store" className="primary-btn mt-6 inline-flex rounded-full px-6 py-3 text-sm font-bold">Explore our products</Link>
         </div>
       )}
 
@@ -188,9 +217,26 @@ export default function OrderHistoryPage() {
                   <span className="font-semibold">Delivery address: </span>{order.shipping_summary}
                 </p>
               )}
+
               <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--border)] pt-4">
                 <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--muted)]">
-                  {order.return_status ? <>Return request: <strong className="capitalize">{statusLabel(order.return_status)}</strong></> : order.status === "delivered" ? <button onClick={() => void requestReturn(order.id)} className="rounded-full border border-[var(--border)] px-4 py-2 font-semibold text-[var(--mud)]">Request a return</button> : null}
+                  {order.return_status ? (
+                    <span>Return request: <strong className="capitalize">{statusLabel(order.return_status)}</strong></span>
+                  ) : order.status === "delivered" ? (
+                    <button
+                      type="button"
+                      aria-expanded={returnFormOrderId === order.id}
+                      aria-controls={`return-form-${order.id}`}
+                      onClick={() => {
+                        setReturnFormOrderId(returnFormOrderId === order.id ? null : order.id);
+                        setReturnReason("");
+                        setReturnNotice(null);
+                      }}
+                      className="rounded-full border border-[var(--border)] px-4 py-2 font-semibold text-[var(--mud)] hover:border-[var(--terracotta)]"
+                    >
+                      {returnFormOrderId === order.id ? "Close return form" : "Request a return"}
+                    </button>
+                  ) : null}
                   <button type="button" onClick={() => void reorder(order)} disabled={reorderingOrderId !== null || !order.items?.length}
                     className="rounded-full bg-[var(--terracotta)] px-4 py-2 font-semibold text-white disabled:opacity-50">
                     {reorderingOrderId === order.id ? "Checking live stock…" : "Buy these items again"}
@@ -198,6 +244,48 @@ export default function OrderHistoryPage() {
                 </div>
                 <p className="text-sm text-[var(--muted)]">Order total <span className="ml-2 text-lg font-bold text-[var(--terracotta)]">₹{Number(order.total_inr).toLocaleString("en-IN")}</span></p>
               </div>
+
+              {returnFormOrderId === order.id && !order.return_status && (
+                <form
+                  id={`return-form-${order.id}`}
+                  className="mt-4 rounded-2xl border border-[var(--border)] bg-[var(--bg)] p-4 sm:p-5"
+                  onSubmit={(event) => { event.preventDefault(); void submitReturn(order.id); }}
+                >
+                  <label htmlFor={`return-reason-${order.id}`} className="block text-sm font-semibold text-[var(--mud)]">
+                    Tell us why you are requesting a return
+                  </label>
+                  <textarea
+                    id={`return-reason-${order.id}`}
+                    value={returnReason}
+                    onChange={(event) => { setReturnReason(event.target.value); setReturnNotice(null); }}
+                    minLength={5}
+                    maxLength={1000}
+                    rows={3}
+                    required
+                    disabled={returnSubmitting}
+                    placeholder="Describe the issue with your order..."
+                    className="mt-3 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--mud)] outline-none focus:border-[var(--terracotta)]"
+                  />
+                  <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+                    <p className="text-xs text-[var(--muted)]">{returnReason.trim().length}/1000 characters · Minimum 5</p>
+                    <div className="flex gap-2">
+                      <button type="button" onClick={() => { setReturnFormOrderId(null); setReturnReason(""); setReturnNotice(null); }} disabled={returnSubmitting}
+                        className="rounded-full border border-[var(--border)] px-4 py-2 text-xs font-semibold text-[var(--mud)] disabled:opacity-50">Cancel</button>
+                      <button type="submit" disabled={returnSubmitting || returnReason.trim().length < 5}
+                        className="rounded-full bg-[var(--terracotta)] px-4 py-2 text-xs font-bold text-white disabled:opacity-50">
+                        {returnSubmitting ? "Submitting..." : "Submit return request"}
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              )}
+
+              {returnNotice?.orderId === order.id && (
+                <p role={returnNotice.kind === "error" ? "alert" : "status"}
+                  className={`mt-3 rounded-xl border p-3 text-xs ${returnNotice.kind === "error" ? "border-red-200 bg-red-50 text-red-800" : "border-emerald-200 bg-emerald-50 text-emerald-900"}`}>
+                  {returnNotice.message}
+                </p>
+              )}
               {reorderNotice?.orderId === order.id && <p role="status" className="mt-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] p-3 text-xs text-[var(--muted)]">{reorderNotice.message}</p>}
             </article>
           ))}

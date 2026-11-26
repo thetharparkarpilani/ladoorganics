@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
+function privateJson(body: unknown, init: ResponseInit = {}) {
+  const headers = new Headers(init.headers);
+  headers.set("Cache-Control", "private, no-store, max-age=0");
+  headers.set("Vary", "Cookie");
+  return NextResponse.json(body, { ...init, headers });
+}
+
 function config() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, "");
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
@@ -36,7 +43,7 @@ function restHeaders(key: string, token: string, extra?: Record<string, string>)
 export async function GET(req: NextRequest) {
   const identity = await getIdentity(req);
   if (!identity) {
-    return NextResponse.json({ error: "Your session has expired. Please sign in again." }, { status: 401 });
+    return privateJson({ error: "Your session has expired. Please sign in again." }, { status: 401 });
   }
 
   const metadata = identity.user.user_metadata || {};
@@ -57,22 +64,22 @@ export async function GET(req: NextRequest) {
 
   const rows = await response.json().catch(() => []);
   if (!response.ok || !Array.isArray(rows) || !rows[0]) {
-    return NextResponse.json({ error: "Unable to load your profile. Please try again." }, { status: 502 });
+    return privateJson({ error: "Unable to load your profile. Please try again." }, { status: 502 });
   }
-  return NextResponse.json({ profile: rows[0] });
+  return privateJson({ profile: rows[0] });
 }
 
 export async function PATCH(req: NextRequest) {
   const identity = await getIdentity(req);
   if (!identity) {
-    return NextResponse.json({ error: "Your session has expired. Please sign in again." }, { status: 401 });
+    return privateJson({ error: "Your session has expired. Please sign in again." }, { status: 401 });
   }
 
   let body: Record<string, unknown>;
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: "Invalid profile details." }, { status: 400 });
+    return privateJson({ error: "Invalid profile details." }, { status: 400 });
   }
 
   const fields = ["display_name", "phone", "address_line1", "address_line2", "city", "state", "postal_code", "country"] as const;
@@ -84,20 +91,20 @@ export async function PATCH(req: NextRequest) {
   for (const field of fields) {
     if (body[field] === undefined) continue;
     if (typeof body[field] !== "string") {
-      return NextResponse.json({ error: `Invalid value for ${field.replaceAll("_", " ")}.` }, { status: 400 });
+      return privateJson({ error: `Invalid value for ${field.replaceAll("_", " ")}.` }, { status: 400 });
     }
     const value = (body[field] as string).trim();
     if (value.length > limits[field]) {
-      return NextResponse.json({ error: `${field.replaceAll("_", " ")} is too long.` }, { status: 400 });
+      return privateJson({ error: `${field.replaceAll("_", " ")} is too long.` }, { status: 400 });
     }
     if (field === "display_name" && !value) {
-      return NextResponse.json({ error: "Please enter your name." }, { status: 400 });
+      return privateJson({ error: "Please enter your name." }, { status: 400 });
     }
     updates[field] = value || null;
   }
 
   if (Object.keys(updates).length === 0) {
-    return NextResponse.json({ error: "No profile changes were provided." }, { status: 400 });
+    return privateJson({ error: "No profile changes were provided." }, { status: 400 });
   }
   updates.updated_at = new Date().toISOString();
 
@@ -110,7 +117,7 @@ export async function PATCH(req: NextRequest) {
   });
   const rows = await response.json().catch(() => []);
   if (!response.ok || !Array.isArray(rows) || !rows[0]) {
-    return NextResponse.json({ error: "Unable to save your profile. Please try again." }, { status: 502 });
+    return privateJson({ error: "Unable to save your profile. Please try again." }, { status: 502 });
   }
-  return NextResponse.json({ profile: rows[0], message: "Your profile has been saved." });
+  return privateJson({ profile: rows[0], message: "Your profile has been saved." });
 }

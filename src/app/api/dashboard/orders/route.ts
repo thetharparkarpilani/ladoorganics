@@ -15,9 +15,13 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    // A verified account email can also retrieve guest orders placed with that
+    // same address. The identity is verified by the auth layer; never accept an
+    // arbitrary email from a query parameter for this lookup.
     const result = await db.query(
       `SELECT o.id, o.order_number, o.status, o.payment_method, o.payment_status,
-              o.subtotal_inr, o.total_inr, o.shipping_summary, o.created_at,\n              (SELECT r.status FROM order_returns r WHERE r.order_id = o.id LIMIT 1) AS return_status,
+              o.subtotal_inr, o.total_inr, o.shipping_summary, o.created_at,
+              (SELECT r.status FROM order_returns r WHERE r.order_id = o.id LIMIT 1) AS return_status,
               COALESCE((
                 SELECT jsonb_agg(jsonb_build_object(
                   'id', oi.id,
@@ -28,11 +32,12 @@ export async function GET(req: NextRequest) {
                 ) ORDER BY oi.id)
                 FROM order_items oi WHERE oi.order_id = o.id
               ), '[]'::jsonb) AS items
-       FROM orders o
-       WHERE o.user_id = $1::uuid
-       ORDER BY o.created_at DESC
-       LIMIT 100`,
-      [customer.databaseUserId]
+         FROM orders o
+        WHERE o.user_id = $1::uuid
+           OR lower(COALESCE(o.guest_email, '')) = lower($2)
+        ORDER BY o.created_at DESC
+        LIMIT 100`,
+      [customer.databaseUserId, customer.email]
     );
 
     return NextResponse.json(
