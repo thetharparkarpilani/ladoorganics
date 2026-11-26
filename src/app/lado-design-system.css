@@ -1,0 +1,571 @@
+/* ==========================================================================
+   LADO ORGANICS — PREMIUM UI / UX SYSTEM
+   Shared visual refinements: spacing, rhythm, typography, responsive layouts,
+   interaction states, accessibility and component consistency.
+   ========================================================================== */
+
+:root {
+  --lado-forest: #244b35;
+  --lado-forest-deep: #183526;
+  --lado-forest-soft: #e9efe7;
+  --lado-ivory: #f8f5ec;
+  --lado-paper: #fffdf7;
+  --lado-sand: #f1eadb;
+  --lado-clay: #b86d4c;
+  --lado-gold: #c9a66b;
+  --lado-ink: #29271f;
+  --lado-muted: #777366;
+  --lado-line: rgba(41, 39, 31, .13);
+  --lado-line-strong: rgba(41, 39, 31, .2);
+  --lado-shadow-soft: 0 8px 28px rgba(35, 48, 34, .055);
+  --lado-shadow-card: 0 18px 46px rgba(35, 48, 34, .09);
+  --lado-shadow-float: 0 24px 70px rgba(24, 53, 38, .15);
+  --lado-radius-sm: 10px;
+  --lado-radius-md: 16px;
+  --lado-radius-lg: 24px;
+  --lado-radius-xl: 32px;
+  --lado-content: 1280px;
+  --lado-gutter: clamp(18px, 4.2vw, 64px);
+  --lado-section-space: clamp(56px, 7vw, 104px);
+  --lado-motion: 220ms cubic-bezier(.2, .7, .25, 1);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 104px;
+  text-size-adjust: 100%;
+}
+
+body {
+  color: var(--lado-ink);
+  background: var(--lado-paper);
+  font-family: "DM Sans", Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body, button, input, select, textarea { font-family: "DM Sans", Arial, sans-serif; }
+body :where(h1, h2, h3, h4) {
+  color: var(--lado-forest-deep);
+  font-family: "Playfair Display", Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -.025em;
+  line-height: 1.16;
+  text-wrap: balance;
+}
+body :where(p, li) { text-wrap: pretty; }
+body :where(img, video, svg) { max-width: 100%; }
+body :where(a, button, input, select, textarea) { -webkit-tap-highlight-color: transparent; }
+::selection { color: #fffdf7; background: var(--lado-forest); }
+
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid rgba(184, 109, 76, .58);
+  outline-offset: 3px;
+}
+:where(button, input, select, textarea) { font-size: inherit; }
+button { cursor: pointer; }
+button:disabled, [aria-disabled="true"] { cursor: not-allowed; opacity: .58; }
+a { text-underline-offset: 4px; }
+a:hover { text-decoration-thickness: 1px; }
+[id] { scroll-margin-top: 110px; }
+
+/* Shared content rhythm */
+.lado-site { width: 100%; overflow: clip; background: var(--lado-paper); }
+.lado-site main { min-width: 0; }
+.lado-site main > section,
+.lado-site main > div[data-lado-reveal] { min-width: 0; }
+.lado-site main > section:not(.lado-hero) { position: relative; }
+.lado-site .lado-intro,
+.lado-site .lado-collection,
+.lado-site .lado-journey-strip {
+  width: min(var(--lado-content), calc(100% - (var(--lado-gutter) * 2)));
+  margin-inline: auto;
+}
+.lado-site .lado-intro { padding-block: var(--lado-section-space); }
+.lado-site .lado-collection { padding-block: clamp(52px, 6vw, 88px); }
+.lado-site .lado-journey-strip { margin-block: var(--lado-section-space); }
+.lado-site .lado-intro h2,
+.lado-site .lado-section-heading h2,
+.lado-site .lado-journey-strip h2 {
+  max-width: 780px;
+  margin: 0;
+  font-size: clamp(30px, 4vw, 48px);
+  line-height: 1.12;
+}
+.lado-site .lado-intro > p:not(.lado-eyebrow) {
+  max-width: 720px;
+  margin: 22px auto 0;
+  color: #69685e;
+  font-size: clamp(15px, 1.25vw, 17px);
+  line-height: 1.9;
+}
+.lado-site .lado-intro-links { gap: 12px; margin-top: 30px; }
+.lado-site .lado-intro-links a,
+.lado-site .lado-journey-actions a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 16px;
+  border: 1px solid var(--lado-line);
+  border-radius: 999px;
+  color: var(--lado-forest);
+  background: rgba(255, 253, 247, .72);
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: .035em;
+  text-decoration: none;
+  transition: color var(--lado-motion), background var(--lado-motion), border-color var(--lado-motion), transform var(--lado-motion);
+}
+.lado-site .lado-intro-links a:hover,
+.lado-site .lado-journey-actions a:hover {
+  transform: translateY(-2px);
+  border-color: var(--lado-forest);
+  color: white;
+  background: var(--lado-forest);
+}
+.lado-site .lado-section-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 28px;
+  margin-bottom: clamp(24px, 3vw, 38px);
+}
+.lado-site .lado-section-heading > p {
+  max-width: 390px;
+  margin: 0;
+  color: var(--lado-muted);
+  font-size: 14px;
+  line-height: 1.8;
+}
+.lado-site .lado-eyebrow {
+  margin: 0 0 14px;
+  color: var(--lado-clay);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .19em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+.lado-site .lado-state {
+  min-height: 180px;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 16px;
+  padding: 32px;
+  border: 1px dashed var(--lado-line-strong);
+  border-radius: var(--lado-radius-lg);
+  color: var(--lado-muted);
+  background: rgba(248, 245, 236, .62);
+  text-align: center;
+}
+.lado-site .lado-catalog-tools {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 28px;
+}
+.lado-site .lado-catalog-tools label {
+  color: var(--lado-muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+.lado-site .lado-catalog-tools input {
+  width: min(100%, 320px);
+  min-height: 46px;
+  padding: 10px 16px;
+  border: 1px solid var(--lado-line);
+  border-radius: 999px;
+  color: var(--lado-ink);
+  background: var(--lado-paper);
+  transition: border-color var(--lado-motion), box-shadow var(--lado-motion);
+}
+.lado-site .lado-catalog-tools input:focus {
+  border-color: var(--lado-forest);
+  box-shadow: 0 0 0 4px rgba(36, 75, 53, .08);
+  outline: none;
+}
+
+/* Homepage hero — controlled measure, balanced columns and responsive type */
+.lado-site .lado-hero {
+  width: 100%;
+  min-height: min(760px, calc(100svh - 42px));
+  grid-template-columns: minmax(0, 1.04fr) minmax(320px, .96fr);
+  gap: clamp(28px, 5vw, 76px);
+  padding: clamp(64px, 8vw, 112px) max(var(--lado-gutter), calc((100vw - 1280px) / 2)) clamp(82px, 9vw, 122px);
+}
+.lado-site .lado-hero-text { max-width: 660px; }
+.lado-site .lado-hero h1 {
+  max-width: 720px;
+  font-size: clamp(46px, 6vw, 82px);
+  line-height: 1.035;
+  letter-spacing: -.048em;
+}
+.lado-site .lado-hero-description {
+  max-width: 540px;
+  margin-top: 24px;
+  font-size: clamp(15px, 1.25vw, 17px);
+  line-height: 1.85;
+}
+.lado-site .lado-hero-actions { gap: 12px; margin-top: 30px; }
+.lado-site .lado-button {
+  min-height: 50px;
+  padding-inline: 22px;
+  border-radius: 999px;
+  font-size: 10px;
+  letter-spacing: .09em;
+}
+.lado-site .lado-button-primary { box-shadow: 0 10px 24px rgba(36, 75, 53, .16); }
+.lado-site .lado-button:focus-visible { outline-offset: 4px; }
+.lado-site .lado-hero-footnote { margin-top: 38px; }
+.lado-site .lado-hero-art {
+  min-height: 430px;
+  max-height: 570px;
+  border-radius: 48% 48% 8px 8px;
+  box-shadow: var(--lado-shadow-card);
+}
+.lado-site .lado-hero-bottom { left: var(--lado-gutter); right: var(--lado-gutter); }
+
+/* Header and navigation */
+.lado-site .lado-header { position: sticky; top: 0; z-index: 50; }
+.lado-site .lado-header-inner {
+  width: min(1440px, calc(100% - 2 * var(--lado-gutter)));
+  min-height: 82px;
+  gap: clamp(14px, 2.2vw, 34px);
+}
+.lado-site .lado-brand img { display: block; width: clamp(118px, 11vw, 150px); height: 70px; object-fit: contain; }
+.lado-site .lado-nav { gap: clamp(12px, 1.65vw, 25px); }
+.lado-site .lado-nav a,
+.lado-site .lado-account-link {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--lado-ink);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: .075em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color var(--lado-motion);
+}
+.lado-site .lado-nav a:hover,
+.lado-site .lado-nav a[aria-current="page"],
+.lado-site .lado-account-link:hover { color: var(--lado-clay); }
+.lado-site .lado-header-actions { gap: clamp(8px, 1.1vw, 16px); }
+.lado-site .lado-header-actions select {
+  min-height: 38px;
+  padding: 7px 10px;
+  border: 1px solid var(--lado-line);
+  border-radius: 999px;
+  color: var(--lado-ink);
+  background: rgba(255, 253, 247, .82);
+  font-size: 10px;
+}
+.lado-site .lado-cart-button {
+  min-height: 42px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: var(--lado-forest);
+  font-size: 10px;
+  transition: transform var(--lado-motion), background var(--lado-motion), box-shadow var(--lado-motion);
+}
+.lado-site .lado-cart-button:hover { transform: translateY(-1px); background: var(--lado-forest-deep); box-shadow: 0 8px 20px rgba(24, 53, 38, .16); }
+.lado-site .lado-menu-toggle {
+  min-height: 42px;
+  padding: 9px 13px;
+  border: 1px solid var(--lado-line);
+  border-radius: 999px;
+  color: var(--lado-forest);
+  background: transparent;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+/* Consistent product cards, media and purchase actions */
+.store-page,
+.checkout-page,
+.dashboard-page { width: min(1240px, calc(100% - 2 * var(--lado-gutter))); margin-inline: auto; }
+.store-page { padding-block: clamp(34px, 5vw, 68px); }
+.store-page-heading { margin-bottom: clamp(28px, 4vw, 48px); }
+.store-page-heading h1 { font-size: clamp(34px, 4.5vw, 54px); line-height: 1.1; }
+.store-product-grid,
+.home-store-grid { gap: clamp(14px, 1.8vw, 24px); }
+.store-product-card,
+.home-store-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--lado-line);
+  border-radius: var(--lado-radius-lg);
+  background: var(--lado-paper);
+  box-shadow: var(--lado-shadow-soft);
+  transition: transform var(--lado-motion), border-color var(--lado-motion), box-shadow var(--lado-motion);
+}
+.store-product-card:hover,
+.home-store-card:hover { transform: translateY(-4px); border-color: rgba(184, 109, 76, .42); box-shadow: var(--lado-shadow-card); }
+.store-product-media,
+.home-store-image { aspect-ratio: 4 / 3; overflow: hidden; }
+.store-product-media img,
+.home-store-image img { width: 100%; height: 100%; object-fit: cover; }
+.store-product-body { display: flex; flex: 1; flex-direction: column; padding: clamp(18px, 2vw, 25px); }
+.store-product-body h2,
+.store-product-body h3,
+.home-store-title { font-size: clamp(19px, 1.6vw, 23px); line-height: 1.25; }
+.store-product-body p,
+.home-store-card p { color: var(--lado-muted); font-size: 13px; line-height: 1.75; }
+.store-product-pack { max-width: 100%; }
+.store-product-card button,
+.home-store-card button,
+.product-detail-order,
+.checkout-page button,
+.dashboard-page button {
+  min-height: 44px;
+  transition: transform var(--lado-motion), background var(--lado-motion), border-color var(--lado-motion), box-shadow var(--lado-motion);
+}
+.store-product-card button:hover:not(:disabled),
+.home-store-card button:hover:not(:disabled),
+.product-detail-order:hover:not(:disabled),
+.checkout-page button:hover:not(:disabled),
+.dashboard-page button:hover:not(:disabled) { transform: translateY(-1px); }
+
+/* Product detail and checkout */
+.product-detail-page,
+.product-page { width: min(1240px, calc(100% - 2 * var(--lado-gutter))); margin-inline: auto; padding-block: clamp(32px, 5vw, 68px); }
+.product-detail-page h1,
+.product-page h1 { font-size: clamp(34px, 4.5vw, 54px); line-height: 1.1; }
+.product-detail-page :where(input, select),
+.product-page :where(input, select),
+.checkout-page :where(input, select, textarea) {
+  min-height: 46px;
+  max-width: 100%;
+  border: 1px solid var(--lado-line-strong);
+  border-radius: 12px;
+  padding: 10px 13px;
+  color: var(--lado-ink);
+  background: var(--lado-paper);
+}
+.product-detail-page :where(input, select):focus,
+.product-page :where(input, select):focus,
+.checkout-page :where(input, select, textarea):focus {
+  border-color: var(--lado-forest);
+  box-shadow: 0 0 0 4px rgba(36, 75, 53, .08);
+  outline: none;
+}
+.checkout-page { padding-block: clamp(30px, 5vw, 64px); }
+.checkout-page h1 { font-size: clamp(32px, 4vw, 48px); }
+.checkout-panel,
+.checkout-confirmation,
+.checkout-empty { border-radius: var(--lado-radius-lg); box-shadow: var(--lado-shadow-soft); }
+.checkout-page label { display: block; margin-bottom: 6px; color: #5f5d53; font-size: 12px; font-weight: 700; }
+.checkout-page :where(input, select, textarea) { width: 100%; }
+.checkout-page button[type="submit"] { min-height: 48px; }
+
+/* Shared inner-page chrome */
+.lado-global-header { border-bottom-color: var(--lado-line); }
+.lado-global-header-inner {
+  width: min(1380px, calc(100% - 2 * var(--lado-gutter)));
+  min-height: 82px;
+  gap: clamp(14px, 2vw, 28px);
+}
+.lado-global-brand img { width: clamp(108px, 10vw, 136px); height: 70px; }
+.lado-global-nav { gap: clamp(12px, 1.65vw, 25px); }
+.lado-global-nav a,
+.lado-global-account { min-height: 42px; display: inline-flex; align-items: center; font-size: 10px; letter-spacing: .075em; }
+.lado-global-actions { gap: 10px; }
+.lado-global-actions select { min-height: 38px; padding: 7px 10px; }
+.lado-global-bag { min-height: 42px; padding: 9px 15px; transition: transform var(--lado-motion), background var(--lado-motion); }
+.lado-global-bag:hover { transform: translateY(-1px); background: var(--lado-forest-deep); }
+.lado-global-footer { padding-top: clamp(38px, 5vw, 64px); }
+.lado-global-footer-inner { width: min(1280px, 100%); margin-inline: auto; gap: clamp(18px, 3vw, 42px); }
+.lado-global-footer-inner p { max-width: 360px; line-height: 1.7; }
+.lado-global-footer nav { gap: 12px 18px; }
+.lado-global-footer a { min-height: 32px; display: inline-flex; align-items: center; }
+.lado-global-footer-bottom { gap: 12px 24px; }
+
+/* Forms and common controls on all public pages */
+main :where(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]), select, textarea) {
+  max-width: 100%;
+  border-color: var(--lado-line-strong);
+  border-radius: 12px;
+  color: var(--lado-ink);
+}
+main :where(input, select, textarea)::placeholder { color: #999487; opacity: 1; }
+main :where(input, select, textarea):focus {
+  border-color: var(--lado-forest);
+  box-shadow: 0 0 0 4px rgba(36, 75, 53, .08);
+  outline: none;
+}
+main :where(button, [role="button"]) { touch-action: manipulation; }
+main :where(button, a) { transition-timing-function: cubic-bezier(.2, .7, .25, 1); }
+
+/* Tables, badges, status labels and content blocks */
+main table { max-width: 100%; }
+main th { font-size: 10px; font-weight: 800; letter-spacing: .08em; }
+main td { line-height: 1.55; }
+main :where(code, pre) { overflow-wrap: anywhere; }
+main :where(blockquote) { border-left: 3px solid var(--lado-gold); }
+main :where(hr) { border-color: var(--lado-line); }
+main :where(.rounded-xl, .rounded-2xl, .rounded-3xl) { border-color: var(--lado-line); }
+
+/* Customer dashboard layout */
+.dashboard-page { padding-block: clamp(22px, 3.5vw, 46px); }
+.dashboard-page h1 { font-size: clamp(30px, 3.5vw, 44px); }
+.dashboard-page h2 { font-size: clamp(22px, 2.4vw, 30px); }
+.dashboard-page :where(article, section, .dashboard-orders, .dashboard-shortcut) { min-width: 0; }
+.dashboard-page table { border-collapse: separate; border-spacing: 0; }
+.dashboard-page th { padding: 13px 14px; background: #f1eee5; color: #69665a; text-align: left; }
+.dashboard-page td { padding: 14px; border-bottom: 1px solid var(--lado-line); }
+.lado-dashboard-layout-inner { width: min(1380px, calc(100% - 2 * var(--lado-gutter))); margin-inline: auto; }
+.lado-dashboard-content { width: 100%; }
+
+/* Admin workspace — calm, readable density */
+.admin-overview { width: min(1480px, calc(100% - 2 * var(--lado-gutter))); padding-block: clamp(24px, 4vw, 48px); }
+.admin-overview-header { gap: 18px; }
+.admin-metric-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.admin-metric-card { min-width: 0; }
+.admin-shell main,
+.admin-layout main { min-width: 0; }
+.admin-shell main :where(input, select, textarea),
+.admin-layout main :where(input, select, textarea) { width: 100%; min-width: 0; }
+.admin-shell main :where(button, a),
+.admin-layout main :where(button, a) { overflow-wrap: anywhere; }
+.admin-shell main table,
+.admin-layout main table { min-width: 620px; }
+.admin-shell main th,
+.admin-layout main th { padding: 13px 14px; white-space: nowrap; }
+.admin-shell main td,
+.admin-layout main td { padding: 13px 14px; vertical-align: middle; }
+.admin-shell main section,
+.admin-layout main section { min-width: 0; }
+
+/* Motion and reveal states */
+[data-lado-reveal] { transition: opacity 500ms ease, transform 500ms cubic-bezier(.2, .7, .25, 1); }
+[data-lado-reveal]:not(.lado-is-visible) { opacity: 0; transform: translateY(16px); }
+[data-lado-reveal].lado-is-visible { opacity: 1; transform: translateY(0); }
+:where(.store-product-card, .home-store-card, .lado-button, .lado-global-bag) { will-change: auto; }
+
+/* Tablet */
+@media (max-width: 1080px) {
+  .lado-site .lado-header-inner { gap: 14px; }
+  .lado-site .lado-nav { gap: 12px; }
+  .lado-site .lado-nav a { font-size: 9px; letter-spacing: .045em; }
+  .lado-site .lado-account-link { display: none; }
+  .lado-global-header-inner { gap: 12px; }
+  .lado-global-nav { gap: 12px; }
+  .lado-global-nav a { font-size: 9px; letter-spacing: .045em; }
+  .admin-metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Mobile */
+@media (max-width: 760px) {
+  :root { --lado-gutter: 18px; --lado-section-space: 52px; }
+  html { scroll-padding-top: 82px; }
+  body { font-size: 14px; }
+  .lado-site .lado-hero {
+    min-height: auto;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 34px;
+    padding: 62px var(--lado-gutter) 78px;
+  }
+  .lado-site .lado-hero h1 { max-width: 620px; font-size: clamp(38px, 10vw, 58px); }
+  .lado-site .lado-hero-description { max-width: 580px; margin-top: 18px; font-size: 15px; line-height: 1.75; }
+  .lado-site .lado-hero-actions { margin-top: 24px; }
+  .lado-site .lado-hero-art { min-height: 300px; max-height: 420px; width: min(100%, 540px); margin-inline: auto; }
+  .lado-site .lado-hero-footnote { margin-top: 28px; }
+  .lado-site .lado-hero-bottom { bottom: 22px; font-size: 8px; }
+  .lado-site .lado-intro,
+  .lado-site .lado-collection,
+  .lado-site .lado-journey-strip { width: calc(100% - 2 * var(--lado-gutter)); }
+  .lado-site .lado-intro h2,
+  .lado-site .lado-section-heading h2,
+  .lado-site .lado-journey-strip h2 { font-size: clamp(28px, 7vw, 38px); }
+  .lado-site .lado-section-heading { align-items: flex-start; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+  .lado-site .lado-catalog-tools { align-items: stretch; flex-direction: column; }
+  .lado-site .lado-catalog-tools input { width: 100%; }
+  .lado-site .lado-header-inner {
+    width: calc(100% - 2 * var(--lado-gutter));
+    min-height: 68px;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    padding-block: 5px;
+  }
+  .lado-site .lado-brand img { width: 112px; height: 56px; }
+  .lado-site .lado-menu-toggle { display: inline-flex; margin-left: auto; }
+  .lado-site .lado-nav { display: none; order: 5; width: 100%; padding: 8px 0 14px; }
+  .lado-site .lado-nav.is-open { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 12px; }
+  .lado-site .lado-nav a { min-height: 42px; padding: 8px 4px; font-size: 10px; }
+  .lado-site .lado-header-actions { gap: 6px; }
+  .lado-site .lado-header-actions select { min-height: 36px; padding: 6px 8px; }
+  .lado-site .lado-cart-button { min-height: 38px; padding: 8px 11px; }
+  .lado-global-header-inner { min-height: 68px; flex-wrap: wrap; padding-block: 4px; }
+  .lado-global-brand img { width: 104px; height: 56px; }
+  .lado-global-menu-toggle { min-height: 40px; margin-left: auto; border-radius: 999px; }
+  .lado-global-nav.is-open { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 12px; padding: 8px 0 14px; }
+  .lado-global-nav a { min-height: 42px; padding: 8px 4px; }
+  .lado-global-actions { gap: 6px; }
+  .lado-global-actions select { min-height: 36px; }
+  .lado-global-bag { min-height: 38px; }
+  .lado-global-footer { padding-inline: var(--lado-gutter); }
+  .lado-global-footer-inner { padding-bottom: 24px; }
+  .lado-global-footer-bottom { padding-top: 14px; font-size: 8px; }
+  .store-page,
+  .checkout-page,
+  .dashboard-page,
+  .product-detail-page,
+  .product-page { width: calc(100% - 2 * var(--lado-gutter)); }
+  .store-product-grid,
+  .home-store-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .store-product-card,
+  .home-store-card { border-radius: 17px; }
+  .store-product-media,
+  .home-store-image { aspect-ratio: 1 / 1; }
+  .store-product-body { min-height: 0; padding: 13px; }
+  .store-product-body h2,
+  .store-product-body h3,
+  .home-store-title { font-size: 17px; }
+  .store-product-body p,
+  .home-store-card p { font-size: 12px; line-height: 1.6; }
+  .store-product-body .text-2xl { font-size: 19px; }
+  .store-product-pack { font-size: 9px; padding: 6px 8px; }
+  .store-product-card button,
+  .home-store-card button { min-height: 42px; padding-inline: 10px; font-size: 10px; }
+  .checkout-page { padding-block: 24px; }
+  .checkout-panel,
+  .checkout-confirmation,
+  .checkout-empty { padding: 18px; border-radius: 18px; }
+  .dashboard-page { padding-block: 20px; }
+  .dashboard-page table { display: block; overflow-x: auto; white-space: nowrap; }
+  .lado-dashboard-layout-inner { width: calc(100% - 2 * var(--lado-gutter)); }
+  .admin-overview { width: calc(100% - 2 * var(--lado-gutter)); }
+  .admin-shell main,
+  .admin-layout main { padding: 16px !important; }
+  .admin-shell main table,
+  .admin-layout main table { display: block; overflow-x: auto; }
+}
+
+/* Narrow phones */
+@media (max-width: 380px) {
+  :root { --lado-gutter: 14px; }
+  .lado-site .lado-hero { padding-top: 48px; }
+  .lado-site .lado-hero h1 { font-size: 36px; }
+  .lado-site .lado-hero-actions { align-items: stretch; flex-direction: column; }
+  .lado-site .lado-hero-actions .lado-button { width: 100%; }
+  .lado-site .lado-header-actions select { padding-inline: 5px; }
+  .store-product-grid,
+  .home-store-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Respect motion preferences and avoid hidden content when scripting is unavailable */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  [data-lado-reveal]:not(.lado-is-visible) { opacity: 1; transform: none; }
+}
