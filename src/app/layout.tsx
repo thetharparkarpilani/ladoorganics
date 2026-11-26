@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import "./lado-release.css";
 import "./lado-major-upgrade.css";
+import "./lado-design-system.css";
 import { CartProvider } from "@/context/CartContext";
 import AnalyticsProvider from "@/components/AnalyticsProvider";
 import PWARegistration from "@/components/PWARegistration";
