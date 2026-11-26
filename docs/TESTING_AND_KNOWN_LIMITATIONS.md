@@ -51,3 +51,25 @@ The site should be called ready for customers only after:
 - Any remaining business decisions (prices, stock, shipping rules, approved claims, legal text and payment operations) are confirmed by the Lado team.
 
 Never execute production migrations, alter live data, weaken security controls or enable payment processing as part of a code-only verification.
+
+
+## 4. Roadmap implementation boundary
+
+The current application already contains substantial modules for storefront catalogue and checkout, Google customer sign-in, customer order/profile/support/review/returns pages, staff role-based admin workspaces, bookings, sponsorships, corporate enquiries, batch traceability, Lado AI, and the farm/community content areas. A module being present in the repository does not by itself mean its production workflow has been configured or accepted by the business.
+
+The current upgrade adds:
+- A single aggregated catalogue query with a short shared-cache window. Checkout remains the authority for current price and stock.
+- Checkout confirmation validation that uses the payment method and total returned by the order API, including idempotent repeat responses.
+- Removal of the unverified hard-coded WhatsApp destination. WhatsApp entry points appear only when `NEXT_PUBLIC_WHATSAPP_NUMBER` is explicitly configured.
+- Automated roadmap contract checks for checkout confirmation, contact configuration, catalogue response behavior, payment gates and approved-only traceability.
+- Quality workflow execution for all pushed branches, including the roadmap feature branch.
+
+The following roadmap items remain intentionally gated on real-world configuration or business approval:
+- **Payments:** keep Cash on Delivery and manually verified UPI. Enable Razorpay only after a complete reservation/capture/refund/reconciliation lifecycle and live webhook verification.
+- **Shipping:** choose a courier, configure credentials and serviceable PIN codes, then test quotes, labels, tracking and exception handling. Until then, do not promise rates or delivery dates.
+- **Subscriptions:** confirm products, recurring prices, stock allocation, cancellation, delivery schedules and payment mandate requirements before converting interest forms into paid subscriptions.
+- **Traceability:** publish only batch records backed by actual production, quality and packaging evidence and explicitly approved by the team.
+- **Compliance and claims:** review food labels, FSSAI details, nutrition, product claims, privacy and legal policies against current source documents.
+- **Customer communications:** configure and test the real WhatsApp number, transactional email sender and (if desired) an SMS OTP provider.
+
+A successful automated build is a code-quality signal, not proof of production readiness. Use the verification checklist above for each deployment candidate.
