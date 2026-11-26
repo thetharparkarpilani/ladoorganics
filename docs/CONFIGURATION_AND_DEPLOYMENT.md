@@ -68,7 +68,7 @@ Do not describe the site as production-ready solely because a build passes. Data
 Order creation writes customer and (when configured) administrator email work to \`notification_outbox\` in the same database transaction as the order. A committed order therefore retains its notification work even when SMTP is temporarily unavailable.
 
 Before enabling the worker:
-1. Apply and verify migration \`029_catalogue_taxonomy_and_notification_outbox.sql\` on an isolated Supabase branch first.
+1. Run the PostgreSQL migration integration suite locally or in GitHub Actions first (`npm run test:db-migrations`). This uses a disposable local/CI PostgreSQL database and does not create a paid Supabase branch. Review the SQL and confirm the target project's current migration history before any live change.
 2. Configure SMTP credentials and \`ADMIN_NOTIFICATION_EMAIL\` in the intended Vercel environments.
 3. Generate a strong random \`CRON_SECRET\` (at least 32 characters) and set it as a server-only Vercel environment variable.
 4. Configure a trusted scheduler to POST \`/api/internal/notifications/process\` with \`Authorization: Bearer <CRON_SECRET>\`.
@@ -81,4 +81,4 @@ No scheduler is configured by this code change: the available Vercel plan and pr
 The inventory workspace now supports creating a product and its first variant. New records are created hidden from customers. An authorized inventory administrator must verify the product description, business category, SKU, pack label, price and opening stock, add the approved image, and explicitly publish the product. Food, non-food and farm-experience entries are categorized separately. Legacy JSON and seed files are not automatically imported because their prices and stock may be stale.
 
 
-The CI pipeline also runs migrations 028 and 029 against an isolated PostgreSQL 16 service, including grant, default-privilege and profile RLS ownership checks. This validates SQL semantics in PostgreSQL; a disposable Supabase branch is still required before production because Supabase-specific Auth and platform settings are not fully represented by the local CI database.
+The CI pipeline runs migrations 028 and 029 against an isolated PostgreSQL 16 service, including grant, default-privilege and profile RLS ownership checks. This is the no-additional-infrastructure validation path; it does not create a Supabase branch or incur branch charges. It validates PostgreSQL SQL behaviour but cannot fully emulate Supabase Auth/platform behaviour. Before applying a migration to the live project, take/verify a backup, inspect the live migration history and schema, review the exact pending SQL, and schedule an approved maintenance window. A paid Supabase branch is optional, not a requirement for the website to run.
