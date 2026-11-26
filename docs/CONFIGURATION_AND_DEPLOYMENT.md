@@ -79,3 +79,6 @@ No scheduler is configured by this code change: the available Vercel plan and pr
 ## Catalogue administration
 
 The inventory workspace now supports creating a product and its first variant. New records are created hidden from customers. An authorized inventory administrator must verify the product description, business category, SKU, pack label, price and opening stock, add the approved image, and explicitly publish the product. Food, non-food and farm-experience entries are categorized separately. Legacy JSON and seed files are not automatically imported because their prices and stock may be stale.
+
+
+The CI pipeline also runs migrations 028 and 029 against an isolated PostgreSQL 16 service, including grant, default-privilege and profile RLS ownership checks. This validates SQL semantics in PostgreSQL; a disposable Supabase branch is still required before production because Supabase-specific Auth and platform settings are not fully represented by the local CI database.
