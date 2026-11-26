@@ -4,7 +4,8 @@ This checklist defines the release gates for the website recovery and platform r
 
 ## P0 — Store recovery and brand assets
 
-- [ ] Apply migration 029 only after it passes on an isolated Supabase branch.
+- [ ] Run migrations 028 and 029 through `npm run test:db-migrations` on local/CI PostgreSQL (no paid Supabase branch required).
+- [ ] Before any live migration, verify a current backup, compare live migration history/schema, review the exact SQL and obtain explicit production-change approval.
 - [ ] Add real approved product records through the admin inventory workspace.
 - [ ] Confirm each product's food / non-food / experience category.
 - [ ] Verify product name, description, SKU, pack label, price, stock, image and active status.
