@@ -1,7 +1,7 @@
 const CACHE_PREFIX = "lado-organics-";
-const STATIC_CACHE = "lado-organics-static-v4";
+const STATIC_CACHE = "lado-organics-static-v5";
 const OFFLINE_URL = "/offline.html";
-const CORE_ASSETS = [OFFLINE_URL, "/lado-organics-logo.svg", "/manifest.json"];
+const CORE_ASSETS = [OFFLINE_URL, "/lado-organics-logo.svg?v=2", "/manifest.json"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(

@@ -39,9 +39,9 @@ export default function EssentialsClubPage() {
   }
 
   return (
-    <main className="organic-gradient min-h-screen px-4 py-16 sm:px-6 lg:px-8">
-      <div className="mx-auto grid max-w-6xl items-start gap-10 lg:grid-cols-[1fr_0.9fr] lg:gap-16">
-        <section className="pt-4">
+    <main className="lado-essentials-page organic-gradient min-h-screen px-4 py-16 sm:px-6 lg:px-8">
+      <div className="lado-essentials-layout mx-auto grid max-w-6xl items-start gap-10 lg:grid-cols-[1fr_0.9fr] lg:gap-16">
+        <section className="lado-essentials-intro pt-4">
           <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-terracotta)]">
             Lado Organics · Repeat-delivery enquiries
           </p>
@@ -56,7 +56,7 @@ export default function EssentialsClubPage() {
           </div>
         </section>
 
-        <section className="card-earthy rounded-3xl p-6 shadow-xl sm:p-9">
+        <section className="lado-essentials-form card-earthy rounded-3xl p-6 shadow-xl sm:p-9">
           <h2 className="mb-2 font-serif text-2xl font-bold text-[var(--text-charcoal)]">Your repeat-delivery enquiry</h2>
           <p className="mb-7 text-sm text-[var(--text-muted)]">Choose your preferences. You can discuss final details with our team.</p>
 

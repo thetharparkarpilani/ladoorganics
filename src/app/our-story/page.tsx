@@ -33,8 +33,8 @@ const principles = [
 
 export default function OurStoryPage() {
   return (
-    <main className="min-h-screen bg-[var(--bg)]">
-      <section className="border-b border-[var(--border)] bg-[var(--surface)] px-4 py-16 sm:px-6 sm:py-24">
+    <main className="lado-story-page min-h-screen bg-[var(--bg)]">
+      <section className="lado-story-hero border-b border-[var(--border)] bg-[var(--surface)] px-4 py-16 sm:px-6 sm:py-24">
         <div className="mx-auto max-w-5xl">
           <p className="text-xs font-bold uppercase tracking-[0.24em] text-[var(--terracotta)]">Lado Organics · Pilani, Rajasthan</p>
           <h1 className="mt-5 max-w-4xl font-serif text-4xl font-bold leading-tight text-[var(--mud)] sm:text-6xl">

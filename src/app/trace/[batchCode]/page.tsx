@@ -127,7 +127,7 @@ export default function BatchTracePage() {
   };
 
   return (
-    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+    <div className="lado-trace-page min-h-screen py-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
         <Link href="/" className="text-sm font-bold text-[var(--terracotta)] hover:underline">
           {copy.back}

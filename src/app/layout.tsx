@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import "./lado-release.css";
 import "./lado-major-upgrade.css";
+import "./lado-design-system.css";
 import { CartProvider } from "@/context/CartContext";
 import AnalyticsProvider from "@/components/AnalyticsProvider";
 import PWARegistration from "@/components/PWARegistration";
@@ -47,7 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <SiteAnnouncement />
               <GlobalSiteChrome />
               <div id="main-content" className="min-h-screen" tabIndex={-1}>{children}</div>
-              <ConciergeWidget whatsappNumber={process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919636100337"} />
+              <ConciergeWidget whatsappNumber={process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || ""} />
             </CartProvider>
           </AnalyticsProvider>
         </LocaleProvider>

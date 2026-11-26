@@ -9,14 +9,9 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/lado-organics-logo.svg",
+      "src": "/lado-organics-logo.svg?v=2",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any"
-    },
-    {
-      "src": "/images/lado-organics/Ladologo.png",
-      "type": "image/png",
       "purpose": "any"
     }
   ]

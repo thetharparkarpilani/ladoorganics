@@ -38,7 +38,7 @@ const LIBRARY_RESOURCES = [
 
 export default function KnowledgeLibraryPage() {
   return (
-    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+    <div className="lado-library-page min-h-screen py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
       <div className="mb-8 flex items-center justify-between gap-4">
         <Link href="/" className="text-sm font-bold text-[var(--terracotta)] hover:underline">
           ← Back to Lado Organics Home
@@ -48,18 +48,18 @@ export default function KnowledgeLibraryPage() {
         </span>
       </div>
 
-      <div className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 sm:p-10 shadow-sm mb-12">
+      <div className="lado-library-hero bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 sm:p-10 shadow-sm mb-12">
         <h1 className="text-3xl sm:text-5xl font-serif font-bold mb-4">Lado Knowledge Library</h1>
         <p className="text-sm sm:text-base opacity-85 max-w-3xl leading-relaxed">
           Access verified educational resources, research summaries, and workshop materials detailing our zero-waste circular farm ecosystem in Pilani, Rajasthan.
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="lado-library-grid grid md:grid-cols-2 gap-6">
         {LIBRARY_RESOURCES.map((resource) => (
           <article 
             key={resource.id} 
-            className="p-6 sm:p-8 bg-[var(--surface)] border border-[var(--border)] rounded-3xl hover:border-[var(--terracotta)] transition flex flex-col justify-between"
+            className="lado-library-card p-6 sm:p-8 bg-[var(--surface)] border border-[var(--border)] rounded-3xl hover:border-[var(--terracotta)] transition flex flex-col justify-between"
           >
             <div>
               <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--terracotta)] mb-2 block">
@@ -72,9 +72,9 @@ export default function KnowledgeLibraryPage() {
               <span className="text-xs font-mono opacity-60 uppercase">{resource.format} • {resource.fileSize}</span>
               <button 
                 type="button" 
-                className="text-xs font-bold text-[var(--terracotta)] hover:underline cursor-pointer"
+                className="text-xs font-bold text-[var(--muted)] cursor-default" disabled
               >
-                Download Resource ↓
+                Resource information
               </button>
             </div>
           </article>

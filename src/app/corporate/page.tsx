@@ -35,11 +35,11 @@ export default function CorporateGiftingPage() {
   };
 
   return (
-    <div className="min-h-screen organic-gradient py-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-start">
+    <div className="lado-corporate-page min-h-screen organic-gradient py-20 px-4 sm:px-6 lg:px-8">
+      <div className="lado-corporate-layout max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-start">
         
         {/* Editorial Value Proposition */}
-        <div className="pt-8">
+        <div className="lado-corporate-intro pt-8">
           <Link href="/" className="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] hover:text-[var(--accent-terracotta)] transition mb-8 inline-block">← Back to Ecosystem</Link>
           <span className="text-xs font-bold tracking-[0.2em] text-[var(--accent-forest)] mb-4 uppercase block">Module Q • B2B & Wholesale</span>
           <h1 className="text-4xl md:text-5xl font-serif font-bold text-[var(--text-charcoal)] mb-6 leading-tight">
@@ -68,7 +68,7 @@ export default function CorporateGiftingPage() {
         </div>
 
         {/* B2B Enquiry Form */}
-        <div className="card-earthy p-8 sm:p-12 shadow-xl">
+        <div className="lado-corporate-form card-earthy p-8 sm:p-12 shadow-xl">
           <h3 className="text-2xl font-serif font-bold text-[var(--text-charcoal)] mb-6">Request a Corporate Proposal</h3>
           
           {message && (
