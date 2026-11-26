@@ -741,3 +741,70 @@ main.min-h-screen :where(.border) { border-color: var(--lado-line); }
   .store-product-card:hover .store-product-media img { transform: scale(1.035); }
   .product-detail-trace:hover { border-color: var(--lado-forest); background: var(--lado-forest-soft); }
 }
+
+ 
+/* Final route polish: policy, education, repeat delivery, corporate and trace journeys */
+.lado-policy-layout { padding-block: clamp(34px, 5.5vw, 76px); background: linear-gradient(180deg, #f4efe4 0, #fbf8f0 420px); }
+.lado-policy-inner { width: min(900px, 100%); }
+.lado-policy-inner > nav { align-items: center; row-gap: 12px; }
+.lado-policy-inner > nav a { min-height: 36px; display: inline-flex; align-items: center; padding: 7px 10px; border-radius: 999px; text-decoration: none; transition: color var(--lado-motion), background var(--lado-motion); }
+.lado-policy-inner > nav a:hover { color: var(--lado-forest); background: rgba(36,75,53,.08); }
+.lado-policy-card { padding: clamp(22px, 4.5vw, 52px); border-radius: var(--lado-radius-xl); box-shadow: var(--lado-shadow-soft); }
+.lado-policy-card :where(h1,h2,h3) { color: var(--lado-forest-deep); }
+.lado-policy-card h1 { margin-bottom: 24px; font-size: clamp(30px, 4.5vw, 46px); }
+.lado-policy-card h2 { margin-top: 34px; margin-bottom: 12px; font-size: clamp(20px, 2.6vw, 26px); }
+.lado-policy-card p { color: #656257; line-height: 1.9; }
+.lado-library-page { padding-block: clamp(34px, 5.5vw, 76px); }
+.lado-library-hero { padding: clamp(24px, 4.5vw, 48px); border-radius: var(--lado-radius-xl); background: linear-gradient(130deg, #fffdf7 0%, #f0eadb 100%); }
+.lado-library-hero h1 { max-width: 700px; font-size: clamp(32px, 5vw, 54px); }
+.lado-library-hero p { max-width: 700px; color: var(--lado-muted); line-height: 1.9; }
+.lado-library-grid { gap: clamp(14px, 2vw, 24px); }
+.lado-library-card { min-height: 250px; padding: clamp(20px, 3vw, 32px); border-radius: var(--lado-radius-lg); background: var(--lado-paper); box-shadow: var(--lado-shadow-soft); transition: transform var(--lado-motion), box-shadow var(--lado-motion), border-color var(--lado-motion); }
+.lado-library-card:hover { transform: translateY(-3px); box-shadow: var(--lado-shadow-card); }
+.lado-library-card h2 { font-size: clamp(20px, 2.3vw, 25px); }
+.lado-library-card > div:last-child { gap: 14px; flex-wrap: wrap; }
+.lado-essentials-page, .lado-corporate-page { padding-block: clamp(40px, 6vw, 88px); }
+.lado-essentials-layout, .lado-corporate-layout { width: min(1160px, 100%); gap: clamp(28px, 5vw, 68px); }
+.lado-essentials-intro, .lado-corporate-intro { padding-top: clamp(0px, 2vw, 24px); }
+.lado-essentials-intro h1, .lado-corporate-intro h1 { max-width: 660px; font-size: clamp(36px, 5vw, 58px); line-height: 1.08; }
+.lado-essentials-intro > p:not(:first-child), .lado-corporate-intro > p { max-width: 590px; line-height: 1.9; }
+.lado-essentials-intro > div { border-color: var(--lado-line); border-radius: var(--lado-radius-md); background: rgba(255,253,247,.78); }
+.lado-essentials-form, .lado-corporate-form { min-width: 0; padding: clamp(20px, 3.5vw, 40px); border: 1px solid var(--lado-line); border-radius: var(--lado-radius-xl); background: rgba(255,253,247,.96); box-shadow: var(--lado-shadow-card); }
+.lado-essentials-form h2, .lado-corporate-form h3 { font-size: clamp(23px, 2.8vw, 31px); }
+.lado-essentials-form form, .lado-corporate-form form { gap: 20px; }
+.lado-essentials-form :where(input,select,textarea), .lado-corporate-form :where(input,select,textarea) { min-height: 48px; border-radius: 11px; border-color: var(--lado-line-strong); background: #fffefa; }
+.lado-essentials-form :where(input,select,textarea):focus, .lado-corporate-form :where(input,select,textarea):focus { border-color: var(--lado-forest); box-shadow: 0 0 0 4px rgba(36,75,53,.08); outline: none; }
+.lado-essentials-form button[type="submit"], .lado-corporate-form button[type="submit"] { min-height: 50px; border-radius: 999px; font-weight: 750; }
+.lado-corporate-intro ul { gap: 22px; }
+.lado-corporate-intro li { min-width: 0; }
+.lado-story-hero h1 { max-width: 850px; font-size: clamp(38px, 6vw, 68px); }
+.lado-story-page section:not(.lado-story-hero) { scroll-margin-top: 100px; }
+.lado-story-page section > div { min-width: 0; }
+.lado-trace-page { padding-block: clamp(28px, 5vw, 64px); }
+.lado-trace-page > div { border-radius: var(--lado-radius-xl); box-shadow: var(--lado-shadow-soft); }
+.lado-trace-page h1 { font-size: clamp(30px, 4.5vw, 48px); }
+.lado-trace-page :where(input,button) { min-height: 48px; }
+@media (max-width: 760px) {
+  .lado-policy-layout { padding-block: 28px 48px; }
+  .lado-policy-inner > nav { margin-bottom: 24px; }
+  .lado-policy-card { padding: 22px; border-radius: 20px; }
+  .lado-policy-card h2 { margin-top: 26px; }
+  .lado-library-page { padding-block: 28px 48px; }
+  .lado-library-page > div:first-child { align-items: flex-start; }
+  .lado-library-hero { margin-bottom: 26px; }
+  .lado-library-grid { grid-template-columns: minmax(0,1fr); }
+  .lado-library-card { min-height: 0; }
+  .lado-essentials-page, .lado-corporate-page { padding-block: 34px 52px; }
+  .lado-essentials-layout, .lado-corporate-layout { grid-template-columns: minmax(0,1fr); gap: 28px; }
+  .lado-essentials-intro h1, .lado-corporate-intro h1 { font-size: clamp(34px, 9vw, 44px); }
+  .lado-essentials-form, .lado-corporate-form { padding: 21px; border-radius: 20px; }
+  .lado-corporate-form .grid.grid-cols-2 { grid-template-columns: minmax(0,1fr); gap: 14px; }
+  .lado-story-hero { padding-block: 54px; }
+  .lado-story-hero h1 { font-size: clamp(36px, 9vw, 48px); }
+  .lado-trace-page { padding-block: 24px 44px; }
+}
+@media (max-width: 380px) {
+  .lado-policy-card { padding: 18px; }
+  .lado-library-card { padding: 18px; }
+  .lado-essentials-form, .lado-corporate-form { padding: 17px; }
+}
