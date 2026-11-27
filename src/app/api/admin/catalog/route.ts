@@ -4,13 +4,19 @@ import { getAdminActor } from "@/lib/admin-auth";
 
 export const runtime = "nodejs";
 
+function clean(value: unknown, maxLength: number): string {
+  return typeof value === "string"
+    ? value.replace(/[\u0000-\u001f\u007f]/g, " ").trim().slice(0, maxLength)
+    : "";
+}
+
 export async function GET(req: NextRequest) {
   if (!(await getAdminActor(req, "inventory"))) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
   try {
     const result = await db.query(
-      `SELECT p.id AS product_id, p.slug, p.name_en, p.is_active, p.image_url,
+      `SELECT p.id AS product_id, p.slug, p.name_en, p.is_active, p.image_url, p.business_category,
               v.id AS variant_id, v.sku, v.label, v.price_inr, v.stock_qty, v.is_default
          FROM products p
          LEFT JOIN product_variants v ON v.product_id = p.id
@@ -30,6 +36,91 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => null);
     const action = typeof body?.action === "string" ? body.action : "";
+
+    if (action === "create_product") {
+      const nameEn = clean(body?.nameEn, 160);
+      const slug = clean(body?.slug, 100).toLowerCase();
+      const descriptionEn = clean(body?.descriptionEn, 2000);
+      const sku = clean(body?.sku, 80).toUpperCase();
+      const variantLabel = clean(body?.variantLabel, 80);
+      const businessCategory = clean(body?.businessCategory, 24);
+      const price = Number(body?.priceInr);
+      const stock = Number(body?.stockQty);
+      if (!nameEn || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || !descriptionEn ||
+          !/^[A-Z0-9][A-Z0-9_-]{1,79}$/.test(sku) || !variantLabel ||
+          !["food", "non_food", "experience", "other"].includes(businessCategory) ||
+          !Number.isSafeInteger(price) || price < 1 || price > 100000000 ||
+          !Number.isInteger(stock) || stock < 0 || stock > 1000000) {
+        return NextResponse.json({ error: "Complete every product field with a valid slug, SKU, category, whole-rupee price and stock quantity." }, { status: 400 });
+      }
+      const client = await db.getClient();
+      try {
+        await client.query("BEGIN");
+        const product = await client.query(
+          "INSERT INTO products (slug, name_en, description_en, business_category, is_active) VALUES ($1,$2,$3,$4,FALSE) RETURNING id, slug, name_en, business_category, is_active",
+          [slug, nameEn, descriptionEn, businessCategory]
+        );
+        const variant = await client.query(
+          "INSERT INTO product_variants (product_id, sku, label, price_inr, stock_qty, is_default) VALUES ($1,$2,$3,$4,$5,TRUE) RETURNING id, sku, label, price_inr, stock_qty",
+          [product.rows[0].id, sku, variantLabel, price, stock]
+        );
+        await client.query(
+          "INSERT INTO audit_logs(action,entity_type,entity_id,metadata) VALUES('PRODUCT_CREATED','product',$1,$2::jsonb)",
+          [product.rows[0].id, JSON.stringify({ slug, businessCategory, sku, initialStock: stock, published: false })]
+        );
+        await client.query("COMMIT");
+        return NextResponse.json({ ok: true, product: product.rows[0], variant: variant.rows[0], message: "Product created as hidden. Review its details and publish it when ready." }, { status: 201 });
+      } catch (error) {
+        await client.query("ROLLBACK").catch(() => undefined);
+        if (error && typeof error === "object" && "code" in error && error.code === "23505") {
+          return NextResponse.json({ error: "That product slug or SKU is already in use." }, { status: 409 });
+        }
+        throw error;
+      } finally { client.release(); }
+    }
+
+    if (action === "create_variant") {
+      const productId = typeof body?.productId === "string" ? body.productId.trim() : "";
+      const sku = clean(body?.sku, 80).toUpperCase();
+      const label = clean(body?.label, 80);
+      const price = Number(body?.priceInr);
+      const stock = Number(body?.stockQty);
+      const requestedDefault = body?.isDefault === true;
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(productId) ||
+          !/^[A-Z0-9][A-Z0-9_-]{1,79}$/.test(sku) || !label ||
+          !Number.isSafeInteger(price) || price < 1 || price > 100000000 ||
+          !Number.isInteger(stock) || stock < 0 || stock > 1000000) {
+        return NextResponse.json({ error: "Enter a valid product, SKU, pack label, whole-rupee price and stock quantity." }, { status: 400 });
+      }
+      const client = await db.getClient();
+      try {
+        await client.query("BEGIN");
+        const product = await client.query("SELECT id FROM products WHERE id=$1 FOR UPDATE", [productId]);
+        if (!product.rows[0]) {
+          await client.query("ROLLBACK");
+          return NextResponse.json({ error: "Product not found." }, { status: 404 });
+        }
+        const existing = await client.query("SELECT COUNT(*)::int AS count FROM product_variants WHERE product_id=$1", [productId]);
+        const isDefault = requestedDefault || Number(existing.rows[0]?.count || 0) === 0;
+        if (isDefault) await client.query("UPDATE product_variants SET is_default=FALSE WHERE product_id=$1", [productId]);
+        const variant = await client.query(
+          "INSERT INTO product_variants(product_id,sku,label,price_inr,stock_qty,is_default) VALUES($1,$2,$3,$4,$5,$6) RETURNING id,sku,label,price_inr,stock_qty,is_default",
+          [productId,sku,label,price,stock,isDefault]
+        );
+        await client.query(
+          "INSERT INTO audit_logs(action,entity_type,entity_id,metadata) VALUES('PRODUCT_VARIANT_CREATED','product_variant',$1,$2::jsonb)",
+          [variant.rows[0].id, JSON.stringify({ productId, sku, label, priceInr: price, stockQty: stock, isDefault })]
+        );
+        await client.query("COMMIT");
+        return NextResponse.json({ ok:true, variant:variant.rows[0] }, { status:201 });
+      } catch (error) {
+        await client.query("ROLLBACK").catch(() => undefined);
+        if (error && typeof error === "object" && "code" in error && error.code === "23505") {
+          return NextResponse.json({ error: "That SKU is already in use." }, { status: 409 });
+        }
+        throw error;
+      } finally { client.release(); }
+    }
 
     if (action === "update_variant") {
       const variantId = typeof body?.variantId === "string" ? body.variantId.trim() : "";

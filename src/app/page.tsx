@@ -11,13 +11,15 @@ import StorefrontSection from "@/components/StorefrontSection";
 import EssentialsClubSection from "@/components/EssentialsClubSection";
 import TrustAndProcessSection from "@/components/TrustAndProcessSection";
 import FarmCalculatorsSuite from "@/components/FarmCalculatorsSuite";
+import FarmExperienceSection from "@/components/FarmExperienceSection";
+import BuildYourOwnExperience from "@/components/BuildYourOwnExperience";
 import GauSevaTransparencySection from "@/components/GauSevaTransparencySection";
 import JournalLibrarySection from "@/components/JournalLibrarySection";
 import CorporateGiftingSection from "@/components/CorporateGiftingSection";
 import FarmWorldSection from "@/components/FarmWorldSection";
 import CartCheckoutDrawer from "@/components/CartCheckoutDrawer";
 
-const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919636100337";
+const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "";
 
 export default function HomePage() {
   const { locale, setLocale } = useLocale();
@@ -27,6 +29,7 @@ export default function HomePage() {
   const [catalogState, setCatalogState] = useState<"loading" | "ready" | "error">("loading");
   const [query, setQuery] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [logoLoadFailed, setLogoLoadFailed] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -114,7 +117,7 @@ export default function HomePage() {
       <header className="lado-header">
         <div className="lado-header-inner">
           <Link href="/" className="lado-brand" aria-label="Lado Organics home">
-            <Image src="/lado-organics-logo.svg" alt="Lado Organics — Lado Love Pure" width={184} height={104} priority />
+            {logoLoadFailed ? <span role="img" aria-label="Lado Organics — Lado Love Pure" className="flex flex-col leading-none text-left"><strong className="font-serif text-2xl">Lado</strong><small className="mt-1 text-[9px] font-bold tracking-[0.28em]">ORGANICS</small></span> : <Image src="/lado-organics-logo.svg" alt="Lado Organics — Lado Love Pure" width={184} height={104} priority unoptimized onError={() => setLogoLoadFailed(true)} />}
           </Link>
           <button className="lado-menu-toggle" type="button" aria-expanded={menuOpen} aria-controls="lado-primary-nav" onClick={() => setMenuOpen((value) => !value)}>{menuOpen ? "Close" : "Menu"}</button>
           <nav id="lado-primary-nav" className={menuOpen ? "lado-nav is-open" : "lado-nav"} aria-label="Main navigation">
@@ -178,6 +181,8 @@ export default function HomePage() {
         </section>
 
         <div data-lado-reveal><FarmWorldSection /></div>
+        <div data-lado-reveal><FarmExperienceSection whatsappNumber={whatsappNumber} /></div>
+        <div data-lado-reveal><BuildYourOwnExperience whatsappNumber={whatsappNumber} /></div>
         <div data-lado-reveal><EssentialsClubSection /></div>
         <div data-lado-reveal><TrustAndProcessSection whatsappNumber={whatsappNumber} /></div>
         <div data-lado-reveal><FarmCalculatorsSuite locale={locale} /></div>
@@ -193,7 +198,7 @@ export default function HomePage() {
 
       <footer className="lado-footer">
         <div className="lado-footer-main">
-          <Link href="/" aria-label="Lado Organics home"><Image src="/lado-organics-logo.svg" alt="Lado Organics" width={160} height={88} /></Link>
+          <Link href="/" aria-label="Lado Organics home">{logoLoadFailed ? <span role="img" aria-label="Lado Organics" className="flex flex-col leading-none text-left"><strong className="font-serif text-2xl">Lado</strong><small className="mt-1 text-[9px] font-bold tracking-[0.28em]">ORGANICS</small></span> : <Image src="/lado-organics-logo.svg" alt="Lado Organics" width={160} height={88} unoptimized onError={() => setLogoLoadFailed(true)} />}</Link>
           <p>{copy.footer}</p>
           <nav aria-label="Footer navigation"><Link href="/contact">{copy.help}</Link><Link href="/policies">Policies</Link><Link href="/trace">{copy.trace}</Link><Link href="/dashboard">{copy.account}</Link></nav>
         </div>

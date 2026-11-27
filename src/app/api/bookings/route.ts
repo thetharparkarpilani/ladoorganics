@@ -4,7 +4,7 @@ import { sendTemplatedNotification } from "@/lib/customer-notifications";
 import { sendAdminRequestAlert } from "@/lib/admin-notifications";
 import { enforceRateLimit } from "@/lib/rate-limit";
 
-const NIGHTLY_RATE_INR = Number(process.env.BHUNGA_NIGHTLY_RATE_INR || 4000);
+const NIGHTLY_RATE_INR = Number(process.env.BHUNGA_NIGHTLY_RATE_INR || 0);
 
 function validDate(value: unknown): value is string {
   if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
@@ -40,10 +40,11 @@ export async function POST(req: NextRequest) {
     if (nights < 1 || nights > 30) {
       return NextResponse.json({ error: "Stay duration must be between 1 and 30 nights." }, { status: 400 });
     }
-    if (!Number.isSafeInteger(NIGHTLY_RATE_INR) || NIGHTLY_RATE_INR <= 0 || NIGHTLY_RATE_INR > 1000000) {
-      return NextResponse.json({ error: "Booking prices are temporarily unavailable. Please contact the farm team." }, { status: 503 });
+    const hasConfiguredRate = Number.isSafeInteger(NIGHTLY_RATE_INR) && NIGHTLY_RATE_INR > 0 && NIGHTLY_RATE_INR <= 1000000;
+    if (process.env.BHUNGA_NIGHTLY_RATE_INR?.trim() && !hasConfiguredRate) {
+      return NextResponse.json({ error: "The configured stay price is invalid. Please contact the farm team." }, { status: 503 });
     }
-    const totalAmountInr = nights * NIGHTLY_RATE_INR;
+    const totalAmountInr = hasConfiguredRate ? nights * NIGHTLY_RATE_INR : 0;
     client = await db.getClient();
 
     await client.query("BEGIN");
@@ -81,14 +82,15 @@ export async function POST(req: NextRequest) {
       "Check-out": checkOut,
       "Guests": guestsCount,
       "Nights": nights,
-      "Estimated amount (INR)": totalAmountInr,
+      "Estimated amount (INR)": hasConfiguredRate ? totalAmountInr : "To be confirmed",
       "Status": "pending",
     });
 
     return NextResponse.json({
       ok: true,
       booking: result.rows[0],
-      message: "Stay request recorded as pending. The farm team must confirm availability and final details."
+      pricingStatus: hasConfiguredRate ? "estimated" : "to_be_confirmed",
+      message: "Stay request recorded as pending. The farm team must confirm availability and final pricing."
     }, { status: 201 });
   } catch (error) {
     if (client) await client.query("ROLLBACK").catch(() => undefined);

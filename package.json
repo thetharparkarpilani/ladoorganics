@@ -9,7 +9,10 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "test:lado-ai": "node --experimental-strip-types scripts/test-lado-ai-retrieval.mjs",
-    "test:roadmap": "node scripts/test-roadmap-contracts.mjs"
+    "test:roadmap": "node scripts/test-roadmap-contracts.mjs",
+    "test:backend-security": "node scripts/test-backend-security-contracts.mjs",
+    "test:full-roadmap": "node scripts/test-full-roadmap-contracts.mjs",
+    "test:db-migrations": "node scripts/test-db-migrations.mjs"
   },
   "dependencies": {
     "next": "15.5.29",

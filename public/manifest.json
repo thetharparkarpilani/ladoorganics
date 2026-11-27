@@ -1,18 +1,45 @@
 {
+  "id": "/",
   "name": "Lado Organics",
   "short_name": "Lado",
-  "description": "Lado Love Pure — traditional farm products from Pilani, Rajasthan.",
+  "description": "Lado Love Pure — traditional farm products and farm experiences rooted in Pilani, Rajasthan.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "background_color": "#FDF9F5",
   "theme_color": "#204E36",
   "orientation": "portrait",
+  "categories": ["shopping", "food", "lifestyle"],
   "icons": [
     {
       "src": "/lado-organics-logo.svg?v=2",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Shop Products",
+      "short_name": "Shop",
+      "description": "Browse the Lado Organics collection",
+      "url": "/store",
+      "icons": [{ "src": "/lado-organics-logo.svg?v=2", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "My Lado Journey",
+      "short_name": "Account",
+      "description": "View your Lado customer account",
+      "url": "/dashboard",
+      "icons": [{ "src": "/lado-organics-logo.svg?v=2", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Batch Traceability",
+      "short_name": "Trace",
+      "description": "Look up a product batch",
+      "url": "/trace",
+      "icons": [{ "src": "/lado-organics-logo.svg?v=2", "sizes": "any", "type": "image/svg+xml" }]
     }
   ]
 }

@@ -7,7 +7,7 @@ export function escapeHtml(value: unknown): string {
 
 export async function sendNotification(to: string, subject: string, htmlContent: string) {
   if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    console.warn("SMTP credentials missing in .env.local. Mocking email to:", to);
+    console.warn("SMTP credentials are not configured; notification was not sent.");
     return false;
   }
 

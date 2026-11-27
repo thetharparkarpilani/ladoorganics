@@ -11,7 +11,6 @@ interface FarmActivityOption {
   title: string;
   duration: string;
   description: string;
-  addonInr: number; // 0 = included / confirm custom fee with Pilani host
 }
 
 const ACTIVITIES: FarmActivityOption[] = [
@@ -19,39 +18,32 @@ const ACTIVITIES: FarmActivityOption[] = [
     id: "bilona-workshop",
     title: "Traditional Bilona Ghee Churning Session",
     duration: "Morning Session",
-    description: "Observe curd culturing and wooden Bilona churning at the Pilani unit.",
-    addonInr: 0
+    description: "Ask whether a traditional Bilona process session can be arranged during your visit."
   },
   {
     id: "biogas-vermicompost",
     title: "Biogas & Pure Kechua Khad Demonstration",
     duration: "90 Mins",
-    description: "Walk through the anaerobic biogas digester and vermicompost beds.",
-    addonInr: 0
+    description: "Enquire about a farm-systems walk-through; the team will confirm what is available."
   },
   {
     id: "calf-care",
-    title: "Tharparkar Gaushala & Calf Care",
-    duration: "Morning / Evening",
-    description: "Spend time with Dholi Sheri, Tara, and Roshni during feeding hours.",
-    addonInr: 0
+    title: "Tharparkar cattle care enquiry",
+    duration: "Subject to confirmation",
+    description: "Ask the farm team whether a supervised gaushala visit can be arranged."
   },
   {
     id: "organic-farm-walk",
     title: "Pilani Farm Tour & Traditional Meal",
     duration: "Half Day",
-    description: "Guided farm walk in Pilani with satvik A2 dairy meal options.",
-    addonInr: 0
+    description: "Ask the team about a guided farm walk and any meal options available for your dates."
   }
 ];
 
 export default function BuildYourOwnExperience({ whatsappNumber }: BuildYourOwnExperienceProps) {
   const [nights, setNights] = useState<number>(2);
   const [guests, setGuests] = useState<number>(1);
-  const [selectedActivities, setSelectedActivities] = useState<string[]>([
-    "bilona-workshop",
-    "calf-care"
-  ]);
+  const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
   const [checkIn, setCheckIn] = useState<string>("");
   const [guestName, setGuestName] = useState<string>("");
   const [guestEmail, setGuestEmail] = useState<string>("");
@@ -66,16 +58,9 @@ export default function BuildYourOwnExperience({ whatsappNumber }: BuildYourOwnE
   };
 
   const packageSummary = useMemo(() => {
-    const stayBaseInr = nights * 4000;
-    const chosen = ACTIVITIES.filter((a) => selectedActivities.includes(a.id));
-    const addonsInr = chosen.reduce((sum, a) => sum + a.addonInr, 0);
-    return {
-      stayBaseInr,
-      addonsInr,
-      totalInr: stayBaseInr + addonsInr,
-      chosenTitles: chosen.map((c) => c.title)
-    };
-  }, [nights, selectedActivities]);
+    const chosen = ACTIVITIES.filter((activity) => selectedActivities.includes(activity.id));
+    return { chosenTitles: chosen.map((activity) => activity.title) };
+  }, [selectedActivities]);
 
   const computedCheckOut = useMemo(() => {
     if (!checkIn || nights < 1) return "";
@@ -114,7 +99,7 @@ export default function BuildYourOwnExperience({ whatsappNumber }: BuildYourOwnE
       } else {
         setFeedback({
           type: "ok",
-          text: `Package request recorded (#${String(data.booking?.id || "").slice(0, 8)}) for ${nights} night(s) (${checkIn} to ${computedCheckOut}) with ${packageSummary.chosenTitles.length} selected experience(s). Base stay estimate: ₹${packageSummary.totalInr.toLocaleString("en-IN")}.`
+          text: `Stay request recorded (#${String(data.booking?.id || "").slice(0, 8)}) for ${nights} night(s) (${checkIn} to ${computedCheckOut}). The Lado team will confirm availability, inclusions and final pricing. Share activity interests separately using WhatsApp.`
         });
         setGuestName("");
         setGuestEmail("");
@@ -135,11 +120,11 @@ export default function BuildYourOwnExperience({ whatsappNumber }: BuildYourOwnE
     const msg = [
       "Namaste Lado Organics!",
       "Build Your Own Farm Experience Package:",
-      `- Accommodation: "Deep Work" Bhunga Stay (${nights} night(s) @ ₹4,000/night)`,
+      `- Accommodation: Bhunga stay (${nights} night(s); price to be confirmed)`,
       `- Guests: ${guests}`,
       `- Check-in: ${checkIn || "Flexible"}`,
       `- Selected Experiences: ${acts}`,
-      `- Estimated Base Stay Total: ₹${packageSummary.totalInr.toLocaleString("en-IN")}`,
+      "- Price and availability: please confirm with the Lado team",
       "Please confirm availability and any custom workshop/meal pricing."
     ].join("\n");
     return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msg)}`;
@@ -155,7 +140,7 @@ export default function BuildYourOwnExperience({ whatsappNumber }: BuildYourOwnE
           Build Your Own Farm Experience
         </h2>
         <p className="text-xs sm:text-sm opacity-80 mb-8 max-w-3xl">
-          Combine “Deep Work” Bhunga accommodation (₹4,000/night) with hands-on Pilani farm experiences. Dates are checked against existing bookings on the server to prevent double bookings.
+          Build a visit around a Bhunga stay and optional farm interests. The booking form records accommodation dates only; the team confirms availability, inclusions and final pricing before a reservation is confirmed.
         </p>
 
         <div className="grid lg:grid-cols-12 gap-8">
@@ -163,7 +148,7 @@ export default function BuildYourOwnExperience({ whatsappNumber }: BuildYourOwnE
             <div className="grid sm:grid-cols-2 gap-4 text-xs">
               <div>
                 <label className="block font-bold uppercase mb-1">
-                  Bhunga Stay Nights: {nights} (₹{(nights * 4000).toLocaleString("en-IN")})
+                  Bhunga Stay Nights: {nights}
                 </label>
                 <input
                   type="range"
@@ -220,14 +205,12 @@ export default function BuildYourOwnExperience({ whatsappNumber }: BuildYourOwnE
             onSubmit={handleBookPackage}
             className="lg:col-span-5 bg-[var(--bg)] border border-[var(--border)] rounded-2xl p-6 space-y-3.5 text-xs"
           >
-            <div className="flex items-baseline justify-between pb-3 border-b border-[var(--border)]">
-              <span className="font-bold uppercase opacity-75">Configured Package Base</span>
-              <span className="text-2xl font-serif font-bold text-[var(--terracotta)]">
-                ₹{packageSummary.totalInr.toLocaleString("en-IN")}
-              </span>
+            <div className="pb-3 border-b border-[var(--border)]">
+              <span className="font-bold uppercase opacity-75">Stay request summary</span>
+              <p className="mt-2 font-serif text-lg font-bold text-[var(--terracotta)]">{nights} night(s) · {guests} guest(s)</p>
             </div>
             <p className="text-[11px] opacity-75">
-              Includes {nights} night(s) Bhunga Stay (@ ₹4,000/night) + {packageSummary.chosenTitles.length} selected experience(s). Any custom workshop/meal add-on rates are confirmed by the Pilani host.
+              Price, availability and activity inclusions are confirmed by the Lado team. Activity selections are shared through the WhatsApp enquiry link; the booking form below records stay dates and guest details only.
             </p>
 
             <div className="grid grid-cols-2 gap-2.5">
@@ -306,17 +289,10 @@ export default function BuildYourOwnExperience({ whatsappNumber }: BuildYourOwnE
               disabled={submitting}
               className="w-full primary-btn py-3 rounded-xl font-bold cursor-pointer disabled:opacity-50"
             >
-              {submitting ? "Checking Availability..." : "Request Custom Experience Package"}
+              {submitting ? "Checking Availability..." : "Request stay dates"}
             </button>
 
-            <a
-              href={whatsappPackageUrl()}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block text-center py-2.5 rounded-xl border border-[var(--border)] font-bold hover:border-[var(--terracotta)]"
-            >
-              Share Package on WhatsApp ↗
-            </a>
+            {whatsappNumber ? <a href={whatsappPackageUrl()} target="_blank" rel="noopener noreferrer" className="block text-center py-2.5 rounded-xl border border-[var(--border)] font-bold hover:border-[var(--terracotta)]">Share Package on WhatsApp ↗</a> : null}
           </form>
         </div>
       </div>

@@ -23,7 +23,7 @@ export default function StorefrontSection({
 }: StorefrontSectionProps) {
   const dict = TRANSLATIONS[locale] ?? TRANSLATIONS.en;
   const copy = locale === "hi" ? {
-    noMatch: "आपकी खोज से मिलता-जुलता कोई उत्पाद नहीं मिला।", discover: "उत्पाद की जानकारी देखें",
+    noMatch: "आपकी खोज से मिलता-जुलता कोई उत्पाद नहीं मिला।", emptyCatalog: "लाइव उत्पाद सूची अभी तैयार की जा रही है। मौजूदा उत्पाद, पैक और कीमत की पुष्टि के लिए टीम से संपर्क करें।", contactTeam: "टीम से संपर्क करें", discover: "उत्पाद की जानकारी देखें",
     per: "प्रति", unit: "इकाई", add: "बैग में जोड़ें", order: "व्हाट्सऐप से ऑर्डर पूछें",
     photoKicker: "पिलानी की एक झलक", photoTitle: "खेत, कारीगरी और उत्पाद।",
     photoDescription: "Lado Organics के खेत और पारंपरिक उत्पादों की एक झलक।",
@@ -44,7 +44,7 @@ export default function StorefrontSection({
       "deep-work-bhunga-stay": "पिलानी में पारंपरिक राजस्थानी मिट्टी की वास्तुकला वाला भुंगा ठहराव।",
     } as Record<string,string>,
   } : locale === "ma" ? {
-    noMatch: "थारी खोज सूं मेल खातो सामान कोनी मिल्यो।", discover: "ई सामान री पूरी बात देखो",
+    noMatch: "थारी खोज सूं मेल खातो सामान कोनी मिल्यो।", emptyCatalog: "चालू सामान री सूची अभी तैयार हो री है। सामान, पैक अर भाव पक्को करावण खातर टीम नै खबर करो।", contactTeam: "टीम नै खबर करो", discover: "ई सामान री पूरी बात देखो",
     per: "एक", unit: "इकाई", add: "थैली में जोड़ो", order: "व्हाट्सऐप पर ऑर्डर पूछो",
     photoKicker: "पिलानी री एक झलक", photoTitle: "खेत, कारीगरी अर सामान।",
     photoDescription: "Lado Organics रै खेत अर पुराणी रीति सूं बण्या सामान री झलक।",
@@ -65,7 +65,7 @@ export default function StorefrontSection({
       "deep-work-bhunga-stay": "पिलानी में राजस्थानी माटी री पुराणी बनावट वालो भुंगा ठहराव।",
     } as Record<string,string>,
   } : {
-    noMatch: "No matching items found for your search.", discover: "Discover this product",
+    noMatch: "No matching items found for your search.", emptyCatalog: "Our live product catalogue is being prepared. Contact the team to confirm current products, pack sizes and prices.", contactTeam: "Contact the team", discover: "Discover this product",
     per: "Per", unit: "Unit", add: "Add to Bag", order: "Order via WhatsApp",
     photoKicker: "A glimpse of Pilani", photoTitle: "The farm, the craft, the collection.",
     photoDescription: "A visual introduction to the Lado Organics farm story and traditional product collection.",
@@ -175,7 +175,8 @@ export default function StorefrontSection({
 
           {filteredProducts.length === 0 ? (
             <div className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-10 text-center">
-              <p className="font-medium">{copy.noMatch} “{searchQuery}”.</p>
+              <p className="font-medium">{products.length === 0 ? copy.emptyCatalog : `${copy.noMatch} “${searchQuery}”.`}</p>
+              {products.length === 0 && <Link href="/contact" className="inline-flex mt-5 primary-btn px-5 py-3 rounded-xl text-xs font-bold">{copy.contactTeam}</Link>}
             </div>
           ) : (
             <div className="home-store-grid grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -282,19 +283,23 @@ export default function StorefrontSection({
                             {copy.add}
                           </button>
                         )}
-                        <button
-                          type="button"
-                          onClick={() =>
-                            sendWhatsAppOrder(
-                              product.nameEn,
-                              activeVariant?.label ?? "Unit",
-                              activeVariant?.priceInr ?? 0
-                            )
-                          }
-                          className="w-full py-2.5 rounded-xl text-xs font-semibold border border-[var(--border)] hover:border-[var(--terracotta)] cursor-pointer"
-                        >
-                          {copy.order}
-                        </button>
+                        {whatsappNumber ? (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              sendWhatsAppOrder(
+                                product.nameEn,
+                                activeVariant?.label ?? "Unit",
+                                activeVariant?.priceInr ?? 0
+                              )
+                            }
+                            className="w-full py-2.5 rounded-xl text-xs font-semibold border border-[var(--border)] hover:border-[var(--terracotta)] cursor-pointer"
+                          >
+                            {copy.order}
+                          </button>
+                        ) : (
+                          <Link href="/contact" className="block w-full text-center py-2.5 rounded-xl text-xs font-semibold border border-[var(--border)] hover:border-[var(--terracotta)]">{copy.contactTeam}</Link>
+                        )}
                       </div>
                     </div>
                   </article>
@@ -305,6 +310,8 @@ export default function StorefrontSection({
         </div>
       </section>
 
+      {products.length > 0 && (
+      <>
       <section aria-labelledby="lado-photo-story-title" className="border-t border-[var(--border)] py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
@@ -412,16 +419,12 @@ export default function StorefrontSection({
               </span>
             </div>
 
-            <button
-              type="button"
-              onClick={sendCalculatorOrder}
-              className="primary-btn px-6 py-3.5 rounded-xl text-sm font-semibold cursor-pointer"
-            >
-              {copy.send}
-            </button>
+            {whatsappNumber ? <button type="button" onClick={sendCalculatorOrder} className="primary-btn px-6 py-3.5 rounded-xl text-sm font-semibold cursor-pointer">{copy.send}</button> : <Link href="/contact" className="primary-btn px-6 py-3.5 rounded-xl text-sm font-semibold text-center">{copy.contactTeam}</Link>}
           </div>
         </div>
       </section>
+      </>
+      )}
     </>
   );
 }
