@@ -57,6 +57,10 @@ export default function GlobalSiteChrome() {
             <Link href="/store" aria-current={isCurrent("/store") ? "page" : undefined} onClick={closeMenu}>{labels.shop}</Link>
             <Link href="/#farm-world" onClick={closeMenu}>{labels.farm}</Link>
             <Link href="/our-story" aria-current={isCurrent("/our-story") ? "page" : undefined} onClick={closeMenu}>{labels.story}</Link>
+            <Link href="/our-farm" aria-current={isCurrent("/our-farm") ? "page" : undefined} onClick={closeMenu}>Our farm</Link>
+            <Link href="/our-process" aria-current={isCurrent("/our-process") ? "page" : undefined} onClick={closeMenu}>Our process</Link>
+            <Link href="/gau-seva" aria-current={isCurrent("/gau-seva") ? "page" : undefined} onClick={closeMenu}>Gau Seva</Link>
+            <Link href="/library" aria-current={isCurrent("/library") ? "page" : undefined} onClick={closeMenu}>Journal</Link>
             <Link href="/trace" aria-current={isCurrent("/trace") ? "page" : undefined} onClick={closeMenu}>{labels.trace}</Link>
             <Link href="/search" aria-current={isCurrent("/search") ? "page" : undefined} onClick={closeMenu}>{labels.search}</Link>
             <Link href="/contact" aria-current={isCurrent("/contact") ? "page" : undefined} onClick={closeMenu}>{labels.contact}</Link>
@@ -76,7 +80,7 @@ export default function GlobalSiteChrome() {
           <Link href="/" aria-label="Lado Organics home" className="lado-footer-logo-box">{footerLogoLoadFailed ? <span role="img" aria-label="Lado Organics" className="flex flex-col items-center justify-center leading-none"><strong className="font-serif text-xl">Lado</strong><small className="mt-1 text-[8px] font-bold tracking-[0.25em]">ORGANICS</small></span> : <Image src="/images/lado-organics/Ladologo.png" alt="Lado Organics" width={180} height={100} className="lado-footer-logo-image" loading="eager" sizes="180px" onError={() => setFooterLogoLoadFailed(true)} />}</Link>
           <p>Lado Love Pure · Rooted in tradition. Close to nature.</p>
           <nav aria-label="Footer navigation">
-            <Link href="/store">Shop</Link><Link href="/our-story">Our story</Link><Link href="/search">Search</Link><Link href="/trace">Batch traceability</Link><Link href="/dashboard">My account</Link><Link href="/contact">Contact</Link><Link href="/policies">Policies</Link>
+            <Link href="/store">Shop</Link><Link href="/our-story">Our story</Link><Link href="/our-farm">Our farm</Link><Link href="/our-process">Our process</Link><Link href="/gau-seva">Gau Seva</Link><Link href="/library">Journal</Link><Link href="/search">Search</Link><Link href="/trace">Batch traceability</Link><Link href="/dashboard">My account</Link><Link href="/contact">Contact</Link><Link href="/policies">Policies</Link>
           </nav>
         </div>
         <div className="lado-global-footer-bottom"><span>© {new Date().getFullYear()} Lado Organics</span><span>Pilani, Rajasthan, India</span></div>
