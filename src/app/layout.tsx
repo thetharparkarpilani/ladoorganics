@@ -10,8 +10,12 @@ import ConciergeWidget from "@/components/ConciergeWidget";
 import SiteAnnouncement from "@/components/SiteAnnouncement";
 import GlobalSiteChrome from "@/components/GlobalSiteChrome";
 import { LocaleProvider } from "@/context/LocaleContext";
+import { getServerLocale } from "@/lib/server-locale";
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ladoorganics.in";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Lado Organics | Lado Love Pure",
   description: "Traditional farm products and a living farm story from Pilani, Rajasthan. Discover Lado Organics.",
   manifest: "/manifest.json",
@@ -25,7 +29,7 @@ export const metadata: Metadata = {
     siteName: "Lado Organics",
     title: "Lado Organics | Lado Love Pure",
     description: "Traditional farm products and a living farm story from Pilani, Rajasthan.",
-    url: "https://ladoorganics.in",
+    url: siteUrl,
     images: [{ url: "/lado-organics-logo.svg", alt: "Lado Organics — Lado Love Pure" }],
   },
   twitter: { card: "summary_large_image", title: "Lado Organics | Lado Love Pure", description: "Traditional farm products and a living farm story from Rajasthan.", images: ["/lado-organics-logo.svg"] },
@@ -34,9 +38,11 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = { themeColor: "#244b35", width: "device-width", initialScale: 1 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getServerLocale();
+  const documentLanguage = locale === "ma" ? "mwr" : locale;
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang={documentLanguage} className="scroll-smooth">
       <head>
         <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
