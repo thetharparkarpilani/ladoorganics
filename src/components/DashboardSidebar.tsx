@@ -9,6 +9,7 @@ import { useLocale } from "@/context/LocaleContext";
 export default function DashboardSidebar() {
   const { locale } = useLocale();
   const pathname = usePathname();
+  const [logoLoadFailed, setLogoLoadFailed] = useState(false);
   const labels = locale === "hi"
     ? { title: "मेरा सफ़र", patron: "सत्यापित ग्राहक", overview: "अवलोकन", orders: "ऑर्डर इतिहास", reviews: "मेरी समीक्षाएँ", rewards: "Lado रिवॉर्ड", club: "एसेंशियल्स क्लब", stays: "भुंगा स्टे", gau: "गौ सेवा", profile: "मेरी प्रोफ़ाइल", support: "ग्राहक सहायता", logout: "सुरक्षित लॉगआउट" }
     : locale === "ma"
@@ -22,7 +23,7 @@ export default function DashboardSidebar() {
       <div className="lado-dashboard-sidebar-card bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-5 sm:p-6 sticky top-28 shadow-sm">
         <div className="flex items-center gap-4 mb-8">
           <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--earth)] bg-[var(--earth)]/10 p-1">
-            <Image src="/lado-organics-logo.svg" alt="Lado Organics" width={48} height={48} />
+            {logoLoadFailed ? <span aria-label="Lado Organics" role="img" className="font-serif text-[10px] font-bold leading-none text-[var(--mud)]">LADO</span> : <Image src="/images/lado-organics/Ladologo.png" alt="Lado Organics" width={48} height={48} unoptimized className="h-12 w-12 object-contain" onError={() => setLogoLoadFailed(true)} /> }
           </div>
           <div>
             <h2 className="font-serif font-bold text-lg text-[var(--mud)]">{labels.title}</h2>
