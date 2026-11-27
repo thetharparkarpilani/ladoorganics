@@ -53,7 +53,6 @@ function createSceneVertices(): Float32Array {
       quad(p1,p2,p3,p4,color); tri([base[0],base[1]+height,base[2]],p4,p3,color);
     }
   };
-  const cone = (base: V3,radius:number,height:number,color:Color,segments=12) => cylinder(base,radius,height,color,segments,0.02);
 
   // Rolling cultivated land: a real triangulated 3D height field.
   const terrain = (x:number,z:number) => -0.15 + Math.sin(x*.22+z*.12)*.22 + Math.cos(z*.28)*.18 + Math.sin(x*.09-z*.16)*.16;
