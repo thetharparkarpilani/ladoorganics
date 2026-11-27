@@ -25,14 +25,15 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    document.documentElement.lang = locale === "ma" ? "hi" : locale;
+    document.documentElement.lang = locale === "ma" ? "mwr" : locale;
     document.documentElement.dataset.locale = locale;
   }, [locale]);
 
   const setLocale = (next: LocaleCode) => {
     setLocaleState(next);
     try { window.localStorage.setItem("lado-locale", next); } catch { /* The choice still applies for this session. */ }
-    document.cookie = `lado-locale=${next}; path=/; max-age=31536000; samesite=lax`;
+    const secure = window.location.protocol === "https:" ? "; secure" : "";
+    document.cookie = `lado-locale=${next}; path=/; max-age=31536000; samesite=lax${secure}`;
   };
 
   const value = useMemo(() => ({ locale, setLocale, ready }), [locale, ready]);

@@ -76,7 +76,7 @@ export default function CartCheckoutDrawer() {
 
   if (!isDrawerOpen) return null;
 
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919636100337";
+  const whatsappNumber = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/\D/g, "");
   const upiId = process.env.NEXT_PUBLIC_UPI_ID || "";
   const upiLink = upiId
     ? `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent("Lado Organics")}&am=${completedTotal}&cu=INR&tn=${encodeURIComponent(completedOrder)}`
@@ -109,9 +109,13 @@ export default function CartCheckoutDrawer() {
               {completedMethod === "manual_upi" && upiLink && (
                 <a href={upiLink} className="mt-5 mr-2 inline-flex rounded-full bg-[var(--accent-forest)] px-5 py-3 text-sm font-bold text-white">Pay ₹{completedTotal.toLocaleString("en-IN")} using UPI</a>
               )}
-              <a href={`https://wa.me/${whatsappNumber}?text=${whatsappText}`} target="_blank" rel="noreferrer" className="mt-5 inline-flex rounded-full bg-green-700 px-5 py-3 text-sm font-bold text-white">
-                {completedMethod === "manual_upi" ? "Get UPI details on WhatsApp" : "Confirm order on WhatsApp"}
-              </a>
+              {whatsappNumber ? (
+                <a href={`https://wa.me/${whatsappNumber}?text=${whatsappText}`} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex rounded-full bg-green-700 px-5 py-3 text-sm font-bold text-white">
+                  {completedMethod === "manual_upi" ? "Get UPI details on WhatsApp" : "Confirm order on WhatsApp"}
+                </a>
+              ) : (
+                <p className="mt-5 text-sm">Your order is recorded. Please use the <Link href="/contact" className="font-semibold underline">Contact page</Link> to reach our team.</p>
+              )}
               <Link href="/dashboard/orders" onClick={closeDrawer} className="mt-4 block text-xs font-semibold underline">
                 View Order History (sign in required)
               </Link>

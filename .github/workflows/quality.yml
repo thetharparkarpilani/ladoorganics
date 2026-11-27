@@ -37,6 +37,8 @@ jobs:
         run: npm run test:roadmap
       - name: Test backend security contracts
         run: npm run test:backend-security
+      - name: Test production readiness contracts
+        run: npm run test:production-readiness
       - name: Test full roadmap contracts
         run: npm run test:full-roadmap
       - name: Run ESLint
