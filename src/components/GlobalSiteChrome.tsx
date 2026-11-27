@@ -47,7 +47,7 @@ export default function GlobalSiteChrome() {
       <header className="lado-global-header">
         <div className="lado-global-header-inner">
           <Link href="/" className="lado-global-brand" aria-label="Lado Organics home" onClick={closeMenu}>
-            {logoLoadFailed ? <span role="img" aria-label="Lado Organics — Lado Love Pure" className="flex flex-col leading-none"><strong className="font-serif text-xl">Lado</strong><small className="mt-1 text-[8px] font-bold tracking-[0.25em]">ORGANICS</small></span> : <Image src="/lado-organics-logo.svg" alt="Lado Organics — Lado Love Pure" width={150} height={82} priority unoptimized onError={() => setLogoLoadFailed(true)} />}
+            {logoLoadFailed ? <span role="img" aria-label="Lado Organics — Lado Love Pure" className="flex flex-col leading-none"><strong className="font-serif text-xl">Lado</strong><small className="mt-1 text-[8px] font-bold tracking-[0.25em]">ORGANICS</small></span> : <Image src="/images/lado-organics/Ladologo.png" alt="Lado Organics — Lado Love Pure" width={150} height={82} priority unoptimized onError={() => setLogoLoadFailed(true)} />}
           </Link>
           <button className="lado-global-menu-toggle" type="button" aria-expanded={menuOpen} aria-controls="lado-global-nav" onClick={() => setMenuOpen(value => !value)}>
             {menuOpen ? labels.close : labels.menu}
@@ -72,7 +72,7 @@ export default function GlobalSiteChrome() {
       </header>
       <footer className="lado-global-footer">
         <div className="lado-global-footer-inner">
-          <Link href="/" aria-label="Lado Organics home">{logoLoadFailed ? <span role="img" aria-label="Lado Organics" className="flex flex-col leading-none"><strong className="font-serif text-xl">Lado</strong><small className="mt-1 text-[8px] font-bold tracking-[0.25em]">ORGANICS</small></span> : <Image src="/lado-organics-logo.svg" alt="Lado Organics" width={138} height={76} unoptimized onError={() => setLogoLoadFailed(true)} />}</Link>
+          <Link href="/" aria-label="Lado Organics home">{logoLoadFailed ? <span role="img" aria-label="Lado Organics" className="flex flex-col leading-none"><strong className="font-serif text-xl">Lado</strong><small className="mt-1 text-[8px] font-bold tracking-[0.25em]">ORGANICS</small></span> : <Image src="/images/lado-organics/Ladologo.png" alt="Lado Organics" width={138} height={76} unoptimized onError={() => setLogoLoadFailed(true)} />}</Link>
           <p>Lado Love Pure · Rooted in tradition. Close to nature.</p>
           <nav aria-label="Footer navigation">
             <Link href="/store">Shop</Link><Link href="/our-story">Our story</Link><Link href="/search">Search</Link><Link href="/trace">Batch traceability</Link><Link href="/dashboard">My account</Link><Link href="/contact">Contact</Link><Link href="/policies">Policies</Link>
