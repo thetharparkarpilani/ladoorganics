@@ -843,3 +843,39 @@ main.min-h-screen :where(.border) { border-color: var(--lado-line); }
   }
   .lado-global-footer-inner .lado-footer-logo-image { height: 80px; }
 }
+
+
+/* Homepage footer logo panel — match the approved white brand box used site-wide */
+.lado-footer-main > a.lado-home-footer-logo-box {
+  display: flex;
+  flex: 0 0 190px;
+  width: 190px;
+  min-height: 108px;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  overflow: hidden;
+  border: 1px solid rgba(36, 75, 53, .12);
+  border-radius: 14px;
+  background: #fff;
+  color: #244b35;
+  text-decoration: none;
+}
+.lado-footer-main .lado-home-footer-logo-image {
+  display: block;
+  width: 100%;
+  max-width: 162px;
+  height: 92px;
+  object-fit: contain;
+  object-position: center;
+  background: transparent;
+  filter: none !important;
+}
+@media (max-width: 760px) {
+  .lado-footer-main > a.lado-home-footer-logo-box {
+    flex-basis: 170px;
+    width: 170px;
+    min-height: 96px;
+  }
+  .lado-footer-main .lado-home-footer-logo-image { height: 80px; }
+}
