@@ -88,11 +88,20 @@ function createSceneVertices(): Float32Array {
   const cow=(x:number,z:number,s=1)=>{
     const ground=terrain(x,z);
     sphere([x,ground+.88*s,z],[.88*s,.55*s,.43*s],[.82,.78,.65],18,12);
+    // Distinctive indigenous zebu shoulder hump and dewlap.
+    sphere([x-.34*s,ground+1.25*s,z],[.39*s,.48*s,.37*s],[.82,.78,.65],16,11);
     sphere([x+.68*s,ground+1.08*s,z-.02*s],[.30*s,.38*s,.30*s],[.82,.78,.65],16,10);
     sphere([x+.88*s,ground+.86*s,z+.05*s],[.22*s,.13*s,.23*s],[.40,.29,.20],12,8);
+    sphere([x+.58*s,ground+1.08*s,z-.28*s],[.20*s,.09*s,.10*s],[.77,.73,.62],10,7);
+    sphere([x+.58*s,ground+1.08*s,z+.24*s],[.20*s,.09*s,.10*s],[.77,.73,.62],10,7);
     sphere([x+.54*s,ground+1.44*s,z-.02*s],[.08*s,.23*s,.08*s],[.78,.74,.60],10,8);
     cylinder([x+.51*s,ground+1.38*s,z-.2*s],.035*s,.24*s,[.70,.65,.52],8,0);
     cylinder([x+.51*s,ground+1.38*s,z+.16*s],.035*s,.24*s,[.70,.65,.52],8,0);
+    // Tapered horns, tail and udder complete the cattle silhouette.
+    cylinder([x+.73*s,ground+1.35*s,z-.19*s],.055*s,.24*s,[.55,.47,.35],8,.012*s);
+    cylinder([x+.73*s,ground+1.35*s,z+.15*s],.055*s,.24*s,[.55,.47,.35],8,.012*s);
+    cylinder([x-.86*s,ground+.98*s,z],.035*s,.5*s,[.73,.68,.57],7,.018*s);
+    sphere([x+.04*s,ground+.42*s,z],[.19*s,.16*s,.19*s],[.70,.59,.48],12,8);
     for(const dx of [-.52,.52]) for(const dz of [-.24,.24]) cylinder([x+dx*s,ground+.08*s,z+dz*s],.085*s,.68*s,[.72,.67,.55],8,.065*s);
   };
   cow(3.2,-1.2,1.0); cow(5.25,.2,.78);
