@@ -158,7 +158,8 @@ export default function ManualCheckout({ items, onSuccess }: Props) {
         </label>
       </fieldset>
 
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3 text-xs leading-6 text-[var(--muted)]">The amount shown is the product subtotal recorded at checkout. Delivery charges and any applicable taxes are not calculated online yet. Our team will confirm delivery availability and the full payable amount with you before dispatch. For UPI, wait for the team’s payment instructions and verification; do not treat this order as paid until receipt is confirmed.</div>\n      {error && <p role="alert" className="rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-800">{error}</p>}
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3 text-xs leading-6 text-[var(--muted)]">The amount shown is the product subtotal recorded at checkout. Delivery charges and any applicable taxes are not calculated online yet. Our team will confirm delivery availability and the full payable amount with you before dispatch. For UPI, wait for the team’s payment instructions and verification; do not treat this order as paid until receipt is confirmed.</div>
+      {error && <p role="alert" className="rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-800">{error}</p>}
       <button type="submit" disabled={loading || items.length === 0} className="w-full primary-btn rounded-xl py-4 text-sm font-bold shadow-lg disabled:opacity-50">
         {loading ? "Placing your order..." : "Place Order"}
       </button>
