@@ -89,14 +89,14 @@ export default function CartCheckoutDrawer() {
   return (
     <div className="fixed inset-0 z-[100] flex justify-end">
       <button aria-label="Close shopping bag" className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeDrawer} />
-      <section ref={dialogRef} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="lado-cart-drawer-title" className="relative flex h-full w-full max-w-md flex-col border-l border-[var(--border-light)] bg-[var(--bg-ivory)] shadow-2xl animate-fade-in">
-        <div className="flex items-center justify-between border-b border-[var(--border-light)] bg-[var(--bg-sand)] p-6">
+      <section ref={dialogRef} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="lado-cart-drawer-title" className="relative flex h-[100dvh] min-h-0 w-full max-w-md flex-col overflow-hidden border-l border-[var(--border-light)] bg-[var(--bg-ivory)] shadow-2xl animate-fade-in">
+        <div className="flex shrink-0 items-center justify-between border-b border-[var(--border-light)] bg-[var(--bg-sand)] p-5 sm:p-6">
           <h2 id="lado-cart-drawer-title" className="text-2xl font-serif font-bold text-[var(--text-charcoal)]">Your Lado Bag</h2>
           <button onClick={closeDrawer} className="rounded-lg border border-[var(--border-light)] px-3 py-1 text-[10px] font-bold uppercase tracking-widest">Close</button>
         </div>
 
         {completedOrder ? (
-          <div className="flex-1 space-y-4 overflow-y-auto p-6">
+          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain p-5 sm:p-6 [-webkit-overflow-scrolling:touch]">
             <div className="rounded-2xl border border-green-200 bg-green-50 p-6 text-green-900">
               <h3 className="text-xl font-serif font-bold">Thank you! Your order is placed.</h3>
               <p className="mt-3 text-xs">Order number</p>
@@ -120,7 +120,7 @@ export default function CartCheckoutDrawer() {
           </div>
         ) : (
           <>
-            <div className="flex-1 space-y-6 overflow-y-auto p-6">
+            <div className="min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain p-5 sm:p-6 [-webkit-overflow-scrolling:touch]">
               {items.length === 0 ? (
                 <div className="py-20 text-center">
                   <i className="fas fa-shopping-bag mb-4 text-4xl text-[var(--text-muted)] opacity-30" />
@@ -146,7 +146,7 @@ export default function CartCheckoutDrawer() {
               ))}
             </div>
             {items.length > 0 && (
-              <div className="border-t border-[var(--border-light)] bg-[var(--bg-sand)] p-6 shadow-[0_-10px_20px_rgba(0,0,0,0.03)]">
+              <div className="max-h-[48dvh] shrink-0 overflow-y-auto overscroll-contain border-t border-[var(--border-light)] bg-[var(--bg-sand)] p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-[0_-10px_20px_rgba(0,0,0,0.03)] sm:max-h-[42dvh] sm:p-6 [-webkit-overflow-scrolling:touch]">
                 <div className="mb-2 flex justify-between text-sm">
                   <span className="text-[var(--text-muted)]">Estimated subtotal</span>
                   <span className="font-bold text-[var(--text-charcoal)]">₹{cartTotal.toLocaleString("en-IN")}</span>

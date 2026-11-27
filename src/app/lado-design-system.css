@@ -808,3 +808,38 @@ main.min-h-screen :where(.border) { border-color: var(--lado-line); }
   .lado-library-card { padding: 18px; }
   .lado-essentials-form, .lado-corporate-form { padding: 17px; }
 }
+
+
+/* Footer brand mark: explicit contrast and predictable image sizing */
+.lado-global-footer-inner > a.lado-footer-logo-box {
+  display: flex;
+  width: 190px;
+  min-width: 190px;
+  min-height: 108px;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  overflow: hidden;
+  border: 1px solid rgba(36, 75, 53, .12);
+  border-radius: 14px;
+  background: #fff;
+  color: #244b35;
+  text-decoration: none;
+}
+.lado-global-footer-inner .lado-footer-logo-image {
+  display: block;
+  width: 100%;
+  height: 92px;
+  max-width: 162px;
+  object-fit: contain;
+  object-position: center;
+  background: transparent;
+}
+@media (max-width: 760px) {
+  .lado-global-footer-inner > a.lado-footer-logo-box {
+    width: 170px;
+    min-width: 170px;
+    min-height: 96px;
+  }
+  .lado-global-footer-inner .lado-footer-logo-image { height: 80px; }
+}
