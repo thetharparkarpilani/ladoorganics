@@ -411,3 +411,33 @@ body { background: var(--lado-ivory); }
 @media (prefers-reduced-motion:reduce) {
   .lado-site .lado-header { transition:none; }
 }
+
+
+/* TRUE INTERACTIVE 3D FARM EXPERIENCE — WebGL scene, not layered CSS artwork */
+.lado-site .lado-hero { min-height:min(900px,calc(100svh - 10px));grid-template-columns:minmax(0,.88fr) minmax(420px,1.12fr);gap:clamp(28px,4vw,68px);padding-top:clamp(94px,11vh,132px);padding-bottom:112px;background:radial-gradient(ellipse at 72% 24%,rgba(198,161,91,.2),transparent 38%),linear-gradient(118deg,#0c241a 0%,#173d2b 52%,#294b37 100%); }
+.lado-site .lado-hero::before { opacity:.12;background-image:radial-gradient(rgba(255,255,255,.55) .55px,transparent .55px);background-size:5px 5px; }
+.lado-site .lado-hero::after { right:-22vw;top:-35vw;border-color:rgba(230,199,144,.12); }
+.lado-site .lado-hero-text { z-index:4; }
+.lado-site .lado-hero .lado-eyebrow { color:#dfc38c; }
+.lado-site .lado-hero h1 { color:#fffdf7;text-shadow:0 10px 45px rgba(0,0,0,.22); }
+.lado-site .lado-hero-description { color:rgba(255,253,247,.78); }
+.lado-site .lado-hero .lado-button-primary { color:#172d20;background:#d7b875;border-color:#d7b875; }
+.lado-site .lado-hero .lado-button-quiet { color:#fffdf7;border-color:rgba(255,253,247,.4);background:rgba(255,255,255,.045); }
+.lado-site .lado-hero-footnote { color:#fffdf7; }
+.lado-site .lado-hero-footnote small { color:rgba(255,253,247,.62); }
+.lado-site .lado-seal { color:#173d2b;background:#d7b875;border-color:#d7b875; }
+.lado-site .lado-hero-art { position:relative;z-index:2;min-height:clamp(460px,58vw,690px);height:100%;max-height:720px;overflow:hidden;border:1px solid rgba(255,245,218,.24);border-radius:24px;background:#b8a77c url("/images/lado-organics/Lado Organics Farm-Fresh Collection.png") center/cover no-repeat;box-shadow:0 38px 110px rgba(0,0,0,.34),inset 0 0 90px rgba(255,245,218,.1);transform-style:preserve-3d; }
+.lado-site .lado-3d-farm-scene { position:absolute;inset:0;width:100%;height:100%;min-height:inherit;overflow:hidden;isolation:isolate;touch-action:pan-y; }
+.lado-site .lado-3d-farm-scene canvas { display:block;width:100%;height:100%;min-height:inherit; }
+.lado-site .lado-3d-scene-vignette { position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(19,35,24,.03) 45%,rgba(12,31,21,.54) 100%),linear-gradient(90deg,rgba(14,35,24,.08),transparent 35%,rgba(14,35,24,.06)); }
+.lado-site .lado-3d-scene-label { position:absolute;left:24px;top:24px;display:grid;gap:5px;padding:12px 16px;border:1px solid rgba(255,253,247,.3);border-radius:12px;color:#fffdf7;background:rgba(16,43,32,.32);backdrop-filter:blur(12px);pointer-events:none; }
+.lado-site .lado-3d-scene-label span { font-size:8px;font-weight:700;letter-spacing:.2em; }
+.lado-site .lado-3d-scene-label strong { font-family:"Playfair Display",Georgia,serif;font-size:18px;font-weight:500; }
+.lado-site .lado-3d-scene-hint { position:absolute;right:22px;bottom:22px;display:flex;align-items:center;gap:12px;color:rgba(255,253,247,.88);font-size:8px;font-weight:700;letter-spacing:.18em;text-shadow:0 2px 10px rgba(0,0,0,.35);pointer-events:none; }
+.lado-site .lado-3d-scene-hint span { display:grid;width:28px;height:28px;place-items:center;border:1px solid rgba(255,253,247,.5);border-radius:50%;font-size:13px; }
+.lado-site .lado-hero-bottom { color:rgba(255,253,247,.68);border-color:rgba(255,253,247,.2); }
+.lado-site .store-product-card,.lado-site .home-store-card { perspective:1100px;transform-style:preserve-3d; }
+.lado-site .store-product-card:hover,.lado-site .home-store-card:hover { transform:perspective(1100px) rotateX(2deg) rotateY(-2deg) translateY(-9px); }
+@media (max-width:980px) { .lado-site .lado-hero { grid-template-columns:minmax(0,1fr);padding-top:112px; }.lado-site .lado-hero-text { max-width:780px; }.lado-site .lado-hero-art { min-height:clamp(390px,64vw,570px);max-height:620px; } }
+@media (max-width:760px) { .lado-site .lado-hero { min-height:auto;padding:104px 20px 88px;gap:34px; }.lado-site .lado-hero h1 { font-size:clamp(43px,12vw,64px); }.lado-site .lado-hero-art { min-height:440px;border-radius:18px; }.lado-site .lado-3d-scene-label { left:14px;top:14px;padding:9px 12px; }.lado-site .lado-3d-scene-hint { right:14px;bottom:14px; } }
+@media (prefers-reduced-motion:reduce) { .lado-site .lado-3d-farm-scene * { animation:none!important;transition:none!important; } }

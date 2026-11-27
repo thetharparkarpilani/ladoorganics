@@ -18,6 +18,7 @@ import JournalLibrarySection from "@/components/JournalLibrarySection";
 import CorporateGiftingSection from "@/components/CorporateGiftingSection";
 import FarmWorldSection from "@/components/FarmWorldSection";
 import CartCheckoutDrawer from "@/components/CartCheckoutDrawer";
+import ImmersiveFarmScene from "@/components/ImmersiveFarmScene";
 
 const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "";
 
@@ -158,16 +159,7 @@ export default function HomePage() {
             </div>
             <div className="lado-hero-footnote"><span className="lado-seal">L</span><span><strong>Lado Organics</strong><small>Pilani · Rajasthan · India</small></span></div>
           </div>
-          <div className="lado-hero-art" aria-hidden="true">
-            <div className="lado-art-sun" />
-            <div className="lado-art-orbit" />
-            <div className="lado-art-distant-ridge" />
-            <div className="lado-art-hill lado-art-hill-back" />
-            <div className="lado-art-farmhouse"><span /></div>
-            <div className="lado-art-hill lado-art-hill-front" />
-            <div className="lado-art-foreground" />
-            <div className="lado-art-caption">A slower, more thoughtful way of living</div>
-          </div>
+          <div className="lado-hero-art"><ImmersiveFarmScene /></div>
           <div className="lado-hero-bottom"><span>01 / THE LADO STORY</span><span>SCROLL TO EXPLORE ↓</span></div>
         </section>
 
