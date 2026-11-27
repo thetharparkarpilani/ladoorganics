@@ -96,7 +96,7 @@ export default function CartCheckoutDrawer() {
         </div>
 
         {completedOrder ? (
-          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain p-5 sm:p-6 [webkit-overflow-scrolling:touch]">
+          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain p-5 sm:p-6 [-webkit-overflow-scrolling:touch]">
             <div className="rounded-2xl border border-green-200 bg-green-50 p-6 text-green-900">
               <h3 className="text-xl font-serif font-bold">Thank you! Your order is placed.</h3>
               <p className="mt-3 text-xs">Order number</p>
@@ -120,7 +120,7 @@ export default function CartCheckoutDrawer() {
           </div>
         ) : (
           <>
-            <div className="min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain p-5 sm:p-6 [webkit-overflow-scrolling:touch]">
+            <div className="min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain p-5 sm:p-6 [-webkit-overflow-scrolling:touch]">
               {items.length === 0 ? (
                 <div className="py-20 text-center">
                   <i className="fas fa-shopping-bag mb-4 text-4xl text-[var(--text-muted)] opacity-30" />
@@ -146,7 +146,7 @@ export default function CartCheckoutDrawer() {
               ))}
             </div>
             {items.length > 0 && (
-              <div className="max-h-[48dvh] shrink-0 overflow-y-auto overscroll-contain border-t border-[var(--border-light)] bg-[var(--bg-sand)] p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-[0_-10px_20px_rgba(0,0,0,0.03)] sm:max-h-[42dvh] sm:p-6 [webkit-overflow-scrolling:touch]">
+              <div className="max-h-[48dvh] shrink-0 overflow-y-auto overscroll-contain border-t border-[var(--border-light)] bg-[var(--bg-sand)] p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-[0_-10px_20px_rgba(0,0,0,0.03)] sm:max-h-[42dvh] sm:p-6 [-webkit-overflow-scrolling:touch]">
                 <div className="mb-2 flex justify-between text-sm">
                   <span className="text-[var(--text-muted)]">Estimated subtotal</span>
                   <span className="font-bold text-[var(--text-charcoal)]">₹{cartTotal.toLocaleString("en-IN")}</span>
