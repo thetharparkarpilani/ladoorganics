@@ -29,6 +29,14 @@ export default function HomePage() {
   const [query, setQuery] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
   const [logoLoadFailed, setLogoLoadFailed] = useState(false);
+  const [headerScrolled, setHeaderScrolled] = useState(false);
+
+  useEffect(() => {
+    const updateHeader = () => setHeaderScrolled(window.scrollY > 24);
+    updateHeader();
+    window.addEventListener("scroll", updateHeader, { passive: true });
+    return () => window.removeEventListener("scroll", updateHeader);
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -113,7 +121,7 @@ export default function HomePage() {
 
   return (
     <div className="lado-site">
-      <header className="lado-header">
+      <header className={headerScrolled ? "lado-header is-scrolled" : "lado-header"}>
         <div className="lado-header-inner">
           <Link href="/" className="lado-brand" aria-label="Lado Organics home">
             {logoLoadFailed ? <span role="img" aria-label="Lado Organics — Lado Love Pure" className="flex flex-col leading-none text-left"><strong className="font-serif text-2xl">Lado</strong><small className="mt-1 text-[9px] font-bold tracking-[0.28em]">ORGANICS</small></span> : <img src="/images/lado-organics/Ladologo.png" alt="Lado Organics — Lado Love Pure" width={184} height={104} fetchPriority="high" decoding="async" onError={() => setLogoLoadFailed(true)} />}

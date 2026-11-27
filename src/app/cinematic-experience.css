@@ -352,3 +352,62 @@ body { background: var(--lado-ivory); }
   .lado-site .lado-art-sun { animation:none; }
   .lado-site .lado-hero-art,.lado-site .store-product-card,.lado-site .home-store-card { transition:none; }
 }
+
+
+/* Sticky transparent-to-solid navigation transition */
+.lado-site .lado-header {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  margin-bottom: -78px;
+  background: rgba(16,43,32,.18);
+  border-bottom: 1px solid rgba(255,253,247,.14);
+  box-shadow: none;
+  backdrop-filter: blur(14px) saturate(125%);
+  transition: background 360ms ease, border-color 360ms ease, box-shadow 360ms ease;
+}
+.lado-site .lado-header-inner { min-height: 78px; }
+.lado-site .lado-header:not(.is-scrolled) .lado-nav a,
+.lado-site .lado-header:not(.is-scrolled) .lado-account-link { color: rgba(255,253,247,.9); }
+.lado-site .lado-header:not(.is-scrolled) .lado-header-actions select {
+  color: #fffdf7;
+  background: rgba(16,43,32,.3);
+  border-color: rgba(255,253,247,.28);
+}
+.lado-site .lado-header:not(.is-scrolled) .lado-menu-toggle {
+  color: #fffdf7;
+  border-color: rgba(255,253,247,.35);
+}
+.lado-site .lado-header:not(.is-scrolled) .lado-cart-button {
+  color: #173d2b;
+  background: #d7b875;
+  border-color: #d7b875;
+}
+.lado-site .lado-header.is-scrolled {
+  background: rgba(255,253,247,.96);
+  border-bottom-color: rgba(23,61,43,.12);
+  box-shadow: 0 8px 28px rgba(16,43,32,.08);
+}
+.lado-site .lado-header.is-scrolled .lado-nav a,
+.lado-site .lado-header.is-scrolled .lado-account-link { color: var(--lado-forest-deep); }
+.lado-site .lado-header.is-scrolled .lado-header-actions select {
+  color: var(--lado-ink);
+  background: #fffdf7;
+  border-color: var(--lado-line);
+}
+.lado-site .lado-header.is-scrolled .lado-menu-toggle {
+  color: var(--lado-forest);
+  border-color: var(--lado-line);
+}
+.lado-site .lado-header.is-scrolled .lado-cart-button {
+  color: #fffdf7;
+  background: var(--lado-forest);
+  border-color: var(--lado-forest);
+}
+@media (max-width:760px) {
+  .lado-site .lado-header { margin-bottom:-72px; }
+  .lado-site .lado-header-inner { min-height:72px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .lado-site .lado-header { transition:none; }
+}
