@@ -22,8 +22,8 @@ export default function DashboardSidebar() {
     <aside className="lado-dashboard-sidebar w-full md:w-72 shrink-0">
       <div className="lado-dashboard-sidebar-card bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-5 sm:p-6 sticky top-28 shadow-sm">
         <div className="flex items-center gap-4 mb-8">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--earth)] bg-[var(--earth)]/10 p-1">
-            {logoLoadFailed ? <span aria-label="Lado Organics" role="img" className="font-serif text-[10px] font-bold leading-none text-[var(--mud)]">LADO</span> : <Image src="/images/lado-organics/Ladologo.png" alt="Lado Organics" width={48} height={48} unoptimized className="h-12 w-12 object-contain" onError={() => setLogoLoadFailed(true)} /> }
+          <div className="flex h-16 w-24 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[var(--earth)]/30 bg-white p-1">
+            {logoLoadFailed ? <span aria-label="Lado Organics" role="img" className="font-serif text-[10px] font-bold leading-none text-[var(--mud)]">LADO</span> : <Image src="/lado-organics-logo.svg" alt="Lado Organics — Lado Love Pure" width={96} height={64} unoptimized priority className="h-16 w-24 object-contain" onError={() => setLogoLoadFailed(true)} /> }
           </div>
           <div>
             <h2 className="font-serif font-bold text-lg text-[var(--mud)]">{labels.title}</h2>

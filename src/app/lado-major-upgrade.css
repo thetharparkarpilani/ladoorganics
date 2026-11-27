@@ -319,7 +319,7 @@ main:has(.trace-batch),main:has([data-traceability]) { background: var(--lado-iv
 .lado-global-menu-toggle { display: none; }
 .lado-global-footer { padding: 42px max(24px,calc((100vw - 1320px)/2)) 18px; background: var(--lado-forest-deep); color: #f8f5ec; }
 .lado-global-footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-bottom: 30px; }
-.lado-global-footer-inner img { width: 116px; height: 66px; object-fit: contain; filter: brightness(0) invert(1); }
+.lado-global-footer-inner img { width: 116px; height: 66px; object-fit: contain; filter: none !important; }
 .lado-global-footer-inner p { color: rgba(255,255,255,.72); font: italic 15px "Playfair Display",Georgia,serif; }
 .lado-global-footer nav { display: flex; flex-wrap: wrap; gap: 16px; }
 .lado-global-footer a { color: #f8f5ec; font-size: 9px; }
