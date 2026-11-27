@@ -12,7 +12,8 @@
     "test:roadmap": "node scripts/test-roadmap-contracts.mjs",
     "test:backend-security": "node scripts/test-backend-security-contracts.mjs",
     "test:full-roadmap": "node scripts/test-full-roadmap-contracts.mjs",
-    "test:db-migrations": "node scripts/test-db-migrations.mjs"
+    "test:db-migrations": "node scripts/test-db-migrations.mjs",
+    "test:production-readiness": "node scripts/test-production-readiness.mjs"
   },
   "dependencies": {
     "next": "15.5.29",
