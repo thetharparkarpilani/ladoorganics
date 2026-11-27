@@ -4,6 +4,7 @@ import React, { use, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import ProductReviewsSection from "@/components/ProductReviewsSection";
+import ProductModelViewer from "@/components/ProductModelViewer";
 import { useCart } from "@/context/CartContext";
 import { useLocale } from "@/context/LocaleContext";
 import type { ProductDTO, ProductVariantDTO } from "@/types/domain";
@@ -171,6 +172,8 @@ export default function ProductDetailPage(props: PageProps) {
           </div>
         </div>
       </section>
+
+      <div className="my-6 max-w-md"><ProductModelViewer slug={slug} name={displayName} /></div>
 
       <section className="product-detail-buy">
         <div className="product-detail-buy-heading">
