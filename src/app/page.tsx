@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import type { ProductDTO, LocaleCode } from "@/types/domain";
 import { useLocale } from "@/context/LocaleContext";
@@ -102,8 +101,8 @@ export default function HomePage() {
   } : {
     announcement: "Rooted in Pilani, Rajasthan · Tradition, care and everyday purity",
     shop: "Shop collection", farm: "Explore the farm", story: "Our story",
-    headline: "Rooted in tradition. Made for everyday living.",
-    subhead: "Welcome to Lado Organics — where traditional craft, a living farm story and thoughtfully presented products come together.",
+    headline: "Rooted in Tradition. Crafted with Purity.",
+    subhead: "Discover the goodness of nature, traditional Indian wisdom and thoughtfully crafted products from Lado Organics, rooted in Pilani, Rajasthan.",
     explore: "Explore the collection", learn: "Discover Lado", promise: "Our approach",
     promiseTitle: "More than a product. A living tradition.",
     promiseText: "Our story is connected to the farm, animal care and traditional practices. We show product details and availability only when they can be verified.",
@@ -117,7 +116,7 @@ export default function HomePage() {
       <header className="lado-header">
         <div className="lado-header-inner">
           <Link href="/" className="lado-brand" aria-label="Lado Organics home">
-            {logoLoadFailed ? <span role="img" aria-label="Lado Organics — Lado Love Pure" className="flex flex-col leading-none text-left"><strong className="font-serif text-2xl">Lado</strong><small className="mt-1 text-[9px] font-bold tracking-[0.28em]">ORGANICS</small></span> : <Image src="/lado-organics-logo.svg" alt="Lado Organics — Lado Love Pure" width={184} height={104} priority unoptimized onError={() => setLogoLoadFailed(true)} />}
+            {logoLoadFailed ? <span role="img" aria-label="Lado Organics — Lado Love Pure" className="flex flex-col leading-none text-left"><strong className="font-serif text-2xl">Lado</strong><small className="mt-1 text-[9px] font-bold tracking-[0.28em]">ORGANICS</small></span> : <img src="/images/lado-organics/Ladologo.png" alt="Lado Organics — Lado Love Pure" width={184} height={104} fetchPriority="high" decoding="async" onError={() => setLogoLoadFailed(true)} />}
           </Link>
           <button className="lado-menu-toggle" type="button" aria-expanded={menuOpen} aria-controls="lado-primary-nav" onClick={() => setMenuOpen((value) => !value)}>{menuOpen ? "Close" : "Menu"}</button>
           <nav id="lado-primary-nav" className={menuOpen ? "lado-nav is-open" : "lado-nav"} aria-label="Main navigation">
@@ -151,7 +150,13 @@ export default function HomePage() {
             <div className="lado-hero-footnote"><span className="lado-seal">L</span><span><strong>Lado Organics</strong><small>Pilani · Rajasthan · India</small></span></div>
           </div>
           <div className="lado-hero-art" aria-hidden="true">
-            <div className="lado-art-sun" /><div className="lado-art-hill lado-art-hill-back" /><div className="lado-art-hill lado-art-hill-front" />
+            <div className="lado-art-sun" />
+            <div className="lado-art-orbit" />
+            <div className="lado-art-distant-ridge" />
+            <div className="lado-art-hill lado-art-hill-back" />
+            <div className="lado-art-farmhouse"><span /></div>
+            <div className="lado-art-hill lado-art-hill-front" />
+            <div className="lado-art-foreground" />
             <div className="lado-art-caption">A slower, more thoughtful way of living</div>
           </div>
           <div className="lado-hero-bottom"><span>01 / THE LADO STORY</span><span>SCROLL TO EXPLORE ↓</span></div>
@@ -198,7 +203,7 @@ export default function HomePage() {
 
       <footer className="lado-footer">
         <div className="lado-footer-main">
-          <Link href="/" aria-label="Lado Organics home">{logoLoadFailed ? <span role="img" aria-label="Lado Organics" className="flex flex-col leading-none text-left"><strong className="font-serif text-2xl">Lado</strong><small className="mt-1 text-[9px] font-bold tracking-[0.28em]">ORGANICS</small></span> : <Image src="/lado-organics-logo.svg" alt="Lado Organics" width={160} height={88} unoptimized onError={() => setLogoLoadFailed(true)} />}</Link>
+          <Link href="/" aria-label="Lado Organics home" className="lado-home-footer-logo-box">{logoLoadFailed ? <span role="img" aria-label="Lado Organics" className="flex flex-col items-center justify-center leading-none text-center"><strong className="font-serif text-2xl">Lado</strong><small className="mt-1 text-[9px] font-bold tracking-[0.28em]">ORGANICS</small></span> : <img src="/images/lado-organics/Ladologo.png" alt="Lado Organics" width={180} height={120} loading="eager" decoding="async" className="lado-home-footer-logo-image" onError={() => setLogoLoadFailed(true)} />}</Link>
           <p>{copy.footer}</p>
           <nav aria-label="Footer navigation"><Link href="/contact">{copy.help}</Link><Link href="/policies">Policies</Link><Link href="/trace">{copy.trace}</Link><Link href="/dashboard">{copy.account}</Link></nav>
         </div>
