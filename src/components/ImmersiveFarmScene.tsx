@@ -137,7 +137,7 @@ export default function ImmersiveFarmScene(){
       void main(){
         gl_Position=uMvp*vec4(aPosition,1.0);
         vec3 lightDir=normalize(vec3(-0.45,0.82,0.34));
-        vLight=0.58+0.52*max(dot(normalize(aNormal),lightDir),0.0);
+        vLight=0.66+0.38*abs(dot(normalize(aNormal),lightDir));
         vColor=aColor;
       }`;
     const fragmentSource=`
@@ -165,7 +165,7 @@ export default function ImmersiveFarmScene(){
     gl.enableVertexAttribArray(normal);gl.vertexAttribPointer(normal,3,gl.FLOAT,false,stride,12);
     gl.enableVertexAttribArray(color);gl.vertexAttribPointer(color,3,gl.FLOAT,false,stride,24);
     const mvpLocation=gl.getUniformLocation(program,"uMvp");
-    gl.enable(gl.DEPTH_TEST);gl.enable(gl.CULL_FACE);gl.cullFace(gl.BACK);
+    gl.enable(gl.DEPTH_TEST);gl.disable(gl.CULL_FACE);
     gl.clearColor(0,0,0,0);
     const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let pointerX=0,pointerY=0,targetX=0,targetY=0,scroll=0,frame=0,visible=true;
