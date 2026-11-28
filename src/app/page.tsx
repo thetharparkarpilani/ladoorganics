@@ -136,6 +136,7 @@ export default function HomePage() {
             <a href="#our-approach" onClick={() => setMenuOpen(false)}>{copy.promise}</a>
             <Link href="/trace" onClick={() => setMenuOpen(false)}>{copy.trace}</Link>
             <Link href="/search" onClick={() => setMenuOpen(false)}>Search</Link>
+            <Link href="/experience-3d" className="lado-3d-nav-link" onClick={() => setMenuOpen(false)}>Explore in 3D ↗</Link>
             <Link href="/contact" onClick={() => setMenuOpen(false)}>{copy.help}</Link>
           </nav>
           <div className="lado-header-actions">
@@ -157,6 +158,7 @@ export default function HomePage() {
             <div className="lado-hero-actions">
               <a className="lado-button lado-button-primary" href="#collection">{copy.explore}<span aria-hidden="true">↗</span></a>
               <a className="lado-button lado-button-quiet" href="#farm-world">{copy.learn}<span aria-hidden="true">↓</span></a>
+              <Link href="/experience-3d" className="lado-button lado-button-3d">Enter 3D experience <span aria-hidden="true">↗</span></Link>
             </div>
             <div className="lado-hero-footnote"><span className="lado-seal">L</span><span><strong>Lado Organics</strong><small>Pilani · Rajasthan · India</small></span></div>
           </div>
