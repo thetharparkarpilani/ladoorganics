@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { LocaleCode, ProductDTO } from "@/types/domain";
 import { TRANSLATIONS } from "@/lib/i18n";
+import ProductModelViewer from "@/components/ProductModelViewer";
 
 interface StorefrontSectionProps {
   products: ProductDTO[];
@@ -220,6 +221,7 @@ export default function StorefrontSection({
                           <span className="product-art-foot">LADO LOVE PURE</span>
                         </div>
                       )}
+                      <ProductModelViewer slug={product.slug} name={displayName} />
                       <h3 className="home-store-title text-xl font-serif font-bold mb-2">{displayName}</h3>
                       <p className="text-sm opacity-80 leading-relaxed mb-4">{copy.descriptions[product.slug] || product.descriptionEn}</p>
                       {["a2-bilona-ghee", "tharparkar-dhoop", "pure-kechua-khad", "deep-work-bhunga-stay"].includes(product.slug) && (
