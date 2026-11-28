@@ -456,3 +456,7 @@ body { background: var(--lado-ivory); }
 .lado-site .lado-home-tab-panel>[data-lado-reveal]{margin-block:18px}
 @media(max-width:760px){.lado-site .lado-home-discover{padding:54px 0 68px}.lado-site .lado-home-discover-heading{padding:0 20px}.lado-site .lado-home-tabs{top:70px;margin:0 12px 26px;padding:7px;border-radius:14px;gap:5px}.lado-site .lado-home-tabs button{min-height:40px;padding:0 14px;font-size:10px}.lado-site .lado-home-tab-panel{padding:0 12px}}
 @media(prefers-reduced-motion:reduce){.lado-site .lado-home-tabs button{transition:none}}
+
+
+.lado-site .lado-button-3d{border:1px solid rgba(198,161,91,.72);background:#173d2b;color:#fffdf7}
+.lado-site .lado-button-3d:hover{background:#244f37;color:#fffdf7}
