@@ -441,3 +441,18 @@ body { background: var(--lado-ivory); }
 @media (max-width:980px) { .lado-site .lado-hero { grid-template-columns:minmax(0,1fr);padding-top:112px; }.lado-site .lado-hero-text { max-width:780px; }.lado-site .lado-hero-art { min-height:clamp(390px,64vw,570px);max-height:620px; } }
 @media (max-width:760px) { .lado-site .lado-hero { min-height:auto;padding:104px 20px 88px;gap:34px; }.lado-site .lado-hero h1 { font-size:clamp(43px,12vw,64px); }.lado-site .lado-hero-art { min-height:440px;border-radius:18px; }.lado-site .lado-3d-scene-label { left:14px;top:14px;padding:9px 12px; }.lado-site .lado-3d-scene-hint { right:14px;bottom:14px; } }
 @media (prefers-reduced-motion:reduce) { .lado-site .lado-3d-farm-scene * { animation:none!important;transition:none!important; } }
+
+
+/* Homepage discovery tabs: keep the landing page calm while retaining every section. */
+.lado-site .lado-home-discover{padding:clamp(54px,7vw,96px) clamp(18px,5vw,72px);background:#f7f3e9}
+.lado-site .lado-home-discover-heading{max-width:760px;margin:0 auto 28px;text-align:center}
+.lado-site .lado-home-discover-heading h2{margin:12px 0;color:#173d2b;font-family:"Playfair Display",Georgia,serif;font-size:clamp(34px,4.2vw,54px);font-weight:500;letter-spacing:-.04em}
+.lado-site .lado-home-discover-heading>p:last-child{color:#687064;font-size:14px}
+.lado-site .lado-home-tabs{position:sticky;top:78px;z-index:20;display:flex;gap:8px;max-width:1240px;margin:0 auto 34px;padding:10px;overflow-x:auto;border:1px solid rgba(23,61,43,.12);border-radius:18px;background:rgba(255,253,247,.94);box-shadow:0 12px 34px rgba(16,43,32,.07);backdrop-filter:blur(16px);scrollbar-width:thin}
+.lado-site .lado-home-tabs button{flex:0 0 auto;min-height:42px;padding:0 17px;border:1px solid transparent;border-radius:999px;background:transparent;color:#4f5d50;font-size:11px;font-weight:750;white-space:nowrap;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.lado-site .lado-home-tabs button:hover{border-color:rgba(23,61,43,.18);color:#173d2b}
+.lado-site .lado-home-tabs button.is-active{border-color:#173d2b;background:#173d2b;color:#fffdf7;box-shadow:0 6px 16px rgba(23,61,43,.18)}
+.lado-site .lado-home-tab-panel{max-width:1440px;margin:0 auto;min-height:180px}
+.lado-site .lado-home-tab-panel>[data-lado-reveal]{margin-block:18px}
+@media(max-width:760px){.lado-site .lado-home-discover{padding:54px 0 68px}.lado-site .lado-home-discover-heading{padding:0 20px}.lado-site .lado-home-tabs{top:70px;margin:0 12px 26px;padding:7px;border-radius:14px;gap:5px}.lado-site .lado-home-tabs button{min-height:40px;padding:0 14px;font-size:10px}.lado-site .lado-home-tab-panel{padding:0 12px}}
+@media(prefers-reduced-motion:reduce){.lado-site .lado-home-tabs button{transition:none}}
