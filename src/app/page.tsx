@@ -32,6 +32,7 @@ export default function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [logoLoadFailed, setLogoLoadFailed] = useState(false);
   const [headerScrolled, setHeaderScrolled] = useState(false);
+  const [activeHomeTab, setActiveHomeTab] = useState("farm");
 
   useEffect(() => {
     const updateHeader = () => setHeaderScrolled(window.scrollY > 24);
@@ -186,15 +187,35 @@ export default function HomePage() {
           </div>
         </section>
 
-        <div data-lado-reveal><FarmWorldSection /></div>
-        <div data-lado-reveal><FarmExperienceSection whatsappNumber={whatsappNumber} /></div>
-        <div data-lado-reveal><BuildYourOwnExperience whatsappNumber={whatsappNumber} /></div>
-        <div data-lado-reveal><EssentialsClubSection /></div>
-        <div data-lado-reveal><TrustAndProcessSection whatsappNumber={whatsappNumber} /></div>
-        <div data-lado-reveal><FarmCalculatorsSuite locale={locale} /></div>
-        <div data-lado-reveal><GauSevaTransparencySection /></div>
-        <div data-lado-reveal><JournalLibrarySection locale={locale} /></div>
-        <div data-lado-reveal><CorporateGiftingSection whatsappNumber={whatsappNumber} /></div>
+        <section className="lado-home-discover" data-lado-reveal aria-labelledby="lado-home-discover-title">
+          <div className="lado-home-discover-heading">
+            <p className="lado-eyebrow">EXPLORE THE LADO WORLD</p>
+            <h2 id="lado-home-discover-title">A little more to discover</h2>
+            <p>Choose a chapter. The details are here when you need them.</p>
+          </div>
+          <div className="lado-home-tabs" role="tablist" aria-label="Explore Lado sections">
+            <button id="home-tab-farm" type="button" role="tab" aria-selected={activeHomeTab === "farm"} aria-controls="home-tab-panel" className={activeHomeTab === "farm" ? "is-active" : ""} onClick={() => setActiveHomeTab("farm")}>The farm</button>
+            <button id="home-tab-experience" type="button" role="tab" aria-selected={activeHomeTab === "experience"} aria-controls="home-tab-panel" className={activeHomeTab === "experience" ? "is-active" : ""} onClick={() => setActiveHomeTab("experience")}>Experiences</button>
+            <button id="home-tab-build" type="button" role="tab" aria-selected={activeHomeTab === "build"} aria-controls="home-tab-panel" className={activeHomeTab === "build" ? "is-active" : ""} onClick={() => setActiveHomeTab("build")}>Build your own</button>
+            <button id="home-tab-club" type="button" role="tab" aria-selected={activeHomeTab === "club"} aria-controls="home-tab-panel" className={activeHomeTab === "club" ? "is-active" : ""} onClick={() => setActiveHomeTab("club")}>Essentials club</button>
+            <button id="home-tab-process" type="button" role="tab" aria-selected={activeHomeTab === "process"} aria-controls="home-tab-panel" className={activeHomeTab === "process" ? "is-active" : ""} onClick={() => setActiveHomeTab("process")}>Our process</button>
+            <button id="home-tab-tools" type="button" role="tab" aria-selected={activeHomeTab === "tools"} aria-controls="home-tab-panel" className={activeHomeTab === "tools" ? "is-active" : ""} onClick={() => setActiveHomeTab("tools")}>Farm tools</button>
+            <button id="home-tab-seva" type="button" role="tab" aria-selected={activeHomeTab === "seva"} aria-controls="home-tab-panel" className={activeHomeTab === "seva" ? "is-active" : ""} onClick={() => setActiveHomeTab("seva")}>Gau Seva</button>
+            <button id="home-tab-journal" type="button" role="tab" aria-selected={activeHomeTab === "journal"} aria-controls="home-tab-panel" className={activeHomeTab === "journal" ? "is-active" : ""} onClick={() => setActiveHomeTab("journal")}>Journal</button>
+            <button id="home-tab-gifting" type="button" role="tab" aria-selected={activeHomeTab === "gifting"} aria-controls="home-tab-panel" className={activeHomeTab === "gifting" ? "is-active" : ""} onClick={() => setActiveHomeTab("gifting")}>Gifting</button>
+          </div>
+          <div id="home-tab-panel" className="lado-home-tab-panel" role="tabpanel" aria-labelledby={`home-tab-${activeHomeTab}`}>
+            {activeHomeTab === "farm" && <><FarmWorldSection /><FarmExperienceSection whatsappNumber={whatsappNumber} /></>}
+            {activeHomeTab === "experience" && <FarmExperienceSection whatsappNumber={whatsappNumber} />}
+            {activeHomeTab === "build" && <BuildYourOwnExperience whatsappNumber={whatsappNumber} />}
+            {activeHomeTab === "club" && <EssentialsClubSection />}
+            {activeHomeTab === "process" && <TrustAndProcessSection whatsappNumber={whatsappNumber} />}
+            {activeHomeTab === "tools" && <FarmCalculatorsSuite locale={locale} />}
+            {activeHomeTab === "seva" && <GauSevaTransparencySection />}
+            {activeHomeTab === "journal" && <JournalLibrarySection locale={locale} />}
+            {activeHomeTab === "gifting" && <CorporateGiftingSection whatsappNumber={whatsappNumber} />}
+          </div>
+        </section>
 
         <section className="lado-journey-strip" data-lado-reveal>
           <div><p className="lado-eyebrow">CONTINUE YOUR LADO JOURNEY</p><h2>Know your product. Follow its journey.</h2><p>Visit your account, explore available batch information or speak with our team.</p></div>
