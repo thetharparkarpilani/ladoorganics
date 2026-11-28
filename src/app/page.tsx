@@ -194,7 +194,7 @@ export default function HomePage() {
             <p>Choose a chapter. The details are here when you need them.</p>
           </div>
           <div className="lado-home-tabs" role="tablist" aria-label="Explore Lado sections">
-            <button id="home-tab-farm" type="button" role="tab" aria-selected={activeHomeTab === "farm"} aria-controls="home-tab-panel" className={activeHomeTab === "farm" ? "is-active" : ""} onClick={() => setActiveHomeTab("farm")}>The farm</button>
+            <button id="home-tab-farm" type="button" role="tab" aria-selected={activeHomeTab === "farm"} aria-controls="home-tab-panel" className={activeHomeTab === "farm" ? "is-active" : ""} onClick={() => setActiveHomeTab("farm")}>Farm world</button>
             <button id="home-tab-experience" type="button" role="tab" aria-selected={activeHomeTab === "experience"} aria-controls="home-tab-panel" className={activeHomeTab === "experience" ? "is-active" : ""} onClick={() => setActiveHomeTab("experience")}>Experiences</button>
             <button id="home-tab-build" type="button" role="tab" aria-selected={activeHomeTab === "build"} aria-controls="home-tab-panel" className={activeHomeTab === "build" ? "is-active" : ""} onClick={() => setActiveHomeTab("build")}>Build your own</button>
             <button id="home-tab-club" type="button" role="tab" aria-selected={activeHomeTab === "club"} aria-controls="home-tab-panel" className={activeHomeTab === "club" ? "is-active" : ""} onClick={() => setActiveHomeTab("club")}>Essentials club</button>
@@ -205,7 +205,7 @@ export default function HomePage() {
             <button id="home-tab-gifting" type="button" role="tab" aria-selected={activeHomeTab === "gifting"} aria-controls="home-tab-panel" className={activeHomeTab === "gifting" ? "is-active" : ""} onClick={() => setActiveHomeTab("gifting")}>Gifting</button>
           </div>
           <div id="home-tab-panel" className="lado-home-tab-panel" role="tabpanel" aria-labelledby={`home-tab-${activeHomeTab}`}>
-            {activeHomeTab === "farm" && <><FarmWorldSection /><FarmExperienceSection whatsappNumber={whatsappNumber} /></>}
+            {activeHomeTab === "farm" && <FarmWorldSection /> }
             {activeHomeTab === "experience" && <FarmExperienceSection whatsappNumber={whatsappNumber} />}
             {activeHomeTab === "build" && <BuildYourOwnExperience whatsappNumber={whatsappNumber} />}
             {activeHomeTab === "club" && <EssentialsClubSection />}
