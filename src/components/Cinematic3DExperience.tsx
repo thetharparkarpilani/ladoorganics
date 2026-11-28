@@ -255,7 +255,7 @@ export default function Cinematic3DExperience() {
       <Link href="/" className={styles.brand} aria-label="Lado Organics classic website"><Image src="/images/lado-organics/Ladologo.png" alt="Lado Organics — Lado Love Pure" width={150} height={84} priority /></Link>
       <button type="button" className={styles.menuButton} onClick={()=>setMenuOpen(v=>!v)} aria-expanded={menuOpen} aria-controls="lado-3d-navigation">{menuOpen?"Close":"Explore"}</button>
       <nav id="lado-3d-navigation" className={menuOpen?styles.nav+" "+styles.navOpen:styles.nav} aria-label="3D experience navigation">
-        <Link href="#world" onClick={()=>setMenuOpen(false)}>The world</Link><Link href="#collection" onClick={()=>setMenuOpen(false)}>Collection</Link><Link href="/our-story" onClick={()=>setMenuOpen(false)}>Our story</Link><Link href="/trace" onClick={()=>setMenuOpen(false)}>Trace a batch</Link>
+        <Link href="#world" onClick={()=>setMenuOpen(false)}>The world</Link><Link href="#collection" onClick={()=>setMenuOpen(false)}>Collection</Link><Link href="/our-story" onClick={()=>setMenuOpen(false)}>Our story</Link><Link href="/trace" onClick={()=>setMenuOpen(false)}>Trace a batch</Link><Link href="/dashboard" onClick={()=>setMenuOpen(false)}>My account</Link><Link href="/contact" onClick={()=>setMenuOpen(false)}>Contact</Link>
       </nav>
       <div className={styles.headerActions}><button type="button" className={styles.bagButton} onClick={()=>setDrawerOpen(true)}>Bag <span>{itemCount}</span></button><Link href="/" className={styles.modeSwitch}>Classic site <span>↗</span></Link></div>
     </header>
@@ -276,11 +276,11 @@ export default function Cinematic3DExperience() {
       <section id="collection" className={styles.collection}>
         <div className={styles.sectionIntro}><div><p className={styles.eyebrow}>THE LADO COLLECTION</p><h2>Made with care.<br/><em>Chosen with meaning.</em></h2></div><p>Explore products currently listed in our live catalogue. Product details, available pack sizes and prices are kept in sync with the Lado store.</p></div>
         {catalogState==="loading"?<p className={styles.state}>Loading the live collection…</p>:catalogState==="error"?<p className={styles.state}>The live collection is temporarily unavailable. Please visit the <Link href="/store">classic store</Link> or try again shortly.</p>:products.length===0?<p className={styles.state}>There are no products available to display right now.</p>:<>
-          <div className={styles.productRail} role="list" aria-label="Live Lado Organics products">
+          <div className={styles.productRail} role="group" aria-label="Live Lado Organics products">
             {products.map(product=>{
               const active=selectedProduct?.slug===product.slug;
               const variant=product.variants.find(v=>v.isDefault)||product.variants[0];
-              return <button key={product.id} type="button" role="listitem" className={active?styles.productCard+" "+styles.productActive:styles.productCard} onClick={()=>setSelectedSlug(product.slug)} aria-pressed={active}>
+              return <button key={product.id} type="button" className={active?styles.productCard+" "+styles.productActive:styles.productCard} onClick={()=>setSelectedSlug(product.slug)} aria-pressed={active}>
                 <span className={styles.productImage} style={product.imageUrl?{backgroundImage:"url("+JSON.stringify(product.imageUrl)+")"}:undefined}><span className={styles.productOrb}/></span>
                 <span className={styles.productInfo}><strong>{productName(product)}</strong><small>{variant?"From ₹"+Number(variant.priceInr).toLocaleString("en-IN"):"Price to be confirmed"}</small></span>
                 <span className={styles.productSelect}>{active?"Selected":"View in 3D"} ↗</span>
