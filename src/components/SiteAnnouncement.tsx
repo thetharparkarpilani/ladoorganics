@@ -10,7 +10,7 @@ export default function SiteAnnouncement() {
   const [item, setItem] = useState<Announcement | null>(null);
 
   useEffect(() => {
-    if (pathname.startsWith("/admin")) {
+    if (pathname.startsWith("/admin") || pathname.startsWith("/experience-3d")) {
       setItem(null);
       return;
     }
@@ -51,7 +51,7 @@ export default function SiteAnnouncement() {
     };
   }, [pathname]);
 
-  if (pathname.startsWith("/admin") || !item) return null;
+  if (pathname.startsWith("/admin") || pathname.startsWith("/experience-3d") || !item) return null;
 
   return (
     <aside aria-label="Lado Organics announcement" className="w-full bg-[#294b35] px-4 py-2 text-center text-sm text-[#fff8e9]">

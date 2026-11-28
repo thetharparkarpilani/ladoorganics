@@ -29,7 +29,7 @@ export default function GlobalSiteChrome() {
   }, [menuOpen]);
 
   // The homepage owns its editorial header and footer; admin has a separate workspace shell.
-  if (pathname === "/" || pathname.startsWith("/admin")) return null;
+  if (pathname === "/" || pathname.startsWith("/admin") || pathname.startsWith("/experience-3d")) return null;
 
   const labels = locale === "hi"
     ? { shop: "उत्पाद", farm: "हमारा खेत", story: "हमारी कहानी", trace: "बैच ट्रेस", search: "खोजें", account: "मेरा खाता", contact: "संपर्क", bag: "बैग", menu: "मेन्यू", close: "बंद करें" }
@@ -63,6 +63,7 @@ export default function GlobalSiteChrome() {
             <Link href="/library" aria-current={isCurrent("/library") ? "page" : undefined} onClick={closeMenu}>Journal</Link>
             <Link href="/trace" aria-current={isCurrent("/trace") ? "page" : undefined} onClick={closeMenu}>{labels.trace}</Link>
             <Link href="/search" aria-current={isCurrent("/search") ? "page" : undefined} onClick={closeMenu}>{labels.search}</Link>
+            <Link href="/experience-3d" className="lado-3d-nav-link" onClick={closeMenu}>Explore in 3D ↗</Link>
             <Link href="/contact" aria-current={isCurrent("/contact") ? "page" : undefined} onClick={closeMenu}>{labels.contact}</Link>
           </nav>
           <div className="lado-global-actions">
